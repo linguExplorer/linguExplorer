@@ -28,7 +28,7 @@
         <h2>Adresse:</h2>
         <p>Rennweg 89b, 1030 Wien</p>
         <h2>Kontaktdaten:</h2>
-        <p>team@linguexplorer.com</p>
+        <p class="underline">team@linguexplorer.com</p>
         <h2>Urheberrecht:</h2>
         <p>
           Die Inhalte dieser Website sind urheberrechtlich geschützt. Jegliche Verwertung, die nicht vom Urheberrecht gedeckt ist, bedarf der schriftlichen Zustimmung des Betreibers.
@@ -136,6 +136,11 @@
     margin: 0; 
     padding: 0; 
     font-family: Arial, sans-serif; 
+  }
+
+   /* Unterstrichene E-Mail */
+   .underline {
+    text-decoration: underline; /* Unterstreicht den Text */
   }
   </style>
   
