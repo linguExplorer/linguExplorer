@@ -25,6 +25,12 @@
       <p>
         Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich. Sollten Sie rechtswidrige Inhalte auf verlinkten Seiten bemerken, informieren Sie uns bitte, damit wir die Links umgehend entfernen können.
       </p>
+      <!-- Button -->
+        <div class="button-container">
+      <button class="custom-button">
+        <img src="@/assets/xx_Images/xx_Images/Buttons/button zrk.png" alt="Button" />
+      </button>
+    </div>
     </div>
   </template>
   
@@ -58,6 +64,24 @@
   margin: 0; 
 }
   
+/* Button */
+.button-container {
+  position: fixed; /* Positioniert den Button relativ zum Browserfenster */
+  bottom: 20px; /* Abstand vom unteren Rand */
+  right: 20px; /* Abstand vom rechten Rand */
+}
+
+.custom-button {
+  background: none; /* Entfernt die Standard-Hintergrundfarbe */
+  border: none; /* Entfernt den Standardrahmen */
+  padding: 0; /* Entfernt das Padding */
+}
+
+.custom-button img {
+  width: 180px; /* Setze die Breite des Buttons (kann nach Bedarf angepasst werden) */
+  height: auto; /* Höhe automatisch basierend auf dem Bildverhältnis */
+}
+
   /* Globales CSS */
   body {
     background-color: #f6f5f1; 
