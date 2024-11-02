@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
-import Impressum from "../pages/Impressum.vue"; // Importiere die Impressum-Komponente
-import Spielbeschreibung from "../pages/Spielbeschreibung.vue"; // Importiere die Spielbeschreibung-Komponente
-import Datenschutz from "../pages/Datenschutz.vue"; // Importiere die Datenschutz-Komponente
+import Impressum from "../pages/Impressum.vue"; 
+import Spielbeschreibung from "../pages/Spielbeschreibung.vue"; 
+import Datenschutz from "../pages/Datenschutz.vue"; 
+import Anmelden from "../pages/Anmelden.vue";
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: "/datenschutz", // Route für Datenschutz
     name: "datenschutz",
     component: Datenschutz,
+  },
+  {
+    path: "/anmelden", // Route für Anmelden
+    name: "anmelden",
+    component: Anmelden,
   },
   {
     path: "/about",

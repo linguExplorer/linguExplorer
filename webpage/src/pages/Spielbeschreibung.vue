@@ -34,9 +34,9 @@
       </div>
 
       <!-- Gras Bild unter dem Button -->
-      <div class="grass-image-container">
+      <!--<div class="grass-image-container">
         <img src="@/assets/xx_Images/xx_Images/gras small patch.png" alt="Gras" class="grass-image" />
-      </div>
+      </div> -->
 
     <div class="grass-background">
 
