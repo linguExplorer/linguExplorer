@@ -1,9 +1,7 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view />
+  <main>
+    <router-view />
+  </main>
 </template>
 
 <style>
@@ -27,4 +25,14 @@ nav a {
 nav a.router-link-exact-active {
   color: #42b983;
 }
+
+/* Abstand für den gesamten Inhalt, um unter der Navigationsleiste sichtbar zu sein */
+#app main {
+  padding-top: 70px; /* Passt den oberen Abstand an die Höhe der Navigation an */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: left;
+}
+
 </style>

@@ -97,6 +97,7 @@
   h1 {
     margin-bottom: 15px; /* Abstand unter dem Titel */
     font-size: 22px; /* Größe des Haupttitels */
+    text-align: center;
   }
   h2 {
     margin-top: 20px; /* Abstand über den Untertiteln */
