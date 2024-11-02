@@ -11,6 +11,7 @@
 
     <!-- Content -->
     <div class="container">
+
       <div class="welcome-container">
         <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="left-cloud" />
         <img src="@/assets/xx_Images/xx_Images/sun.png" alt="Sonne" class="sun-image" />
@@ -25,6 +26,22 @@
         <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark.png" alt="Linguexplorer" class="linguexplorer-image" />
       </div>
 
+      <!-- Button direkt unter dem Linguexplorer-Logo -->
+      <div class="linguexplorer-button">
+        <button class="nav-button">
+          <img src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png" alt="Jetzt spielen" class="play-button-image" />
+        </button>
+      </div>
+
+      <!-- Gras Bild unter dem Button -->
+      <div class="grass-image-container">
+        <img src="@/assets/xx_Images/xx_Images/gras small patch.png" alt="Gras" class="grass-image" />
+      </div>
+
+    <div class="grass-background">
+
+    <!-- Boxes for content -->
+    <div class="content-box">
       <h2>Was ist</h2>
       <h2>?</h2>
       <p>
@@ -32,6 +49,9 @@
         durch die englische Sprache mitnimmt. Diese Reise ist speziell darauf ausgelegt, den Herausforderungen der
         Fremdsprachenerlernung entgegenzutreten, die viele Jugendliche in ihrer Schullaufbahn bis zur Matura erleben.
       </p>
+    </div>
+
+    <div class="content-box">
       <h2>Ziele des Spiels:</h2>
       <p>
         Das primäre Ziel von Linguexplorer ist es, die Motivation der Spieler zu steigern, indem sie auf spielerische
@@ -45,6 +65,9 @@
         Selbstvertrauen und ihre Fähigkeiten im Umgang mit Englisch zu stärken, und dies auf eine Weise, die im
         traditionellen Unterricht oft fehlt.
       </p>
+    </div>
+
+    <div class="content-box">
       <h2>Gameplay:</h2>
       <p>
         Linguexplorer ist ein Singleplayer-Lernspiel, das auf der Kombination von Spielspaß und Bildung basiert, ein
@@ -59,6 +82,10 @@
         Spielern jederzeit zur Verfügung und ermöglicht es ihnen, Inhalte nachzuschlagen und ihren Lernfortschritt
         zu verfolgen.
       </p>
+    </div>
+  </div>
+
+    
     </div>
   </div>
 </template>
@@ -105,9 +132,10 @@ export default {
   margin-right: 20px;
 }
 
-/* Content Container */
 .container {
-  padding: 30px 20px 20px; 
+  width: 100%; /* Breite auf 100% setzen */
+  padding: 30px 0 20px; /* Nur oben und unten Padding */
+  box-sizing: border-box; /* Box-Sizing auf Border-Box setzen */
 }
 
 .welcome-container {
@@ -120,31 +148,31 @@ export default {
 
 /* Sun behind the left cloud */
 .sun-image {
-  width: 100px; /* Größe der Sonne */
+  width: 100px; 
   height: auto;
-  position: absolute; /* Positioniere die Sonne absolut */
-  left: 10%; /* Positioniere sie links von der Wolke */
-  bottom: 40px; /* Höher als die Wolke */
-  z-index: 0; /* Behind the cloud */
+  position: absolute; 
+  left: 10%; 
+  bottom: 40px; 
+  z-index: 0; 
 }
 
 /* Left Cloud */
 .left-cloud {
-  width: 230px; /* Adjust size as needed */
+  width: 230px; 
   height: auto;
-  position: absolute; /* Positioniere die Wolke absolut */
-  left: 9%; /* Positioniere sie am linken Rand */
-  bottom: 0; /* Auf der gleichen Höhe wie der Text */
-  z-index: 1; /* Higher z-index to ensure it is above the sun */
+  position: absolute; 
+  left: 9%; 
+  bottom: 0; 
+  z-index: 1; 
 }
 
 /* Right Cloud */
 .right-cloud {
-  width: 230px; /* Größe der rechten Wolke */
+  width: 230px; 
   height: auto;
-  position: absolute; /* Positioniere die Wolke absolut */
-  right: 9%; /* Positioniere sie näher am rechten Rand */
-  bottom: 0; /* Auf der gleichen Höhe wie der Text */
+  position: absolute; 
+  right: 9%; 
+  bottom: 0; 
 }
 
 /* Welcome Text */
@@ -174,17 +202,10 @@ p {
   margin-bottom: 15px;
   color: black;
   line-height: 1.6;
-  font-family: 'VCR OSD Mono', monospace; /* Use the new font for paragraphs */
+  font-family: 'VCR OSD Mono', monospace; 
 }
 
 /* Global Styles */
-body {
-  background-color: #f6f5f1;
-  color: #333;
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-}
 
 @font-face {
   font-family: 'Pixelsplitter';
@@ -195,18 +216,33 @@ body {
 
 @font-face {
   font-family: 'VCR OSD Mono'; 
-  src: url('@/assets/fonts/vcr_osd_mono/VCR_OSD_MONO_1.001.ttf') format('truetype'); /* Corrected comment */
+  src: url('@/assets/fonts/vcr_osd_mono/VCR_OSD_MONO_1.001.ttf') format('truetype'); 
   font-weight: normal;
   font-style: normal;
 }
 
-.page-wrapper {
-    background-color: #f6f5f1;
-    min-height: 100vh;
-    color: black;
-    margin: 0; 
-    padding: 0;
+html, body {
+  height: 100%; /* Sicherstellen, dass der Body die volle Höhe hat */
+  margin: 0; /* Margen auf 0 setzen */
+  padding: 0; /* Polsterung auf 0 setzen */
 }
+
+body {
+  background-color: #f6f5f1; /* Hintergrundfarbe */
+  color: #333;
+  font-family: Arial, sans-serif;
+}
+
+.page-wrapper {
+    background-color: #f6f5f1; /* Hintergrundfarbe */
+    min-height: 100vh; /* Sicherstellen, dass die Seite mindestens die Höhe des Viewports hat */
+    color: black;
+    margin: 0; /* Keine Margen */
+    padding: 0; /* Keine Polsterung */
+    width: 100%; /* Breite auf 100% setzen */
+    box-sizing: border-box; /* Box-Sizing auf Border-Box setzen */
+}
+
 
 .linguexplorer-logo {
   text-align: center; 
@@ -217,5 +253,57 @@ body {
   width: 80%; 
   max-width: 500px; 
 }
-</style>
 
+.linguexplorer-button {
+  display: flex;
+  justify-content: center; 
+  margin: 100px 0; 
+}
+
+.play-button-image {
+  height: 200px; 
+  width: auto;
+}
+
+/* Spacer for additional spacing */
+.spacer {
+  height: 60px; /* Adjust height as needed for spacing */
+}
+
+
+/* grass hintergrund*/
+.grass-background {
+  background-image: url('@/assets/xx_Images/xx_Images/gras full.png'); 
+  background-size: cover; 
+  background-position: center;
+  padding: 60px 0 20px; 
+  position: relative; 
+  min-height: 100vh; 
+}
+
+.grass-image-container {
+  text-align: center; 
+  margin: 0; 
+  padding: 0; 
+  position: relative; 
+}
+
+.grass-image {
+  width: 80%; 
+  max-width: 400px; 
+  z-index: 1; 
+}
+
+/* Content Box Styles */
+.content-box {
+  background-color: rgba(246, 245, 241, 0.9); 
+  padding: 20px;
+  margin: 30px auto; 
+  max-width: 800px; 
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
+  text-align: center; 
+  position: relative; 
+  z-index: 2; 
+}
+
+</style>
