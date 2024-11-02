@@ -1,6 +1,7 @@
 <template>
+  <div class="page-wrapper">
     <div>
-      <!-- Navigation Bar -->
+      <!-- Nav Bar -->
       <nav class="navbar">
         <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark hell.png" alt="Logo" class="logo" />
         <button class="nav-button">
@@ -45,6 +46,7 @@
         </div>
       </div>
     </div>
+  </div>
   </template>
   
   <script>
@@ -54,57 +56,68 @@
   </script>
   
   <style scoped>
-  /* Navigation Bar Styles */
+  /* Nav Bar */
   .navbar {
     display: flex;
-    align-items: center; /* Vertikal zentriert */
-    background-color: #99b305; /* Hintergrundfarbe der Navigationsleiste */
-    padding: 10px 0; /* Innenabstand oben/unten reduziert */
-    width: 100%; /* Breite der Navigationsleiste auf 100% */
-    position: fixed; /* Fest positioniert am oberen Rand */
-    top: 0; /* Am oberen Rand des Viewports */
-    left: 0; /* Links am Rand des Viewports */
-    right: 0; /* Rechts am Rand des Viewports */
+    align-items: center; 
+    background-color: #99b305; 
+    padding: 10px 0; /* Innenabstand oben/unten */
+    width: 100%; 
+    position: fixed; 
+    top: 0; /*Viewport*/
+    left: 0; 
+    right: 0; 
   }
   
   .logo {
-  height: 35px; /* Höhe des Logos */
-  margin-left: 20px; /* Abstand zum linken Rand */
-  margin-right: auto; /* Platz zwischen Logo und Button */
+  height: 35px; 
+  margin-left: 20px; 
+  margin-right: auto; 
   }
   
   .nav-button {
-    background: none; /* Entfernt die Standard-Hintergrundfarbe */
-    border: none; /* Entfernt den Standardrahmen */
-    margin-right: 15px; /* Abstand zum Menü-Icon */
+    background: none; 
+    border: none; 
+    margin-right: 15px; 
   }
   
   .nav-button img {
-    height: 40px; /* Höhe des Buttons */
+    height: 40px; 
   }
   
   .menu-icon {
-  height: 25px; /* Höhe des Menü-Icons */
-  margin-right: 20px; /* Abstand zum rechten Rand */
+  height: 25px; 
+  margin-right: 20px; 
 }
   
-  .content {
-    padding: 70px 20%; /* Innenabstand oben/unten 70px, links/rechts 20% */
-    text-align: left; /* Text linksbündig */
-  }
+.content {
+  padding: 80px 20%; 
+  text-align: left; 
+  margin: 0;
+}
   
-  /* Spezifische Stile für die Seite */
-  h1 {
-    margin-bottom: 15px; /* Abstand unter dem Titel */
-    font-size: 22px; /* Größe des Haupttitels */
+
+@font-face {
+    font-family: 'Pixelsplitter';
+    src: url('@/assets/fonts/pixelsplitter/PixelSplitter-Bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+h1 {
+    font-family: 'Pixelsplitter', Arial, sans-serif; 
+    margin-bottom: 5px;
+    font-size: 45px;
     text-align: center;
-  }
+    color: black;
+}
+
   h2 {
-    margin-top: 20px; /* Abstand über den Untertiteln */
-    font-size: 20px; /* Größe der Untertitel */
+    margin-top: 20px; 
+    font-size: 20px; 
   }
   p {
-    margin-bottom: 10px; /* Abstand unter den Absätzen */
+    margin-bottom: 10px; 
   }
   ul {
     list-style-type: none; 
@@ -114,34 +127,42 @@
   
   /* Button */
   .button-container {
-    position: fixed; /* Positioniert den Button relativ zum Browserfenster */
-    bottom: 20px; /* Abstand vom unteren Rand */
-    right: 20px; /* Abstand vom rechten Rand */
+    position: fixed; 
+    bottom: 20px; 
+    right: 20px; 
   }
   
   .custom-button {
-    background: none; /* Entfernt die Standard-Hintergrundfarbe */
-    border: none; /* Entfernt den Standardrahmen */
-    padding: 0; /* Entfernt das Padding */
+    background: none; 
+    border: none; 
+    padding: 0; 
   }
   
   .custom-button img {
-    width: 150px; /* Setze die Breite des Buttons (kann nach Bedarf angepasst werden) */
-    height: auto; /* Höhe automatisch basierend auf dem Bildverhältnis */
+    width: 150px; 
+    height: auto; 
   }
   
-  /* Globales CSS */
   body {
-    background-color: #f6f5f1; 
+    background-color: black; 
     color: black; 
     margin: 0; 
     padding: 0; 
     font-family: Arial, sans-serif; 
   }
 
-   /* Unterstrichene E-Mail */
    .underline {
-    text-decoration: underline; /* Unterstreicht den Text */
+    text-decoration: underline; 
   }
+
+  .page-wrapper {
+    background-color: #f6f5f1;
+    min-height: 100vh;
+    color: black;
+    margin: 0; 
+    padding: 0;
+  }
+
+  
   </style>
   
