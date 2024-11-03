@@ -30,6 +30,9 @@
                     <label for="password">Passwort:</label>
                     <input type="password" id="password" v-model="password" required />
                 </div>
+                <!-- Fehlermeldung -->
+                <p v-if="showError" class="error-message">Ungültige E-Mail oder Passwort</p>
+
                 <button type="submit" class="submit-button">
                     <img src="@/assets/xx_Images/xx_Images/Buttons/button anmelden blue.png" alt="Anmelden" />
                 </button>
@@ -189,14 +192,32 @@ h1 {
 
 /* Content Box Styles */
 .content-box {
-    background-color: transparent; 
+    width: 30%; 
+    margin: 0 auto; 
     padding: 20px;
-    margin: 0; 
-    width: 100%; 
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
+    box-shadow: none; 
     text-align: center; 
-    position: relative; 
-    z-index: 2; 
+    position: relative;
+    z-index: 2;
+    background-color: transparent; 
+}
+
+input {
+    display: block;
+    margin: 10px auto;
+    padding: 10px;
+    width: 100%;
+    background-color: white; 
+    border: 2px solid #9cb405; 
+    color: black; 
+    font-family: 'VCR OSD Mono', monospace; 
+    box-sizing: border-box; 
+}
+
+
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
+    box-shadow: 0 0 0px 1000px white inset;
 }
 
 .input-group {
@@ -231,8 +252,8 @@ h1 {
 
 .button-container {
     display: flex; 
-    justify-content: flex-end; /* Align the button to the right */
-    padding: 20px; /* Optional: Add some padding for spacing */
+    justify-content: flex-end; 
+    padding: 20px; 
 }
 
 .custom-button {
@@ -246,16 +267,16 @@ h1 {
     height: auto; 
 }
 
-input {
-    display: block;
-    margin: 10px auto;
-    padding: 10px;
-    width: 80%;
-    max-width: 300px;
-}
-
 label {
     display: block;
     margin-bottom: 5px;
+}
+
+/* Fehlermeldung*/
+.error-message {
+    color: red;
+    font-family: 'VCR OSD Mono', monospace; 
+    font-size: 16px;
+    margin-top: 5px;
 }
 </style>

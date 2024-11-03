@@ -4,6 +4,9 @@ import Impressum from "../pages/Impressum.vue";
 import Spielbeschreibung from "../pages/Spielbeschreibung.vue"; 
 import Datenschutz from "../pages/Datenschutz.vue"; 
 import Anmelden from "../pages/Anmelden.vue";
+import ForgotPassword from "../pages/forgot_password.vue"; 
+import NewPassword from "../pages/new_password.vue"; 
+import Registrieren from "../pages/Registrieren.vue";
 
 const routes = [
   {
