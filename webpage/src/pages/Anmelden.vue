@@ -6,7 +6,7 @@
                     <p>Hast du noch keinen Account?</p>
                 </div>
                 <button class="register-button" @click="goToRegister">
-                    <img src="@/assets/xx_Images/xx_Images/Buttons/button registrieren blue.png" alt="Registrieren" />
+                    <img src="@/assets/xx_Images/xx_Images/Buttons/button registrieren green.png" alt="Registrieren" />
                 </button>
             </div>
         </div>
