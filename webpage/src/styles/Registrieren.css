@@ -52,7 +52,7 @@
     height: auto; 
 }
 
-.welcome-container {
+.registrier-container {
     display: flex;
     align-items: flex-end; 
     justify-content: center; 
@@ -61,7 +61,7 @@
 }
 
 /* Wolkenstile */
-.sun-image {
+.sun-image-r {
     width: 100px; 
     height: auto;
     position: absolute; 
@@ -71,7 +71,7 @@
 }
 
 /* Obere Wolke links */
-.left-cloud-top {
+.left-cloud-top-r {
     width: 230px; 
     height: auto;
     position: absolute; 
@@ -81,7 +81,7 @@
 }
 
 /* Untere Wolke links */
-.left-cloud-bottom {
+.left-cloud-bottom-r {
     width: 230px; 
     height: auto;
     position: absolute; 
@@ -91,7 +91,7 @@
 }
 
 /* Rechte Wolke */
-.right-cloud {
+.right-cloud-r {
     width: 230px; 
     height: auto;
     position: absolute; 

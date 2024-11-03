@@ -1,9 +1,4 @@
-@font-face {
-    font-family: 'VCR OSD Mono';
-    src: url('@/assets/fonts/vcr_osd_mono/VCR_OSD_MONO_1.001.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
+
 
 .page-wrapper {
     background-color: #f6f5f1; 
@@ -52,7 +47,7 @@
     height: auto; 
 }
 
-.welcome-container {
+.anmelde-container {
     display: flex;
     align-items: flex-end; 
     justify-content: center; 
@@ -60,43 +55,42 @@
     position: relative; 
 }
 
-/* Wolkenstile */
-.sun-image {
-    width: 100px; 
+/* sonne */
+.anmelde-container .sun-image {
+    width: 137px; 
     height: auto;
     position: absolute; 
-    left: 10%; 
-    bottom: 50%; 
-    z-index: 1; 
-}
+    left: -300%; 
+    top: -370%; 
+  }
 
 /* Obere Wolke links */
-.left-cloud-top {
-    width: 230px; 
+.anmelde-container .left-cloud-top {
+    width: 300px; 
     height: auto;
     position: absolute; 
-    left: 5%; 
-    bottom: 70%; 
+    left: -390%; 
+    top: -550%; 
     z-index: 0; 
 }
 
 /* Untere Wolke links */
-.left-cloud-bottom {
-    width: 230px; 
+.anmelde-container .left-cloud-bottom {
+    width: 320px; 
     height: auto;
     position: absolute; 
-    left: 3%; 
-    bottom: 0%; 
+    left: -420%; 
+    top: -290%;  
     z-index: 2; 
 }
 
 /* Rechte Wolke */
-.right-cloud {
-    width: 230px; 
+.anmelde-container .right-cloud-middle {
+    width: 320px; 
     height: auto;
     position: absolute; 
-    right: 10%; 
-    bottom: 20%; 
+    left: 200%; 
+    top: -55%; 
 }
 
 /* Welcome Text */
@@ -106,9 +100,9 @@
     align-items: center; 
 }
 
-h1 {
+.welcome-text .h1 {
     font-family: 'Pixelsplitter', Arial, sans-serif;
-    font-size: 45px;
+    font-size: 100px;
     color: black;
     margin: 0 10px 10px; 
     text-align: center;
@@ -202,4 +196,11 @@ label {
     font-family: 'VCR OSD Mono', monospace; 
     font-size: 16px;
     margin-top: 5px;
+}
+
+@font-face {
+    font-family: 'VCR OSD Mono';
+    src: url('@/assets/fonts/vcr_osd_mono/VCR_OSD_MONO_1.001.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }

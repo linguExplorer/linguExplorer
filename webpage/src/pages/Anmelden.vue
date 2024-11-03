@@ -10,11 +10,11 @@
                 </button>
             </div>
         </div>
-        <div class="welcome-container">
+        <div class="anmelde-container">
             <img src="@/assets/xx_Images/xx_Images/cloud.png" alt="Wolke" class="left-cloud-top" />
-            <img src="@/assets/xx_Images/xx_Images/cloud.png" alt="Wolke" class="left-cloud-bottom" />
+            <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="left-cloud-bottom" />
             <img src="@/assets/xx_Images/xx_Images/sun.png" alt="Sonne" class="sun-image" />
-            <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="right-cloud" />
+            <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="right-cloud-middle" />
             <div class="welcome-text">
                 <h1>Anmelden</h1>
             </div>

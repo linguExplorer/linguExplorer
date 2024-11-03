@@ -11,11 +11,11 @@
             </div>
         </div>
 
-        <div class="welcome-container">
-            <img src="@/assets/xx_Images/xx_Images/cloud.png" alt="Wolke" class="left-cloud-top" />
-            <img src="@/assets/xx_Images/xx_Images/cloud.png" alt="Wolke" class="left-cloud-bottom" />
-            <img src="@/assets/xx_Images/xx_Images/sun.png" alt="Sonne" class="sun-image" />
-            <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="right-cloud" />
+        <div class="registrier-container">
+            <img src="@/assets/xx_Images/xx_Images/cloud.png" alt="Wolke" class="left-cloud-top-r" />
+            <img src="@/assets/xx_Images/xx_Images/cloud.png" alt="Wolke" class="left-cloud-bottom-r" />
+            <img src="@/assets/xx_Images/xx_Images/sun.png" alt="Sonne" class="sun-image-r" />
+            <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="right-cloud-r" />
             <div class="welcome-text">
                 <h1>Registrieren</h1>
             </div>
@@ -88,3 +88,4 @@ export default {
     }
 };
 </script>
+
