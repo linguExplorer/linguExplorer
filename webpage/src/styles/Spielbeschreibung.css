@@ -38,17 +38,17 @@
   }
   
   .container {
-    width: 100%; /* Breite auf 100% setzen */
-    padding: 30px 0 20px; /* Nur oben und unten Padding */
-    box-sizing: border-box; /* Box-Sizing auf Border-Box setzen */
+    width: 100%; 
+    padding: 30px 0 20px; 
+    box-sizing: border-box; 
   }
   
   .welcome-container {
     display: flex;
-    align-items: flex-end; /* Align items to the bottom */
+    align-items: flex-end; 
     justify-content: center; 
     margin-bottom: 20px; 
-    position: relative; /* Allow absolute positioning of children */
+    position: relative; 
   }
   
   /* Sun behind the left cloud */
@@ -83,8 +83,8 @@
   /* Welcome Text */
   .welcome-text {
     display: flex;
-    flex-direction: column; /* Text untereinander anordnen */
-    align-items: center; /* Text zentrieren */
+    flex-direction: column; 
+    align-items: center; 
   }
   
   h1 {
@@ -127,25 +127,25 @@
   }
   
   html, body {
-    height: 100%; /* Sicherstellen, dass der Body die volle Höhe hat */
-    margin: 0; /* Margen auf 0 setzen */
-    padding: 0; /* Polsterung auf 0 setzen */
+    height: 100%; 
+    margin: 0; 
+    padding: 0; 
   }
   
   body {
-    background-color: #f6f5f1; /* Hintergrundfarbe */
+    background-color: #f6f5f1; 
     color: #333;
     font-family: Arial, sans-serif;
   }
   
   .page-wrapper {
-      background-color: #f6f5f1; /* Hintergrundfarbe */
-      min-height: 100vh; /* Sicherstellen, dass die Seite mindestens die Höhe des Viewports hat */
+      background-color: #f6f5f1; 
+      min-height: 100vh; 
       color: black;
-      margin: 0; /* Keine Margen */
-      padding: 0; /* Keine Polsterung */
-      width: 100%; /* Breite auf 100% setzen */
-      box-sizing: border-box; /* Box-Sizing auf Border-Box setzen */
+      margin: 0; 
+      padding: 0; 
+      width: 100%; 
+      box-sizing: border-box; 
   }
   
   
@@ -167,7 +167,7 @@
   
   /* Spacer for additional spacing */
   .spacer {
-    height: 60px; /* Adjust height as needed for spacing */
+    height: 60px; 
   }
   
   
