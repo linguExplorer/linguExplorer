@@ -28,7 +28,7 @@
 
       <!-- Button direkt unter dem Linguexplorer-Logo -->
       <div class="linguexplorer-button">
-        <button class="nav-button">
+        <button class="play-button">
           <img src="@/assets/xx_Images/xx_Images/Buttons/button play now.png" alt="Jetzt spielen" class="play-button-image" />
         </button>
       </div>
@@ -42,8 +42,11 @@
 
     <!-- Boxes for content -->
     <div class="content-box">
-      <h2>Was ist</h2>
-      <h2>?</h2>
+      <div class="image-between">
+        <h2>Was ist</h2>
+        <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark hell.png" alt="Logo" class="between-image" />
+        <h2>?</h2>
+      </div>
       <p>
         Linguexplorer ist eine innovative Lernanwendung, die Schülerinnen und Schüler auf eine unterhaltsame Reise
         durch die englische Sprache mitnimmt. Diese Reise ist speziell darauf ausgelegt, den Herausforderungen der
@@ -125,6 +128,10 @@ export default {
 
 .nav-button img {
   height: 40px;
+}
+
+.play-button img{
+  height: 80px;
 }
 
 .menu-icon {
@@ -260,11 +267,6 @@ body {
   margin: 100px 0; 
 }
 
-.play-button-image {
-  height: 200px; 
-  width: auto;
-}
-
 /* Spacer for additional spacing */
 .spacer {
   height: 60px; /* Adjust height as needed for spacing */
@@ -303,7 +305,35 @@ body {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
   text-align: center; 
   position: relative; 
-  z-index: 2; 
+  z-index: 2;  
 }
 
+.between-image {
+  margin: 0 10px; 
+  height: 50px; 
+  width: auto; 
+}
+
+.image-between{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.play-button {
+  background: none; 
+  border: none; 
+  cursor: pointer; 
+  outline: none; 
+  padding: 0; 
+}
+
+.play-button img {
+  height: 80px; 
+  display: block; 
+}
+
+.play-button:hover img {
+  opacity: 1;
+}
 </style>
