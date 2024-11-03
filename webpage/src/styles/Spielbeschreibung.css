@@ -1,17 +1,18 @@
 /* Nav Bar */
 .navbar {
-    display: flex;
-    align-items: center;
-    background-color: #99b305;
-    padding: 10px 0;
-    width: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1; /* Ensures nav bar is above content */
-  }
-  
+  display: flex;
+  align-items: center;
+  background-color: #99b305;
+  padding: 10px 0; 
+  width: 100%; 
+  position: relative;
+  top: -70px;
+  left: 0;
+  right: 0;
+  z-index: auto;
+  margin: 0;
+}
+
   .logo {
     height: 35px;
     margin-left: 20px;
@@ -87,15 +88,16 @@
     align-items: center; 
   }
   
+  /*Wilkommen zu*/
   h1 {
     font-family: 'Pixelsplitter', Arial, sans-serif;
-    font-size: 50px;
-    color: black;
+    font-size: 70px;
+    color: rgb(0, 0, 0);
     margin: 0 10px 10px; 
     text-align: center;
   }
   
-  /* Headings */
+  /* Headings für Container*/
   h2 {
     font-family: 'Pixelsplitter', Arial, sans-serif;
     margin-top: 10px; 
@@ -110,21 +112,7 @@
     font-family: 'VCR OSD Mono', monospace; 
   }
   
-  /* Global Styles */
-  
-  @font-face {
-    font-family: 'Pixelsplitter';
-    src: url('@/assets/fonts/pixelsplitter/PixelSplitter-Bold.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-  }
-  
-  @font-face {
-    font-family: 'VCR OSD Mono'; 
-    src: url('@/assets/fonts/vcr_osd_mono/VCR_OSD_MONO_1.001.ttf') format('truetype'); 
-    font-weight: normal;
-    font-style: normal;
-  }
+
   
   html, body {
     height: 100%; 
@@ -135,7 +123,7 @@
   body {
     background-color: #f6f5f1; 
     color: #333;
-    font-family: Arial, sans-serif;
+    /*font-family: Arial, sans-serif;*/
   }
   
   .page-wrapper {
@@ -159,12 +147,41 @@
     max-width: 500px; 
   }
   
-  .linguexplorer-button {
+  /*Container Lingu und Button*/
+  .container1 {
     display: flex;
-    justify-content: center; 
-    margin: 100px 0; 
+    /*justify-content: center;*/
+    margin: 50px 0; 
   }
   
+  /*Lingu*/
+  .character-image {
+    width: 320px; 
+    position: relative;
+    left: 2%; 
+    bottom: -60px; 
+    z-index: auto;
+  }
+
+  .play-button {
+    background: none; 
+    border: none; 
+    cursor: pointer; 
+    outline: none; 
+    padding: 0; 
+  }
+  
+  /*jetzt spielen button*/
+  .play-button img {
+    height: 100px; /*größe*/
+    margin-left: 150%;
+    display: block; 
+  }
+  
+  .play-button:hover img {
+    opacity: 1;
+  }
+
   .spacer {
     height: 60px; 
   }
@@ -216,29 +233,19 @@
     align-items: center;
     justify-content: center;
   }
-  
-  .play-button {
-    background: none; 
-    border: none; 
-    cursor: pointer; 
-    outline: none; 
-    padding: 0; 
-  }
-  
-  /*jetzt spielen' button*/
-  .play-button img {
-    height: 90px; 
-    display: block; 
-  }
-  
-  .play-button:hover img {
-    opacity: 1;
-  }
 
-  .character-image {
-    width: 320px; 
-    position: absolute;
-    left: 3%; 
-    bottom: 63px; 
-    z-index: 2;
+
+  
+  @font-face {
+    font-family: 'Pixelsplitter';
+    src: url('@/assets/fonts/pixelsplitter/PixelSplitter-Bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'VCR OSD Mono'; 
+    src: url('@/assets/fonts/vcr_osd_mono/VCR_OSD_MONO_1.001.ttf') format('truetype'); 
+    font-weight: normal;
+    font-style: normal;
   }

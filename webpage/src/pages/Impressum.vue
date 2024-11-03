@@ -16,7 +16,7 @@
         <p>Informationspflicht laut Offenlegungspflicht laut §25 Mediengesetz</p>
         <h2>Websitebetreiber-Team:</h2>
         <ul>
-          <li>Alexander Nems</li>
+          <li>Alexander Nems</li>   
           <li>Thuy Tien Luong</li>
           <li>Benjamin Bician</li>
           <li>Helena Stindl</li>

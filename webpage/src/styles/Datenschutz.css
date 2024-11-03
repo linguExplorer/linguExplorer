@@ -1,111 +1,118 @@
-/* Navigation */
+/* Reset any browser default spacing */
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #f6f5f1; 
+  color: black;
+  font-family: Arial, sans-serif;
+  overflow-x: hidden; 
+}
+
+/* Page Wrapper */
+.page-wrapper {
+  background-color: #f6f5f1;
+  min-height: 100vh;
+  color: black;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navigation Bar */
 .navbar {
-    display: flex;
-    align-items: center; 
-    background-color: #99b305; 
-    padding: 10px 0; /* Innenabstand oben/unten */
-    width: 100%; /* Breite */
-    position: fixed; /* oberen Rand fix */
-    top: 0; /* Viewport */
-    left: 0; 
-    right: 0; 
-  }
-  
-  .logo {
-    height: 35px; 
-    margin-left: 20px; /* linker Rand */
-    margin-right: auto; /* Logo + Button Abstand */
-  }
-  
-  .nav-button {
-    background: none; 
-    border: none; 
-    margin-right: 15px; /* Abstand zum Menü-Icon */
-  }
-  
-  .nav-button img {
-    height: 40px; 
-  }
-  
-  .menu-icon {
-    height: 25px; 
-    margin-right: 20px; 
-  }
-  
-  .content {
-    padding: 70px 20%; /* Innenabstand oben/unten links/rechts */
-    text-align: left;
-  }
-  
-  @font-face {
-    font-family: 'Pixelsplitter';
-    src: url('@/assets/fonts/pixelsplitter/PixelSplitter-Bold.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-  }
+  display: flex;
+  align-items: center;
+  background-color: #99b305;
+  padding: 10px 0; 
+  width: 100%; 
+  position: relative;
+  top: -70px;
+  left: 0;
+  right: 0;
+  z-index: auto;
+  margin: 0;
+}
 
-  h1 {
-    font-family: 'Pixelsplitter', Arial, sans-serif; 
-    margin-bottom: 5px;
-    font-size: 45px;
-    text-align: center;
-    color: black;
-  }
+/* Content Section */
+.content {
+  padding: 20px 20%; 
+  text-align: left;
+  min-height: 200vh;
+}
 
-  h2 {
-    margin-top: 20px; 
-    font-size: 20px;
-  }
-  p {
-    margin-bottom: 10px; 
-  }
-  ul {
-    padding: 0; 
-    margin: 0; 
-  }
-  .no-bullets {
-    list-style-type: none; /* Entfernt punkte bei liste */
-  }
-  
-  .indented-list {
-    padding-left: 20px; /* Eingerückte liste */
-  }
-  
-  .underline {
-    text-decoration: underline; 
-  }
-  
-  /* Button */
-  .button-container {
-    position: fixed; 
-    bottom: 20px; 
-    right: 20px; 
-  }
-  
-  .custom-button {
-    background: none; 
-    border: none; 
-    padding: 0;
-  }
-  
-  .custom-button img {
-    width: 150px; 
-    height: auto; 
-  }
-  
-  /* Globales CSS */
-  body {
-    background-color: #f6f5f1; 
-    color: black; 
-    margin: 0; 
-    padding: 0; 
-    font-family: Arial, sans-serif; 
-  }
+/* Logo and Buttons */
+.logo {
+  height: 35px; 
+  margin-left: 20px;
+  margin-right: auto;
+}
 
-  .page-wrapper {
-    background-color: #f6f5f1;
-    min-height: 100vh;
-    color: black;
-    margin: 0; 
-    padding: 0;
-  }
+.nav-button {
+  background: none; 
+  border: none; 
+  margin-right: 15px;
+}
+
+.nav-button img {
+  height: 40px; 
+}
+
+.menu-icon {
+  height: 25px; 
+  margin-right: 20px; 
+}
+
+/* Headers and General Styles */
+h1 {
+  font-family: 'Pixelsplitter', Arial, sans-serif; 
+  margin-bottom: 5px;
+  font-size: 45px;
+  text-align: center;
+  color: black;
+}
+
+h2 {
+  margin-top: 20px; 
+  font-size: 20px;
+  font-family: sans-serif;
+}
+
+p {
+  margin-bottom: 10px; 
+}
+
+ul {
+  padding: 0; 
+  margin: 0; 
+}
+
+.no-bullets {
+  list-style-type: none; /* Removes bullet points from list */
+}
+
+.indented-list {
+  padding-left: 20px; 
+}
+
+.underline {
+  text-decoration: underline; 
+}
+
+/* Button Container */
+.button-container {
+  position: fixed; 
+  bottom: 20px; 
+  right: 20px; 
+}
+
+.custom-button {
+  background: none; 
+  border: none; 
+  padding: 0;
+}
+
+.custom-button img {
+  width: 150px; 
+  height: auto; 
+}

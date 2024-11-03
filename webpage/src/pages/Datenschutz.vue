@@ -1,5 +1,6 @@
 <template>
     <div class="page-wrapper">
+      
       <!-- Nav Bar -->
       <nav class="navbar">
         <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark dunkel.png" alt="Logo" class="logo" />

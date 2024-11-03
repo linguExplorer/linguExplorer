@@ -1,15 +1,17 @@
 /* Nav Bar */
 .navbar {
-    display: flex;
-    align-items: center; 
-    background-color: #99b305; 
-    padding: 10px 0; /* Innenabstand oben/unten */
-    width: 100%; 
-    position: fixed; 
-    top: 0; /*Viewport*/
-    left: 0; 
-    right: 0; 
-  }
+  display: flex;
+  align-items: center;
+  background-color: #99b305;
+  padding: 10px 0; 
+  width: 100%; 
+  position: relative;
+  top: -70px;
+  left: 0;
+  right: 0;
+  z-index: auto;
+  margin: 0;
+}
   
   .logo {
   height: 35px; 

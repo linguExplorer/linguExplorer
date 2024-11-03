@@ -27,14 +27,16 @@
       </div>
 
       <!-- Button direkt unter dem Linguexplorer-Logo -->
-      <div class="linguexplorer-button">
+      <div class="container1">
+        <!-- Character Image - positioned near the "Jetzt spielen" button -->
+        <img src="@/assets/xx_Images/xx_Images/Charactee New.png" alt="Character" class="character-image" />
+
         <button class="play-button">
           <img src="@/assets/xx_Images/xx_Images/Buttons/button play now.png" alt="Jetzt spielen" class="play-button-image" />
         </button>
       </div>
 
-      <!-- Character Image - positioned near the "Jetzt spielen" button -->
-      <img src="@/assets/xx_Images/xx_Images/Charactee New.png" alt="Character" class="character-image" />
+      
 
       <!-- Gras Bild unter dem Button -->
       <!--<div class="grass-image-container">
