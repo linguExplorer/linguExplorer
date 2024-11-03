@@ -13,13 +13,13 @@
     <div class="container">
 
       <div class="welcome-container">
-        <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="left-cloud" />
         <img src="@/assets/xx_Images/xx_Images/sun.png" alt="Sonne" class="sun-image" />
+        <img src="@/assets/xx_Images/xx_Images/cloud.png" alt="Wolke" class="left-cloud" />
         <div class="welcome-text">
           <h1>Willkommen</h1>
           <h1>zu</h1>
         </div>
-        <img src="@/assets/xx_Images/xx_Images/cloud.png" alt="Wolke" class="right-cloud" />
+        <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="right-cloud" />
       </div>
 
       <div class="linguexplorer-logo">
