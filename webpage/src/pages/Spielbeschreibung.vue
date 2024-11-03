@@ -2,7 +2,7 @@
   <div class="page-wrapper">
     <!-- Nav Bar -->
     <nav class="navbar">
-      <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark hell.png" alt="Logo" class="logo" />
+      <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark dunkel.png" alt="Logo" class="logo" />
       <button class="nav-button">
         <img src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png" alt="Jetzt spielen" />
       </button>
@@ -32,6 +32,9 @@
           <img src="@/assets/xx_Images/xx_Images/Buttons/button play now.png" alt="Jetzt spielen" class="play-button-image" />
         </button>
       </div>
+
+      <!-- Character Image - positioned near the "Jetzt spielen" button -->
+      <img src="@/assets/xx_Images/xx_Images/Charactee New.png" alt="Character" class="character-image" />
 
       <!-- Gras Bild unter dem Button -->
       <!--<div class="grass-image-container">
