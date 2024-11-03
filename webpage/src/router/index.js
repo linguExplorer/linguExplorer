@@ -4,8 +4,8 @@ import Impressum from "../pages/Impressum.vue";
 import Spielbeschreibung from "../pages/Spielbeschreibung.vue"; 
 import Datenschutz from "../pages/Datenschutz.vue"; 
 import Anmelden from "../pages/Anmelden.vue";
-import ForgotPassword from "../pages/forgot_password.vue"; 
-import NewPassword from "../pages/new_password.vue"; 
+import NewPassword from "../pages/NewPassword.vue";
+import ForgotPassword from "../pages/ForgotPassword.vue";
 import Registrieren from "../pages/Registrieren.vue";
 
 const routes = [
@@ -33,6 +33,21 @@ const routes = [
     path: "/anmelden", // Route für Anmelden
     name: "anmelden",
     component: Anmelden,
+  },
+  {
+    path: "/forgotPassword", // Route für Forgot Password
+    name: "forgotPassword",
+    component: ForgotPassword,
+  },
+  {
+    path: "/newPassword", // Route für New Password
+    name: "newPassword",
+    component: NewPassword,
+  },
+  {
+    path: "/registrieren", // Route für Registrieren
+    name: "registrieren",
+    component: Registrieren,
   },
   {
     path: "/about",

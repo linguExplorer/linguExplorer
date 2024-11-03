@@ -23,11 +23,11 @@
         <div class="content-box">
             <form @submit.prevent="handleLogin">
                 <div class="input-group">
-                    <label for="email">E-Mail:</label>
+                    <label for="email">E-Mail</label>
                     <input type="email" id="email" v-model="username" required />
                 </div>
                 <div class="input-group">
-                    <label for="password">Passwort:</label>
+                    <label for="password">Passwort</label>
                     <input type="password" id="password" v-model="password" required />
                 </div>
                 <!-- Fehlermeldung -->
@@ -96,7 +96,7 @@ export default {
 
 .header {
     display: flex; 
-    justify-content: flex-end; /* Aligns content to the right */
+    justify-content: flex-end; 
     align-items: center; 
     z-index: 10; 
     padding: 20px; 
@@ -105,13 +105,13 @@ export default {
 
 .register-container {
     display: flex;
-    align-items: center; /* Align items vertically in the center */
+    align-items: center; 
 }
 
 .register-text {
     font-family: 'VCR OSD Mono', monospace; 
     font-size: 18px; 
-    margin-right: 10px; /* Reduce distance to the button */
+    margin-right: 10px; 
 }
 
 .register-button {
@@ -120,7 +120,7 @@ export default {
     padding: 0; 
     width: 150px; 
     height: auto; 
-    margin-right: 20px; /* Add space from the right edge */
+    margin-right: 20px; 
 }
 
 .register-button img {

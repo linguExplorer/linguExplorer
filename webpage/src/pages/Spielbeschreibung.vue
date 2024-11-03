@@ -29,7 +29,7 @@
       <!-- Button direkt unter dem Linguexplorer-Logo -->
       <div class="linguexplorer-button">
         <button class="nav-button">
-          <img src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png" alt="Jetzt spielen" class="play-button-image" />
+          <img src="@/assets/xx_Images/xx_Images/Buttons/button play now.png" alt="Jetzt spielen" class="play-button-image" />
         </button>
       </div>
 
@@ -184,7 +184,7 @@ export default {
 
 h1 {
   font-family: 'Pixelsplitter', Arial, sans-serif;
-  font-size: 45px;
+  font-size: 50px;
   color: black;
   margin: 0 10px 10px; 
   text-align: center;
