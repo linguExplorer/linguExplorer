@@ -1,58 +1,57 @@
 <template>
-    <div class="page-wrapper">
-        <div class="header">
-            <div class="register-container">
-                <div class="register-text">
+    <div class="page-wrapper-registrieren registrieren-page">
+        <div class="header-registrieren">
+            <div class="register-container-registrieren">
+                <div class="register-text-registrieren">
                     <p>Hast du schon einen Account?</p>
                 </div>
-                <button class="register-button" @click="goToLogin">
+                <button class="register-button-registrieren" @click="goToLogin">
                     <img src="@/assets/xx_Images/xx_Images/Buttons/button anmelden green.png" alt="Anmelden" />
                 </button>
             </div>
         </div>
 
-        <div class="registrier-container">
-            <img src="@/assets/xx_Images/xx_Images/cloud.png" alt="Wolke" class="left-cloud-top-r" />
-            <img src="@/assets/xx_Images/xx_Images/cloud.png" alt="Wolke" class="left-cloud-bottom-r" />
-            <img src="@/assets/xx_Images/xx_Images/sun.png" alt="Sonne" class="sun-image-r" />
-            <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="right-cloud-r" />
-            <div class="welcome-text">
+            <img src="@/assets/xx_Images/xx_Images/cloud.png" alt="Wolke" class="left-cloud-top-registrieren" />
+            <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="left-cloud-bottom-registrieren" />
+            <img src="@/assets/xx_Images/xx_Images/sun.png" alt="Sonne" class="sun-image-registrieren" />
+            <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="right-cloud-middle-registrieren" />
+
+            <div class="text-registrieren">
                 <h1>Registrieren</h1>
             </div>
-        </div>
 
-        <div class="content-box">
+        <div class="content-box-registrieren">
             <form @submit.prevent="handleRegister">
-                <div class="input-group">
+                <div class="input-group-registrieren">
                     <label for="email">E-Mail</label>
                     <input type="email" id="email" v-model="email" required />
                     <p v-if="emailError" class="error-message">Benutzer mit dieser E-Mail existiert bereits.</p>
                 </div>
-                <div class="input-group">
+                <div class="input-group-registrieren">
                     <label for="username">Benutzername</label>
                     <input type="text" id="username" v-model="username" required />
                     <p v-if="usernameError" class="error-message">Benutzername bereits vergeben.</p>
                 </div>
-                <div class="input-group">
+                <div class="input-group-registrieren">
                     <label for="password">Passwort (mind. 8 Zeichen)</label>
                     <input type="password" id="password" v-model="password" required minlength="8" />
                     <p v-if="passwordError" class="error-message">Passwort entspricht nicht den Anforderungen.</p>
                 </div>
-                <div class="input-group">
+                <div class="input-group-registrieren">
                     <label for="confirmPassword">Passwort wiederholen</label>
                     <input type="password" id="confirmPassword" v-model="confirmPassword" required minlength="8" />
                     <p v-if="confirmPasswordError" class="error-message">Passwörter stimmen nicht überein.</p>
                 </div>
                 
                 <!-- Speicher-Button -->
-                <button type="submit" class="submit-button">
+                <button type="submit" class="submit-button-registrieren">
                     <img src="@/assets/xx_Images/xx_Images/Buttons/button registrieren blue.png" alt="Registrieren" />
                 </button>
             </form>
         </div>
 
-        <div class="button-container">
-            <button class="custom-button" @click="goBack">
+        <div class="button-container-registrieren">
+            <button class="custom-button-registrieren" @click="goBack">
                 <img src="@/assets/xx_Images/xx_Images/Buttons/button zrk.png" alt="Zurück" />
             </button>
         </div>

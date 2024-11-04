@@ -19,13 +19,13 @@
   margin-right: auto; 
   }
   
-  .nav-button {
+  .nav-button-impressum {
     background: none; 
     border: none; 
     margin-right: 15px; 
   }
   
-  .nav-button img {
+  .nav-button-impressum img {
     height: 40px; 
   }
   
@@ -34,10 +34,10 @@
   margin-right: 20px; 
 }
   
-.content {
-  padding: 80px 20%; 
-  text-align: left; 
-  margin: 0;
+.content-impressum {
+  padding: 50px 30% 100px; /*abstand text zu Überschrift oben, Abstand Rand, abstand unten*/
+  text-align: left;
+  flex: 1;
 }
   
 

@@ -1,10 +1,9 @@
 <template>
   <div class="page-wrapper">
-    <div>
       <!-- Nav Bar -->
       <nav class="navbar">
         <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark hell.png" alt="Logo" class="logo" />
-        <button class="nav-button">
+        <button class="nav-button-impressum">
           <img src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png" alt="Jetzt spielen" />
         </button>
         <img src="@/assets/xx_Images/xx_Images/menue.png" alt="Menü" class="menu-icon" />
@@ -12,7 +11,7 @@
   
       <h1>Impressum</h1>
 
-      <div class="content">
+      <div class="content-impressum">
         <p>Informationspflicht laut Offenlegungspflicht laut §25 Mediengesetz</p>
         <h2>Websitebetreiber-Team:</h2>
         <ul>
@@ -44,8 +43,7 @@
           <button class="custom-button">
             <img src="@/assets/xx_Images/xx_Images/Buttons/button zrk.png" alt="Button" />
           </button>
-        </div>
-    </div>
+      </div>
   </div>
   </template>
   

@@ -3,14 +3,14 @@
     <!-- Nav Bar -->
     <nav class="navbar">
       <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark hell.png" alt="Logo" class="logo" />
-      <button class="nav-button">
+      <button class="nav-button-spielbeschreibung">
         <img src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png" alt="Jetzt spielen" />
       </button>
       <img src="@/assets/xx_Images/xx_Images/menue.png" alt="Menü" class="menu-icon" />
     </nav>
 
     <!-- Content -->
-    <div class="container">
+    <div class="container-spielbeschreibung">
 
       <div class="welcome-container">
         <img src="@/assets/xx_Images/xx_Images/sun.png" alt="Sonne" class="sun-image-s" />
@@ -35,12 +35,11 @@
           <img src="@/assets/xx_Images/xx_Images/Buttons/button play now.png" alt="Jetzt spielen" class="play-button-image" />
         </button>
       </div>
-
       
 
       <!-- Gras Bild unter dem Button -->
       <div class="grass-image-container">
-        <img src="@/assets/xx_Images/xx_Images/gras small patch.png" alt="Gras" class="grass-image" />
+        <img src="@/assets/xx_Images/xx_Images/gras small patch_scaled.png" alt="Gras" class="grass-image" />
       </div>
 
     <div class="grass-background">

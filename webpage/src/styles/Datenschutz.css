@@ -9,7 +9,7 @@ html, body {
 }
 
 /* Page Wrapper */
-.page-wrapper datenschutz-page {
+.page-wrapper {
   background-color: #f6f5f1;
   min-height: 100vh;
   color: black;
@@ -20,7 +20,7 @@ html, body {
 }
 
 /* Navigation Bar */
-.navbar {
+.navbar-datenschutz {
   display: flex;
   align-items: center;
   background-color: #99b305;
@@ -35,7 +35,7 @@ html, body {
 }
 
 /* Content Section */
-.content {
+.content-datenschutz {
   padding: 50px 30% 100px; /*abstand text zu Überschrift oben, Abstand Rand, abstand unten*/
   text-align: left;
   flex: 1;
@@ -50,14 +50,14 @@ html, body {
 }
 
 /*Abstand button und menue*/
-.nav-button {
+.nav-button-datenschutz {
   background: none; 
   border: none; 
   margin-right: 15px;
 }
 
 /*jetzt Spielen Button*/
-.nav-button img {
+.nav-button-datenschutz img {
   height: 40px; /*groesse*/
 }
 

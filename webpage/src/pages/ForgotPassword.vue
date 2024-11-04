@@ -1,12 +1,15 @@
 <template>
-    <div class="page-wrapper">
-        <div class="content-box">
-            <!-- Überschrift -->
-            <div class="welcome-text">
-                <h1>Passwort vergessen?</h1>
-                <p class="subtext">Gib hier die E-Mail-Adresse ein, um dein Passwort zurückzusetzen</p>
-            </div>
+    <div class="page-wrapper-forgotPassword forgotPassword">
 
+        <!-- Überschrift -->
+        <div class="forgot-password">
+                <h1>Passwort vergessen?</h1>
+        </div>
+
+        <div class="content-box-forgotPassword">
+
+            <p class="subtext">Gib hier die E-Mail-Adresse ein, um dein Passwort zurückzusetzen</p>
+            
             <!-- Eingabeformular -->
             <form @submit.prevent="handlePasswordReset">
                 <div class="input-group">
@@ -15,7 +18,7 @@
                 </div>
                 
                 <!-- Passwort-Button -->
-                <button type="submit" class="submit-button">
+                <button type="submit" class="submit-button-forgotPassword">
                     <img src="@/assets/xx_Images/xx_Images/Buttons/button neues passwort.png" alt="Neues Passwort" />
                 </button>
             </form>

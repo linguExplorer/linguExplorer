@@ -19,14 +19,14 @@
     margin-right: auto;
   }
   
-  .nav-button {
+  .nav-button-spielbeschreibung {
     background: none;
     border: none;
     margin-right: 15px;
   }
   
-  .nav-button img {
-    height: 50px;
+  .nav-button-spielbeschreibung img {
+    height: 40px;
   }
   
   .play-button img{
@@ -67,10 +67,11 @@
   }
   
   
-  .container {
+  .container-spielbeschreibung {
     width: 100%; 
     padding: 0px 0px 0px 0px; /*left, right, up, and down*/
     box-sizing: border-box; 
+    margin-top: -20px;
   }
   
   /*überschriften + clouds container*/
@@ -99,6 +100,7 @@
     color: rgb(0, 0, 0);
     margin: 0px 0px 0px 0px; /*top right bottom left*/
     text-align: center;
+    margin-bottom: 5px;
   }
   
   /* Headings für Container*/
@@ -144,28 +146,29 @@
   /*logo linguexplorer*/
   .linguexplorer-logo {
     text-align: center; 
-    margin: 20px 0 0 0; /*top right bottom left*/
+    margin: 0 0 0 0; /*top right bottom left*/
   }
   
   /*logo linguexplorer*/
   .linguexplorer-image {
     width: 80%; 
     max-width: 500px; 
+    margin: -50px 0 0 0; /*abstand zu wilkommen*/
   }
   
   /*Container Lingu und Button*/
   .container1 {
     display: flex;
     /*justify-content: center;*/
-    margin: 0 0 50px 0; /*top right bottom left*/
+    margin: -40px 0 0 0; /*top right bottom left*/ /*abstand zu linguexplorer*/
   }
   
   /*Lingu*/
   .character-image {
     width: 320px; 
     position: relative;
-    left: 5%; 
-    bottom: -60px; 
+    left: 10%; 
+    bottom: -40px; /*damit lingu tiefer ist*/
     z-index: auto;
   }
 
@@ -198,22 +201,23 @@
     background-image: url('@/assets/xx_Images/xx_Images/gras full_scaled.png'); 
     background-size: cover; 
     background-position: center;
-    padding: 60px 0 20px; 
+    padding: 80px 0 20px; /*1 = abstand oben von innen*/
     position: relative; 
     min-height: 100vh; 
     z-index: 0;
+    margin-top: -4px; /*abstand nach oben zu grass zeile*/
   }
   
+    /* grass Zeile*/
   .grass-image-container {
     text-align: center; 
-    margin: 0; 
     padding: 0; 
     position: relative; 
+    margin-top: -16px; /*grass Zeile weiter oben*/
   }
   
   .grass-image {
-    width: 80%; 
-    max-width: 400px; 
+    width: 100%; 
     z-index: 1; 
   }
   

@@ -1,10 +1,10 @@
 <template>
-    <div class="page-wrapper">
-        <div class="content-box">
-            <!-- Überschrift -->
-            <div class="welcome-text">
+    <div class="page-wrapper-newPassword newPassword">
+        <!-- Überschrift -->
+        <div class="new-password">
                 <h1>Neues Passwort erstellen</h1>
             </div>
+        <div class="content-box-newPassword">
 
             <!-- Eingabeformular -->
             <form @submit.prevent="handlePasswordSave">
@@ -19,7 +19,7 @@
                 </div>
 
                 <!-- Speicher-Button -->
-                <button type="submit" class="submit-button">
+                <button type="submit" class="submit-button-newPassword">
                     <img src="@/assets/xx_Images/xx_Images/Buttons/button speichern.png" alt="Speichern" />
                 </button>
             </form>
