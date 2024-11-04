@@ -65,7 +65,7 @@
     width: 100px; 
     height: auto;
     position: absolute; 
-    left: 10%; 
+    left: -180%; 
     bottom: 50%; 
     z-index: 1; 
 }
@@ -75,7 +75,7 @@
     width: 230px; 
     height: auto;
     position: absolute; 
-    left: 5%; 
+    left: -180%; 
     bottom: 70%; 
     z-index: 0; 
 }
@@ -85,7 +85,7 @@
     width: 230px; 
     height: auto;
     position: absolute; 
-    left: 3%; 
+    left: -180%; 
     bottom: 0%; 
     z-index: 2; 
 }
@@ -95,7 +95,7 @@
     width: 230px; 
     height: auto;
     position: absolute; 
-    right: 10%; 
+    left: 150%; 
     bottom: 20%; 
 }
 
@@ -106,9 +106,9 @@
     align-items: center; 
 }
 
-h1 {
+.register-container .welcome-text .h1 {
     font-family: 'Pixelsplitter', Arial, sans-serif;
-    font-size: 45px;
+    font-size: 60px;
     color: black;
     margin: 0 10px 10px; 
     text-align: center;

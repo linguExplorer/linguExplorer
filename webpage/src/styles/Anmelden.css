@@ -18,7 +18,7 @@
     justify-content: flex-end; 
     align-items: center; 
     z-index: 10; 
-    padding: 20px; 
+    padding: 0px; 
     width: 100%; 
 }
 
@@ -51,7 +51,7 @@
     display: flex;
     align-items: flex-end; 
     justify-content: center; 
-    margin-bottom: 20px; 
+    margin-bottom: 5px; 
     position: relative; 
 }
 
@@ -60,8 +60,8 @@
     width: 137px; 
     height: auto;
     position: absolute; 
-    left: -300%; 
-    top: -370%; 
+    left: -110%; 
+    top: -380%; 
   }
 
 /* Obere Wolke links */
@@ -69,9 +69,8 @@
     width: 300px; 
     height: auto;
     position: absolute; 
-    left: -390%; 
-    top: -550%; 
-    z-index: 0; 
+    left: -150%; 
+    top: -60%; 
 }
 
 /* Untere Wolke links */
@@ -79,9 +78,8 @@
     width: 320px; 
     height: auto;
     position: absolute; 
-    left: -420%; 
-    top: -290%;  
-    z-index: 2; 
+    left: -160%; 
+    top: 0%;  
 }
 
 /* Rechte Wolke */
@@ -89,8 +87,8 @@
     width: 320px; 
     height: auto;
     position: absolute; 
-    left: 200%; 
-    top: -55%; 
+    left: 160%; 
+    top: -60%; 
 }
 
 /* Welcome Text */
@@ -98,21 +96,25 @@
     display: flex;
     flex-direction: column; 
     align-items: center; 
+    top: 80px;
+    margin-bottom: 0;
 }
 
-.welcome-text .h1 {
+/* Welcome Text */
+.anmelde-container .welcome-text h1 {
     font-family: 'Pixelsplitter', Arial, sans-serif;
-    font-size: 100px;
+    font-size: 60px;
     color: black;
-    margin: 0 10px 10px; 
+    margin-top: -100px; /*Abstand 'Anmenden' und top*/
+    margin-bottom: 20px;
     text-align: center;
 }
 
 /* Content Box Styles */
 .content-box {
     width: 30%; 
-    margin: 0 auto; 
-    padding: 20px;
+    margin-top: 0px; 
+    padding: 0 20px;
     box-shadow: none; 
     text-align: center; 
     position: relative;
@@ -140,7 +142,7 @@ input:-webkit-autofill {
 
 .input-group {
     text-align: left; 
-    margin-bottom: 15px; 
+    margin-bottom: 5px; 
 }
 
 .input-group label {

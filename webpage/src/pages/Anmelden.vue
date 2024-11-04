@@ -18,7 +18,7 @@
             <div class="welcome-text">
                 <h1>Anmelden</h1>
             </div>
-        </div>
+        </div>  
 
         <div class="content-box">
             <form @submit.prevent="handleLogin">
