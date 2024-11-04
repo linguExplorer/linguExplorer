@@ -1,5 +1,5 @@
 <template>
-    <div class="page-wrapper">
+    <div class="page-wrapper-anmelden anmelden-page">
         <div class="header">
             <div class="register-container">
                 <div class="register-text">

@@ -1,5 +1,5 @@
 <template>
-  <div class="page-wrapper">
+  <div class="page-wrapper-spielbeschreibung spielbeschreibung-page">
     <!-- Nav Bar -->
     <nav class="navbar">
       <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark hell.png" alt="Logo" class="logo" />
@@ -23,7 +23,7 @@
       </div>
 
       <div class="linguexplorer-logo">
-        <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark.png" alt="Linguexplorer" class="linguexplorer-image" />
+        <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_scaled.png" alt="Linguexplorer" class="linguexplorer-image" />
       </div>
 
       <!-- Button direkt unter dem Linguexplorer-Logo -->
@@ -39,14 +39,14 @@
       
 
       <!-- Gras Bild unter dem Button -->
-      <!--<div class="grass-image-container">
+      <div class="grass-image-container">
         <img src="@/assets/xx_Images/xx_Images/gras small patch.png" alt="Gras" class="grass-image" />
-      </div> -->
+      </div>
 
     <div class="grass-background">
 
     <!-- Boxes for content -->
-    <div class="content-box">
+    <div class="content-box-spielbeschreibung">
       <div class="image-between">
         <h2>Was ist</h2>
         <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark hell.png" alt="Logo" class="between-image" />
@@ -59,7 +59,7 @@
       </p>
     </div>
 
-    <div class="content-box">
+    <div class="content-box-spielbeschreibung">
       <h2>Ziele des Spiels:</h2>
       <p>
         Das primäre Ziel von Linguexplorer ist es, die Motivation der Spieler zu steigern, indem sie auf spielerische
@@ -75,7 +75,7 @@
       </p>
     </div>
 
-    <div class="content-box">
+    <div class="content-box-spielbeschreibung">
       <h2>Gameplay:</h2>
       <p>
         Linguexplorer ist ein Singleplayer-Lernspiel, das auf der Kombination von Spielspaß und Bildung basiert, ein
@@ -85,7 +85,10 @@
       </p>
       <p>
         An diesen Orten stehen dem Spieler eine Vielzahl von Minispielen zur Verfügung, die den Fokus auf spezifische
-        sprachliche Fertigkeiten legen. Zusätzlich bietet das Spiel ein Phrasenheft als hilfreiches Werkzeug. Hier
+        sprachliche Fertigkeiten legen.
+      </p> 
+      <p>
+        Zusätzlich bietet das Spiel ein Phrasenheft als hilfreiches Werkzeug. Hier
         werden alle während des Spiels erlernten Vokabeln und Phrasen gesammelt. Dieses Phrasenheft steht den
         Spielern jederzeit zur Verfügung und ermöglicht es ihnen, Inhalte nachzuschlagen und ihren Lernfortschritt
         zu verfolgen.
