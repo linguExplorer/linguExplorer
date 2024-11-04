@@ -38,13 +38,13 @@
         <p>
           Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich. Sollten Sie rechtswidrige Inhalte auf verlinkten Seiten bemerken, informieren Sie uns bitte, damit wir die Links umgehend entfernen können.
         </p>
-        <!-- Button -->
-        <div class="button-container">
+      </div>
+      <!-- Button -->
+      <div class="button-container">
           <button class="custom-button">
             <img src="@/assets/xx_Images/xx_Images/Buttons/button zrk.png" alt="Button" />
           </button>
         </div>
-      </div>
     </div>
   </div>
   </template>

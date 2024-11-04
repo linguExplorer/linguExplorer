@@ -110,13 +110,11 @@ ul {
 
 /* Button Container */
 .button-container {
-  position: relative;
-  /*bottom: 20px; 
-  right: 20px;*/ 
+  position: relative; 
   margin-top: auto;
-  /*z-index:auto;*/
   padding: 20px;
   text-align: right;
+  width: 100%;
 }
 
 .custom-button {
@@ -128,7 +126,9 @@ ul {
 /*zurück zu home*/
 .button-container .custom-button img {
   width: 200px; 
-  height: auto; 
+  height: auto;
+  display: inline-block;
+  vertical-align: middle; 
 }
 
 
