@@ -1,9 +1,9 @@
 <template>
-    <div class="page-wrapper">
+    <div class="page-wrapper datenschutz-page">
       
       <!-- Nav Bar -->
       <nav class="navbar">
-        <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark dunkel.png" alt="Logo" class="logo" />
+        <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark hell.png" alt="Logo" class="logo" />
         <button class="nav-button">
           <img src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png" alt="Jetzt spielen" />
         </button>
@@ -50,6 +50,7 @@
           Personenbezogene Daten werden nicht ohne Ihre ausdrückliche Zustimmung an Dritte weitergegeben, es sei denn, dies ist gesetzlich vorgeschrieben oder zur Vertragserfüllung notwendig.
         </p>
         <h2>Rechte der betroffenen Personen:</h2>
+        <p>Sie haben das Recht: </p>
         <ul class="indented-list">
           <li>Auskunft über Ihre bei uns gespeicherten Daten zu erhalten.</li>
           <li>Berichtigung unrichtiger Daten zu verlangen.</li>
@@ -61,13 +62,13 @@
         <p>
           Diese Datenschutzerklärung wird regelmäßig überprüft und aktualisiert, um den rechtlichen Anforderungen zu entsprechen oder um Änderungen in unseren Services abzubilden.
         </p>
-        <!-- Button -->
-        <div class="button-container">
+      </div>
+      <!-- Button -->
+      <div class="button-container">
           <button class="custom-button">
             <img src="@/assets/xx_Images/xx_Images/Buttons/button zrk.png" alt="Button" />
           </button>
         </div>
-      </div>
     </div>
   </template>
   

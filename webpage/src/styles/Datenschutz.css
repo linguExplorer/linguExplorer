@@ -9,7 +9,7 @@ html, body {
 }
 
 /* Page Wrapper */
-.page-wrapper {
+.page-wrapper datenschutz-page {
   background-color: #f6f5f1;
   min-height: 100vh;
   color: black;
@@ -36,26 +36,29 @@ html, body {
 
 /* Content Section */
 .content {
-  padding: 20px 20%; 
+  padding: 50px 30% 100px; /*abstand text zu Überschrift oben, Abstand Rand, abstand unten*/
   text-align: left;
-  min-height: 200vh;
+  flex: 1;
+  /*min-height: 200vh;*/
 }
 
-/* Logo and Buttons */
+/* Logo LinguExplorer */
 .logo {
   height: 35px; 
   margin-left: 20px;
   margin-right: auto;
 }
 
+/*Abstand button und menue*/
 .nav-button {
   background: none; 
   border: none; 
   margin-right: 15px;
 }
 
+/*jetzt Spielen Button*/
 .nav-button img {
-  height: 40px; 
+  height: 40px; /*groesse*/
 }
 
 .menu-icon {
@@ -63,7 +66,6 @@ html, body {
   margin-right: 20px; 
 }
 
-/* Headers and General Styles */
 h1 {
   font-family: 'Pixelsplitter', Arial, sans-serif; 
   margin-bottom: 5px;
@@ -74,12 +76,16 @@ h1 {
 
 h2 {
   margin-top: 20px; 
+  margin-bottom: 0;
   font-size: 20px;
-  font-family: sans-serif;
+  font-family: 'Inter', sans-serif; 
+  line-height: 1;
 }
 
 p {
-  margin-bottom: 10px; 
+  margin: 0 0 10px; /* Abstand oben | links | unten */ 
+  font-family: 'Inter', sans-serif; 
+  line-height: 1;
 }
 
 ul {
@@ -93,17 +99,24 @@ ul {
 
 .indented-list {
   padding-left: 20px; 
+  list-style-type:disc;
+  line-height: 1;
 }
 
 .underline {
   text-decoration: underline; 
+  margin-top: 10px;
 }
 
 /* Button Container */
 .button-container {
-  position: fixed; 
-  bottom: 20px; 
-  right: 20px; 
+  position: relative;
+  /*bottom: 20px; 
+  right: 20px;*/ 
+  margin-top: auto;
+  /*z-index:auto;*/
+  padding: 20px;
+  text-align: right;
 }
 
 .custom-button {
@@ -112,7 +125,16 @@ ul {
   padding: 0;
 }
 
-.custom-button img {
-  width: 150px; 
+/*zurück zu home*/
+.button-container .custom-button img {
+  width: 200px; 
   height: auto; 
+}
+
+
+@font-face {
+  font-family: 'Inter';
+  src: url('@/assets/fonts/Inter/static/Inter_18pt-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }

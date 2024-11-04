@@ -7,6 +7,7 @@ import Anmelden from "../pages/Anmelden.vue";
 import NewPassword from "../pages/NewPassword.vue";
 import ForgotPassword from "../pages/ForgotPassword.vue";
 import Registrieren from "../pages/Registrieren.vue";
+import ComingSoon from "@/pages/ComingSoon.vue";
 
 const routes = [
   {
@@ -48,6 +49,11 @@ const routes = [
     path: "/registrieren", // Route für Registrieren
     name: "registrieren",
     component: Registrieren,
+  },
+  {
+    path: "/comingSoon", // Route für ComingSoonPage
+    name: "comingSoon",
+    component: ComingSoon,
   },
   {
     path: "/about",
