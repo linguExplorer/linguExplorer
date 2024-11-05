@@ -2,7 +2,7 @@
   <div class="page-wrapper">
       <!-- Nav Bar -->
       <nav class="navbar">
-        <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark hell.png" alt="Logo" class="logo" />
+        <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" alt="Logo" class="logo" />
         <button class="nav-button-impressum">
           <img src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png" alt="Jetzt spielen" />
         </button>
