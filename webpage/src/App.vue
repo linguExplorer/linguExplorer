@@ -28,7 +28,6 @@ nav a.router-link-exact-active {
 
 /* Abstand für den gesamten Inhalt, um unter der Navigationsleiste sichtbar zu sein */
 #app main {
-  padding-top: 70px; /* Passt den oberen Abstand an die Höhe der Navigation an */
   display: flex;
   flex-direction: column;
   align-items: center;

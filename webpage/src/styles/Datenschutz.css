@@ -1,3 +1,5 @@
+
+
 /* Reset any browser default spacing */
 html, body {
   margin: 0;
@@ -27,11 +29,12 @@ html, body {
   padding: 10px 0; 
   width: 100%; 
   position: relative;
-  top: -70px;
+  top: 0px;
   left: 0;
   right: 0;
   z-index: auto;
   margin: 0;
+  margin-bottom: 70px;
 }
 
 /* Content Section */
