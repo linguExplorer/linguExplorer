@@ -32,7 +32,10 @@
         <img src="@/assets/xx_Images/xx_Images/Charactee New.png" alt="Character" class="character-image" />
 
         <button class="play-button">
+          <router-link to="/anmelden" class="nav-link"  href="#">
+
           <img src="@/assets/xx_Images/xx_Images/Buttons/button play now.png" alt="Jetzt spielen" class="play-button-image" />
+          </router-link>
         </button>
       </div>
       

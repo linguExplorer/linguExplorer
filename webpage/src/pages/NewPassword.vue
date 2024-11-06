@@ -7,10 +7,10 @@
         <div class="content-box-newPassword">
 
             <!-- Eingabeformular -->
-            <form @submit.prevent="handlePasswordSave">
+            <form @submit.prevent="submit">
                 <div class="input-group">
                     <label for="password" id="passwordLabel">Passwort (mind. 8 Zeichen)</label>
-                    <input type="password" id="password" v-model="password" required minlength="8" />
+                    <input type="password" id="password" v-model="data.password" required minlength="8" />
                 </div>
                 
                 <div class="input-group">
@@ -29,8 +29,36 @@
 
 <script>
 import '../styles/NewPassword.css';
+import { reactive } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 export default {
     name: 'NewPassword',
+    setup() {
+    const data = reactive({
+      password:'',
+      token:''
+    });
+
+    const router = useRouter();
+    const route = useRoute();
+    data.token = route.params.ref;
+
+    const  submit = async() => {
+      await fetch('http://localhost:8000/password_reset/confirm/', {
+               method: 'POST',
+               headers: {'Content-Type': 'application/json'},
+               credentials: 'include',
+               body: JSON.stringify(data)
+    });
+
+    await router.push('/anmelden');
+    }
+
+    return {
+      data,
+      submit
+    }
+  },
     data() {
         return {
             password: '',

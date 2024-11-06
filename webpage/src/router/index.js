@@ -8,12 +8,19 @@ import NewPassword from "../pages/NewPassword.vue";
 import ForgotPassword from "../pages/ForgotPassword.vue";
 import Registrieren from "../pages/Registrieren.vue";
 import ComingSoon from "@/pages/ComingSoon.vue";
+import AwaitPass from "@/pages/AwaitPass.vue";
 
 const routes = [
   {
     path: "/",
     name: "home",
-    component: HomeView,
+    component: Spielbeschreibung,
+  },
+  
+  {
+    path: "/awaitP",
+    name: "awaitP",
+    component: AwaitPass,
   },
   {
     path: "/impressum", // Route für Impressum
@@ -41,7 +48,7 @@ const routes = [
     component: ForgotPassword,
   },
   {
-    path: "/newPassword", // Route für New Password
+    path: "/newPassword/:ref", // Route für New Password
     name: "newPassword",
     component: NewPassword,
   },

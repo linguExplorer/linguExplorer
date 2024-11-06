@@ -3,10 +3,15 @@
         <div class="header-registrieren">
             <div class="register-container-registrieren">
                 <div class="register-text-registrieren">
+
                     <p>Hast du schon einen Account?</p>
                 </div>
-                <button class="register-button-registrieren" @click="goToLogin">
+                <button class="register-button-registrieren">
+                    <router-link to="/anmelden" class="nav-link"  href="#">
+
                     <img src="@/assets/xx_Images/xx_Images/Buttons/button anmelden green.png" alt="Anmelden" />
+                    </router-link>
+
                 </button>
             </div>
         </div>
@@ -21,20 +26,20 @@
             </div>
 
         <div class="content-box-registrieren">
-            <form @submit.prevent="handleRegister">
+            <form @submit.prevent="submit">
                 <div class="input-group-registrieren">
                     <label for="email">E-Mail</label>
-                    <input type="email" id="email" v-model="email" required />
+                    <input type="email" id="email" v-model="data.email" required />
                     <p v-if="emailError" class="error-message">Benutzer mit dieser E-Mail existiert bereits.</p>
                 </div>
                 <div class="input-group-registrieren">
                     <label for="username">Benutzername</label>
-                    <input type="text" id="username" v-model="username" required />
+                    <input type="text" id="username" v-model="data.name" required />
                     <p v-if="usernameError" class="error-message">Benutzername bereits vergeben.</p>
                 </div>
                 <div class="input-group-registrieren">
                     <label for="password">Passwort (mind. 8 Zeichen)</label>
-                    <input type="password" id="password" v-model="password" required minlength="8" />
+                    <input type="password" id="password" v-model="data.password" required minlength="8" />
                     <p v-if="passwordError" class="error-message">Passwort entspricht nicht den Anforderungen.</p>
                 </div>
                 <div class="input-group-registrieren">
@@ -45,6 +50,7 @@
                 
                 <!-- Speicher-Button -->
                 <button type="submit" class="submit-button-registrieren">
+
                     <img src="@/assets/xx_Images/xx_Images/Buttons/button registrieren blue.png" alt="Registrieren" />
                 </button>
             </form>
@@ -60,8 +66,32 @@
 
 <script>
 import '../styles/Registrieren.css';
+import { reactive } from 'vue';
+import { useRouter } from 'vue-router';
 export default {
     name: 'Registrieren',
+    setup() {
+         const data = reactive({
+            name: '',
+            email: '',
+            password: ''
+         });
+         const router = useRouter()
+
+    const submit = async() => {
+   await fetch('http://localhost:8000/api/register', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+   });
+
+   await router.push('/anmelden')
+}
+return{
+            data,
+            submit
+         }
+    },
     data() {
         return {
             email: '',

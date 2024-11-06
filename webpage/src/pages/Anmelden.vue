@@ -3,10 +3,14 @@
         <div class="header-anmelden">
             <div class="container-anmelden">
                 <div class="text-anmelden">
+
                     <p>Hast du noch keinen Account?</p>
                 </div>
-                <button class="button-anmelden" @click="goToRegister">
+                <button class="button-anmelden" >
+                    <router-link to="/registrieren" class="nav-link"  href="#">
+
                     <img src="@/assets/xx_Images/xx_Images/Buttons/button registrieren green.png" alt="Registrieren" />
+                        </router-link>
                 </button>
             </div>
         </div>
@@ -23,14 +27,14 @@
         <!--</div>-->
 
         <div class="content-box-anmelden">
-            <form @submit.prevent="handleLogin">
+            <form @submit.prevent="submit">
                 <div class="input-group-anmelden">
                     <label for="email">E-Mail</label>
-                    <input type="email" id="email" v-model="username" required />
+                    <input type="email" id="email" v-model="data.email" required />
                 </div>
                 <div class="input-group-anmelden">
                     <label for="password">Passwort</label>
-                    <input type="password" id="password" v-model="password" required />
+                    <input type="password" id="password" v-model="data.password" required />
                 </div>
                 <!-- Fehlermeldung -->
                 <p v-if="showError" class="error-message-anmelden">Ungültige E-Mail oder Passwort</p>
@@ -39,7 +43,10 @@
                     <img src="@/assets/xx_Images/xx_Images/Buttons/button anmelden blue.png" alt="Anmelden" />
                 </button>
                 <div class="forgot-password-anmelden">
+                    <router-link to="/forgotPassword" class="nav-link"  href="#">
+
                     <p>Passwort vergessen?</p>
+                    </router-link>
                 </div>
             </form>
         </div>
@@ -54,8 +61,34 @@
 
 <script>
 import '../styles/Anmelden.css';
+import { reactive } from 'vue';
+import { useRouter } from 'vue-router';
 export default {
     name: 'AnmeldePage',
+    setup() {
+    const data = reactive({
+      email:'',
+      password:''
+    });
+    const router = useRouter();
+
+
+    const  submit = async() => {
+      await fetch('http://localhost:8000/api/login', {
+               method: 'POST',
+               headers: {'Content-Type': 'application/json'},
+               credentials: 'include',
+               body: JSON.stringify(data)
+    });
+
+    await router.push('/comingsoon');
+    }
+
+    return {
+      data,
+      submit
+    }
+},
     data() {
         return {
             username: '',
