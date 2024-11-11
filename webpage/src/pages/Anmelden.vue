@@ -1,59 +1,77 @@
 <template>
-    <div class="page-wrapper-anmelden anmelden-page">
-        <div class="header-anmelden">
-            <div class="container-anmelden">
-                <div class="text-anmelden">
-                    <p>Hast du noch keinen Account?</p>
-                </div>
-                <button class="button-anmelden" @click="goToRegister">
-                    <img src="@/assets/xx_Images/xx_Images/Buttons/button registrieren green.png" alt="Registrieren" />
+    <div class="font-vcr m-0 p-3 text-black w-full bg-[#f6f5f1] min-h-screen flex flex-col justify-center">
+        <header class="top-0">
+            <section class="mx-auto p-4 flex  justify-end items-center gap-8">
+                    
+                    <p class=" font-size:18px font-vcr">Hast du noch keinen Account?</p>
+            
+                    <button class=" max-w-[150px]" >
+                        <router-link to="/registrieren" class="nav-link"  href="#">
+
+                    <img src="@/assets/xx_Images/xx_Images/Buttons/button registrieren green.png" alt="Registrieren" class="hover:opacity-80"/>
+                        </router-link>
+
                 </button>
-            </div>
-        </div>
+            </section>
+        </header>
 
-        <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="left-cloud-bottom-anmelden" />
-        <img src="@/assets/xx_Images/xx_Images/sun.png" alt="Sonne" class="sun-image-anmelden" />
-        <img src="@/assets/xx_Images/xx_Images/cloud.png" alt="Wolke" class="left-cloud-top-anmelden" />
-        <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="right-cloud-middle-anmelden" />
-
+        <main class="max-w-6xl mx-auto mt-[80px]">
+            <img src="@/assets/xx_Images/xx_Images/cloud.png" alt="Wolke" class="min-w-[320px] xxl:min-w-[380px] absolute z-2 translate-x-[-42vw] translate-y-[-12vh] 
+            xxl:translate-x-[-42vw] xxl:translate-y-[-11vh]" />
+            <img src="@/assets/xx_Images/xx_Images/sun.png" alt="Sonne" class="min-w-[150px] xxl:min-w-[180px] absolute z-1 translate-x-[-38vw] translate-y-[-3vh]
+            xxl:translate-x-[-38vw] xxl:translate-y-[-3vh]" />
+        <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="min-w-[320px] xxl:min-w-[380px] absolute z-2 translate-x-[-45vw] translate-y-[7vh]
+        xxl:translate-x-[-45vw] xxl:translate-y-[5vh]" />
+        <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="min-w-[320px] xxl:min-w-[380px] absolute z-1 translate-x-[30vw] translate-y-[-8vh]
+        xxl:translate-x-[30vw] xxl:translate-y-[-8vh]" />
+    
         <!--<div class="anmelde-container">-->
-            <div class="ueberschrift-anmelden">
-                <h1>Anmelden</h1>
+            <section class="flex flex-col justify-center items-center gap-[20px] min-w-[700px]">
+        <h1 class="font-pixelsplitter text-[60px] mb-6">Anmelden</h1>
+
+        <form @submit.prevent="handleLogin" class="min-w-[600px] max-w-md flex flex-col  items-center mt-[30px]">
+            <div class="input-group flex flex-col mb-4 ">
+                <label for="email" class="">E-Mail</label>
+                <input type="email" id="email" v-model="username" required class="
+                font-vcr bg-white border-[#9cb405] border-[2px] min-w-[500px] p-2" />
             </div>
-        <!--</div>-->
+            <div class="input-group flex flex-col mb-4 ">
+                <label for="password" class="">Passwort</label>
+                <input type="password" id="password" v-model="password" required class="
+                 font-vcr bg-white border-[#9cb405] border-[2px]  min-w-[500px] p-2" />
+            </div>
 
-        <div class="content-box-anmelden">
-            <form @submit.prevent="handleLogin">
-                <div class="input-group-anmelden">
-                    <label for="email">E-Mail</label>
-                    <input type="email" id="email" v-model="username" required />
-                </div>
-                <div class="input-group-anmelden">
-                    <label for="password">Passwort</label>
-                    <input type="password" id="password" v-model="password" required />
-                </div>
-                <!-- Fehlermeldung -->
-                <p v-if="showError" class="error-message-anmelden">Ungültige E-Mail oder Passwort</p>
+            <!-- Fehlermeldung -->
+            <p v-if="showError" class="mb-4">Ungültige E-Mail oder Passwort</p>
 
-                <button type="submit" class="submit-button-anmelden">
-                    <img src="@/assets/xx_Images/xx_Images/Buttons/button anmelden blue.png" alt="Anmelden" />
-                </button>
-                <div class="forgot-password-anmelden">
-                    <p>Passwort vergessen?</p>
-                </div>
-            </form>
-        </div>
-
-        <div class="button-container-anmelden">
-            <button class="back-button-anmelden" @click="goBack">
-                <img src="@/assets/xx_Images/xx_Images/Buttons/button zrk.png" alt="Zurück" />
+            <button type="submit" class="max-w-[150px] mt-6 w-full">
+                <img src="@/assets/xx_Images/xx_Images/Buttons/button anmelden blue.png" alt="Anmelden" class="w-full hover:opacity-80" />
             </button>
-        </div>
+            <router-link to="/forgotPassword" class="nav-link"  href="#">
+
+            <p class="text-center mt-4 font-vcr">Passwort vergessen?</p>
+            </router-link>
+        </form>
+    </section>
+       
+    </main>
+
+    <footer class="mt-auto">
+        <section class="mx-auto p-4 flex  justify-end items-center">
+        
+            <button class="max-w-[200px] p-4">
+                <router-link to="/" class="nav-link"  href="#">
+
+                <img src="@/assets/xx_Images/xx_Images/Buttons/button zrk.png" alt="Zurück" class="hover:opacity-80" />
+                </router-link>
+            </button>
+    
+        </section>
+    </footer>
     </div>
 </template>
 
 <script>
-import '../styles/Anmelden.css';
 export default {
     name: 'AnmeldePage',
     data() {

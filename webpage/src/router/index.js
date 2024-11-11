@@ -8,12 +8,11 @@ import NewPassword from "../pages/NewPassword.vue";
 import ForgotPassword from "../pages/ForgotPassword.vue";
 import Registrieren from "../pages/Registrieren.vue";
 import ComingSoon from "@/pages/ComingSoon.vue";
-
 const routes = [
   {
     path: "/",
     name: "home",
-    component: HomeView,
+    component: Spielbeschreibung,
   },
   {
     path: "/impressum", // Route für Impressum

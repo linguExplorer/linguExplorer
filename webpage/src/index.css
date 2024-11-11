@@ -1,0 +1,29 @@
+/* ./src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: 'VCR OSD Mono';
+    src: url('@/assets/fonts/vcr_osd_mono/VCR_OSD_MONO_1.001.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pixelsplitter';
+    src: url('@/assets/fonts/pixelsplitter/PixelSplitter-Bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+.grass-background {
+    background-image: url('@/assets/xx_Images/xx_Images/gras_combined_scaled.png');
+    background-size: cover;
+    background-position: top;
+  }
+  
+  .bg-custom-size {
+    background-size: 70%;
+}
+  

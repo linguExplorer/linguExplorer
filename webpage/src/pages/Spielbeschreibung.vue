@@ -1,108 +1,114 @@
 <template>
-  <div class="page-wrapper-spielbeschreibung spielbeschreibung-page">
-    <!-- Nav Bar -->
-    <nav class="navbar">
-      <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" alt="Logo" class="logo" />
+  <div class="min-h-screen bg-[#f6f5f1]">
+
+    <header class="bg-[#99b305] text-black sticky top-0 z-10">
+      <section class="max-w-full mx-auto px-6 py-2 flex justify-between items-center ">
+      <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" alt="Logo" class="w-1/6" />
+      <div class="flex justify-center items-center space-x-4">
       <button class="nav-button-spielbeschreibung">
-        <img src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png" alt="Jetzt spielen" />
+        <router-link to="/anmelden" class="nav-link"  href="#">
+        <img src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png" alt="Jetzt spielen" class="max-h-[55px] px-2 hover:opacity-80" />
+        </router-link>
       </button>
-      <img src="@/assets/xx_Images/xx_Images/menue.png" alt="Menü" class="menu-icon" />
-    </nav>
+      <button id="hamburger-button" class="text-4xl focus:outline-none cursor-pointer items-center">
+                &#9776;
+        </button>
+      </div>
+      </section>
+    </header>
+    <!-- Nav Bar -->
+
 
     <!-- Content -->
-    <div class="container-spielbeschreibung">
+    <main class="max-w-full mx-auto">
+      <section class="flex flex-col w-full justify-center items-center  bg-cloud-background bg-cover">
 
-      <div class="welcome-container">
-          <img src="@/assets/xx_Images/xx_Images/sun.png" alt="Sonne" class="sun-image-s" />
-          <img src="@/assets/xx_Images/xx_Images/cloud.png" alt="Wolke" class="left-cloud-s" />
-            <div class="welcome-text">
-              <h1>Willkommen</h1>
-              <h1>zu</h1>
-            </div>
-          <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="right-cloud-s" />
-      </div>
-
-      <div class="linguexplorer-logo">
-        <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_scaled.png" alt="Linguexplorer" class="linguexplorer-image" />
-      </div>
+    
+          <h1 class="font-pixelsplitter text-[68px] m-0 leading-none xxl:text-[80px] mt-20">Willkommen</h1>
+              <h1 class="font-pixelsplitter text-[68px] m-0 xxl:text-[80px]  ">zu</h1>
+      
+        <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_scaled.png" alt="Linguexplorer" class="w-5/12 mb-10" />
 
       <!-- Button direkt unter dem Linguexplorer-Logo -->
-      <div class="container1">
         <!-- Character Image - neben dem "Jetzt spielen" button -->
-        <img src="@/assets/xx_Images/xx_Images/Charactee New.png" alt="Character" class="character-image" />
 
           <button class="play-button">
-            <img src="@/assets/xx_Images/xx_Images/Buttons/button play now.png" alt="Jetzt spielen" class="play-button-image" />
+            <router-link to="/anmelden" class="nav-link"  href="#">
+            <img src="@/assets/xx_Images/xx_Images/Buttons/button play now.png" alt="Jetzt spielen" class="max-h-[110px] min-h-[80px] hover:opacity-80" />
+            </router-link>
           </button>
-      </div>
-      
+          <img src="@/assets/xx_Images/xx_Images/Charactee New.png" alt="Character" class="w-[300px] lg:w-[380px] absolute z-1
+          translate-x-[-35vw] translate-y-[35vh] xxl:translate-x-[-35vw] xxl:translate-y-[28.5vh]" />
+    </section>
+    
 
+    <section class="bg-grass-background bg-cover relative z-0 mt-[20px]">
       <!-- Gras Bild unter dem Button -->
-      <div class="grass-image-container">
-        <!--<img src="@/assets/xx_Images/xx_Images/gras small patch_scaled.png" alt="Gras" class="grass-image" />-->
-      </div>
+ 
+    <ul class="list-none mx-36 my-36 flex flex-col items-center ">
+      <li class="w-4/6 sm:w-5/6 flex flex-col items-center justify-center
+      bg-[#f6f5f1] mt-32">
 
-    <div class="grass-background">
+      <div class="flex flex-row items-center justify-center gap-2 m-8">
 
-    <!-- Container für content -->
-    <div class="content-box-spielbeschreibung">
-      <div class="image-between">
-        <h2>Was ist</h2>
-        <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" alt="Logo" class="between-image" />
-        <h2>?</h2>
+        <h2 class="font-pixelsplitter text-3xl">Was ist</h2>
+        <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" alt="Logo" class="w-1/3" />
+        <h2 class="font-pixelsplitter text-3xl">?</h2>
       </div>
-      <p>
+      <p class="text-[20px] font-vcr text-left px-40 pb-20">
         linguExplorer ist eine innovative Lernanwendung, die Schülerinnen und Schüler auf eine unterhaltsame Reise
         durch die englische Sprache mitnimmt. Diese Reise ist speziell darauf ausgelegt, den Herausforderungen der
         Fremdsprachenerlernung entgegenzutreten, die viele Jugendliche in ihrer Schullaufbahn bis zur Matura erleben.
       </p>
-    </div>
+      </li>
+    <li class="w-4/6 sm:w-5/6 flex flex-col items-center justify-center
+    bg-[#f6f5f1] mt-24">
 
-    <div class="content-box-spielbeschreibung">
-      <h2>Ziele des Spiels:</h2>
-      <p>
+      <h2 class="font-pixelsplitter text-3xl text-center px-14 pt-14">Ziele des Spiels:</h2>
+      <p class="text-[20px] font-vcr text-left px-40 pt-8">
         Das primäre Ziel von linguExplorer ist es, die Motivation der Spieler zu steigern, indem sie auf spielerische
         Weise die englische Sprache erlernen. Das Spiel verbindet Lernen und Spaß, um den Schülern zu helfen, ihre
         Englischkenntnisse langfristig zu verbessern. Durch die interaktiven und herausfordernden Aufgaben soll nicht
         nur das Lernen gefördert, sondern auch ein tieferes Verständnis und ein besseres Gefühl für die Sprache
         vermittelt werden.
       </p>
-      <p>
+      <p class="text-[20px] font-vcr text-left px-40 pb-20" >
         linguExplorer soll den Nutzern die Möglichkeit geben, durch regelmäßige Interaktion mit der Sprache ihr
         Selbstvertrauen und ihre Fähigkeiten im Umgang mit Englisch zu stärken, und dies auf eine Weise, die im
         traditionellen Unterricht oft fehlt.
       </p>
-    </div>
+  </li>
+  <li class="w-4/6 sm:w-5/6 flex flex-col items-center justify-center
+  bg-[#f6f5f1] mt-24">
 
-    <div class="content-box-spielbeschreibung">
-      <h2>Gameplay:</h2>
-      <p>
+      <h2 class="font-pixelsplitter text-3xl text-center px-14 pt-14">Gameplay:</h2>
+      <p class="text-[20px] font-vcr text-left px-40 pt-8 ">
         linguExplorer ist ein Singleplayer-Lernspiel, das auf der Kombination von Spielspaß und Bildung basiert, ein
         sogenanntes Serious Game. Das Hauptziel des Spiels ist es, Englischkenntnisse durch das Erforschen einer
         offenen Spielwelt zu verbessern. Die Spieler können sich auf einer Map bewegen und verschiedene Orte
         besuchen, die jeweils unterschiedliche Themenbereiche und sprachliche Herausforderungen repräsentieren.
       </p>
-      <p>
+      <p class="text-[20px] font-vcr text-left px-40 pt-8 pb-8 ">
         An diesen Orten stehen dem Spieler eine Vielzahl von Minispielen zur Verfügung, die den Fokus auf spezifische
         sprachliche Fertigkeiten legen.
       </p> 
-      <p>
+      <p class="text-[20px] font-vcr text-left px-40 pb-20 ">
         Zusätzlich bietet das Spiel ein Phrasenheft als hilfreiches Werkzeug. Hier
         werden alle während des Spiels erlernten Vokabeln und Phrasen gesammelt. Dieses Phrasenheft steht den
         Spielern jederzeit zur Verfügung und ermöglicht es ihnen, Inhalte nachzuschlagen und ihren Lernfortschritt
         zu verfolgen.
       </p>
-    </div>
-  </div>
+  </li>
+  </ul>
+  </section>
 
+</main>
+</div>
     
-    </div>
-    
-  </div>
 </template>
 
 <script>
-import '../styles/Spielbeschreibung.css';
+
 export default {
   name: 'SpielbeschreibungPage',
 };

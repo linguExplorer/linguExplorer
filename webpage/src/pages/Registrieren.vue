@@ -1,65 +1,80 @@
 <template>
-    <div class="page-wrapper-registrieren registrieren-page">
-        <div class="header-registrieren">
-            <div class="register-container-registrieren">
-                <div class="register-text-registrieren">
-                    <p>Hast du schon einen Account?</p>
-                </div>
-                <button class="register-button-registrieren" @click="goToLogin">
-                    <img src="@/assets/xx_Images/xx_Images/Buttons/button anmelden green.png" alt="Anmelden" />
+    <div class="font-vcr m-0 p-3 text-black w-full bg-[#f6f5f1] min-h-screen flex flex-col justify-center">
+        <header class="top-0">
+            <section class="mx-auto p-4 flex  justify-end items-center gap-8">
+                    
+                    <p class=" font-size:18px font-vcr">Hast du schon einen Account?</p>
+            
+                    <button class=" max-w-[150px]">
+                        <router-link to="/anmelden" class="nav-link"  href="#">
+
+                    <img src="@/assets/xx_Images/xx_Images/Buttons/button anmelden green.png" alt="Registrieren" class=" hover:opacity-80" />
+                        </router-link>
                 </button>
-            </div>
-        </div>
+            </section>
+        </header>
 
-            <img src="@/assets/xx_Images/xx_Images/cloud.png" alt="Wolke" class="left-cloud-top-registrieren" />
-            <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="left-cloud-bottom-registrieren" />
-            <img src="@/assets/xx_Images/xx_Images/sun.png" alt="Sonne" class="sun-image-registrieren" />
-            <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="right-cloud-middle-registrieren" />
+        <main class="max-w-6xl mx-auto mt-[80px]">
+            <img src="@/assets/xx_Images/xx_Images/cloud.png" alt="Wolke" class="min-w-[320px] xxl:min-w-[380px] absolute z-2 translate-x-[-42vw] translate-y-[-12vh] 
+            xxl:translate-x-[-42vw] xxl:translate-y-[-11vh]" />
+            <img src="@/assets/xx_Images/xx_Images/sun.png" alt="Sonne" class="min-w-[150px] xxl:min-w-[180px] absolute z-1 translate-x-[-38vw] translate-y-[-3vh]
+            xxl:translate-x-[-38vw] xxl:translate-y-[-3vh]" />
+        <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="min-w-[320px] xxl:min-w-[380px] absolute z-2 translate-x-[-45vw] translate-y-[7vh]
+        xxl:translate-x-[-45vw] xxl:translate-y-[5vh]" />
+        <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="min-w-[320px] xxl:min-w-[380px] absolute z-1 translate-x-[30vw] translate-y-[-8vh]
+        xxl:translate-x-[30vw] xxl:translate-y-[-8vh]" />
+    
+        <!--<div class="anmelde-container">-->
+            <section class="flex flex-col justify-center items-center gap-[20px] min-w-[700px]">
+        <h1 class="font-pixelsplitter text-[60px] mb-6">Registrieren</h1>
 
-            <div class="text-registrieren">
-                <h1>Registrieren</h1>
-            </div>
-
-        <div class="content-box-registrieren">
-            <form @submit.prevent="handleRegister">
-                <div class="input-group-registrieren">
-                    <label for="email">E-Mail</label>
-                    <input type="email" id="email" v-model="email" required />
-                    <p v-if="emailError" class="error-message">Benutzer mit dieser E-Mail existiert bereits.</p>
+            <form @submit.prevent="handleRegister" class="min-w-[600px] max-w-md flex flex-col  items-center mt-[30px]">
+                <div class="input-group flex flex-col mb-4 ">
+                    <label for="email" class="">E-Mail</label>
+                <input type="email" id="email" v-model="username" required class="
+                font-vcr bg-white border-[#9cb405] border-[2px] min-w-[500px] p-2" />
                 </div>
-                <div class="input-group-registrieren">
-                    <label for="username">Benutzername</label>
-                    <input type="text" id="username" v-model="username" required />
+                <div class="input-group flex flex-col mb-4 ">
+                    <label for="uname" class="">Benutzername</label>
+                <input type="uname" id="email" v-model="username" required class="
+                font-vcr bg-white border-[#9cb405] border-[2px] min-w-[500px] p-2" />
                     <p v-if="usernameError" class="error-message">Benutzername bereits vergeben.</p>
                 </div>
-                <div class="input-group-registrieren">
-                    <label for="password">Passwort (mind. 8 Zeichen)</label>
-                    <input type="password" id="password" v-model="password" required minlength="8" />
+                <div class="input-group flex flex-col mb-4 ">
+                    <label for="password" class="">Passwort</label>
+                <input type="password" id="password" v-model="password" required class="
+                 font-vcr bg-white border-[#9cb405] border-[2px]  min-w-[500px] p-2" />
                     <p v-if="passwordError" class="error-message">Passwort entspricht nicht den Anforderungen.</p>
                 </div>
-                <div class="input-group-registrieren">
-                    <label for="confirmPassword">Passwort wiederholen</label>
-                    <input type="password" id="confirmPassword" v-model="confirmPassword" required minlength="8" />
+                <div class="input-group flex flex-col mb-4 ">
+                    <label for="password" class="">Passwort Wiederholen</label>
+                <input type="password" id="password" v-model="password" required class="
+                 font-vcr bg-white border-[#9cb405] border-[2px]  min-w-[500px] p-2 " />
                     <p v-if="confirmPasswordError" class="error-message">Passwörter stimmen nicht überein.</p>
                 </div>
                 
                 <!-- Speicher-Button -->
-                <button type="submit" class="submit-button-registrieren">
-                    <img src="@/assets/xx_Images/xx_Images/Buttons/button registrieren blue.png" alt="Registrieren" />
+                <button type="submit" class="max-w-[150px] mt-6 w-full">
+                    <img src="@/assets/xx_Images/xx_Images/Buttons/button registrieren blue.png" alt="Registrieren" class="hover:opacity-80" />
                 </button>
             </form>
-        </div>
+        </section>
+       
+    </main>
 
-        <div class="button-container-registrieren">
-            <button class="custom-button-registrieren" @click="goBack">
-                <img src="@/assets/xx_Images/xx_Images/Buttons/button zrk.png" alt="Zurück" />
+    <footer class="mt-auto">
+        <section class="mx-auto p-4 flex  justify-end items-center">
+            <button class="max-w-[200px] p-4" >
+                <router-link to="/" class="nav-link"  href="#">
+                <img src="@/assets/xx_Images/xx_Images/Buttons/button zrk.png" alt="Zurück" class="hover:opacity-80"/>
+                </router-link>
             </button>
-        </div>
+        </section>
+    </footer>
     </div>
 </template>
 
 <script>
-import '../styles/Registrieren.css';
 export default {
     name: 'Registrieren',
     data() {
