@@ -21,7 +21,7 @@
 
     <!-- Content -->
     <main class="max-w-full mx-auto">
-      <section class="flex flex-col w-full justify-center items-center  bg-cloud-background bg-cover">
+      <section id="top" class="flex flex-col w-full justify-center items-center  bg-cloud-background bg-cover">
 
     
           <h1 class="font-pixelsplitter text-[68px] m-0 leading-none xxl:text-[80px] mt-20">Willkommen</h1>
@@ -103,6 +103,22 @@
   </section>
 
 </main>
+    
+<footer id="footer" class="bg-[#99b305] text-black text-xl">
+    <section class="max-w-full mx-20 p-4 flex justify-between items-center">
+        <nav class="flex flex-row gap-4" aria-label="footer">
+          <router-link to="/impressum"  href="#">
+            <a href="#" class="hover:opacity-90 font-vcr">Impressum</a>
+          </router-link>
+          <router-link to="/datenschutz"  href="#">
+            <a href="#" class="hover:opacity-90 font-vcr">Datenschutzerklärung</a>
+          </router-link>
+        </nav>
+        <a href="#top" class="hover:opacity-90 font-vcr">nach oben</a>
+    </section>
+</footer>
+
+
 </div>
     
 </template>

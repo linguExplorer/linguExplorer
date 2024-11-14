@@ -76,7 +76,10 @@
         <section class="mx-auto p-4 flex  justify-end items-center">
         
             <button class="max-w-[200px] p-4" @click="goBack">
+              <router-link to="/" href="#">
+
                 <img src="@/assets/xx_Images/xx_Images/Buttons/button zrk.png" alt="Zurück" />
+              </router-link>
             </button>
     
         </section>

@@ -28,33 +28,53 @@
             <section class="flex flex-col justify-center items-center gap-[20px] min-w-[700px]">
         <h1 class="font-pixelsplitter text-[60px] mb-6">Registrieren</h1>
 
-            <form @submit.prevent="handleRegister" class="min-w-[600px] max-w-md flex flex-col  items-center mt-[30px]">
+            <form @submit.prevent="submit" class="min-w-[600px] max-w-md flex flex-col  items-center mt-[30px]">
                 <div class="input-group flex flex-col mb-4 ">
                     <label for="email" class="">E-Mail</label>
-                <input type="email" id="email" v-model="username" required class="
+                <input type="email" id="email" v-model="data.email" required class="
                 font-vcr bg-white border-[#9cb405] border-[2px] min-w-[500px] p-2" />
+                <p v-if="errorMessage" class="text-red-500 mt-2">
+                    {{ errorMessage }}
+                </p>
                 </div>
                 <div class="input-group flex flex-col mb-4 ">
                     <label for="uname" class="">Benutzername</label>
-                <input type="uname" id="email" v-model="username" required class="
+                <input type="uname" id="email" v-model="data.name" required class="
                 font-vcr bg-white border-[#9cb405] border-[2px] min-w-[500px] p-2" />
                     <p v-if="usernameError" class="error-message">Benutzername bereits vergeben.</p>
                 </div>
                 <div class="input-group flex flex-col mb-4 ">
                     <label for="password" class="">Passwort</label>
-                <input type="password" id="password" v-model="password" required class="
+                <input type="password" id="password" v-model="data.password" required minlength="8" class="
                  font-vcr bg-white border-[#9cb405] border-[2px]  min-w-[500px] p-2" />
                     <p v-if="passwordError" class="error-message">Passwort entspricht nicht den Anforderungen.</p>
                 </div>
                 <div class="input-group flex flex-col mb-4 ">
                     <label for="password" class="">Passwort Wiederholen</label>
-                <input type="password" id="password" v-model="password" required class="
+                <input type="password" id="password" v-model="confirmPassword" minlength="8" required class="
                  font-vcr bg-white border-[#9cb405] border-[2px]  min-w-[500px] p-2 " />
-                    <p v-if="confirmPasswordError" class="error-message">Passwörter stimmen nicht überein.</p>
+                    <p v-if="errorPass" class="text-red-500 mt-2"> 
+                    {{ errorPass }}
+                </p>
                 </div>
-                
+                <div class="inline-flex items-center pt-5">
+                        <input type="checkbox"  v-model ="data.checked" id="check-with-link" class=" h-5 w-5 cursor-pointer"/>
+                        <label class="cursor-pointer ml-2 font-vcr text-black text-sm" for="check-with-link">
+                        <p class="  text-[15px]">Ich akzeptiere die Linguexplorer
+                            <router-link to="/datenschutz"  href="#">
+                        <a href="#" class=" hover:text-[#99b305]  underline">
+                            Datenschutzerklärung
+                        </a>
+                        </router-link>
+                        
+                    </p>
+                        </label>
+                </div>
+                <p v-if="!data.checked" class="text-red-500 mt-2">Bitte akzeptieren Sie die Datenschutzerklärung um fortzufahren!</p>
+
+
                 <!-- Speicher-Button -->
-                <button type="submit" class="max-w-[150px] mt-6 w-full">
+                <button type="submit" class="max-w-[150px] mt-6 w-full" :disabled="!isFormValid">
                     <img src="@/assets/xx_Images/xx_Images/Buttons/button registrieren blue.png" alt="Registrieren" class="hover:opacity-80" />
                 </button>
             </form>
@@ -75,18 +95,80 @@
 </template>
 
 <script>
+import { reactive, ref, computed} from 'vue';
+import { useRouter } from 'vue-router';
 export default {
     name: 'Registrieren',
+    setup() {
+         const data = reactive({
+            name: '',
+            email: '',
+            password: ''
+         });
+         const router = useRouter()
+         const errorMessage = ref('');
+         const errorPass = ref('');
+         const confirmPassword = ref('');
+
+         const isFormValid = computed(() => {
+        if (data.password !== confirmPassword.value) {
+                errorPass.value = 'Passwörter stimmen nicht überein.';
+                return false;
+            } else {
+                errorPass.value = '';
+                return true;
+
+            }
+        });
+
+    const submit = async() => {
+        try {
+   const res = await fetch('http://localhost:8000/api/register', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+   });
+   if(!res.ok) {
+    const err = await res.json();
+    if (err.email.length > 0) {
+            if (err.email[0].includes('user')) {
+                 errorMessage.value = 'User mit dieser Email existiert bereits';
+            }
+                
+          } else {
+            errorMessage.value = 'Ein unbekannter Fehler ist aufgetreten.';
+          }
+   } else {
+    await router.push({ 
+    path: '/anmelden', 
+    query: { reg: 'true'} 
+    });
+   }
+} catch (error) {
+    console.error('Fehler beim Senden der Anfrage:', error);
+}
+   
+
+}
+return{
+            data,
+            submit,
+            errorMessage,
+            errorPass,
+            isFormValid,
+            confirmPassword
+         }
+    },
     data() {
         return {
             email: '',
             username: '',
             password: '',
-            confirmPassword: '',
             emailError: false,
             usernameError: false,
             passwordError: false,
             confirmPasswordError: false,
+            checked: false,
         };
     },
     methods: {

@@ -29,16 +29,22 @@
             <section class="flex flex-col justify-center items-center gap-[20px] min-w-[700px]">
         <h1 class="font-pixelsplitter text-[60px] mb-6">Anmelden</h1>
 
-        <form @submit.prevent="handleLogin" class="min-w-[600px] max-w-md flex flex-col  items-center mt-[30px]">
+        <form @submit.prevent="submit" class="min-w-[600px] max-w-md flex flex-col  items-center mt-[30px]">
             <div class="input-group flex flex-col mb-4 ">
                 <label for="email" class="">E-Mail</label>
-                <input type="email" id="email" v-model="username" required class="
+                <input type="email" id="email" v-model="data.email" required class="
                 font-vcr bg-white border-[#9cb405] border-[2px] min-w-[500px] p-2" />
+                <p v-if="emailError" class="text-red-500 mt-2">
+                    {{ emailError }}
+                </p>
             </div>
             <div class="input-group flex flex-col mb-4 ">
                 <label for="password" class="">Passwort</label>
-                <input type="password" id="password" v-model="password" required class="
+                <input type="password" id="password" v-model="data.password" required class="
                  font-vcr bg-white border-[#9cb405] border-[2px]  min-w-[500px] p-2" />
+                 <p v-if="passwordError" class="text-red-500 mt-2">
+                    {{ passwordError }}
+                </p>
             </div>
 
             <!-- Fehlermeldung -->
@@ -72,12 +78,83 @@
 </template>
 
 <script>
+import { reactive, ref} from 'vue';
+import { useRouter } from 'vue-router';
 export default {
     name: 'AnmeldePage',
+
+    mounted() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get('success');
+    const reg = urlParams.get('reg');
+
+
+
+    if (success) {
+        alert('Es wurde eine Email an die angegebene Email geschickt');  
+    } 
+
+    if (reg) {
+        alert('Erfolgtreich Registriert!');  
+
+    }
+    },
+    
+    setup() {
+    const data = reactive({
+      email:'',
+      password:''
+    });
+    const router = useRouter();
+    const emailError = ref('');
+    const passwordError = ref('');
+
+
+    const  submit = async() => {
+        emailError.value = '';
+        passwordError.value = '';
+        try {
+
+      const res = await fetch('http://localhost:8000/api/login', {
+               method: 'POST',
+               headers: {'Content-Type': 'application/json'},
+               credentials: 'include',
+               body: JSON.stringify(data)
+    });
+    if(!res.ok) {
+        const err = await res.json();
+    if (err.detail.length > 0) {
+            if (err.detail.includes('User')) {
+                 emailError.value = 'Es konnte kein Account dieser Email zugeordnet werden';
+ 
+                }else if (err.detail.includes('password')) {
+                    passwordError.value = 'Falsches Passwort';
+                } 
+          }else {
+            passwordError.value = 'Falsches Passwort';
+            emailError.value = 'Ungültige E-Mail-Adresse';
+
+          }
+   } else {
+    await router.push('/comingSoon')
+   }
+} catch (error) {
+    console.error('Fehler beim Senden der Anfrage:', error);
+}
+    }
+
+    return {
+      data,
+      submit,
+      emailError,
+      passwordError
+    }
+},
     data() {
         return {
             username: '',
-            password: ''
+            password: '',
+            
         };
     },
     methods: {
