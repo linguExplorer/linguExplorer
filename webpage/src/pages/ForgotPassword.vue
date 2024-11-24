@@ -8,7 +8,8 @@
 
         <div class="content-box-forgotPassword">
 
-            <p class="subtext">Gib hier die E-Mail-Adresse ein, um dein Passwort zurückzusetzen</p>
+            <!--<p class="subtext">Gib hier die E-Mail-Adresse ein, um dein Passwort zurückzusetzen</p>-->
+            <p class="subtext">instargam:</p>
             
             <!-- Eingabeformular -->
             <form @submit.prevent="handlePasswordReset">
