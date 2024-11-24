@@ -43,7 +43,7 @@ const routes = [
     component: ForgotPassword,
   },
   {
-    path: "/newPassword/:ref", // Route für New Password
+    path: "/newPassword", /*/:ref",*/ // Route für New Password
     name: "newPassword",
     component: NewPassword,
   },
