@@ -10,9 +10,9 @@
         <img src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png" alt="Jetzt spielen" class="max-h-[55px] px-2 hover:opacity-80" />
         </router-link>
       </button>
-      <button id="hamburger-button" class="text-4xl focus:outline-none cursor-pointer items-center">
+      <!--<button id="hamburger-button" class="text-4xl focus:outline-none cursor-pointer items-center">
                 &#9776;
-        </button>
+        </button>-->
       </div>
       </section>
     </header>

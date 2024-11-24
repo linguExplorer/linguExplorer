@@ -44,7 +44,7 @@
         <h2 class="font-pixelsplitter text-[26px] mb-4">PASSWORT ÄNDERN</h2>
 
         <div class="input-group flex flex-col mb-4">
-          <label for="password" class="text-[18px]">altes Passwort</label>
+          <label for="password" class="text-[16px]">altes Passwort</label>
           <input
             type="password"
             id="password"
@@ -58,7 +58,7 @@
         </div>
 
         <div class="input-group flex flex-col mb-4">
-          <label for="newPassword" class="text-[18px]">neues Passwort (mind. 8 Zeichen)</label>
+          <label for="newPassword" class="text-[16px]">neues Passwort (mind. 8 Zeichen)</label>
           <input
             type="password"
             id="newPassword"
@@ -69,7 +69,7 @@
         </div>
 
         <div class="input-group flex flex-col mb-4">
-          <label for="confirmPassword" class="text-[18px]">Passwort wiederholen</label>
+          <label for="confirmPassword" class="text-[16px]">Passwort wiederholen</label>
           <input
             type="password"
             id="confirmPassword"
