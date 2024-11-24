@@ -8,6 +8,9 @@ import NewPassword from "../pages/NewPassword.vue";
 import ForgotPassword from "../pages/ForgotPassword.vue";
 import Registrieren from "../pages/Registrieren.vue";
 import ComingSoon from "@/pages/ComingSoon.vue";
+import Afterlogin from "@/pages/Afterlogin.vue";
+import AccInfoSeite from "@/pages/AccInfoSeite.vue";
+import EMailVerif from "@/pages/EMailVerif.vue";
 const routes = [
   {
     path: "/",
@@ -53,6 +56,21 @@ const routes = [
     path: "/comingSoon", // Route für ComingSoonPage
     name: "comingSoon",
     component: ComingSoon,
+  },
+  {
+    path: "/afterlogin", // Route für Afterloginpage
+    name: "afterlogin",
+    component: Afterlogin,
+  },
+  {
+    path: "/accInfoSeite", // Route für AccInfoSeite
+    name: "accInfoSeite",
+    component: AccInfoSeite,
+  },
+  {
+    path: "/eMailVerif", // Route für EMailVerifpage
+    name: "eMailVerif",
+    component: EMailVerif,
   },
   {
     path: "/about",
