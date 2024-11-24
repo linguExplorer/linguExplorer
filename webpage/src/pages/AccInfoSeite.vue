@@ -31,9 +31,9 @@
         <div class="flex justify-end">
           <button @click="editUsername" class="hover-button">
             <img
-              src="@/assets/xx_Images/xx_Images/Buttons/button anmelden blue.png"
+              src="@/assets/xx_Images/xx_Images/Buttons/aenderungenSpeichern.png"
               alt="Benutzername speichern"
-              class="h-[50px] w-auto hover:opacity-80"
+              class="h-[150px] w-auto hover:opacity-80"
             />
           </button>
         </div>
@@ -81,9 +81,9 @@
         <div class="flex justify-end">
           <button @click="editPassword" class="hover-button">
             <img
-              src="@/assets/xx_Images/xx_Images/Buttons/button anmelden blue.png"
+              src="@/assets/xx_Images/xx_Images/Buttons/aenderungenSpeichern.png"
               alt="Passwort speichern"
-              class="h-[50px] w-auto hover:opacity-80"
+              class="h-[150px] w-auto hover:opacity-80"
             />
           </button>
         </div>
@@ -102,9 +102,9 @@
         <div class="flex justify-end">
           <button @click="editEmail" class="hover-button">
             <img
-              src="@/assets/xx_Images/xx_Images/Buttons/button anmelden blue.png"
+              src="@/assets/xx_Images/xx_Images/Buttons/aenderungenSpeichernVerifizieren.png"
               alt="E-Mail speichern"
-              class="h-[50px] w-auto hover:opacity-80"
+              class="h-[150px] w-auto hover:opacity-80"
             />
           </button>
         </div>

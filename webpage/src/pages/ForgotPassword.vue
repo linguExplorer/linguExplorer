@@ -1,16 +1,21 @@
 <template>
-    <div class="font-vcr m-0 p-3 text-black w-full bg-[#f6f5f1] min-h-screen flex flex-col justify-center">
+        <header class="bg-[#99b305] text-black sticky top-0 z-10 w-full">
+            <section class="w-full py-2 flex justify-between items-center">
+            <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" alt="Logo" class="w-1/6" />
+            </section>
+        </header>
+
+    <div class="font-vcr m-0 text-black w-full bg-[#f6f5f1] min-h-screen flex flex-col justify-center">
+
         <!-- Überschrift -->
         <section class="flex flex-col justify-center items-center gap-[20px] min-w-[700px]">
-            <h1 class="font-pixelsplitter text-[60px] mb-6">Passwort vergessen?</h1>
+            <h1 class="font-pixelsplitter text-[40px] mb-6">Passwort vergessen?</h1>
         
      
-
-
             <!--<p class="subtext">Gib hier die E-Mail-Adresse ein, um dein Passwort zurückzusetzen</p>-->
-            <p class="subtext">instargam:</p>
+            <!--<p class="subtext">instargam:</p>-->
 
-            <p class="font-size:18px font-vcr">Gib hier die E-Mail-Adresse ein, um dein Passwort zurückzusetzen</p>
+            <p class="font-size:18px font-vcr text-center">Gib hier die E-Mail-Adresse ein, um dein <br> Passwort zurückzusetzen</p>
             
             <!-- Eingabeformular -->
             <form @submit.prevent="submit" class="min-w-[600px] max-w-md flex flex-col  justify-center items-center mt-[30px]">

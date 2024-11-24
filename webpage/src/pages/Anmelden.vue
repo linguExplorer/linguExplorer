@@ -1,21 +1,23 @@
 <template>
-    <div class="font-vcr m-0 p-3 text-black w-full bg-[#f6f5f1] min-h-screen flex flex-col justify-center">
-        <header class="top-0">
-            <section class="mx-auto p-4 flex  justify-end items-center gap-8">
-                    
-                    <p class=" font-size:18px font-vcr">Hast du noch keinen Account?</p>
+    <div class="font-vcr m-0 text-black w-full bg-[#f6f5f1] flex flex-col justify-center">
+        
+        <header class="bg-[#99b305] text-black sticky top-0 z-10 w-full">
+        <section class="w-full py-2 flex justify-between items-center">
+            <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" alt="Logo" class="w-1/6" />
+            <div class="flex justify-center items-center space-x-2">
+                <p class=" font-size:18px font-vcr">Hast du noch keinen Account?</p>
             
-                    <button class=" max-w-[150px]" >
-                        <router-link to="/registrieren" class="nav-link"  href="#">
+            <button class=" max-w-[150px] mr-[10px]" >
+                <router-link to="/registrieren" class="nav-link"  href="#">
 
-                    <img src="@/assets/xx_Images/xx_Images/Buttons/button registrieren green.png" alt="Registrieren" class="hover:opacity-80"/>
-                        </router-link>
-
-                </button>
+            <img src="@/assets/xx_Images/xx_Images/Buttons/button registrieren green.png" alt="Registrieren" class="hover:opacity-80"/>
+                </router-link>
+            </button>
+            </div>
             </section>
         </header>
 
-        <main class="max-w-6xl mx-auto mt-[80px]">
+        <main class="max-w-6xl mx-auto mt-[80px] px-6">
             <img src="@/assets/xx_Images/xx_Images/cloud.png" alt="Wolke" class="min-w-[320px] xxl:min-w-[380px] absolute z-2 translate-x-[-42vw] translate-y-[-12vh] 
             xxl:translate-x-[-42vw] xxl:translate-y-[-11vh]" />
             <img src="@/assets/xx_Images/xx_Images/sun.png" alt="Sonne" class="min-w-[150px] xxl:min-w-[180px] absolute z-1 translate-x-[-38vw] translate-y-[-3vh]
@@ -170,3 +172,4 @@ export default {
     }
 };
 </script>
+

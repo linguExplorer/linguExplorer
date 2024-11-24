@@ -1,7 +1,7 @@
 <template>
   <div class="font-vcr m-0 text-black w-full bg-[#f6f5f1] min-h-screen flex flex-col justify-between">
     <!-- Header -->
-    <header class="flex justify-start mt-20 px-40">
+    <header class="flex justify-start mt-40 px-40">
       <!-- Logo links oben -->
       <img
         src="@/assets/xx_Images/xx_Images/wordmark/wordmark_scaled.png"
@@ -14,20 +14,20 @@
     <div class="absolute top-4 right-4">
       <button class="hover-button">
         <img
-          src="@/assets/xx_Images/xx_Images/Buttons/button_up.png"
+          src="@/assets/xx_Images/xx_Images/Buttons/SettingsIcon.png"
           alt="Nach oben"
-          class="max-h-[55px] hover:opacity-80"
+          class="max-h-[100px] hover:opacity-80"
         />
       </button>
     </div>
 
-    <main class="flex flex-col items-center justify-center flex-grow">
-      <div class="flex flex-col lg:flex-row items-center justify-between gap-16 w-full max-w-5xl px-6">
+    <main class="flex flex-col items-center justify-center flex-grow mt-[-90px]">
+      <div class="flex flex-col lg:flex-row items-center justify-between gap-17 w-full max-w-5xl px-6">
         <!-- Buttons links -->
-        <div class="flex flex-col space-y-6 items-center">
+        <div class="flex flex-col space-y-9 items-center">
           <button class="hover-button">
             <img
-              src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png"
+              src="@/assets/xx_Images/xx_Images/Buttons/neuesSpiel_green.png"
               alt="Jetzt spielen"
               class="max-h-[55px] hover:opacity-80"
             />
@@ -35,7 +35,7 @@
 
           <button class="hover-button">
             <img
-             src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png"
+             src="@/assets/xx_Images/xx_Images/Buttons/spielstandLaden_green.png"
               alt="Spielstand laden"
               class="max-h-[55px] hover:opacity-80"
             />
@@ -43,7 +43,7 @@
         </div>
 
         <!-- Charakter rechts -->
-        <div class="flex justify-center">
+        <div class="flex justify-center mt-[-70px]">
           <img
             src="@/assets/xx_Images/xx_Images/Charactee New.png"
             alt="Character"

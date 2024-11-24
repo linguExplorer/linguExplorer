@@ -1,16 +1,18 @@
 <template>
-    <div class="font-vcr m-0 p-3 text-black w-full bg-[#f6f5f1] min-h-screen flex flex-col justify-center">
-        <header class="top-0">
-            <section class="mx-auto p-4 flex  justify-end items-center gap-8">
-                    
-                    <p class=" font-size:18px font-vcr">Hast du schon einen Account?</p>
+    <div class="font-vcr m-0 text-black w-full bg-[#f6f5f1] min-h-screen flex flex-col justify-center">
+        <header class="bg-[#99b305] text-black sticky top-0 z-10 w-full">
+            <section class="w-full py-2 flex justify-between items-center">
+            <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" alt="Logo" class="w-1/6" />
+            <div class="flex justify-center items-center space-x-4">
+                <p class=" font-size:18px font-vcr">Hast du schon einen Account?</p>
             
                     <button class=" max-w-[150px]">
                         <router-link to="/anmelden" class="nav-link"  href="#">
 
                     <img src="@/assets/xx_Images/xx_Images/Buttons/button anmelden green.png" alt="Registrieren" class=" hover:opacity-80" />
                         </router-link>
-                </button>
+                    </button>
+            </div>
             </section>
         </header>
 

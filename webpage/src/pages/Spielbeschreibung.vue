@@ -38,7 +38,7 @@
             </router-link>
           </button>
           <img src="@/assets/xx_Images/xx_Images/Charactee New.png" alt="Character" class="w-[300px] lg:w-[380px] absolute z-1
-          translate-x-[-35vw] translate-y-[35vh] xxl:translate-x-[-35vw] xxl:translate-y-[28.5vh]" />
+          translate-x-[-35vw] translate-y-[36.5vh] xxl:translate-x-[-35vw] xxl:translate-y-[28.5vh]" />
     </section>
     
 
