@@ -9,7 +9,7 @@
     <div class="absolute top-4 right-4">
       <button class="hover-button">
         <img
-          src="@/assets/xx_Images/xx_Images/Buttons/button_up.png"
+          src="@/assets/xx_Images/xx_Images/Buttons/red_X.png"
           alt="Nach oben"
           class="max-h-[55px] hover:opacity-80"
         />
