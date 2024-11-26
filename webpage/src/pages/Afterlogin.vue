@@ -42,12 +42,11 @@
           </button>
         </div>
 
-        <!-- Charakter rechts -->
-        <div class="flex justify-center mt-[-70px]">
+        <div class="flex justify-center mt-[-90px]">
           <img
-            src="@/assets/xx_Images/xx_Images/Charactee New.png"
-            alt="Character"
-            class="w-[200px] md:w-[300px] lg:w-[380px]"
+            src="@/assets/xx_Images/xx_Images/MainCharacterFrontAnimationv2.gif"
+            alt="Character Animation"
+            class="w-[200px] md:w-[200px] lg:w-[250px]"
           />
         </div>
       </div>

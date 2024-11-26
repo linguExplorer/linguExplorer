@@ -1,7 +1,7 @@
 <template>
         <header class="bg-[#99b305] text-black sticky top-0 z-10 w-full">
-            <section class="w-full py-2 flex justify-between items-center">
-            <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" alt="Logo" class="w-1/6" />
+            <section class="w-full py-2 flex justify-between items-center px-4">
+            <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" alt="Logo" class="w-1/8 max-w-[200px] ml-4" />
             </section>
         </header>
 
