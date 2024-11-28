@@ -38,19 +38,23 @@
         <p>
           Wir erheben, verarbeiten und nutzen personenbezogene Daten (z. B. Name, E-Mail-Adresse), soweit dies für die Bereitstellung unserer Webapplikation und der damit verbundenen Services notwendig ist. Dies erfolgt in Übereinstimmung mit den geltenden Datenschutzvorschriften.
         </p>
-        <h2 class="font-bold mt-6">Folgende Daten können erhoben werden:</h2>
+        <h2 class="font-bold mt-6">Folgende Daten werden erhoben:</h2>
         <ul class="indented-list list-disc px-6">
           <li>Name und E-Mail-Adresse</li>
           <li>Nutzungsdaten</li>
           <li>Technische Daten</li>
         </ul>
+        <h2 class="font-bold mt-6">Verwendung von Cookies:</h2>
+        <p>
+          Beim Besuch unserer Website wird Ihnen die Verwendung von Cookies angezeigt, und Sie werden gebeten, Ihre Zustimmung zur Nutzung dieser Cookies zu erteilen. 
+        </p>
         <h2 class="font-bold mt-6">Zweck der Datenverarbeitung:</h2>
         <p>
-          Die erhobenen Daten dienen zur Bereitstellung unseres Lernspiels "Linguexplorer".
+          Die erhobenen Daten dienen zur Bereitstellung unseres Lernspiels "linguExplorer" und werden für Bereitstellung, Aufrechterhaltung und Verwaltung Ihres Nutzerprofils benötigt. Im Zuge dessen sind diese Daten verpflichtend um unsere Applikation zu verwenden.
         </p>
         <h2 class="font-bold mt-6">Speicherung der Daten:</h2>
         <p>
-          Ihre Daten werden nur so lange gespeichert, wie es für die Erfüllung des jeweiligen Zwecks erforderlich ist.
+          Ihre Daten werden temporär gespeichert. Sobald Sie Ihr Profil löschen, wird Ihr Account und Ihre Daten in einem Zeitraum von 7 Tagen gelöscht.
         </p>
         <h2 class="font-bold mt-6">Weitergabe der Daten:</h2>
         <p>
@@ -67,7 +71,7 @@
         </ul>
         <h2 class="font-bold mt-6">Änderungen der Datenschutzerklärung:</h2>
         <p>
-          Diese Datenschutzerklärung wird regelmäßig überprüft und aktualisiert, um den rechtlichen Anforderungen zu entsprechen oder um Änderungen in unseren Services abzubilden.
+          Diese Datenschutzerklärung wird regelmäßig überprüft und aktualisiert, um den rechtlichen Anforderungen zu entsprechen oder um Änderungen in unseren Services abzubilden. Falls eine Änderung durchgeführt wurde, wird Ihnen dies auf unserer Seite erkenntlich gemacht.
         </p>
       </div>
       </main>
