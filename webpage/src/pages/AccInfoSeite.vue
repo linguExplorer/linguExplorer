@@ -33,7 +33,7 @@
             <img
               src="@/assets/xx_Images/xx_Images/Buttons/aenderungenSpeichern.png"
               alt="Benutzername speichern"
-              class="h-[150px] w-auto hover:opacity-80"
+              class="h-[50px] w-auto hover:opacity-80"
             />
           </button>
         </div>
@@ -83,7 +83,7 @@
             <img
               src="@/assets/xx_Images/xx_Images/Buttons/aenderungenSpeichern.png"
               alt="Passwort speichern"
-              class="h-[150px] w-auto hover:opacity-80"
+              class="h-[50px] w-auto hover:opacity-80"
             />
           </button>
         </div>
@@ -104,7 +104,7 @@
             <img
               src="@/assets/xx_Images/xx_Images/Buttons/aenderungenSpeichernVerifizieren.png"
               alt="E-Mail speichern"
-              class="h-[150px] w-auto hover:opacity-80"
+              class="h-[50px] w-auto hover:opacity-80"
             />
           </button>
         </div>
