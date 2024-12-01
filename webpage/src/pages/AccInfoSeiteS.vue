@@ -88,18 +88,12 @@
     data() {
       return {
         username: "maxmust123",
-        password: "",
-        newPassword: "",
-        confirmPassword: "",
         email: "max.mustermann@gmail.com",
       };
     },
     methods: {
       editUsername() {
         alert("Benutzername geändert!");
-      },
-      editPassword() {
-        alert("Passwort geändert!");
       },
       editEmail() {
         alert("E-Mail geändert!");
