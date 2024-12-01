@@ -28,65 +28,23 @@
             class="p-2 bg-white border-[#9cb405] border-2 w-[450px] mb-4"
             placeholder="maxmust123"
           />
-          <div class="flex justify-end">
-            <button @click="editUsername" class="hover-button">
-              <img
-                src="@/assets/xx_Images/xx_Images/Buttons/aenderungenSpeichern.png"
-                alt="Benutzername speichern"
-                class="h-[50px] w-auto hover:opacity-80"
-              />
-            </button>
-          </div>
         </div>
   
         <!-- Passwort ändern -->
         <div class="flex flex-col w-[700px] max-w-5xl bg-[#d5d6d8] p-8 shadow-lg mt-6 mr-60">
-          <h2 class="font-pixelsplitter text-[26px] mb-4">PASSWORT ÄNDERN</h2>
-  
-          <div class="input-group flex flex-col mb-4">
-            <label for="password" class="text-[16px]">altes Passwort</label>
-            <input
-              type="password"
-              id="password"
-              v-model="password"
-              class="font-vcr bg-white border-[#9cb405] border-2 min-w-[500px] p-2"
-              required
-            />
-            <p v-if="passwordError" class="text-red-500 mt-2">
-              {{ passwordError }}
-            </p>
-          </div>
-  
-          <div class="input-group flex flex-col mb-4">
-            <label for="newPassword" class="text-[16px]">neues Passwort (mind. 8 Zeichen)</label>
-            <input
-              type="password"
-              id="newPassword"
-              v-model="newPassword"
-              class="font-vcr bg-white border-[#9cb405] border-2 min-w-[500px] p-2"
-              required
-            />
-          </div>
-  
-          <div class="input-group flex flex-col mb-4">
-            <label for="confirmPassword" class="text-[16px]">Passwort wiederholen</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              v-model="confirmPassword"
-              class="font-vcr bg-white border-[#9cb405] border-2 min-w-[500px] p-2"
-              required
-            />
-          </div>
-          <div class="flex justify-end">
-            <button @click="editPassword" class="hover-button">
-              <img
-                src="@/assets/xx_Images/xx_Images/Buttons/aenderungenSpeichern.png"
-                alt="Passwort speichern"
-                class="h-[50px] w-auto hover:opacity-80"
-              />
-            </button>
-          </div>
+        <h2 class="font-pixelsplitter text-[26px] mb-4">PASSWORT ÄNDERN</h2>
+
+            <div class="flex items-center space-x-4 mb-4">
+                <p class="font-vcr text-[16px] text-[#333]">Lege ein sicheres Passwort zum Schutz deines Accounts fest.</p>
+                
+                <button @click="editPassword" class="hover-button">
+                <img
+                    src="@/assets/xx_Images/xx_Images/Buttons/aenderungenSpeichern.png"
+                    alt="Passwort speichern"
+                    class="h-[50px] w-auto hover:opacity-80"
+                />
+                </button>
+            </div>
         </div>
   
         <!-- E-Mail ändern -->
@@ -99,15 +57,6 @@
             class="p-2 bg-white border-[#9cb405] border-2 w-[450px] mb-4"
             placeholder="max.mustermann@gmail.com"
           />
-          <div class="flex justify-end">
-            <button @click="editEmail" class="hover-button">
-              <img
-                src="@/assets/xx_Images/xx_Images/Buttons/aenderungenSpeichernVerifizieren.png"
-                alt="E-Mail speichern"
-                class="h-[50px] w-auto hover:opacity-80"
-              />
-            </button>
-          </div>
         </div>
       </main>
       <footer class="mt-auto w-full flex justify-between items-center px-12 py-12 bg-[#f6f5f1]">
