@@ -13,11 +13,15 @@
     <!-- Rechts oben Button -->
     <div class="absolute top-4 right-4">
       <button class="hover-button">
+        <router-link to="/accInfoSeite"  href="#">
+
         <img
           src="@/assets/xx_Images/xx_Images/Buttons/SettingsIcon.png"
           alt="Nach oben"
           class="max-h-[100px] hover:opacity-80"
         />
+      </router-link>
+
       </button>
     </div>
 
