@@ -110,6 +110,26 @@
         </div>
       </div>
     </main>
+    <footer class="mt-auto w-full flex justify-between items-center px-12 py-12 bg-[#f6f5f1]">
+    <!-- Linker Button -->
+    <div class="flex justify-start">
+      <button class="max-w-[150px]" @click="goBack">
+        <router-link to="/" href="#">
+          <img src="@/assets/xx_Images/xx_Images/Buttons/abmelden.png" alt="Zurück" />
+        </router-link>
+      </button>
+    </div>
+
+    <!-- Rechter Button -->
+    <div class="flex justify-end">
+      <button class="max-w-[150px]" @click="goBack">
+        <router-link to="/" href="#">
+          <img src="@/assets/xx_Images/xx_Images/Buttons/Loeschen.png" alt="Zurück" />
+        </router-link>
+      </button>
+    </div>
+  </footer>
+
   </div>
 </template>
 
