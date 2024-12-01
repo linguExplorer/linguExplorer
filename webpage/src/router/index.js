@@ -12,6 +12,7 @@ import Afterlogin from "@/pages/Afterlogin.vue";
 import AccInfoSeite from "@/pages/AccInfoSeite.vue";
 import EMailVerif from "@/pages/EMailVerif.vue";
 import CookieBanner from "@/components/CookieBanner.vue";
+import AccInfoSeiteS from "@/pages/AccInfoSeiteS.vue";
 const routes = [
   {
     path: "/cookie",
@@ -74,6 +75,11 @@ const routes = [
     path: "/accInfoSeite", // Route für AccInfoSeite
     name: "accInfoSeite",
     component: AccInfoSeite,
+  },
+  {
+    path: "/accInfoSeiteS", // Route für AccInfoSeite Standart
+    name: "accInfoSeiteS",
+    component: AccInfoSeiteS,
   },
   {
     path: "/eMailVerif", // Route für EMailVerifpage
