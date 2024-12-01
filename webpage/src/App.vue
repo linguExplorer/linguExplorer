@@ -1,9 +1,22 @@
+
+
 <template>
   <main>
+    <CookieBanner></CookieBanner>
     <router-view />
   </main>
 </template>
 
+
+<script >
+import CookieBanner from './components/CookieBanner.vue';
+export default {
+  components: {
+    CookieBanner
+  },
+}
+
+</script>
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

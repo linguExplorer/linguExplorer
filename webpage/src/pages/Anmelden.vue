@@ -184,7 +184,7 @@
               emailError.value = "Passwort oder E-Mail falsch!";
             }
           } else {
-            await router.push("/comingSoon");
+            await router.push("/Afterlogin");
           }
         } catch (error) {
           console.error("Fehler beim Senden der Anfrage:", error);

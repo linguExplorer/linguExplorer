@@ -11,12 +11,20 @@ import ComingSoon from "@/pages/ComingSoon.vue";
 import Afterlogin from "@/pages/Afterlogin.vue";
 import AccInfoSeite from "@/pages/AccInfoSeite.vue";
 import EMailVerif from "@/pages/EMailVerif.vue";
+import CookieBanner from "@/components/CookieBanner.vue";
 const routes = [
+  {
+    path: "/cookie",
+    name: "cookie",
+    component: CookieBanner,
+  },
+
   {
     path: "/",
     name: "home",
     component: Spielbeschreibung,
   },
+
   {
     path: "/impressum", // Route für Impressum
     name: "impressum",
