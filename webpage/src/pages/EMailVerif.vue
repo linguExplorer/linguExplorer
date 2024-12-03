@@ -27,7 +27,7 @@
             
         </section>
 
-        <div class="flex justify-center mt-[-119px] ml-[850px]">
+        <div class="flex justify-center mt-[-105px] ml-[850px]">
           <img
             src="@/assets/xx_Images/xx_Images/MainCharacterSideRightAnimationv2.gif"
             alt="Character Animation"

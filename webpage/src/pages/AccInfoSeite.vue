@@ -20,7 +20,7 @@
     </div>
 
     <!-- Hauptbereich -->
-    <main class="flex flex-col justify-start flex-grow px-20"> 
+    <main class="flex flex-col justify-start flex-grow px-10"> 
       <!-- Benutzername ändern -->
        <!--w: breite der box-->
       <div class="flex flex-col w-full max-w-[700px] bg-[#d5d6d8] p-4 sm:p-8 shadow-lg mt-6 sm:ml-60 mx-auto">
@@ -29,7 +29,7 @@
           type="text"
           id="username"
           v-model="username"
-          class="p-2 bg-white border-[#9cb405] border-2 w-full mb-4"
+          class="p-2 bg-white border-[#9cb405] border-2 w-[90%] sm:w-full mb-4 text-sm sm:text-base"
           placeholder="maxmust123"
         />
         <div class="flex justify-end">
@@ -49,12 +49,12 @@
         <h2 class="font-pixelsplitter text-[15px] sm:text-[26px] mb-4 sm:mb-6">PASSWORT ÄNDERN</h2>
 
         <div class="input-group flex flex-col mb-4">
-          <label for="password" class="text-[16px]">Altes Passwort</label>
+          <label for="password" class="text-[14px] sm:text-[16px]">altes Passwort</label>
           <input
             type="password"
             id="password"
             v-model="password"
-            class="font-vcr bg-white border-[#9cb405] border-2 w-full p-2"
+            class="p-2 bg-white border-[#9cb405] border-2 w-[90%] sm:w-full mb-4 text-sm sm:text-base"
             required
           />
           <p v-if="passwordError" class="text-red-500 mt-2">
@@ -63,27 +63,27 @@
         </div>
 
         <div class="input-group flex flex-col mb-4">
-          <label for="newPassword" class="text-[16px]"
+          <label for="newPassword" class="text-[14px] sm:text-[16px]"
             >Neues Passwort (mind. 8 Zeichen)</label
           >
           <input
             type="password"
             id="newPassword"
             v-model="newPassword"
-            class="font-vcr bg-white border-[#9cb405] border-2 w-full p-2"
+            class="p-2 bg-white border-[#9cb405] border-2 w-[90%] sm:w-full mb-4 text-sm sm:text-base"
             required
           />
         </div>
 
         <div class="input-group flex flex-col mb-4">
-          <label for="confirmPassword" class="text-[16px]"
+          <label for="confirmPassword" class="text-[14px] sm:text-[16px]"
             >Passwort wiederholen</label
           >
           <input
             type="password"
             id="confirmPassword"
             v-model="confirmPassword"
-            class="font-vcr bg-white border-[#9cb405] border-2 w-full p-2"
+            class="p-2 bg-white border-[#9cb405] border-2 w-[90%] sm:w-full mb-4 text-sm sm:text-base"
             required
           />
         </div>
@@ -92,7 +92,7 @@
             <img
               src="@/assets/xx_Images/xx_Images/Buttons/aenderungenSpeichern.png"
               alt="Passwort speichern"
-              class="h-[50px] w-auto hover:opacity-80"
+              class="h-[40px] sm:h-[50px] w-auto hover:opacity-80"
             />
           </button>
         </div>
@@ -108,7 +108,7 @@
           type="email"
           id="email"
           v-model="email"
-          class="p-2 bg-white border-[#9cb405] border-2 w-full mb-4"
+          class="p-2 bg-white border-[#9cb405] border-2 w-[90%] sm:w-full mb-4 text-sm sm:text-base"
           placeholder="max.mustermann@gmail.com"
         />
         <div class="flex justify-end">
@@ -116,7 +116,7 @@
             <img
               src="@/assets/xx_Images/xx_Images/Buttons/aenderungenSpeichernVerifizieren.png"
               alt="E-Mail speichern"
-              class="h-[50px] w-auto hover:opacity-80"
+              class="h-[40px] sm:h-[50px] w-auto hover:opacity-80"
             />
           </button>
         </div>
