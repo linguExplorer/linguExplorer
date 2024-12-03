@@ -1,8 +1,8 @@
 <template>
   <div class="font-vcr m-0 text-black w-full bg-[#f6f5f1] min-h-screen flex flex-col justify-between">
     <!-- Header -->
-    <header class="flex justify-center items-center mt-10 px-4 sm:mt-20 sm:px-40">
-      <h1 class="font-pixelsplitter text-[20px] sm:text-[40px] mb-6 text-center">Accountverwaltung</h1>
+    <header class="flex justify-center items-center mt-10 px-4 sm:mt-30 sm:px-40">
+      <h1 class="font-pixelsplitter text-[20px] sm:text-[40px] mb-6 text-left">Accountverwaltung</h1>
     </header>
 
     <!-- Rechts oben Button -->
