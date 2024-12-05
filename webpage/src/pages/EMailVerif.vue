@@ -18,14 +18,21 @@
 
     </main>
 
-    <section class="flex flex-col justify-center items-center gap-[20px] min-w-[700px]">
+    <section class="flex flex-col justify-center items-center gap-[0px] min-w-[700px]">
+      
             <h1 class="font-pixelsplitter text-[40px] mb-6">Bestätige deine <br> E-Mail-Adresse</h1>
 
             <p class="font-size:18px font-vcr text-center" >Um deine Registrierung abzuschließen,
-               <br> überprüfe bitte dein E-Mail Postfach.<br> Dort findest du eine E-Mail mit einem <br> Bestätigungslink <br>
+                überprüfe <br> bitte dein E-Mail Postfach. Dort findest <br> du eine E-Mail mit einem Bestätigungslink <br>
               Klicke auf den Link in dieser E-Mail, um <br> deine Registrierung zu bestätigen und <br> loszulegen!  </p>
 
-            <p class="font-size:12px font-vcr text-center" >Keine E-Mail erhalten?</p>
+              <p class="font-vcr text-center" style="font-size: 14px; margin-top: 20px; margin-bottom: 20px;">
+               Keine E-Mail erhalten?
+              </p>
+        
+            <button type="submit" class="hover-button max-w-[150px] w-full" >
+                    <img src="@/assets/xx_Images/xx_Images/Buttons/button_nochmal_versuchen.png" alt="Speichern" />
+            </button>
             
         </section>
 
@@ -65,7 +72,6 @@
   opacity: 0.8;
   transform: scale(1.05);
 }
-
 </style>
   
   
