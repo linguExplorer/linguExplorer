@@ -5,12 +5,9 @@
       <section class="max-w-full mx-auto px-6 py-2 flex justify-between items-center ">
       <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" alt="Logo" class="w-1/6" />
       <div class="flex justify-center items-center space-x-4">
-      <button class="nav-button-spielbeschreibung">
+      <button class="nav-button-spielbeschreibung hover-button">
         <img src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png" alt="Jetzt spielen" class="max-h-[55px] px-2" />
       </button>
-      <!--<button id="hamburger-button" class="text-4xl focus:outline-none cursor-pointer items-center">
-                &#9776;
-        </button>-->
       </div>
       </section>
     </header>
@@ -51,7 +48,7 @@
     <footer class="mt-auto">
         <section class="mx-auto p-4 flex  justify-end items-center">
         
-            <button class="max-w-[200px] p-4" @click="goBack">
+            <button class="max-w-[200px] p-4 hover-button" @click="goBack">
               <router-link to="/"  href="#">
 
                 <img src="@/assets/xx_Images/xx_Images/Buttons/button zrk.png" alt="Zurück" />
@@ -68,4 +65,14 @@
     name: 'ImpressumPage',
   };
   </script>
+  
+  <style scoped>
+  .hover-button img {
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .hover-button img:hover {
+    transform: scale(1.1);
+  }
+  </style>
   

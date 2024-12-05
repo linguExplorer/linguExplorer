@@ -10,7 +10,7 @@
         <section class="mx-auto p-4 flex justify-end items-center gap-8">
           <p class="font-size:18px font-vcr">Hast du schon einen Account?</p>
   
-          <button class="max-w-[150px]">
+          <button class="hover-button max-w-[150px]">
             <router-link to="/anmelden" class="nav-link" href="#">
               <img
                 src="@/assets/xx_Images/xx_Images/Buttons/button anmelden green.png"
@@ -150,7 +150,7 @@
                   <p v-if="!data.checked" class="text-red-500 mt-2">Bitte akzeptieren Sie die Datenschutzerklärung um fortzufahren!</p>
   
   
-            <button type="submit" class="max-w-[150px] mt-6 w-full" :disabled="!isFormValid" @click="submit">
+            <button type="submit" class="hover-button max-w-[150px] mt-6 w-full" :disabled="!isFormValid" @click="submit">
               <img
                 src="@/assets/xx_Images/xx_Images/Buttons/button registrieren blue.png"
                 alt="Registrieren"
@@ -163,7 +163,7 @@
   
       <footer class="mt-auto">
         <section class="mx-auto p-4 flex justify-end items-center">
-          <button class="max-w-[200px] p-4">
+          <button class="hover-button max-w-[200px] p-4">
             <router-link to="/" class="nav-link" href="#">
               <img
                 src="@/assets/xx_Images/xx_Images/Buttons/button zrk.png"
@@ -284,3 +284,15 @@
       }
   };
   </script>
+
+   
+<style scoped>
+.hover-button img {
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+.hover-button img:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+</style>

@@ -12,7 +12,7 @@
         <img
           src="@/assets/xx_Images/xx_Images/Buttons/red_X.png"
           alt="Nach oben"
-          class="max-h-[40px] sm:max-h-[55px] hover:opacity-80"
+          class="max-h-[40px] sm:max-h-[55px]"
         />
         </router-link>
 
@@ -126,7 +126,7 @@
     <footer class="mt-auto w-full flex justify-between items-center px-4 sm:px-12 py-6 sm:py-12 bg-[#f6f5f1]">
     <!-- Linker Button -->
     <div class="flex justify-start">
-      <button class="max-w-[100px] sm:max-w-[150px]" @click="goBack">
+      <button class="hover-button max-w-[100px] sm:max-w-[150px]" @click="goBack">
         <router-link to="/" href="#">
           <img src="@/assets/xx_Images/xx_Images/Buttons/abmelden.png" alt="Zurück" />
         </router-link>
@@ -135,7 +135,7 @@
 
     <!-- Rechter Button -->
     <div class="flex justify-end">
-      <button class="max-w-[100px] sm:max-w-[150px]" @click="goBack">
+      <button class="hover-button max-w-[100px] sm:max-w-[150px]" @click="goBack">
         <router-link to="/" href="#">
           <img src="@/assets/xx_Images/xx_Images/Buttons/Loeschen.png" alt="Zurück" />
         </router-link>

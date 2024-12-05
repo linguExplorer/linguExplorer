@@ -29,7 +29,7 @@
                 </div>
 
                 <!-- Speicher-Button -->
-                <button type="submit" class="max-w-[150px] mt-6 w-full" :disabled="!isFormValid" >
+                <button type="submit" class="hover-button max-w-[150px] mt-6 w-full" :disabled="!isFormValid" >
                     <img src="@/assets/xx_Images/xx_Images/Buttons/button speichern.png" alt="Speichern" />
                 </button>
             
@@ -124,3 +124,13 @@ export default {
 };
 </script>
 
+<style scoped>
+.hover-button img {
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+.hover-button img:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+</style>

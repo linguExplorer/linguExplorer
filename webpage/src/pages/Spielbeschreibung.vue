@@ -5,9 +5,11 @@
       <section class="w-full py-2 flex justify-between items-center px-4">
             <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" alt="Logo" class="w-1/8 max-w-[200px] ml-4" />
       <div class="flex justify-center items-center space-x-4">
-      <button class="nav-button-spielbeschreibung">
+      <button class="hover-button">
         <router-link to="/anmelden" class="nav-link"  href="#">
-        <img src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png" alt="Jetzt spielen" class="max-h-[55px] px-2 hover:opacity-80" />
+        <img src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png" 
+        alt="Jetzt spielen" 
+        class="max-h-[55px] px-2 hover:opacity-80" />
         </router-link>
       </button>
       <!--<button id="hamburger-button" class="text-4xl focus:outline-none cursor-pointer items-center">
@@ -32,7 +34,7 @@
       <!-- Button direkt unter dem Linguexplorer-Logo -->
         <!-- Character Image - neben dem "Jetzt spielen" button -->
 
-          <button class="play-button">
+          <button class="hover-button">
             <router-link to="/anmelden" class="nav-link"  href="#">
             <img src="@/assets/xx_Images/xx_Images/Buttons/button play now.png" alt="Jetzt spielen" class="max-h-[110px] min-h-[80px] hover:opacity-80" />
             </router-link>
@@ -129,4 +131,14 @@ export default {
   name: 'SpielbeschreibungPage',
 };
 </script>
+
+<style scoped>
+.hover-button img {
+  transition: transform 0.2s ease-in-out;
+}
+
+.hover-button img:hover {
+  transform: scale(1.1);
+}
+</style>
 

@@ -17,7 +17,7 @@
           <div class="flex justify-center items-center space-x-2">
             <p class="font-size:18px font-vcr">Hast du noch keinen Account?</p>
   
-            <button class="max-w-[150px] mr-[10px]">
+            <button class="hover-button max-w-[150px] mr-[10px]">
               <router-link to="/registrieren" class="nav-link" href="#">
                 <img
                   src="@/assets/xx_Images/xx_Images/Buttons/button registrieren green.png"
@@ -54,7 +54,7 @@
   
         <!--<div class="anmelde-container">-->
         <section
-          class="flex flex-col justify-center items-center gap-[20px] min-w-[700px] "
+          class="hover-button flex flex-col justify-center items-center gap-[20px] min-w-[700px] "
         >
           <h1 class="font-pixelsplitter text-[60px] mb-6">Anmelden</h1>
   
@@ -64,28 +64,31 @@
           >
             <div class="input-group flex flex-col mb-4">
               <label for="email" class="">E-Mail</label>
-              <input
-                type="email"
-                id="email"
-                v-model="data.email"
-                required
-                class="font-vcr bg-white border-[#9cb405] border-[2px] min-w-[500px] p-2"
-              />
-              <p v-if="emailError" class="text-red-500 mt-2">
-                {{ emailError }}
-              </p>
+                <input
+                  type="email"
+                  id="email"
+                  v-model="data.email"
+                  required
+                  class="font-vcr bg-white border-[#9cb405] border-[2px] min-w-[500px] p-2"
+                />
+                <p v-if="emailError" class="text-red-500 mt-2">
+                  {{ emailError }}
+                </p>
             </div>
+
             <div class="input-group flex flex-col mb-4">
               <label for="password" class="">Passwort</label>
+
               <div class="input-group flex items-center mb-4">
-              <input
-                :type="inputType"
-                id="password"
-                v-model="data.password"
-                required
-                class="font-vcr bg-white border-[#9cb405] border-[2px] min-w-[500px] p-2"
-              />
-              <button
+                <input
+                  :type="inputType"
+                  id="password"
+                  v-model="data.password"
+                  required
+                  class="font-vcr bg-white border-[#9cb405] border-[2px] min-w-[500px] p-2"
+                />
+                
+                <button
                   @click="togglePasswordVisibility"
                   type="button"
                   class="focus:outline-none -ml-8"
@@ -96,10 +99,12 @@
                     class="w-4"
                   />
                 </button>
-              <p v-if="passwordError" class="text-red-500 mt-2">
-                {{ passwordError }}
-              </p>
-            </div>
+
+                <p v-if="passwordError" class="text-red-500 mt-2">
+                  {{ passwordError }}
+                </p>
+
+              </div>
             </div>
   
             <!-- Fehlermeldung -->
@@ -121,7 +126,7 @@
   
       <footer class="mt-auto">
         <section class="mx-auto p-4 flex justify-end items-center">
-          <button class="max-w-[200px] p-4">
+          <button class="hover-button max-w-[200px] p-4">
             <router-link to="/" class="nav-link" href="#">
               <img
                 src="@/assets/xx_Images/xx_Images/Buttons/button zrk.png"
@@ -224,3 +229,13 @@
   };
   </script>
   
+  <style scoped>
+  .hover-button img {
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+  }
+  .hover-button img:hover {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+  
+  </style>

@@ -24,6 +24,8 @@
             <p class="font-size:18px font-vcr text-center" >Um deine Registrierung abzuschließen,
                <br> überprüfe bitte dein E-Mail Postfach.<br> Dort findest du eine E-Mail mit einem <br> Bestätigungslink <br>
               Klicke auf den Link in dieser E-Mail, um <br> deine Registrierung zu bestätigen und <br> loszulegen!  </p>
+
+            <p class="font-size:12px font-vcr text-center" >Keine E-Mail erhalten?</p>
             
         </section>
 
@@ -54,5 +56,16 @@
     name: 'EMailVerif',
   };
   </script>
+
+<style scoped>
+.hover-button img {
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+.hover-button img:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+</style>
   
   

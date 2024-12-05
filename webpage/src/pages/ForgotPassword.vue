@@ -25,7 +25,7 @@
                 </div>
                 
                 <!-- Passwort-Button -->
-                <button type="submit" class="w-1/3 mt-6 text-centersm:w-full">
+                <button type="submit" class="hover-button w-1/3 mt-6 text-centersm:w-full">
                     <img src="@/assets/xx_Images/xx_Images/Buttons/button neues passwort.png" 
                     alt="Neues Passwort" 
                     class="max-w-[120px] sm:max-w-[200px] w-full"
@@ -81,3 +81,14 @@ export default {
     }
 };
 </script>
+
+<style scoped>
+.hover-button img {
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+.hover-button img:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+</style>
