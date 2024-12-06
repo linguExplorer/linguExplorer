@@ -21,7 +21,7 @@
         <img 
           src="@/assets/xx_Images/xx_Images/sun.png" 
           alt="Sonne" 
-          class="min-w-[120px] sm:min-w-[150px] md:min-w-[180px] absolute z-1 
+          class="min-w-[120px] sm:min-w-[120px] md:min-w-[180px] absolute z-1 
           translate-x-[-30vw] sm:translate-x-[-25vw] md:translate-x-[-38vw] 
           translate-y-[-13vh] sm:translate-y-[-5vh] md:translate-y-[-5vh]" />
 
@@ -42,28 +42,40 @@
           translate-y-[-10vh] sm:translate-y-[-10vh] md:translate-y-[-8vh]" />
     </main>
 
-    <section class="flex flex-col justify-center items-center gap-[0px] min-w-[700px] sm:min-w-[320px] sm:px-6">
-      <!-- Textgröße anpassen für alle Bildschirmgrößen -->
-      <h1 class="font-pixelsplitter text-[25px] sm:text-[40px] mb-6 text-center">
-        Bestätige deine <br> E-Mail-Adresse
-      </h1>
+    <section class="flex flex-col justify-center items-center gap-2 w-full px-4 sm:px-6 mt-10 sm:mt-0">
+    <!-- Überschrift -->
+    <h1 class="font-pixelsplitter text-[30px] sm:text-[30px] md:text-[40px] text-center mt-2">
+      Bestätige deine <br> E-Mail-Adresse
+    </h1>
 
-      <p class="font-vcr text-center text-[14px] sm:text-[17px]">
-        Um deine Registrierung abzuschließen, überprüfe <br> bitte dein E-Mail Postfach. Dort findest <br> du eine E-Mail mit einem Bestätigungslink. <br>
-        Klicke auf den Link in dieser E-Mail, um <br> deine Registrierung zu bestätigen und <br> loszulegen!
-      </p>
+    <!-- Beschreibung Handy -->
+    <p class="font-vcr text-center text-[14px] sm:hidden leading-tight">
+      Um deine Registrierung <br> abzuschließen, überprüfe bitte <br>
+      dein E-Mail Postfach. <br> Dort findest du eine
+      E-Mail mit <br> einem Bestätigungslink. <br> Klicke
+      auf den Link in dieser E- <br> Mail, um deine Registrierung zu <br> bestätigen und loszulegen!
+    </p>
 
-      <p class="font-vcr text-center text-[12px] sm:text-[14px] mt-4">
-        Keine E-Mail erhalten?
-      </p>
+    <!-- Beschreibung Laptop -->
+    <p class="font-vcr text-center hidden sm:block text-[16px] leading-tight">
+      Um deine Registrierung abzuschließen, <br> überprüfe bitte dein E-Mail Postfach. <br> Dort findest du eine E-Mail mit einem <br> Bestätigungslink. <br>
+      Klicke auf den Link in dieser E-Mail, um <br> deine Registrierung zu bestätigen und <br> loszulegen!
+    </p>
 
-      <button type="submit" class="hover-button max-w-[120px] w-full sm:max-w-[150px] mt-4">
-        <img src="@/assets/xx_Images/xx_Images/Buttons/button_nochmal_versuchen.png" alt="Speichern" />
-      </button>
-    </section>
+    <!-- Hinweis -->
+    <p class="font-vcr text-center text-[12px] sm:text-[14px]">
+      Keine E-Mail erhalten?
+    </p>
+
+    <!-- Button -->
+    <button type="submit" class="hover-button max-w-[120px] w-full sm:max-w-[150px] mx-auto">
+      <img src="@/assets/xx_Images/xx_Images/Buttons/button_nochmal_versuchen.png" alt="Speichern" />
+    </button>
+  </section>
+
 
        <!-- Laptop Charakter -->
-        <div class="hidden md:flex justify-center mt-[-155px] ml-[850px]">
+        <div class="hidden md:flex justify-center mt-[-120px] ml-[850px]">
           <img
             src="@/assets/xx_Images/xx_Images/MainCharacterSideRightAnimationv2.gif"
             alt="Desktop Character Animation"
@@ -72,7 +84,7 @@
         </div>
 
         <!-- Handy Charakters -->
-        <div class="flex md:hidden justify-center mt-[-50px]">
+        <div class="flex md:hidden justify-center mt-[-10px]">
           <img
             src="@/assets/xx_Images/xx_Images/MainCharacterFrontAnimationv2.gif"
             alt="Mobile Character Animation"
@@ -81,15 +93,15 @@
         </div>
 
 
-         <!-- Gras-Bild unten -->
+        <!-- Gras-Bild unten -->
         <div class="w-full absolute bottom-0 z-0 overflow-hidden">
           <img
             src="@/assets/xx_Images/xx_Images/gras_combined_scaled.png"
             alt="Gras"
-            class="w-full"
-            style="transform: translateY(90%);"
+            class="w-full sm:max-w-full sm:object-cover sm:object-center sm:translate-y-[90%] object-cover object-center"
           />
         </div>
+
   </div>
 </template>
 
