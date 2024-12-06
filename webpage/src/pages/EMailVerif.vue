@@ -29,17 +29,17 @@
         <img 
           src="@/assets/xx_Images/xx_Images/Cloud2.png" 
           alt="Wolke" 
-          class="min-w-[200px] sm:min-w-[250px] md:min-w-[320px] xxl:min-w-[380px] absolute z-2 
-          translate-x-[-35vw] sm:translate-x-[-25vw] md:translate-x-[-45vw] 
-          translate-y-[7vh] sm:translate-y-[5vh] md:translate-y-[5vh]" />
+          class="min-w-[100px] sm:min-w-[250px] md:min-w-[320px] xxl:min-w-[380px] absolute z-2 
+          translate-x-[-55vw] sm:translate-x-[-25vw] md:translate-x-[-45vw] 
+          translate-y-[-8vh] sm:translate-y-[5vh] md:translate-y-[5vh]" />
         
         <!-- Wolke 3: Anpassung für verschiedene Bildschirmgrößen -->
         <img 
           src="@/assets/xx_Images/xx_Images/Cloud2.png" 
           alt="Wolke" 
-          class="min-w-[200px] sm:min-w-[250px] md:min-w-[320px] xxl:min-w-[380px] absolute z-1 
-          translate-x-[25vw] sm:translate-x-[30vw] md:translate-x-[30vw] 
-          translate-y-[-8vh] sm:translate-y-[-10vh] md:translate-y-[-8vh]" />
+          class="min-w-[50px] sm:min-w-[50px] md:min-w-[20px] lg:min-w-[250px] absolute z-1 
+          translate-x-[50vw] sm:translate-x-[30vw] md:translate-x-[30vw] 
+          translate-y-[-10vh] sm:translate-y-[-10vh] md:translate-y-[-8vh]" />
     </main>
 
     <section class="flex flex-col justify-center items-center gap-[0px] min-w-[700px] sm:min-w-[320px] sm:px-6">
@@ -62,11 +62,21 @@
       </button>
     </section>
 
-        <div class="flex justify-center mt-[-155px] ml-[850px]">
+       <!-- Laptop Charakter -->
+        <div class="hidden md:flex justify-center mt-[-155px] ml-[850px]">
           <img
             src="@/assets/xx_Images/xx_Images/MainCharacterSideRightAnimationv2.gif"
-            alt="Character Animation"
+            alt="Desktop Character Animation"
             class="w-[300px] md:w-[500px] lg:w-[200px]"
+          />
+        </div>
+
+        <!-- Handy Charakters -->
+        <div class="flex md:hidden justify-center mt-[-50px]">
+          <img
+            src="@/assets/xx_Images/xx_Images/MainCharacterFrontAnimationv2.gif"
+            alt="Mobile Character Animation"
+            class="w-[150px] sm:w-[300px]"
           />
         </div>
 
