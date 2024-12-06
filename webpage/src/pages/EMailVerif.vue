@@ -6,7 +6,8 @@
       </section>
     </header>
 
-    <main class="max-w-6xl mx-auto mt-[80px] px-6">
+    <!--<main class="max-w-6xl mx-auto mt-[80px] px-6">-->
+    <main class="mt-[80px]">
         <!-- Wolke 1: Anpassung für verschiedene Bildschirmgrößen 
          min-w = size klein -->
         <img 
@@ -14,7 +15,7 @@
           alt="Wolke" 
           class="min-w-[200px] sm:min-w-[250px] md:min-w-[320px] xxl:min-w-[380px] absolute z-2 
           translate-x-[-30vw] sm:translate-x-[-20vw] md:translate-x-[-42vw] 
-          translate-y-[-8vh] sm:translate-y-[-10vh] md:translate-y-[-12vh]" />
+          translate-y-[-17vh] sm:translate-y-[-10vh] md:translate-y-[-12vh]" />
         
         <!-- Sonne: Anpassung für verschiedene Bildschirmgrößen -->
         <img 
@@ -22,7 +23,7 @@
           alt="Sonne" 
           class="min-w-[120px] sm:min-w-[150px] md:min-w-[180px] absolute z-1 
           translate-x-[-30vw] sm:translate-x-[-25vw] md:translate-x-[-38vw] 
-          translate-y-[-3vh] sm:translate-y-[-5vh] md:translate-y-[-5vh]" />
+          translate-y-[-13vh] sm:translate-y-[-5vh] md:translate-y-[-5vh]" />
 
         <!-- Wolke 2: Anpassung für verschiedene Bildschirmgrößen -->
         <img 
