@@ -21,37 +21,72 @@
     <section class="flex flex-col justify-center items-center gap-[20px] min-w-[700px]">
             <h1 class="font-pixelsplitter text-[40px] mb-6">Bestätige deine <br> E-Mail-Adresse</h1>
 
-            <p class="font-size:18px font-vcr text-center" >Um deine Registrierung abzuschließen,
+            <p class="font-[20px] font-vcr text-center" >Um deine Registrierung abzuschließen,
                <br> überprüfe bitte dein E-Mail Postfach.<br> Dort findest du eine E-Mail mit einem <br> Bestätigungslink <br>
               Klicke auf den Link in dieser E-Mail, um <br> deine Registrierung zu bestätigen und <br> loszulegen!  </p>
-            
+
+            <p class="font-[10px] font-vcr text-center" >Keine E-Mail erhalten?</p>
+            <button class="max-w-[200px] p-4" @click="resend">
+                  <img
+                    src="@/assets/xx_Images/xx_Images/Buttons/resend.png"
+                    alt=""
+                    class="hover:opacity-80  z-10"
+                  />
+                </button>
+         
         </section>
 
-        <div class="flex justify-center mt-[-119px] ml-[850px]">
-          <img
-            src="@/assets/xx_Images/xx_Images/MainCharacterSideRightAnimationv2.gif"
-            alt="Character Animation"
-            class="w-[300px] md:w-[500px] lg:w-[200px]"
-          />
-        </div>
-
-
-         <!-- Gras-Bild unten -->
-        <div class="w-full absolute bottom-0 z-0 overflow-hidden">
-          <img
-            src="@/assets/xx_Images/xx_Images/gras_combined_scaled.png"
-            alt="Gras"
-            class="w-full"
-            style="transform: translateY(90%);"
-          />
-        </div>
+  
   </div>
 </template>
 
   <script>
-  
+    import { reactive, ref, computed} from 'vue';
+    import { Toaster, toast } from 'vue-sonner'
+
+  import { useStore } from "vuex";
+
   export default {
     name: 'EMailVerif',
+    setup() {
+      const data = reactive({
+        
+              email: '',
+            
+           });
+      const store = useStore();
+      
+      const resend = async() => {
+
+        try {
+        data.email = store.getters.getEmail;
+        toast(`Ein Link wurde an ${data.email} gesendet`);
+
+        const res = await fetch('http://localhost:8000/api/resend', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+     });
+     if(res.ok) {
+
+      toast('Email gesendet');
+
+     }
+
+
+     
+    } catch (error) {
+      console.error('Fehler beim Senden der Anfrage:', error);
+  }
+}
+
+      return {
+        resend,
+        data
+   
+    };
+    }
+
   };
   </script>
   

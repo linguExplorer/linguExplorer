@@ -4,15 +4,18 @@
   <main>
     <CookieBanner></CookieBanner>
     <router-view />
+    <Toaster position="top-right" />
   </main>
 </template>
 
 
 <script >
 import CookieBanner from './components/CookieBanner.vue';
+import { Toaster } from 'vue-sonner';
 export default {
   components: {
-    CookieBanner
+    CookieBanner,
+    Toaster
   },
 }
 

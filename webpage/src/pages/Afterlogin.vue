@@ -55,13 +55,58 @@
         </div>
       </div>
     </main>
+    <footer class="mt-auto">
+        <section class="mx-auto p-4 flex justify-end items-center">
+          <button class="max-w-[200px] p-4">
+            <router-link to="/" class="nav-link" href="#">
+              <img
+                src="@/assets/xx_Images/xx_Images/Buttons/button zrk.png"
+                alt="Zurück"
+                class="hover:opacity-80"
+              />
+            </router-link>
+          </button>
+        </section>
+      </footer>
 
   </div>
 </template>
 
 <script>
+import { onMounted , ref} from 'vue';
+import { useStore } from 'vuex';
+import { toast } from 'vue-sonner'
+
 export default {
   name: "Afterlogin",
+  setup() {
+    const message = ref("Du bist nicht mehr eingeloggt!");
+    const store = useStore();
+    onMounted(async () => {
+      try {
+        const res = await fetch("http://localhost:8000/api/user", {
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        });
+        if (!res.ok) {
+          await store.dispatch("logout");
+        } else {
+          await store.dispatch("login");
+        }
+      } catch (e) {
+        console.error("Fehler beim Senden der Anfrage:", e);
+      }
+    });
+
+    return {
+      message,
+    };
+  },
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters.isAuthenticated;
+    },
+  },
 };
 </script>
 

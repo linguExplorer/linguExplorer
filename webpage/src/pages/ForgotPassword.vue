@@ -1,4 +1,8 @@
 <template>
+    <div
+      v-if="isLoading"
+      class="absolute top-0 left-0 flex justify-center items-center h-screen w-full bg-white bg-opacity-50  z-50"
+    ></div>
         <header class="bg-[#99b305] text-black sticky top-0 z-10 w-full">
             <section class="w-full py-2 flex justify-between items-center px-4">
             <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" alt="Logo" class="w-1/8 max-w-[200px] ml-4" />
@@ -36,7 +40,7 @@
 </template>
 
 <script>
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import { useRouter} from 'vue-router';
 export default {
     name: 'ForgotPassword',
@@ -45,9 +49,11 @@ export default {
     const data = reactive({
       email:''
     });
+    const isLoading = ref(false);
     const router = useRouter()
 
     const  submit = async() => {
+      isLoading.value = true;
       await fetch('http://localhost:8000/password_reset/', {
                method: 'POST',
                headers: {'Content-Type': 'application/json'},
@@ -64,7 +70,8 @@ export default {
 
     return {
       data,
-      submit
+      submit,
+      isLoading
     }
 },
     data() {

@@ -10,13 +10,13 @@
       <div class="w-3/6  flex flex-row items-center justify-center
       bg-[#f6f5f1] border-[#99b305] border-4 px-5">
 
-      <img src="@/assets/xx_Images/cookie.png"  class="w-1/3" />
+      <img src="@/assets/xx_Images/cookie.png"  class="max-h-[250px]" />
 
       <div class="flex flex-col items-center justify-center gap-2 py-10 px-8 ">
 
-        <h2 class="font-pixelsplitter text-4xl">WIR NUTZEN COOKIES</h2>
+        <h2 class="font-pixelsplitter text-2xl">WIR NUTZEN COOKIES</h2>
       
-      <p class="text-[20px] font-vcr text-center  pt-5 pb-10">
+      <p class="text-[15px] font-vcr text-center  pt-5 pb-10">
         Wir verwenden Cookies, um unsere Website zu verbessern und Ihnen eine optimale Nutzung zu ermöglichen. 
         Einige Cookies sind notwendig, während andere uns helfen, die Leistung und Ihr Erlebnis zu verbessern. 
         Sie können Ihre Einstellungen anpassen oder alle Cookies akzeptieren.

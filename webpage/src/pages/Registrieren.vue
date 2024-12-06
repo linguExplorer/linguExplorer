@@ -22,7 +22,7 @@
         </section>
       </header>
   
-      <main class="max-w-6xl mx-auto mt-[80px]">
+      <main class="max-w-6xl mx-auto mt-[20px]">
         <img
           src="@/assets/xx_Images/xx_Images/cloud.png"
           alt="Wolke"
@@ -48,11 +48,11 @@
         <section
           class="flex flex-col justify-center items-center gap-[20px] min-w-[700px]"
         >
-          <h1 class="font-pixelsplitter text-[60px] mb-6">Registrieren</h1>
+          <h1 class="font-pixelsplitter text-[60px] mb-2">Registrieren</h1>
   
           <form
             @submit.prevent="handleRegister"
-            class="min-w-[600px] max-w-md flex flex-col items-center mt-[30px]"
+            class="min-w-[600px] max-w-md flex flex-col items-center mt-[0px]"
           >
             <div class="input-group flex flex-col mb-4 ml-4">
               <label for="email" class="">E-Mail</label>
@@ -138,10 +138,10 @@
                           <input type="checkbox"  v-model ="data.checked" id="check-with-link" class=" h-5 w-5 cursor-pointer"/>
                           <label class="cursor-pointer ml-2 font-vcr text-black text-sm" for="check-with-link">
                           <p class="  text-[15px]">Ich akzeptiere die linguExplorer
-                              <router-link to="/datenschutz"  href="#">
-                          <a href="#" class=" hover:text-[#99b305]  underline">
+                            <router-link to="/datenschutz" target="_blank" class="underline hover:text-green-500">                          
+                              
                               Datenschutzerklärung
-                          </a>
+                    
                           </router-link>
                           
                       </p>
@@ -180,6 +180,9 @@
   <script>
   import { reactive, ref, computed} from 'vue';
   import { useRouter } from 'vue-router';
+  import { Toaster, toast } from 'vue-sonner'
+  import { useStore } from "vuex";
+
   export default {
       name: 'Registrieren',
       setup() {
@@ -193,6 +196,7 @@
            const errorPass = ref('');
            const confirmPassword = ref('');
            const isLoading = ref(false);
+           const store = useStore();
 
   
            
@@ -228,6 +232,8 @@
               errorMessage.value = 'Ein unbekannter Fehler ist aufgetreten.';
             }
      } else {
+      toast('Registrierung erfolgreich');
+      await store.dispatch("updateEmail",data.email);
       await router.push({ 
       path: '/eMailVerif' 
       });

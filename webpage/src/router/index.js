@@ -12,7 +12,13 @@ import Afterlogin from "@/pages/Afterlogin.vue";
 import AccInfoSeite from "@/pages/AccInfoSeite.vue";
 import EMailVerif from "@/pages/EMailVerif.vue";
 import CookieBanner from "@/components/CookieBanner.vue";
+import ToastComponent from "@/components/ToastComponent.vue";
 const routes = [
+  {
+    path: "/toast",
+    name: "toast",
+    component: ToastComponent,
+  },
   {
     path: "/cookie",
     name: "cookie",
@@ -51,7 +57,7 @@ const routes = [
     component: ForgotPassword,
   },
   {
-    path: "/newPassword", /*/:ref",*/ // Route für New Password
+    path: "/newPassword/:ref", /*/:ref",*/ // Route für New Password
     name: "newPassword",
     component: NewPassword,
   },
