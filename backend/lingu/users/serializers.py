@@ -16,3 +16,13 @@ class UserSerializer(serializers.ModelSerializer):
         instance.is_active=False
         instance.save()
         return instance
+    
+class UsernameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['name']
+
+    def validate_user(self,value):
+        if User.objects.filter(name=value).exists():
+            raise serializers.ValidationError('Das ist dein akuteller Benutzername')
+        return value

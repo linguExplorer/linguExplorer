@@ -1,0 +1,15 @@
+name: Publish Docker Image
+
+on:
+  push
+
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name:  Build and push 
+        run:  |
+          docker login ghcr.io --username linguexplorer --password ${{ secrets.BENJI_PAT }}
+          docker build . -t ghcr.io/linguexplorer/linguexplorer/lingu-django
+          docker push ghcr.io/linguexplorer/linguexplorer/lingu-django

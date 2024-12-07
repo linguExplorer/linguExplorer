@@ -11,6 +11,7 @@ class User(AbstractUser):
     email = models.CharField(max_length=55, unique=True)
     password = models.CharField(max_length=255)
     username = None
+    username_changed_at = models.DateTimeField(null=True, blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -19,11 +20,11 @@ class User(AbstractUser):
 @receiver(reset_password_token_created)
 def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
 
-    email_plaintext_message = "Open the link to reset your password" + " " + "{}{}".format(instance.request.build_absolute_uri("http://localhost:8080/newPassword/"), reset_password_token.key)
+    email_plaintext_message = "Klicken Sie auf den Link um ihr Passwort zurückzusetzen" + " " + "{}{}".format(instance.request.build_absolute_uri("http://localhost:8080/newPassword/"), reset_password_token.key)
     
     send_mail(
         # title:
-        "Password Reset for {title}".format(title="Crediation portal account"),
+        "Password zurücksetzen  {title}".format(title="Crediation portal account"),
         # message:
         email_plaintext_message,
         # from:
