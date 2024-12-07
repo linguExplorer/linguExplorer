@@ -1,5 +1,19 @@
 
 services:
+
+
+
+  frontend:
+    build:
+      context: ./webpage
+    labels:
+      - "traefik.http.routers.frontend.rule=HOST(`linguexplorer.com`)"
+      - "traefik.http.services.frontend.loadbalancer.server.port=80"
+    ports:
+      - "8081:80"
+
+    restart: always
+    
   db:
     image: mysql:latest
     container_name: lingu-user-mysql
@@ -20,7 +34,7 @@ services:
 
   backend:
     build:
-      context: ./backend/lingu
+      context: .
     container_name: lingu-backend-container
     command: sh -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
     restart: always
