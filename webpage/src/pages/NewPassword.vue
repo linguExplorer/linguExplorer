@@ -1,42 +1,56 @@
 <template>
-     <header class="bg-[#99b305] text-black sticky top-0 z-10 w-full">
+    <div class="bg-[#f6f5f1] w-full justify-center min-h-screen text-black justify-center">
+
+        <!-- Header -->
+      <header class="bg-[#99b305] text-black sticky top-0 z-10 w-full">
         <section class="w-full py-2 flex justify-between items-center px-4">
-            <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" alt="Logo" class="w-1/8 max-w-[200px] ml-4" />
+          <img 
+            src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" 
+            alt="Logo" 
+            class="w-1/8 max-w-[150px] ml-4 sm:w-1/3 sm:max-w-[200px]" />
         </section>
-        </header>
+      </header>
         
-    <div class="font-vcr m-0 p-3 text-black w-full bg-[#f6f5f1] min-h-screen flex flex-col justify-center">
-        <!-- Überschrift -->
-        <section class="flex flex-col justify-center items-center gap-[-10px] min-w-[500px]">
-            <h1 class="font-pixelsplitter text-[40px] mb-9 mt-0">Neues Passwort erstellen</h1>
-        
-
-            <!-- Eingabeformular -->
-            <form @submit.prevent="submit" class="min-w-[600px] max-w-md flex flex-col  justify-center  items-center mt-[30px]">
-                <div class="input-group flex flex-col mb-4 ">
-                    <label for="password" id="passwordLabel">Passwort</label>
-                    <input type="password" id="password" v-model="data.password" required minlength="8" class="
-                    font-vcr bg-white border-[#9cb405] border-[2px] min-w-[500px] p-2"/>
-                </div>
-                
-                <div class="input-group flex flex-col mb-4 ">
-                    <label for="confirmPassword" id="confirmPasswordLabel">Passwort wiederholen</label>
-                    <input type="password" id="confirmPassword" v-model="confirmPassword" required minlength="8" class="
-                    font-vcr bg-white border-[#9cb405] border-[2px] min-w-[500px] p-2"/>
-                    <p v-if="errorMessage" class="text-red-500 mt-2">
-                    {{ errorMessage }}
-                </p>
-                </div>
-
-                <!-- Speicher-Button -->
-                <button type="submit" class="hover-button max-w-[150px] mt-6 w-full" :disabled="!isFormValid" >
-                    <img src="@/assets/xx_Images/xx_Images/Buttons/button speichern.png" alt="Speichern" />
-                </button>
+      <div class="flex flex-col justify-center items-center px-4 sm:px-6 text-center mt-24">
+            <!-- Überschrift -->
+            <section class="w-full max-w-[500px] flex flex-col justify-center items-center gap-6">
+                <h1 class="font-pixelsplitter text-[28px] mb-4 sm:text-[40px] whitespace-nowrap">
+                    Neues Passwort erstellen
+                </h1>
             
 
-            </form>
-            </section>
+                <!-- Eingabeformular -->
+                <form @submit.prevent="submit" class="w-full flex flex-col justify-center items-center gap-4">
 
+                    <div class="w-full">
+                        <label for="password" 
+                        id="passwordLabel" class="font-vcr block text-left mb-2">Passwort (mind. 8 Zeichen)
+                        </label>
+                        <input type="password" id="password" v-model="data.password" required minlength="8" 
+                        class="font-vcr bg-white border-[#9cb405] border-[2px] p-2 text-sm w-full"/>
+                    </div>
+                    
+                    <div class="w-full">
+                        <label for="confirmPassword" 
+                        id="confirmPasswordLabel" class="font-vcr block text-left mb-2">Passwort wiederholen
+                        </label>
+                        <input type="password" id="confirmPassword" v-model="confirmPassword" required minlength="8" 
+                        class="font-vcr bg-white border-[#9cb405] border-[2px] p-2 text-sm w-full"/>
+                        <p v-if="errorMessage" class="text-red-500 mt-2">
+                        {{ errorMessage }}
+                    </p>
+                    </div>
+
+                    <!-- Speicher-Button -->
+                    <button type="submit" class="hover-button w-full flex justify-center items-center mt-5" :disabled="!isFormValid" >
+                        <img src="@/assets/xx_Images/xx_Images/Buttons/button speichern.png" alt="Speichern"
+                        class="max-w-[100px] sm:max-w-[150px] w-full" />
+                    </button>
+
+                </form>
+                </section>
+
+        </div>
     </div>
 </template>
 
