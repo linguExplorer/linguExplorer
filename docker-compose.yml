@@ -16,7 +16,7 @@ services:
     build:
       context: ./webpage
     labels:
-      - "traefik.http.routers.frontend.rule=Host(`localhost`)"
+      - "traefik.http.routers.frontend.rule=Host(`linguexplorer.com`)"
 
 
 
