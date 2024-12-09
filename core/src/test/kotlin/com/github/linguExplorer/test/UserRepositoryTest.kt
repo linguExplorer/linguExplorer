@@ -20,7 +20,7 @@ class UserRepositoryTest {
 
     @Test
     fun `test create user`() {
-        val user = userRepository.addUser(id, "Max Mustermann")
+        userRepository.addUser(id, "Max Mustermann")
 
         val retrievedUser = userRepository.getUser(id)
 
@@ -31,7 +31,7 @@ class UserRepositoryTest {
 
     @Test
     fun `test remove user`() {
-        val user = userRepository.removeUser(id)
+        userRepository.removeUser(id)
 
         val retrievedUser = userRepository.getUser(id)
 

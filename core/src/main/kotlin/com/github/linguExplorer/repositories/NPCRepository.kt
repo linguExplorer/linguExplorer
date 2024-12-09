@@ -14,19 +14,18 @@ class NPCRepository {
         transaction {
             NPC
                 .select { NPC.id eq id }
-                .map { it.toUser() }
+                .map { it.toNPC() }
                 .singleOrNull()
         }
 
-    fun addNPC(id: Int, name: String, role: String, resource: String): NPCEntity? =
+    fun addNPC(name: String, role: String, resource: String): NPCEntity? =
         transaction {
             val insertStatement = NPC.insert {
-                it[NPC.id] = id
                 it[NPC.name] = name
                 it[NPC.role] = role
                 it[NPC.resource] = resource
             }
-            insertStatement.resultedValues?.first()?.toUser()
+            insertStatement.resultedValues?.first()?.toNPC()
         }
 
     fun removeNPC(id: Int): Boolean =
@@ -37,7 +36,7 @@ class NPCRepository {
 
 
     companion object {
-        private fun ResultRow.toUser() = NPCEntity(
+        private fun ResultRow.toNPC() = NPCEntity(
             this[NPC.id],
             this[NPC.name],
             this[NPC.role],

@@ -15,6 +15,6 @@ object NPC : Table() {
 data class NPCEntity (
     val id: Int,
     val name: String,
-    val role: String?,
-    val resource: String?
+    val role: String? = null,
+    val resource: String? = null
 )

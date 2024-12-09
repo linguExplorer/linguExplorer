@@ -17,6 +17,6 @@ object User : Table() {
  */
 data class UserEntity (
     val id: Int,
-    val name: String
+    val name: String = "Blobi"
 )
 

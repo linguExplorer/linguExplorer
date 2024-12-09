@@ -1,8 +1,11 @@
 package com.github.linguExplorer.test
 
 import com.github.linguExplorer.database.DatabaseManager
+import com.github.linguExplorer.models.NPC
 import com.github.linguExplorer.repositories.NPCRepository
-import com.github.linguExplorer.repositories.UserRepository
+import org.jetbrains.exposed.sql.deleteAll
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
@@ -16,17 +19,29 @@ class NPCRepositoryTest {
     fun setUp() {
         DatabaseManager();
         npcRepository = NPCRepository()
+        transaction {
+            // Setze Auto-Increment auf 1
+            exec("ALTER TABLE npc AUTO_INCREMENT = 1")
+        }
     }
+
+    @AfterEach
+    fun teardown() {
+        transaction {
+            NPC.deleteAll();
+        }
+    }
+
 
 
     @Test
     fun `test create npc`() {
-        val npc = npcRepository.addNPC(id, "Sophie", "arbeitslos", "../assets/blabla")
+        npcRepository.addNPC("Sophie", "arbeitslos", "../assets/blabla")
 
         val retrievedNPC = npcRepository.getNPC(id)
 
         assertNotNull(retrievedNPC)
-        assertEquals(1, retrievedNPC?.id)
+        assertEquals(id, retrievedNPC?.id)
         assertEquals("Sophie", retrievedNPC?.name)
         assertEquals("arbeitslos", retrievedNPC?.role)
         assertEquals("../assets/blabla", retrievedNPC?.resource)
@@ -34,7 +49,7 @@ class NPCRepositoryTest {
 
     @Test
     fun `test remove user`() {
-        val user = npcRepository.removeNPC(id)
+        npcRepository.removeNPC(id)
 
         val retrievedNPC = npcRepository.getNPC(id)
 

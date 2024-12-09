@@ -18,7 +18,7 @@ class UserRepository {
                 .singleOrNull()
         }
 
-    fun addUser(id: Int, name: String): UserEntity? =
+    fun addUser(id: Int, name: String = "Blobi"): UserEntity? =
         transaction {
             val insertStatement = User.insert {
                 it[User.id] = id
