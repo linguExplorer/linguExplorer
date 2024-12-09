@@ -20,15 +20,21 @@ dependencies {
   api "io.github.quillraven.fleks:Fleks:$fleksVersion"
   api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
-  implementation("org.jetbrains.exposed:exposed-core:0.43.0")
-  implementation("org.jetbrains.exposed:exposed-jdbc:0.43.0")
+
   implementation("com.zaxxer:HikariCP:5.0.1")
   implementation("mysql:mysql-connector-java:8.0.29")
+  implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+  implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+  implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
+  implementation "mysql:mysql-connector-java:8.0.29"
 
 
   // Weitere nützliche Abhängigkeiten (optional)
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
+
+  implementation "org.slf4j:slf4j-api:2.0.0"  // SLF4J API
+  implementation "ch.qos.logback:logback-classic:1.4.6"
 
 
   testImplementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"

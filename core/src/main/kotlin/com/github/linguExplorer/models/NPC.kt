@@ -2,7 +2,7 @@ package com.github.linguExplorer.models
 
 import org.jetbrains.exposed.sql.Table
 
-object NPCs : Table() {
+object NPC : Table() {
     val id = integer("pk_npc_id").autoIncrement()
     val name = varchar("name", 20)
     val role = varchar("role", 20).nullable()
@@ -12,7 +12,7 @@ object NPCs : Table() {
 }
 
 
-data class NPC(
+data class NPCEntity (
     val id: Int,
     val name: String,
     val role: String?,
