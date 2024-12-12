@@ -1,7 +1,7 @@
 <template>
     <div
       v-if="isLoading"
-      class="absolute top-0 left-0 flex justify-center items-center h-screen w-full bg-white bg-opacity-50  z-50"
+      class="absolute top-0 left-0 flex justify-center items-center h-screen w-full bg-white bg-opacity-50 z-50"
     ></div>
   
     <div
@@ -12,12 +12,13 @@
           <img
             src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png"
             alt="Logo"
-            class="w-1/6"
+            class="w-1/6 max-w-[180px] sm:w-1/3 sm:max-w-[200px]"
           />
-          <div class="flex justify-center items-center space-x-2">
-            <p class="font-size:18px font-vcr">Hast du noch keinen Account?</p>
-  
-            <button class="hover-button max-w-[150px] mr-[10px]">
+          <div class="flex justify-center items-center class=gap-1 sm:gap-4">
+            <!-- Text -->
+            <p class="text-[12px] sm:text-[18px] font-vcr mr-1 sm:mr-4">Hast du noch keinen Account?</p>
+            <!-- Button -->
+            <button class="hover-button max-w-[100px] sm:max-w-[150px]">
               <router-link to="/registrieren" class="nav-link" href="#">
                 <img
                   src="@/assets/xx_Images/xx_Images/Buttons/button registrieren green.png"
@@ -27,49 +28,52 @@
               </router-link>
             </button>
           </div>
+
+
         </section>
       </header>
   
-      <main class="max-w-6xl mx-auto mt-[80px] px-6">
+      <main class="max-w-6xl mx-auto mt-[40px] sm:mt-[80px] px-4 sm:px-6">
         <img
           src="@/assets/xx_Images/xx_Images/cloud.png"
           alt="Wolke"
-          class="min-w-[320px] xxl:min-w-[380px] absolute z-2 translate-x-[-42vw] translate-y-[-12vh] xxl:translate-x-[-42vw] xxl:translate-y-[-11vh]"
+          class="min-w-[120px] sm:min-w-[320px] absolute z-2 translate-x-[-42vw] translate-y-[-12vh] xxl:translate-x-[-42vw] xxl:translate-y-[-11vh]"
         />
         <img
           src="@/assets/xx_Images/xx_Images/sun.png"
           alt="Sonne"
-          class="min-w-[150px] xxl:min-w-[180px] absolute z-1 translate-x-[-38vw] translate-y-[-3vh] xxl:translate-x-[-38vw] xxl:translate-y-[-3vh]"
+          class="min-w-[100px] sm:min-w-[150px] absolute z-1 translate-x-[-38vw] translate-y-[-3vh] xxl:translate-x-[-38vw] xxl:translate-y-[-3vh]"
         />
         <img
-          src="@/assets/xx_Images/xx_Images/Cloud2.png"
+          src="@/assets/xx_Images/xx_Images/cloud.png"
           alt="Wolke"
-          class="min-w-[320px] xxl:min-w-[380px] absolute z-2 translate-x-[-45vw] translate-y-[7vh] xxl:translate-x-[-45vw] xxl:translate-y-[5vh]"
+          class="min-w-[120px] sm:min-w-[320px] absolute z-2 translate-x-[-45vw] translate-y-[7vh] xxl:translate-x-[-45vw] xxl:translate-y-[5vh]"
         />
         <img
-          src="@/assets/xx_Images/xx_Images/Cloud2.png"
+          src="@/assets/xx_Images/xx_Images/cloud.png"
           alt="Wolke"
-          class="min-w-[320px] xxl:min-w-[380px] absolute z-1 translate-x-[30vw] translate-y-[-8vh] xxl:translate-x-[30vw] xxl:translate-y-[-8vh]"
+          class="min-w-[120px] sm:min-w-[320px] absolute z-1 translate-x-[30vw] translate-y-[-8vh] xxl:translate-x-[30vw] xxl:translate-y-[-8vh]"
         />
   
-        <!--<div class="anmelde-container">-->
+        <!--<div class="anmelde-container">-->  
         <section
-          class="hover-button flex flex-col justify-center items-center gap-[20px] min-w-[700px] "
+          class="hover-button flex flex-col justify-center items-center gap-4 sm:gap-[20px] px-4 sm:px-0"
         >
-          <h1 class="font-pixelsplitter text-[60px] mb-6">Anmelden</h1>
+          <h1 class="font-pixelsplitter text-[30px] sm:text-[60px] mb-6">Anmelden</h1>
   
           <form
             @submit.prevent="submit"
-            class="min-w-[600px] max-w-md flex flex-col items-center mt-[30px]"
+            class="w-full flex flex-col justify-center items-center gap-4"
           >
-            <div class="input-group flex flex-col mb-4">
-              <label for="email" class="">E-Mail</label>
+            <div class="w-full">
+              <label for="email" 
+                class="text-[14px] sm:text-[16px]">E-Mail</label>
                 <input
                   type="email"
                   id="email"
                   v-model="data.email"
                   required
-                  class="font-vcr bg-white border-[#9cb405] border-[2px] min-w-[500px] p-2"
+                  class="font-vcr bg-white border-[#9cb405] border-[2px] text-sm w-full p-2"
                 />
                 <p v-if="emailError" class="text-red-500 mt-2">
                   {{ emailError }}
@@ -77,7 +81,7 @@
             </div>
 
             <div class="input-group flex flex-col mb-4">
-              <label for="password" class="">Passwort</label>
+              <label for="password" class="text-[14px] sm:text-[16px]">Passwort</label>
 
               <div class="input-group flex items-center mb-4">
                 <input
@@ -110,7 +114,7 @@
             <!-- Fehlermeldung -->
             <p v-if="showError" class="mt-2 ">Ungültige E-Mail oder Passwort</p>
   
-            <button type="submit" class="max-w-[150px] mt-6 w-full">
+            <button type="submit" class="w-full max-w-[120px] sm:max-w-[150px] mt-6">
               <img
                 src="@/assets/xx_Images/xx_Images/Buttons/button anmelden blue.png"
                 alt="Anmelden"
@@ -118,15 +122,16 @@
               />
             </button>
             <router-link to="/forgotPassword" class="nav-link" href="#">
-              <p class="text-center mt-4 font-vcr">Passwort vergessen?</p>
+              <p class="text-center mt-4 font-vcr text-[12px] sm:text-[14px]">Passwort vergessen?</p>
             </router-link>
           </form>
         </section>
       </main>
   
+      <!-- Footer -->
       <footer class="mt-auto">
         <section class="mx-auto p-4 flex justify-end items-center">
-          <button class="hover-button max-w-[200px] p-4">
+          <button class="hover-button max-w-[170px] sm:max-w-[200px] p-4">
             <router-link to="/" class="nav-link" href="#">
               <img
                 src="@/assets/xx_Images/xx_Images/Buttons/button zrk.png"
