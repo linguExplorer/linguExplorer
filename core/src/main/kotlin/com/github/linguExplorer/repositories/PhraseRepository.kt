@@ -1,13 +1,13 @@
 package com.github.linguExplorer.repositories
 
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insert
 import com.github.linguExplorer.models.Phrase
 import com.github.linguExplorer.models.PhraseEntity
+import com.github.linguExplorer.models.PhraseProgress
+import com.github.linguExplorer.models.PhraseProgressHistory
+import com.github.linguExplorer.models.User_Progress.isMastered
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.select
 
 class PhraseRepository {
     fun getPhrase(id: Int): PhraseEntity? =
@@ -35,16 +35,58 @@ class PhraseRepository {
                 .map { it.toPhrase() }
         }
 
-    fun getLimitedPhrasesByTopicName(topic: String, number: Int): List<PhraseEntity> =
+    /*fun getLimitedPhrasesByTopicName(topic: String, number: Int): List<PhraseEntity> =
     transaction {
         val topicId = TopicRepository().getTopicIdByName(topic)
         if (topicId == null) return@transaction emptyList<PhraseEntity>()
 
-        Phrase
+        val allPhrases = Phrase
             .select { Phrase.topicId eq topicId }
-            .limit(number)
             .map { it.toPhrase() }
-    }
+
+        allPhrases.shuffled().take(number)
+    }*/
+
+    fun getPhrasesByTopicNameForUser(topic: String, userId: Int): List<PhraseEntity> =
+        transaction {
+            val topicId = TopicRepository().getTopicIdByName(topic)
+            val phaseProgressRepository = PhraseProgressRepository()
+            val phaseProgressHistoryRepository = PhraseProgressHistoryRepository()
+
+            if (topicId == null) return@transaction emptyList<PhraseEntity>()
+
+            val allPhrases = getPhrasesByTopicId(topicId)
+
+
+            val unMasteredPhrases = allPhrases.filter { phrase ->
+                val progress = phaseProgressRepository.getPhraseProgress(phrase.id, userId)
+                progress?.isMastered != true
+            }.sortedBy {
+                Math.random()
+            }.sortedBy { phrase ->
+                val correctIndex = phaseProgressHistoryRepository.calculateCorrectIndex(userId, phrase.id)
+                correctIndex
+            }
+
+            val masteredPhrases = allPhrases.filter { phrase ->
+                val progress = phaseProgressRepository.getPhraseProgress(phrase.id, userId)
+                progress?.isMastered == true
+            }.sortedBy { phrase ->
+                val correctIndex = phaseProgressHistoryRepository.calculateCorrectIndex(userId, phrase.id)
+                correctIndex
+            }.sortedBy {
+                Math.random()
+            }.sortedBy { phrase ->
+                val correctIndex = phaseProgressHistoryRepository.calculateCorrectIndex(userId, phrase.id)
+                correctIndex
+            }
+
+            val result = (unMasteredPhrases + masteredPhrases)
+
+            return@transaction result
+        }
+
+
 
 
 
@@ -65,6 +107,7 @@ class PhraseRepository {
             val deletedRows = Phrase.deleteWhere { Phrase.id eq id }
             deletedRows > 0
         }
+
 
 
     companion object {

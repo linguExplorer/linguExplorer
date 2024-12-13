@@ -1,6 +1,7 @@
 package com.github.linguExplorer.test
 
 import com.github.linguExplorer.database.DatabaseManager
+import com.github.linguExplorer.database.InsertFunctions
 import com.github.linguExplorer.models.Topic
 import com.github.linguExplorer.repositories.TopicRepository
 import org.jetbrains.exposed.sql.deleteAll
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Assertions.*
 class TopicRepositoryTest {
 
     private lateinit var topicRepository: TopicRepository
+    private lateinit var insertFunction: InsertFunctions
     private val id = 1;
 
     @BeforeEach
@@ -20,7 +22,9 @@ class TopicRepositoryTest {
         DatabaseManager();
         topicRepository = TopicRepository()
         transaction {
-            // Setze Auto-Increment auf 1
+            transaction {
+                Topic.deleteAll();
+            }
             exec("ALTER TABLE topic AUTO_INCREMENT = 1")
         }
     }
@@ -28,12 +32,11 @@ class TopicRepositoryTest {
     @AfterEach
     fun teardown() {
         println("ENDE!")
+        insertFunction = InsertFunctions()
         transaction {
             Topic.deleteAll();
-        }
-        transaction {
-            // Setze Auto-Increment auf 1
             exec("ALTER TABLE topic AUTO_INCREMENT = 1")
+            insertFunction.insertSampleTopics()
         }
     }
 

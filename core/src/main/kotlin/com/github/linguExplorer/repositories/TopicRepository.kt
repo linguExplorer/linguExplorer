@@ -10,12 +10,16 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 
 class TopicRepository {
-    fun getTopicById(id: Int): TopicEntity? =
+    fun getTopicById(id: Int?): TopicEntity? =
         transaction {
-            Topic
-                .select { Topic.id eq id }
-                .map { it.toTopic() }
-                .singleOrNull()
+            if (id != null) {
+                Topic
+                    .select { Topic.id eq id }
+                    .map { it.toTopic() }
+                    .singleOrNull()
+            } else {
+                return@transaction null
+            }
         }
 
     fun getTopicIdByName(topicName: String): Int? =
