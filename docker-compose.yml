@@ -65,7 +65,7 @@ services:
       - "traefik.http.routers.backend.tls.certresolver=myresolver"
 
     container_name: lingu-backend-container
-    command: sh -c "python manage.py migrate --noinput && gunicorn --bind 0.0.0.0:8000 config.wsgi"
+    command: sh -c "python manage.py migrate --noinput && gunicorn --bind 0.0.0.0:8000 lingu.wsgi"
     restart: always
     ports:
       - "8000:8000"
