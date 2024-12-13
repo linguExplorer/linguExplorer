@@ -1,10 +1,9 @@
 <template>
     <div
       v-if="isLoading"
-      class="absolute top-0 left-0 flex justify-center items-center h-screen w-full bg-white bg-opacity-50 z-50"
-    ></div>
+      class="absolute top-0 left-0 flex justify-center items-center h-screen w-full bg-white bg-opacity-50 z-50"></div>
   
-    <div class="font-vcr m-0 text-black h-screen w-full bg-[#f6f5f1] flex flex-col justify-center">
+    <div class="font-vcr m-0 text-black w-full h-screen bg-[#f6f5f1] flex flex-col justify-center">
 
       <header class="bg-[#99b305] text-black sticky top-0 z-10 w-full px-4">
         <section class="w-full py-2 flex justify-between items-center">
@@ -39,32 +38,30 @@
         <img
           src="@/assets/xx_Images/xx_Images/sun.png"
           alt="Sonne"
-          class="w-[80px] sm:min-w-[150px] absolute z-1 translate-x-[-38vw] translate-y-[-3vh] sm:translate-x-[-38vw] sm:translate-y-[-3vh]"
+          class="w-[70px] sm:min-w-[150px] absolute z-1 translate-x-[-38vw] translate-y-[-4vh] sm:translate-x-[-38vw] sm:translate-y-[-3vh]"
         />
         <img
-          src="@/assets/xx_Images/xx_Images/cloud.png"
+          src="@/assets/xx_Images/xx_Images/Cloud2.png"
           alt="Wolke"
-          class="min-w-[120px] sm:min-w-[320px] absolute z-2 translate-x-[-45vw] translate-y-[7vh] sm:translate-x-[-45vw] sm:translate-y-[5vh]"
+          class="w-[160px] sm:min-w-[320px] absolute z-2 translate-x-[-45vw] translate-y-[-2vh] sm:translate-x-[-45vw] sm:translate-y-[7vh]"
         />
         <img
-          src="@/assets/xx_Images/xx_Images/cloud.png"
+          src="@/assets/xx_Images/xx_Images/Cloud2.png"
           alt="Wolke"
-          class="min-w-[120px] sm:min-w-[320px] absolute z-1 translate-x-[30vw] translate-y-[-8vh] sm:translate-x-[30vw] sm:translate-y-[-8vh]"
+          class="w-[140px] sm:min-w-[320px] absolute z-1 translate-x-[40vw] translate-y-[-3vh] sm:translate-x-[30vw] sm:translate-y-[-8vh]"
         />
   
-        <!--<div class="anmelde-container">-->  
-        <section class="hover-button bg-[#f6f5f1]flex flex-col justify-center items-center gap-4 sm:gap-[0px] px-1 sm:px-0">
+        <section class="hover-button bg-[#f6f5f1] flex flex-col justify-center items-center gap-4 sm:gap-[0px] px-1 sm:px-0">
           
           <h1 class="font-pixelsplitter text-[30px] sm:text-[60px] mb-5 mt-10 sm:mb-10 sm:mt-5">Anmelden</h1>
   
           <form
             @submit.prevent="submit"
-            class="w-full flex flex-col justify-center items-center gap-4"
-          >
+            class="w-[240px] sm:w-[500px] flex flex-col justify-center items-center gap-4">
           
             <div class="w-full">
               <label for="email" 
-                class="font-vcr block text-left mb-2 text-[14px] sm:text-[18px]">E-Mail</label>
+                class="font-vcr block text-left mb-2 text-[14px] sm:text-[16px]">E-Mail</label>
                 <input
                   type="email"
                   id="email"
@@ -79,7 +76,7 @@
 
             <div class="input-group flex flex-col mb-0 sm:mb-4 w-full">
               <label for="password" 
-              class="font-vcr block text-left mb-2 text-[14px] sm:text-[18px]">Passwort</label>
+              class="font-vcr block text-left mb-2 text-[14px] sm:text-[16px]">Passwort</label>
               <div class="input-group flex items-center mb-4">
                 <input
                   :type="inputType"
