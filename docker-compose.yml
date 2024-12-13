@@ -17,7 +17,6 @@ services:
       - "80:80"
       - "443:443"
       - "8080:8080"
-      - "8000:8000"
       
     volumes:
       - letsencrypt:/letsencrypt
@@ -76,11 +75,7 @@ services:
       - .env
     depends_on:
       - db
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
-      retries: 3
-      interval: 10s
-      timeout: 10s
+   
 
 
 volumes:
