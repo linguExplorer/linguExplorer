@@ -6,7 +6,7 @@
     <div
       class="font-vcr m-0 p-3 text-black w-full bg-[#f6f5f1] min-h-screen flex flex-col justify-center"
     >
-      <header class="top-0">
+      <header class="bg-[#99b305] top-0">
         <section class="mx-auto p-4 flex justify-end items-center gap-8">
           <p class="font-size:18px font-vcr">Hast du schon einen Account?</p>
   

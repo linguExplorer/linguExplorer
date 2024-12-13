@@ -13,10 +13,10 @@
       </header>
   
       <!-- Main Content -->
-      <div class="flex flex-col justify-center items-center px-4 sm:px-6 text-center mt-24">
+      <div class="flex flex-col justify-center items-center px-10 sm:px-6 text-center mt-24">
         <!-- Überschrift -->
         <section class="w-full max-w-[500px] flex flex-col justify-center items-center gap-6">
-            <h1 class="font-pixelsplitter text-[28px] mb-4 sm:text-[40px] whitespace-nowrap">
+            <h1 class="font-pixelsplitter text-[25px] mb-4 sm:text-[40px] whitespace-nowrap">
                 Passwort vergessen?
             </h1>
           <p class="text-[14px] font-vcr sm:text-[18px]">
@@ -26,7 +26,7 @@
           <!-- Eingabeformular -->
           <form @submit.prevent="submit" class="w-full flex flex-col justify-center items-center gap-4">
             <div class="w-full">
-              <label for="email" class="font-vcr block text-left mb-2">E-Mail:</label>
+              <label for="email" class="font-vcr block text-left mb-2 text-[14px] sm:text-[18px]">E-Mail:</label>
               <input 
                 type="email" 
                 id="email" 
