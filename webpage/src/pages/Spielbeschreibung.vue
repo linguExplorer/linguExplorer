@@ -194,7 +194,7 @@ export default {
     const store = useStore();
     onMounted(async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/user", {
+        const res = await fetch("https://da.linguexplorer.com/api/user", {
           headers: { "Content-Type": "application/json" },
           credentials: "include",
         });

@@ -138,7 +138,7 @@ ToastComponent
 
     onMounted(async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/user', {
+        const response = await fetch('https://da.linguexplorer.com/api/user', {
           headers: {'Content-Type': 'application/json'},
           credentials: 'include'
         });
@@ -170,7 +170,7 @@ ToastComponent
    
 
     try {
-          const res = await fetch("http://localhost:8000/api/update-username", {
+          const res = await fetch("https://da.linguexplorer.com/api/update-username", {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -200,7 +200,7 @@ ToastComponent
         isLoading.value = true;
 
         try {
-       const res = await fetch('http://localhost:8000/password_reset/', {
+       const res = await fetch('https://da.linguexplorer.com/password_reset/', {
                method: 'POST',
                headers: {'Content-Type': 'application/json'},
                credentials: 'include',
@@ -223,7 +223,7 @@ if (res.ok) {
  
     const  logout= async() => {
       try {
-      const res = await fetch('http://localhost:8000/api/logout', {
+      const res = await fetch('https://da.linguexplorer.com/api/logout', {
                method: 'POST',
                headers: {'Content-Type': 'application/json'},
                credentials: 'include',

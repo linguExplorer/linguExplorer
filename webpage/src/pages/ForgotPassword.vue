@@ -54,7 +54,7 @@ export default {
 
     const  submit = async() => {
       isLoading.value = true;
-      await fetch('http://localhost:8000/password_reset/', {
+      await fetch('https://da.linguexplorer.com/password_reset/', {
                method: 'POST',
                headers: {'Content-Type': 'application/json'},
                credentials: 'include',

@@ -109,7 +109,7 @@ export default {
 
 
     
-     const res = await fetch('http://localhost:8000/password_reset/confirm/', {
+     const res = await fetch('https://da.linguexplorer.com/password_reset/confirm/', {
                method: 'POST',
                headers: {'Content-Type': 'application/json'},
                credentials: 'include',

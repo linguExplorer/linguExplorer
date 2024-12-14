@@ -20,7 +20,7 @@ class User(AbstractUser):
 @receiver(reset_password_token_created)
 def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
 
-    email_plaintext_message = "Klicken Sie auf den Link um ihr Passwort zurückzusetzen" + " " + "{}{}".format(instance.request.build_absolute_uri("http://localhost:8080/newPassword/"), reset_password_token.key)
+    email_plaintext_message = "Klicken Sie auf den Link um ihr Passwort zurückzusetzen" + " " + "{}{}".format(instance.request.build_absolute_uri("https://da.linguexplorer.com/newPassword/"), reset_password_token.key)
     
     send_mail(
         # title:

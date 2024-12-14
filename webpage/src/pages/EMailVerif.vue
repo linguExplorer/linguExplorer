@@ -62,7 +62,7 @@
         data.email = store.getters.getEmail;
         toast(`Ein Link wurde an ${data.email} gesendet`);
 
-        const res = await fetch('http://localhost:8000/api/resend', {
+        const res = await fetch('https://da.linguexplorer.com/api/resend', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(data)
