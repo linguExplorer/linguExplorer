@@ -35,7 +35,7 @@ def activate(request, uidb64, token):
         raise AuthenticationFailed('Link ist ungültig')
 
 
-    return redirect('https://da.linguexplorer.com/anmelden')
+    return redirect('https://linguexplorer.com/anmelden')
 
 
 class ResendEmail(APIView):
