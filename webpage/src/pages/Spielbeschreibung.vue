@@ -1,20 +1,24 @@
 <template>
   <div class="min-h-screen bg-[#f6f5f1]">
+    <!-- Nav Bar -->
     <header class="bg-[#99b305] text-black sticky top-0 z-10">
-      <section class="w-full py-2 flex justify-between items-center px-4">
+      <section
+        class="max-w-full mx-auto px-4 sm:px-6 py-2 flex justify-between items-center"
+      >
+        <!-- Logo -->
         <img
           src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png"
           alt="Logo"
-          class="w-1/8 max-w-[200px] ml-4"
+          class="w-[50%] max-w-[200px] ml-4 sm:w-1/6"
         />
-        <div class="flex justify-center items-center space-x-4">
+        <div class="flex justify-center items-center space-x-2 sm:space-x-4">
           <template v-if="isLoggedIn">
-            <button class="nav-button-spielbeschreibung">
-              <router-link to="/afterlogin" class="nav-link" href="#">
+            <button class="hover-button">
+              <router-link to="/anmelden" class="nav-link" href="#">
                 <img
                   src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png"
                   alt="Jetzt spielen"
-                  class="max-h-[55px] px-2 hover:opacity-80"
+                  class="max-h-[55px] px-2 hover:opacity-80 sm:max-h-[55px]"
                 />
               </router-link>
             </button>
@@ -23,9 +27,9 @@
             <button class="nav-button-spielbeschreibung">
               <router-link to="/anmelden" class="nav-link" href="#">
                 <img
-                  src="@/assets/xx_Images/xx_Images/Buttons/button anmelden green.png"
+                  src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png"
                   alt="Jetzt spielen"
-                  class="max-h-[55px] px-2 hover:opacity-80"
+                  class="max-h-[55px] px-2 hover:opacity-80 sm:max-h-[55px]"
                 />
               </router-link>
             </button>
@@ -41,38 +45,42 @@
         class="flex flex-col w-full justify-center items-center bg-cloud-background bg-cover"
       >
         <h1
-          class="font-pixelsplitter text-[68px] m-0 leading-none xxl:text-[80px] mt-20"
+          class="font-pixelsplitter text-[24px] sm:text-[48px] lg:text-[68px] mt-8 sm:mt-16"
         >
           Willkommen
         </h1>
-        <h1 class="font-pixelsplitter text-[68px] m-0 xxl:text-[80px]">zu</h1>
+        <h1
+          class="font-pixelsplitter text-[24px] sm:text-[48px] lg:text-[68px]"
+        >
+          zu
+        </h1>
 
         <img
           src="@/assets/xx_Images/xx_Images/wordmark/wordmark_scaled.png"
           alt="Linguexplorer"
-          class="w-5/12 mb-10"
+          class="w-[30%] sm:w-[50%] lg:w-5/12 mb-4 sm:mb-10"
         />
 
-
+        <!-- Button direkt unter dem Linguexplorer-Logo -->
+        <!-- Character Image - neben dem "Jetzt spielen" button -->
         <template v-if="isLoggedIn">
-          <button class="play-button">
+          <button class="hover-button">
             <router-link to="/afterlogin" class="nav-link" href="#">
               <img
                 src="@/assets/xx_Images/xx_Images/Buttons/button play now.png"
                 alt="Jetzt spielen"
-                class="max-h-[110px] min-h-[80px] hover:opacity-80"
+                class="max-h-[60px] sm:max-h-[80px] lg:max-h-[110px] min-h-[50px] hover:opacity-80"
               />
             </router-link>
           </button>
         </template>
-
         <template v-else>
-          <button class="play-button">
+          <button class="hover-button">
             <router-link to="/anmelden" class="nav-link" href="#">
               <img
                 src="@/assets/xx_Images/xx_Images/Buttons/button play now.png"
                 alt="Jetzt spielen"
-                class="max-h-[110px] min-h-[80px] hover:opacity-80"
+                class="max-h-[60px] sm:max-h-[80px] lg:max-h-[110px] min-h-[50px] hover:opacity-80"
               />
             </router-link>
           </button>
@@ -81,7 +89,7 @@
         <img
           src="@/assets/xx_Images/xx_Images/Charactee New.png"
           alt="Character"
-          class="w-[300px] lg:w-[380px] absolute z-1 translate-x-[-35vw] translate-y-[36.5vh] xxl:translate-x-[-35vw] xxl:translate-y-[28.5vh]"
+          class="w-[140px] lg:w-[380px] absolute z-1 translate-x-[-35vw] translate-y-[38vh] xxl:translate-x-[-35vw] xxl:translate-y-[28.5vh]"
         />
       </section>
 
@@ -93,15 +101,17 @@
             class="w-4/6 sm:w-5/6 flex flex-col items-center justify-center bg-[#f6f5f1] mt-32"
           >
             <div class="flex flex-row items-center justify-center gap-2 m-8">
-              <h2 class="font-pixelsplitter text-3xl">Was ist</h2>
+              <h2 class="font-pixelsplitter text-xl sm:text-3xl">Was ist</h2>
               <img
                 src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png"
                 alt="Logo"
                 class="w-1/3"
               />
-              <h2 class="font-pixelsplitter text-3xl">?</h2>
+              <h2 class="font-pixelsplitter text-xl sm:text-3xl">?</h2>
             </div>
-            <p class="text-[20px] font-vcr text-left px-40 pb-20">
+            <p
+              class="font-vcr text-left px-20 pt-8 text-[14px] sm:text-[20px] sm:px-40 pt-4 pb-8"
+            >
               linguExplorer ist eine innovative Lernanwendung, die Schülerinnen
               und Schüler auf eine unterhaltsame Reise durch die englische
               Sprache mitnimmt. Diese Reise ist speziell darauf ausgelegt, den
@@ -112,10 +122,14 @@
           <li
             class="w-4/6 sm:w-5/6 flex flex-col items-center justify-center bg-[#f6f5f1] mt-24"
           >
-            <h2 class="font-pixelsplitter text-3xl text-center px-14 pt-14">
+            <h2
+              class="font-pixelsplitter text-center px-14 pt-14 text-xl sm:text-3xl"
+            >
               Ziele des Spiels:
             </h2>
-            <p class="text-[20px] font-vcr text-left px-40 pt-8">
+            <p
+              class="font-vcr text-left px-20 pt-8 text-[14px] sm:text-[20px] sm:px-40 pt-4 pb-8"
+            >
               Das primäre Ziel von linguExplorer ist es, die Motivation der
               Spieler zu steigern, indem sie auf spielerische Weise die
               englische Sprache erlernen. Das Spiel verbindet Lernen und Spaß,
@@ -125,7 +139,9 @@
               Verständnis und ein besseres Gefühl für die Sprache vermittelt
               werden.
             </p>
-            <p class="text-[20px] font-vcr text-left px-40 pb-20">
+            <p
+              class="font-vcr text-left px-20 pt-8 text-[14px] sm:text-[20px] sm:px-40 pt-4 pb-8"
+            >
               linguExplorer soll den Nutzern die Möglichkeit geben, durch
               regelmäßige Interaktion mit der Sprache ihr Selbstvertrauen und
               ihre Fähigkeiten im Umgang mit Englisch zu stärken, und dies auf
@@ -135,10 +151,14 @@
           <li
             class="w-4/6 sm:w-5/6 flex flex-col items-center justify-center bg-[#f6f5f1] mt-24"
           >
-            <h2 class="font-pixelsplitter text-3xl text-center px-14 pt-14">
+            <h2
+              class="font-pixelsplitter text-center px-14 pt-14 text-xl sm:text-3xl"
+            >
               Gameplay:
             </h2>
-            <p class="text-[20px] font-vcr text-left px-40 pt-8">
+            <p
+              class="font-vcr text-left px-20 pt-8 text-[14px] sm:text-[20px] sm:px-40 pt-4 pb-8"
+            >
               linguExplorer ist ein Singleplayer-Lernspiel, das auf der
               Kombination von Spielspaß und Bildung basiert, ein sogenanntes
               Serious Game. Das Hauptziel des Spiels ist es, Englischkenntnisse
@@ -147,12 +167,16 @@
               besuchen, die jeweils unterschiedliche Themenbereiche und
               sprachliche Herausforderungen repräsentieren.
             </p>
-            <p class="text-[20px] font-vcr text-left px-40 pt-8 pb-8">
+            <p
+              class="font-vcr text-left px-20 pt-8 text-[14px] sm:text-[20px] sm:px-40 pt-4 pb-8"
+            >
               An diesen Orten stehen dem Spieler eine Vielzahl von Minispielen
               zur Verfügung, die den Fokus auf spezifische sprachliche
               Fertigkeiten legen.
             </p>
-            <p class="text-[20px] font-vcr text-left px-40 pb-20">
+            <p
+              class="font-vcr text-left px-20 pt-8 text-[14px] sm:text-[20px] sm:px-40 pt-4 pb-8"
+            >
               Zusätzlich bietet das Spiel ein Phrasenheft als hilfreiches
               Werkzeug. Hier werden alle während des Spiels erlernten Vokabeln
               und Phrasen gesammelt. Dieses Phrasenheft steht den Spielern
@@ -181,7 +205,6 @@
     </footer>
   </div>
 </template>
-
 <script>
 import { mapState, mapActions } from "vuex";
 import { onMounted, ref } from "vue";
@@ -219,3 +242,12 @@ export default {
   },
 };
 </script>
+<style scoped>
+.hover-button img {
+  transition: transform 0.2s ease-in-out;
+}
+
+.hover-button img:hover {
+  transform: scale(1.1);
+}
+</style>

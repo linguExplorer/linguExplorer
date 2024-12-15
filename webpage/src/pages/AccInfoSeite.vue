@@ -4,12 +4,11 @@
   class="fixed inset-0 flex justify-center items-center bg-white bg-opacity-50 z-50"
 ></div>
   
-  <div class="font-vcr m-0 text-black w-full bg-[#f6f5f1] min-h-screen flex flex-col justify-between">
-
-    <header class="flex justify-start mt-20 px-40">
-      <h1 class="font-pixelsplitter text-[40px] mb-6">Accountverwaltung</h1>
+<div class="font-vcr m-0 text-black w-full bg-[#f6f5f1] min-h-screen flex flex-col justify-between">
+    <!-- Header -->
+    <header class="flex justify-center items-center mt-10 px-4 sm:mt-30 sm:px-40">
+      <h1 class="font-pixelsplitter text-[20px] sm:text-[40px] mb-6 text-left">Accountverwaltung</h1>
     </header>
-
 
     <!-- Rechts oben Button -->
     <div class="absolute top-4 right-4">
@@ -18,45 +17,49 @@
         <img
           src="@/assets/xx_Images/xx_Images/Buttons/red_X.png"
           alt="Nach oben"
-          class="max-h-[55px] hover:opacity-80"
+          class="max-h-[40px] sm:max-h-[55px]"
         />
         </router-link>
 
       </button>
     </div>
 
-    <!-- Hauptbereich -->
-    <main class="flex flex-col justify-start flex-grow px-20"> 
+    <main class="flex flex-col justify-start flex-grow px-10"> 
       <!-- Benutzername ändern -->
-      <div class="flex flex-col w-[700px] max-w-5xl bg-[#d5d6d8] p-8 shadow-lg mt-6 mr-60"> 
-        <label for="username" class="font-pixelsplitter text-[26px] mb-6">BENUTZERNAME ÄNDERN</label>
+       <!--w: breite der box-->
+      <div class="flex flex-col w-full max-w-[700px] bg-[#d5d6d8] p-4 sm:p-8 shadow-lg mt-6 sm:ml-60 mx-auto">
+        <label for="username" class="font-pixelsplitter text-[15px] sm:text-[26px] mb-4 sm:mb-6">BENUTZERNAME ÄNDERN</label>
         <input
           type="text"
           id="username"
           v-model="username"
-          class="p-2 bg-white border-[#9cb405] border-2 w-[450px] mb-4"
+          class="p-2 bg-white border-[#9cb405] border-2 w-[90%] sm:w-full mb-4 text-sm sm:text-base"
           placeholder="maxmust123"
         />
         <p v-if="UserError" class="text-red-500 mt-2">
                 {{ UserError }}
               </p>
-              
         <div class="flex justify-end">
           <button @click="changeUser" class="hover-button">
             <img
               src="@/assets/xx_Images/xx_Images/Buttons/aenderungenSpeichern.png"
               alt="Benutzername speichern"
-              class="h-[150px] w-auto hover:opacity-80"
+              class="h-[40px] sm:h-[50px] w-auto hover:opacity-80"
             />
           </button>
         </div>
       </div>
 
+
+
+   
+              
+
       <!-- Passwort ändern -->
-      <div class="flex flex-row justify-between w-[700px] max-w-5xl bg-[#d5d6d8] p-8 shadow-lg mt-6 mr-60">
-  <div class="flex flex-col">
-    <h2 class="font-pixelsplitter text-[26px] mb-4">PASSWORT ÄNDERN</h2>
-    <p class="text-[18px] font-vcr text-start pt-5 pb-10 px-5">
+      <div class="flex flex-col w-full max-w-[700px] bg-[#d5d6d8] p-4 sm:p-8 shadow-lg mt-6 sm:ml-60 mx-auto">
+        <div class="flex flex-col">
+          <h2 class="font-pixelsplitter text-[15px] sm:text-[26px] mb-4 sm:mb-6">PASSWORT ÄNDERN</h2>
+          <p class="text-[18px] font-vcr text-start pt-5 pb-10 px-5">
       Lege ein sicheres Passwort zum Schutz deines Accounts fest. 
     </p>
   </div>
@@ -66,15 +69,15 @@
       <img
         src="@/assets/xx_Images/xx_Images/Buttons/changepw.png"
         alt="Passwort speichern"
-        class=" w-[200px] hover:opacity-80"
-      />
+        class="h-[40px] sm:h-[50px] w-auto hover:opacity-80"
+        />
     </button>
   </div>
 </div>
 
 
       <!-- E-Mail ändern -->
-      <div class="flex flex-col w-[700px] max-w-5xl bg-[#d5d6d8] p-8 shadow-lg mt-6 mr-60"> 
+      <div class="flex flex-col w-full max-w-[700px] bg-[#d5d6d8] p-4 sm:p-8 shadow-lg mt-6 sm:ml-60 mx-auto">
         <label for="email" class="font-pixelsplitter text-[26px] mb-6">E-MAIL ÄNDERN</label>
         <input
           type="email"
@@ -89,23 +92,26 @@
             <img
               src="@/assets/xx_Images/xx_Images/Buttons/aenderungenSpeichernVerifizieren.png"
               alt="E-Mail speichern"
-              class="h-[150px] w-auto hover:opacity-80"
+              class="h-[40px] sm:h-[50px] w-auto hover:opacity-80"
             />
           </button>
         </div>
       </div>
     </main>
-    <footer class="mt-auto">
-        <section class="mx-auto p-4 flex justify-end items-center">
-          <button class="max-w-[200px] p-4" @click="logout">
-              <img
-                src="@/assets/xx_Images/xx_Images/Buttons/abmelden.png"
-                alt="Zurück"
-                class="hover:opacity-80"
-              />
-          </button>
-        </section>
-      </footer>
+
+    <footer class="mt-auto w-full flex justify-between items-center px-4 sm:px-12 py-6 sm:py-12 bg-[#f6f5f1]">
+    <!-- Linker Button -->
+    <div class="flex justify-start">
+      <button class="hover-button max-w-[100px] sm:max-w-[150px]" @click="logout">
+        <router-link to="/" href="#">
+          <img src="@/assets/xx_Images/xx_Images/Buttons/abmelden.png" alt="Zurück" />
+        </router-link>
+      </button>
+    </div>
+
+    <!-- Rechter Button -->
+
+  </footer>
   </div>
 
 </template>
