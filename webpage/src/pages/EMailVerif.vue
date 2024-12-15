@@ -8,7 +8,7 @@
 
     <!--<main class="max-w-6xl mx-auto mt-[80px] px-6">-->
     <main class="mt-[80px]">
-        <!-- Wolke 1: Anpassung für verschiedene Bildschirmgrößen 
+        <!-- Wolke 1: Anpassung für verschiedene Bildschirmgrößens
          min-w = size klein -->
         <img 
           src="@/assets/xx_Images/xx_Images/cloud.png" 
