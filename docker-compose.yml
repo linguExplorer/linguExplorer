@@ -71,6 +71,8 @@ services:
       - "traefik.http.routers.backend.rule=Host(`da.linguexplorer.com`)"
       - "traefik.http.routers.backend.entrypoints=websecure"
       - "traefik.http.routers.backend.tls.certresolver=myresolver"
+      - "com.centurylinklabs.watchtower.enable=true"
+
 
     container_name: lingu-backend-container
     command: sh -c "python manage.py migrate --noinput && gunicorn --bind 0.0.0.0:8000 lingu.wsgi"
