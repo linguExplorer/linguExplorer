@@ -247,8 +247,11 @@ if (res.ok) {
     if (res.ok) {
       const err = await res.json();
       await router.push("/");
-      toast('Sie haben sich abgemeldet');
-
+      toast.custom(shallowRef(ToastComponent_log), { duration: 3000,
+    
+    message: 'Dies ist eine benutzerdefinierte Toast-Nachricht!'
+  });
+   
     }
   } catch (error) {
           console.error("Fehler beim Senden der Anfrage:", error);
