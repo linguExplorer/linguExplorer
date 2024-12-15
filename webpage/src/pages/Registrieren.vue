@@ -236,6 +236,8 @@ import { useRouter } from "vue-router";
 import { Toaster, toast } from "vue-sonner";
 import { useStore } from "vuex";
 import ToastComponent_reg from "@/components/ToastComponent_reg.vue";
+import { shallowRef } from 'vue';
+
 export default {
   name: "Registrieren",
   setup() {
