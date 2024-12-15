@@ -32,7 +32,7 @@ services:
       - letsencrypt:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock
   frontend:
-    image: ghcr.io/linguexplorer/linguexplorer/lingu-vue:latest:prod
+    image: ghcr.io/linguexplorer/linguexplorer/lingu-vue:prod
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=Host(`linguexplorer.com`) || Host(`www.linguexplorer.com`)"
