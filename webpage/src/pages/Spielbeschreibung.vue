@@ -52,7 +52,7 @@
         <h1
           class="font-pixelsplitter text-[24px] sm:text-[48px] lg:text-[68px]"
         >
-          Nein
+          zu
         </h1>
 
         <img
