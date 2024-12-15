@@ -87,7 +87,7 @@
               />
               
               <button
-                @click="togglePasswordVisibility"
+                @click="toastTest"
                 type="button"
                 class="focus:outline-none -ml-8"
               >
@@ -141,6 +141,13 @@
 <script>
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
+import { Toaster, toast } from 'vue-sonner'
+import { shallowRef } from 'vue';
+import ToastComponent from "@/components/ToastComponent.vue";
+import ToastComponent_uch from "@/components/ToastComponent_uch.vue";
+import ToastComponent_log from "@/components/ToastComponent_log.vue";
+
+
 export default {
   name: "AnmeldePage",
 
@@ -220,6 +227,16 @@ export default {
     goToRegister() {
       this.$router.push("/register");
     },
+    toastTest() {
+
+      toast.custom(shallowRef(ToastComponent_log), { duration: 3000,
+    
+    message: 'Dies ist eine benutzerdefinierte Toast-Nachricht!'
+  });
+
+
+    }
+    
   },
 };
 </script>

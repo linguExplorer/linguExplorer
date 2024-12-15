@@ -17,7 +17,7 @@
 export default {
   props: {
     message: {
-      default: "Link ist ungültig"
+      default: "Passwort erfolgreich geändert!"
     }
   }
 }

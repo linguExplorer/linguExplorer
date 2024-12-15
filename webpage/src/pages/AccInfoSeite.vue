@@ -124,6 +124,10 @@ import { Toaster, toast } from 'vue-sonner'
 import { shallowRef } from 'vue';
 
 import ToastComponent from '@/components/ToastComponent.vue';
+import ToastComponent_abg from '@/components/ToastComponent_abg.vue';
+import ToastComponent_log from '@/components/ToastComponent_log.vue';
+import ToastComponent_pwCh from '@/components/ToastComponent_pwCh.vue';
+import ToastComponent_uch from '@/components/ToastComponent_uch.vue';
 
 export default {
   name: "AccInfoSeite",
@@ -155,7 +159,10 @@ ToastComponent
 
         } else {
           await router.push("/");
-          toast('Sie sind nicht mehr angemeldet!');
+          toast.custom(shallowRef(ToastComponent_abg), { duration: 3000,
+    
+    message: 'Dies ist eine benutzerdefinierte Toast-Nachricht!'
+  });
         }
 
 
@@ -192,7 +199,10 @@ ToastComponent
 
             }
           } else {
-            toast('Benutzername erfolgreich geändert!');
+            toast.custom(shallowRef(ToastComponent_uch), { duration: 3000,
+    
+    message: 'Dies ist eine benutzerdefinierte Toast-Nachricht!'
+  });
 
           }
 

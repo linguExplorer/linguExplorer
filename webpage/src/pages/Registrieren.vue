@@ -235,7 +235,7 @@ import { reactive, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { Toaster, toast } from "vue-sonner";
 import { useStore } from "vuex";
-
+import ToastComponent_reg from "@/components/ToastComponent_reg.vue";
 export default {
   name: "Registrieren",
   setup() {
@@ -281,7 +281,10 @@ export default {
             errorMessage.value = "Ein unbekannter Fehler ist aufgetreten.";
           }
         } else {
-          toast("Registrierung erfolgreich");
+          toast.custom(shallowRef(ToastComponent_reg), { duration: 3000,
+    
+    message: 'Dies ist eine benutzerdefinierte Toast-Nachricht!'
+  });
           await store.dispatch("updateEmail", data.email);
           await router.push({
             path: "/eMailVerif",
