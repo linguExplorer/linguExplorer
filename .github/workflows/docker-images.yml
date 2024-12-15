@@ -15,5 +15,5 @@ jobs:
       - name: Build and push Docker image
         run: |
           docker login ghcr.io --username linguexplorer --password ${{ secrets.BENJI_PAT }}
-          docker build . -t ghcr.io/linguexplorer/linguexplorer/lingu-django
-          docker push ghcr.io/linguexplorer/linguexplorer/lingu-django
+          docker build . -t ghcr.io/linguexplorer/linguexplorer/lingu-django:prod
+          docker push ghcr.io/linguexplorer/linguexplorer/lingu-django:prod

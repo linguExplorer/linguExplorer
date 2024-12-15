@@ -1,4 +1,14 @@
 services:
+
+  watchtower:
+    image: containrrr/watchtower
+    command:
+      - "--label-enable"
+      - "--interval"
+      - "30"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
   reverse-proxy:
     image: traefik:v3.1
     command:
@@ -22,14 +32,13 @@ services:
       - letsencrypt:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock
   frontend:
-    build:
-      context: ./webpage
+    image: ghcr.io/linguexplorer/linguexplorer/lingu-vue:latest:prod
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=Host(`linguexplorer.com`) || Host(`www.linguexplorer.com`)"
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.tls.certresolver=myresolver"
-
+      - "com.centurylinklabs.watchtower.enable=true"
     deploy:
       mode: replicated
       replicas: 3
@@ -56,8 +65,7 @@ services:
       retries: 5
 
   backend:
-    build:
-      context: .
+    image: ghcr.io/linguexplorer/linguexplorer/lingu-django:prod
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.backend.rule=Host(`da.linguexplorer.com`)"
