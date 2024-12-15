@@ -1,8 +1,8 @@
 <template>
-  <div class="font-vcr m-0 text-black w-full bg-[#f6f5f1] min-h-screen flex flex-col justify-between">
+  <div class="font-vcr m-0 text-black w-full bg-[#f6f5f1] min-h-screen flex flex-col justify-between 
+              sm:rotate-0 rotate-90 origin-center fixed">
     <!-- Header -->
-    <header class="flex justify-start mt-40 px-60 md:px-40">
-      <!-- Logo links oben -->
+    <header class="flex justify-start mt-40 ml-8 px-60">
       <img
         src="@/assets/xx_Images/xx_Images/wordmark/wordmark_scaled.png"
         alt="Linguexplorer"
@@ -13,15 +13,13 @@
     <!-- Rechts oben Button -->
     <div class="absolute top-4 right-4">
       <button class="hover-button">
-        <router-link to="/accInfoSeite"  href="#">
-
-        <img
-          src="@/assets/xx_Images/xx_Images/Buttons/SettingsIcon.png"
-          alt="Nach oben"
-          class="max-h-[40px] w-[40px] sm:max-h-[60px] sm:w-[60px] hover:opacity-80"
-        />
-      </router-link>
-
+        <router-link to="/accInfoSeite" href="#">
+          <img
+            src="@/assets/xx_Images/xx_Images/Buttons/SettingsIcon.png"
+            alt="Nach oben"
+            class="max-h-[40px] w-[40px] sm:max-h-[60px] sm:w-[60px] hover:opacity-80"
+          />
+        </router-link>
       </button>
     </div>
 
@@ -39,7 +37,7 @@
 
           <button class="hover-button">
             <img
-             src="@/assets/xx_Images/xx_Images/Buttons/spielstandLaden_green.png"
+              src="@/assets/xx_Images/xx_Images/Buttons/spielstandLaden_green.png"
               alt="Spielstand laden"
               class="max-h-[45px] hover:opacity-80 sm:max-h-[55px]"
             />
@@ -55,7 +53,6 @@
         </div>
       </div>
     </main>
-
   </div>
 </template>
 

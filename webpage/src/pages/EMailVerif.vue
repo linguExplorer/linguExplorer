@@ -8,38 +8,26 @@
 
     <!--<main class="max-w-6xl mx-auto mt-[80px] px-6">-->
     <main class="mt-[80px]">
-        <!-- Wolke 1: Anpassung für verschiedene Bildschirmgrößen 
-         min-w = size klein -->
-        <img 
-          src="@/assets/xx_Images/xx_Images/cloud.png" 
-          alt="Wolke" 
-          class="min-w-[200px] sm:min-w-[250px] md:min-w-[320px] xxl:min-w-[380px] absolute z-2 
-          translate-x-[-30vw] sm:translate-x-[-20vw] md:translate-x-[-42vw] 
-          translate-y-[-17vh] sm:translate-y-[-10vh] md:translate-y-[-12vh]" />
-        
-        <!-- Sonne: Anpassung für verschiedene Bildschirmgrößen -->
-        <img 
-          src="@/assets/xx_Images/xx_Images/sun.png" 
-          alt="Sonne" 
-          class="min-w-[120px] sm:min-w-[120px] md:min-w-[180px] absolute z-1 
-          translate-x-[-30vw] sm:translate-x-[-25vw] md:translate-x-[-38vw] 
-          translate-y-[-13vh] sm:translate-y-[-5vh] md:translate-y-[-5vh]" />
-
-        <!-- Wolke 2: Anpassung für verschiedene Bildschirmgrößen -->
-        <img 
-          src="@/assets/xx_Images/xx_Images/Cloud2.png" 
-          alt="Wolke" 
-          class="min-w-[100px] sm:min-w-[250px] md:min-w-[320px] xxl:min-w-[380px] absolute z-2 
-          translate-x-[-55vw] sm:translate-x-[-25vw] md:translate-x-[-45vw] 
-          translate-y-[-8vh] sm:translate-y-[5vh] md:translate-y-[5vh]" />
-        
-        <!-- Wolke 3: Anpassung für verschiedene Bildschirmgrößen -->
-        <img 
-          src="@/assets/xx_Images/xx_Images/Cloud2.png" 
-          alt="Wolke" 
-          class="min-w-[50px] sm:min-w-[50px] md:min-w-[20px] lg:min-w-[250px] absolute z-1 
-          translate-x-[50vw] sm:translate-x-[30vw] md:translate-x-[30vw] 
-          translate-y-[-10vh] sm:translate-y-[-10vh] md:translate-y-[-8vh]" />
+      <img
+          src="@/assets/xx_Images/xx_Images/cloud.png"
+          alt="Wolke"
+          class="w-[160px] sm:min-w-[320px] absolute z-2 translate-x-[-42vw] translate-y-[-10vh] sm:translate-x-[-42vw] sm:translate-y-[-12vh]"
+        />
+        <img
+          src="@/assets/xx_Images/xx_Images/sun.png"
+          alt="Sonne"
+          class="w-[70px] sm:min-w-[150px] absolute z-1 translate-x-[-38vw] translate-y-[-4vh] sm:translate-x-[-38vw] sm:translate-y-[-3vh]"
+        />
+        <img
+          src="@/assets/xx_Images/xx_Images/Cloud2.png"
+          alt="Wolke"
+          class="w-[160px] sm:min-w-[320px] absolute z-2 translate-x-[-45vw] translate-y-[-2vh] sm:translate-x-[-45vw] sm:translate-y-[7vh]"
+        />
+        <img
+          src="@/assets/xx_Images/xx_Images/Cloud2.png"
+          alt="Wolke"
+          class="w-[140px] sm:min-w-[320px] absolute z-1 translate-x-[40vw] translate-y-[-3vh] sm:translate-x-[30vw] sm:translate-y-[-8vh]"
+        />
     </main>
 
     <section class="flex flex-col justify-center items-center gap-2 w-full px-4 sm:px-6 mt-10 sm:mt-0">
