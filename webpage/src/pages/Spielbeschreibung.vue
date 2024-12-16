@@ -1,21 +1,23 @@
 <template>
   <div class="min-h-screen bg-[#f6f5f1]">
 
-    <!-- Nav Bar -->
+    <!-- Header -->
     <header class="bg-[#99b305] text-black sticky top-0 z-10">
       <section class="max-w-full mx-auto px-4 sm:px-6 py-2 flex justify-between items-center">
         <!-- Logo -->
-            <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" 
-            alt="Logo" 
-            class="w-[50%] max-w-[200px] ml-4 sm:w-1/6" 
-            />
+        <img 
+          src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" 
+          alt="Logo" 
+          class="w-[50%] sm:w-1/6" 
+        />
         <div class="flex justify-center items-center space-x-2 sm:space-x-4">
-          <button class="hover-button">
-            <router-link to="/anmelden" class="nav-link"  href="#">
-            <img src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png" 
-            alt="Jetzt spielen" 
-            class="max-h-[55px] px-2 hover:opacity-80 sm:max-h-[55px]" />
-            </router-link>
+          <!-- Button -->
+          <button class="nav-button-spielbeschreibung hover-button">
+            <img 
+              src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png" 
+              alt="Jetzt spielen" 
+              class="max-h-[40px] sm:max-h-[55px] px-2" 
+            />
           </button>
         </div>
       </section>
@@ -23,13 +25,20 @@
 
     <!-- Content -->
     <main class="max-w-full mx-auto">
-      <section id="top" class="flex flex-col w-full justify-center items-center  bg-cloud-background bg-cover">
+
+       <!-- Background Images -->
+      <!--<img src="@/assets/xx_Images/xx_Images/cloud.png" alt="Wolke" class="w-[160px] sm:min-w-[320px] absolute z-2 translate-x-[-42vw] translate-y-[-10vh] sm:translate-x-[-42vw] sm:translate-y-[-1vh]" />-->
+      <img src="@/assets/xx_Images/xx_Images/sun.png" alt="Sonne" class="w-[70px] sm:min-w-[150px] absolute z-1 translate-x-[-40vw] translate-y-[0vh] sm:translate-x-[-45.3vw] sm:translate-y-[3vh]" />
+      <img src="@/assets/xx_Images/xx_Images/cloud.png" alt="Wolke" class="w-[160px] sm:min-w-[320px] absolute z-2 translate-x-[-50vw] translate-y-[3vh] sm:translate-x-[-38vw] sm:translate-y-[10vh]" />
+      <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="w-[140px] sm:min-w-[320px] absolute z-1 translate-x-[40vw] translate-y-[5vh] sm:translate-x-[30vw] sm:translate-y-[13vh]" />
+      
+      <!--<section id="top" class="flex flex-col w-full justify-center items-center bg-cloud-background bg-cover">-->
           <h1 class="font-pixelsplitter text-[24px] sm:text-[48px] lg:text-[68px] mt-8 sm:mt-16">Willkommen</h1>
           <h1 class="font-pixelsplitter text-[24px] sm:text-[48px] lg:text-[68px] ">zu</h1>
       
         <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_scaled.png" 
         alt="Linguexplorer" 
-        class="w-[30%] sm:w-[50%] lg:w-5/12 mb-4 sm:mb-10" />
+        class="w-[30%] sm:w-[50%] mb-4 sm:mb-10" />
 
       <!-- Button direkt unter dem Linguexplorer-Logo -->
         <!-- Character Image - neben dem "Jetzt spielen" button -->
@@ -37,24 +46,23 @@
             <router-link to="/anmelden" class="nav-link"  href="#">
             <img src="@/assets/xx_Images/xx_Images/Buttons/button play now.png" 
             alt="Jetzt spielen" 
-            class="max-h-[60px] sm:max-h-[80px] lg:max-h-[110px] min-h-[50px] hover:opacity-80" />
+            class="max-h-[40px] sm:max-h-[80px] hover:opacity-80" />
             </router-link>
           </button>
 
           <img src="@/assets/xx_Images/xx_Images/Charactee New.png" alt="Character" 
-          class="w-[140px] lg:w-[380px] absolute z-1 translate-x-[-35vw] translate-y-[38vh] xxl:translate-x-[-35vw] xxl:translate-y-[28.5vh]" />
-    </section>
+          class="w-[140px] sm:w-[370px] absolute z-1 translate-x-[-25vw] translate-y-[24vh] sm:translate-x-[-35vw] sm:translate-y-[61.5vh]" />
+      <!--</section>-->
     
 
-    <section class="bg-grass-background bg-cover relative z-0 mt-[20px]">
-      <!-- Gras Bild unter dem Button -->
+    <!-- Gras Bild -->
+    <section class="bg-grass-background bg-cover relative z-0 mt-[-37px] sm:mt-[20px]">
  
-    <ul class="list-none mx-36 my-36 flex flex-col items-center ">
-      <li class="w-4/6 sm:w-5/6 flex flex-col items-center justify-center
-      bg-[#f6f5f1] mt-32">
+    <ul class="list-none mx-9 sm:mx-36 my-36 flex flex-col items-center ">
+      <li class="w-[65%] sm:w-5/6 flex flex-col items-center justify-center
+      bg-[#f6f5f1] mt-0 sm:mt-32 ">
 
       <div class="flex flex-row items-center justify-center gap-2 m-8">
-
         <h2 class="font-pixelsplitter text-xl sm:text-3xl">Was ist</h2>
         <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" alt="Logo" class="w-1/3" />
         <h2 class="font-pixelsplitter text-xl sm:text-3xl">?</h2>
@@ -65,7 +73,7 @@
         Fremdsprachenerlernung entgegenzutreten, die viele Jugendliche in ihrer Schullaufbahn bis zur Matura erleben.
       </p>
       </li>
-    <li class="w-4/6 sm:w-5/6 flex flex-col items-center justify-center
+    <li class="w-[65%] sm:w-5/6 flex flex-col items-center justify-center
     bg-[#f6f5f1] mt-24">
 
       <h2 class="font-pixelsplitter text-center px-14 pt-14 text-xl sm:text-3xl">Ziele des Spiels:</h2>
@@ -82,7 +90,7 @@
         traditionellen Unterricht oft fehlt.
       </p>
   </li>
-  <li class="w-4/6 sm:w-5/6 flex flex-col items-center justify-center
+  <li class="w-[65%] sm:w-5/6 flex flex-col items-center justify-center
   bg-[#f6f5f1] mt-24">
 
       <h2 class="font-pixelsplitter text-center px-14 pt-14 text-xl sm:text-3xl">Gameplay:</h2>
@@ -109,7 +117,7 @@
 </main>
     
 <footer id="footer" class="bg-[#99b305] text-black text-xl">
-    <section class="max-w-full mx-20 p-4 flex justify-between items-center">
+    <section class="max-w-full text-[14px] sm:text-[20px] mx-10 sm:mx-20 p-4 flex justify-between items-center">
         <nav class="flex flex-row gap-4" aria-label="footer">
           <router-link to="/impressum"  href="#">
             <a href="#" class="hover:opacity-90 font-vcr">Impressum</a>
