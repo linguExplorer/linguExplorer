@@ -32,6 +32,7 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
     else:
+        redirect('https://linguexplorer.com')
         raise AuthenticationFailed('Link ist ungültig')
 
 
