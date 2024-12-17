@@ -16,13 +16,15 @@
             <img 
               src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png" 
               alt="Jetzt spielen" 
-              class="max-h-[40px] sm:max-h-[55px] px-2" 
+              class="max-h-[35px] sm:max-h-[55px] px-2" 
             />
           </button>
         </div>
       </section>
     </header>
 
+    <!-- <main class="max-w-[95%] sm:max-w-6xl md:max-w-[80%] lg:max-w-6xl mx-auto mt-[40px] sm:mt-[80px] px-10 sm:px-1">-->
+      
     <!-- Main Content -->
     <main class="max-w-[95%] sm:max-w-6xl mx-auto mt-[40px] sm:mt-[80px] px-10 sm:px-1">
       <!-- Title -->
