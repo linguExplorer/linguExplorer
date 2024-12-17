@@ -68,7 +68,7 @@
     </p>
 
     <!-- Button -->
-    <button type="submit" class="hover-button max-w-[120px] w-full sm:max-w-[150px] mx-auto " @click="resend">
+    <button type="submit" class="hover-button max-w-[120px] w-full sm:max-w-[150px] mx-auto z-10 " @click="resend">
       <img src="@/assets/xx_Images/xx_Images/Buttons/button_nochmal_versuchen.png" alt="Speichern" />
     </button>
   </section>

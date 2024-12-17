@@ -87,8 +87,7 @@
               />
               
               <button
-                @click="toastTest"
-                type="button"
+                @click="togglePasswordVisibility"
                 class="focus:outline-none -ml-8"
               >
                 <img

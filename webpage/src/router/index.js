@@ -13,11 +13,18 @@ import AccInfoSeite from "@/pages/AccInfoSeite.vue";
 import EMailVerif from "@/pages/EMailVerif.vue";
 import CookieBanner from "@/components/CookieBanner.vue";
 import ToastComponent from "@/components/ToastComponent.vue";
+import ToastComponent_uch from "@/components/ToastComponent_uch.vue";
 const routes = [
   {
     path: "/toast",
     name: "toast",
     component: ToastComponent,
+  },
+
+  {
+    path: "/CheckToast",
+    name: "toast",
+    component: ToastComponent_uch,
   },
   {
     path: "/cookie",
