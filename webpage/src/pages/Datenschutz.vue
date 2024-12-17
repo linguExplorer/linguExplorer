@@ -26,12 +26,12 @@
     <!-- Main Content -->
     <main class="max-w-[95%] sm:max-w-6xl mx-auto mt-[40px] sm:mt-[80px] px-4 sm:px-10 flex-grow">
       <!-- Title -->
-      <h1 class="font-pixelsplitter text-[20px] sm:text-[50px] text-center">
+      <h1 class="font-pixelsplitter lg:text-[50px] md:text-[38px] sm:text-[20px] text-[20px] text-center">
         Datenschutzerklärung
       </h1>
 
       <!-- Content -->
-      <div class="content-datenschutz mt-6 sm:mt-10 text-sm sm:text-base leading-relaxed mx-auto sm:mx-[100px] lg:mx-[200px]">
+      <div class="content-datenschutz lg:mt-10 md:mt-8 sm:mt-6 mt-6 text-sm sm:text-base leading-relaxed lg:mx-[200px] md:mx-[100px] sm:mx-[50px] mx-[50px]">
         <h2 class="font-bold mt-6">Allgemeine Hinweise:</h2>
         <p class="mb-6">
           Der Schutz Ihrer persönlichen Daten ist uns sehr wichtig. Diese Datenschutzerklärung informiert Sie darüber, welche Daten wir erheben, wie wir diese verarbeiten und zu welchem Zweck sie genutzt werden. Wir behandeln Ihre personenbezogenen Daten vertraulich und entsprechend der gesetzlichen Datenschutzvorschriften sowie dieser Datenschutzerklärung.

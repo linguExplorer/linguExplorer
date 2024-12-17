@@ -22,16 +22,14 @@
         </div>
       </section>
     </header>
-
-    <!-- <main class="max-w-[95%] sm:max-w-6xl md:max-w-[80%] lg:max-w-6xl mx-auto mt-[40px] sm:mt-[80px] px-10 sm:px-1">-->
       
     <!-- Main Content -->
-    <main class="max-w-[95%] sm:max-w-6xl mx-auto mt-[40px] sm:mt-[80px] px-10 sm:px-1">
+    <main class="lg:max-w-6xl md:max-w-6xl sm:max-w-6xl mx-auto lg:mt-[80px] md:mt-[70px] sm:mt-[60px] mt-[40px] px-10 sm:px-1">
       <!-- Title -->
-      <h1 class="font-pixelsplitter text-[20px] sm:text-[50px] text-center">Impressum</h1>
+      <h1 class="font-pixelsplitter lg:text-[50px] md:text-[38px] sm:text-[20px] text-[20px] text-center">Impressum</h1>
 
       <!-- Content -->
-      <div class="content-datenschutz mt-6 sm:mt-10 text-sm sm:text-base leading-relaxed mx-auto sm:mx-[150px] lg:mx-[250px]">
+      <div class="content-datenschutz lg:mt-10 md:mt-8 sm:mt-6 mt-6 text-sm sm:text-base leading-relaxed lg:mx-[250px] md:mx-[200px] sm:mx-[50px] mx-[50px]">
         <p class="mb-6">
           Informationspflicht laut Offenlegungspflicht laut §25 Mediengesetz
         </p>
