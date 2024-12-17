@@ -1,23 +1,22 @@
 <template>
-  <div class="min-h-screen bg-[#f6f5f1] flex flex-col">
+  <div class="min-h-screen w-full bg-[#f6f5f1] flex flex-col">
 
     <!-- Header -->
     <header class="bg-[#99b305] text-black sticky top-0 z-10">
-      <section class="max-w-full mx-auto px-4 sm:px-6 py-2 flex justify-between items-center">
+      <section class="max-w-full mx-auto py-2 flex justify-between items-center lg:px-6 md:px-6 sm:px-6 px-4">
         <!-- Logo -->
         <img 
           src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" 
           alt="Logo" 
-          class="w-[50%] sm:w-1/6" 
+          class="lg:max-h-[50px] md:max-h-[45px] sm:max-h-[35px] max-h-[35px]" 
         />
-        
-        <!-- Button -->
         <div class="flex justify-center items-center space-x-2 sm:space-x-4">
+          <!-- Button -->
           <button class="nav-button-spielbeschreibung hover-button">
             <img 
               src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png" 
               alt="Jetzt spielen" 
-              class="max-h-[40px] sm:max-h-[55px] px-2" 
+              class="lg:max-h-[50px] md:max-h-[45px] sm:max-h-[35px] max-h-[35px] px-2" 
             />
           </button>
         </div>
