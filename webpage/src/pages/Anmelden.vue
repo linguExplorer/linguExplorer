@@ -14,7 +14,7 @@
           />
           <div class="flex justify-center items-center class=gap-1 sm:gap-4">
             <!-- Text -->
-            <p class="text-[8px] sm:text-[18px] font-vcr mr-1 sm:mr-4">Hast du noch keinen Account?</p>
+            <p class="lg:text-[18px] md:text-[14px] sm:text-[8px] text-[8px] font-vcr mr-1 sm:mr-4">Hast du noch keinen Account?</p>
             <!-- Button -->
             <button class="hover-button max-w-[100px] sm:max-w-[150px]">
               <router-link to="/registrieren" class="nav-link" href="#">
@@ -33,27 +33,27 @@
         <img
           src="@/assets/xx_Images/xx_Images/cloud.png"
           alt="Wolke"
-          class="w-[160px] sm:min-w-[320px] absolute z-2 translate-x-[-42vw] translate-y-[-10vh] sm:translate-x-[-42vw] sm:translate-y-[-12vh]"
+          class="lg:min-w-[320px] md:min-w-[240px] sm:min-w-[160px] w-[160px] absolute z-2 translate-x-[-42vw] translate-y-[-10vh] sm:translate-y-[-12vh]"
         />
         <img
           src="@/assets/xx_Images/xx_Images/sun.png"
           alt="Sonne"
-          class="w-[70px] sm:min-w-[150px] absolute z-1 translate-x-[-38vw] translate-y-[-4vh] sm:translate-x-[-38vw] sm:translate-y-[-3vh]"
+          class="lg:min-w-[150px] md:min-w-[100px] sm:min-w-[70px] w-[70px] absolute z-1 translate-x-[-38vw] lg:translate-y-[-3vh] md:translate-y-[-3vh] sm:translate-y-[-5vh] translate-y-[-5vh]"
         />
         <img
           src="@/assets/xx_Images/xx_Images/Cloud2.png"
           alt="Wolke"
-          class="w-[160px] sm:min-w-[320px] absolute z-2 translate-x-[-45vw] translate-y-[-2vh] sm:translate-x-[-45vw] sm:translate-y-[7vh]"
+          class="lg:min-w-[320px] md:min-w-[240px] sm:min-w-[160px] w-[160px] absolute z-2 translate-x-[-45vw] lg:translate-y-[7vh] md:translate-y-[3vh] sm:translate-y-[-2vh] translate-y-[-2vh]"
         />
         <img
           src="@/assets/xx_Images/xx_Images/Cloud2.png"
           alt="Wolke"
-          class="w-[140px] sm:min-w-[320px] absolute z-1 translate-x-[40vw] translate-y-[-3vh] sm:translate-x-[30vw] sm:translate-y-[-8vh]"
+          class="lg:min-w-[320px] md:min-w-[240px] sm:min-w-[160px] w-[160px] absolute z-1 translate-x-[40vw] translate-y-[-3vh] sm:translate-x-[30vw] sm:translate-y-[-8vh]"
         />
   
         <section class="hover-button bg-[#f6f5f1] flex flex-col justify-center items-center gap-4 sm:gap-[0px] px-1 sm:px-0">
           
-          <h1 class="font-pixelsplitter text-[30px] sm:text-[60px] mb-5 mt-10 sm:mb-10 sm:mt-5">Anmelden</h1>
+          <h1 class="font-pixelsplitter lg:text-[60px] md:text-[45px] sm:text-[30px] text-[30px] mb-5 mt-10 sm:mb-10 sm:mt-5">Anmelden</h1>
   
           <form
             @submit.prevent="submit"
@@ -61,7 +61,7 @@
           
             <div class="w-full">
               <label for="email" 
-                class="font-vcr block text-left mb-2 text-[14px] sm:text-[16px]">E-Mail</label>
+                class="font-vcr block text-left mb-2 lg:text-[16px] md:text-[15px] sm:text-[14px] text-[14px]">E-Mail</label>
                 <input
                   type="email"
                   id="email"
@@ -76,7 +76,7 @@
 
             <div class="input-group flex flex-col mb-0 sm:mb-4 w-full">
               <label for="password" 
-              class="font-vcr block text-left mb-2 text-[14px] sm:text-[16px]">Passwort</label>
+              class="font-vcr block text-left mb-2 lg:text-[16px] md:text-[15px] sm:text-[14px] text-[14px]">Passwort</label>
               <div class="input-group flex items-center mb-4">
                 <input
                   :type="inputType"
@@ -108,7 +108,7 @@
             <!-- Fehlermeldung -->
             <p v-if="showError" class="mt-2 ">Ungültige E-Mail oder Passwort</p>
   
-            <button type="submit" class="w-full max-w-[120px] sm:max-w-[150px] mt-1">
+            <button type="submit" class="w-full lg:max-w-[150px] md:max-w-[130px] sm:max-w-[110px] max-w-[110px] mt-1">
               <img
                 src="@/assets/xx_Images/xx_Images/Buttons/button anmelden blue.png"
                 alt="Anmelden"
@@ -116,26 +116,23 @@
               />
             </button>
             <router-link to="/forgotPassword" class="nav-link" href="#">
-              <p class="text-center mt-4 font-vcr text-[12px] sm:text-[14px]">Passwort vergessen?</p>
+              <p class="text-center mt-4 font-vcr lg:text-[14px] md:text-[13px] sm:text-[12px] text-[12px]">Passwort vergessen?</p>
             </router-link>
           </form>
         </section>
       </main>
   
       <!-- Footer -->
-      <footer class="mt-auto">
-        <section class="p-4 flex justify-end items-center">
-          <button class="hover-button max-w-[170px] sm:max-w-[200px] p-4">
-            <router-link to="/" class="nav-link" href="#">
-              <img
-                src="@/assets/xx_Images/xx_Images/Buttons/button zrk.png"
-                alt="Zurück"
-                class="hover:opacity-80"
-              />
-            </router-link>
-          </button>
-        </section>
-      </footer>
+    <footer class="mt-auto">
+      <section class="mx-auto p-4 flex justify-end items-center">
+        <button class="lg:max-w-[200px] md:max-w-[150px] sm:max-w-[100px] max-w-[100px] hover-button">
+          <router-link to="/" href="#">
+            <img src="@/assets/xx_Images/xx_Images/Buttons/button zrk.png" alt="Zurück" />
+          </router-link>
+        </button>
+      </section>
+    </footer>
+
     </div>
   </template>
   <script>

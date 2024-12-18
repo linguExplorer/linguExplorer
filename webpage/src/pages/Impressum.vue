@@ -3,13 +3,12 @@
 
     <!-- Header -->
     <header class="bg-[#99b305] text-black sticky top-0 z-10">
-      <section class="max-w-full mx-auto py-2 flex justify-between items-center lg:px-6 md:px-6 sm:px-6 px-4">
-        <!-- Logo -->
-        <img 
-          src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" 
-          alt="Logo" 
-          class="lg:max-h-[50px] md:max-h-[45px] sm:max-h-[35px] max-h-[35px]" 
-        />
+      <section class="w-full py-2 flex justify-between items-center px-4">
+          <img
+            src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png"
+            alt="Logo"
+            class="w-3/6 max-w-[180px] sm:max-w-[200px] mr-9"
+          />
         <div class="flex justify-center items-center space-x-2 sm:space-x-4">
           <!-- Button -->
           <button class="nav-button-spielbeschreibung hover-button">
