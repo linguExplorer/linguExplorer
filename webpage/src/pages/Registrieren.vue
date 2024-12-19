@@ -1,6 +1,7 @@
 <template>
-  <div v-if="isLoading" class="absolute top-0 left-0 flex justify-center items-center h-screen w-full bg-white bg-opacity-50 z-50"></div>
-
+  <div v-if="isLoading" 
+  class="absolute top-0 left-0 flex justify-center items-center h-screen w-full bg-white bg-opacity-50 z-50"></div>
+  
   <div class="font-vcr m-0 text-black w-full h-screen bg-[#f6f5f1] flex flex-col justify-center">
 
     <!-- Header -->
@@ -12,8 +13,8 @@
           class="w-3/6 max-w-[180px] sm:max-w-[200px] mr-9"
         />
         <div class="flex justify-center items-center sm:gap-4">
-          <p class="text-[8px] sm:text-[18px] font-vcr mr-1 sm:mr-4">Hast du schon einen Account?</p>
-          <button class="hover-button max-w-[100px] sm:max-w-[150px]">
+          <p class="lg:text-[18px] md:text-[14px] sm:text-[8px] text-[8px] font-vcr mr-1 sm:mr-4">Hast du schon einen Account?</p>
+          <button class="hover-button lg:max-w-[150px] md:max-w-[130px] sm:max-w-[100px] max-w-[100px]">
             <router-link to="/anmelden" class="nav-link">
               <img
                 src="@/assets/xx_Images/xx_Images/Buttons/button anmelden green.png"
@@ -26,12 +27,28 @@
       </section>
     </header>
 
-    <main class="w-full mx-auto mt-[40px] sm:mt-[80px] px-4 sm:px-6 bg-[#f6f5f1] relative">
+    <main class="w-full mx-auto mt-[40px] sm:mt-[80px] px-4 sm:px-6 bg-[#f6f5f1]">
       <!-- Background Images -->
-      <img src="@/assets/xx_Images/xx_Images/cloud.png" alt="Wolke" class="w-[160px] sm:min-w-[320px] absolute z-2 translate-x-[-42vw] translate-y-[-10vh] sm:translate-x-[-42vw] sm:translate-y-[-1vh]" />
-      <img src="@/assets/xx_Images/xx_Images/sun.png" alt="Sonne" class="w-[70px] sm:min-w-[150px] absolute z-1 translate-x-[-38vw] translate-y-[-4vh] sm:translate-x-[-38vw] sm:translate-y-[8vh]" />
-      <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="w-[160px] sm:min-w-[320px] absolute z-2 translate-x-[-50vw] translate-y-[-3vh] sm:translate-x-[-45vw] sm:translate-y-[18vh]" />
-      <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="w-[140px] sm:min-w-[320px] absolute z-1 translate-x-[40vw] translate-y-[-3vh] sm:translate-x-[30vw] sm:translate-y-[6vh]" />
+      <img
+          src="@/assets/xx_Images/xx_Images/cloud.png"
+          alt="Wolke"
+          class="lg:min-w-[320px] md:min-w-[240px] sm:min-w-[160px] w-[160px] absolute z-2 translate-x-[-42vw] translate-y-[-10vh] sm:translate-y-[-12vh]"
+        />
+        <img
+          src="@/assets/xx_Images/xx_Images/sun.png"
+          alt="Sonne"
+          class="lg:min-w-[150px] md:min-w-[100px] sm:min-w-[70px] w-[70px] absolute z-1 translate-x-[-38vw] lg:translate-y-[-3vh] md:translate-y-[-3vh] sm:translate-y-[-5vh] translate-y-[-5vh]"
+        />
+        <img
+          src="@/assets/xx_Images/xx_Images/Cloud2.png"
+          alt="Wolke"
+          class="lg:min-w-[320px] md:min-w-[240px] sm:min-w-[160px] w-[160px] absolute z-2 translate-x-[-45vw] lg:translate-y-[7vh] md:translate-y-[3vh] sm:translate-y-[-2vh] translate-y-[-2vh]"
+        />
+        <img
+          src="@/assets/xx_Images/xx_Images/Cloud2.png"
+          alt="Wolke"
+          class="lg:min-w-[320px] md:min-w-[240px] sm:min-w-[160px] w-[160px] absolute z-1 translate-x-[40vw] translate-y-[-3vh] sm:translate-x-[30vw] sm:translate-y-[-8vh]"
+        />
 
       <!-- Registration Form -->
       <section class="hover-button bg-[#f6f5f1] flex flex-col justify-center items-center gap-4 sm:gap-0 px-1 sm:px-0">
