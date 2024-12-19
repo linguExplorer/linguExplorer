@@ -62,7 +62,7 @@
           <!-- Email Input -->
           <div class="w-full">
             <label for="email" 
-            class="font-vcr block text-left mb-2 text-[14px] sm:text-[16px]">E-Mail</label>
+            class="font-vcr block text-left mb-2 lg:text-[16px] md:text-[15px] sm:text-[14px] text-[14px]">E-Mail</label>
             <input
               type="email"
               id="email"
@@ -75,7 +75,7 @@
 
           <!-- Username Input -->
           <div class="w-full">
-            <label for="uname" class="font-vcr block text-left mb-2 text-[14px] sm:text-[16px]">Benutzername</label>
+            <label for="uname" class="font-vcr block text-left mb-2 lg:text-[16px] md:text-[15px] sm:text-[14px] text-[14px]">Benutzername</label>
             <input
               type="text"
               id="uname"
@@ -89,7 +89,7 @@
           <!-- Password Input -->
           <div class="input-group flex flex-col sm:mb-0 w-full">
             <label for="password" 
-            class="font-vcr block text-left mb-2 text-[14px] sm:text-[16px]">Passwort</label>
+            class="font-vcr block text-left mb-2 lg:text-[16px] md:text-[15px] sm:text-[14px] text-[14px]">Passwort</label>
             <div class="input-group flex items-center">
               <input
                 :type="inputType"
@@ -108,7 +108,7 @@
           <!-- Confirm Password Input -->
           <div class="input-group flex flex-col mb-0 sm:mb-4 w-full">
             <label for="confpassword" 
-            class="font-vcr block text-left mb-2 text-[14px] sm:text-[16px]">Passwort Wiederholen</label>
+            class="font-vcr block text-left mb-2 lg:text-[16px] md:text-[15px] sm:text-[14px] text-[14px]">Passwort Wiederholen</label>
             <div class="input-group flex items-center mb-0">
               <input
                 :type="confirmInputType"
@@ -137,7 +137,7 @@
           <p v-if="!data.checked" class="text-red-500 text-center mt-0 text-[13px] sm:text-[15px]">Bitte akzeptieren Sie die Datenschutzerklärung um fortzufahren!</p>
 
           <!-- Submit Button -->
-          <button type="submit" class="hover-button w-full max-w-[120px] sm:max-w-[150px] mt-0" :disabled="!isFormValid">
+          <button type="submit" class="hover-button w-full lg:max-w-[150px] md:max-w-[145px] sm:max-w-[120px] max-w-[120px] mt-0" :disabled="!isFormValid">
             <img src="@/assets/xx_Images/xx_Images/Buttons/button registrieren blue.png" alt="Registrieren" class="w-full hover:opacity-80" />
           </button>
         </form>
