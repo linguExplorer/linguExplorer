@@ -53,7 +53,7 @@
       <!-- Registration Form -->
       <section class="hover-button bg-[#f6f5f1] flex flex-col justify-center items-center gap-4 sm:gap-0 px-1 sm:px-0">
 
-        <h1 class="font-pixelsplitter text-[30px] sm:text-[60px] mb-5 mt-10 sm:mb-0 sm:mt-5">Registrieren</h1>
+        <h1 class="font-pixelsplitter lg:text-[60px] md:text-[50px] sm:text-[30px] text-[30px] mb-5 mt-10 sm:mb-0 sm:mt-5">Registrieren</h1>
 
         <form 
         @submit.prevent="handleRegister" 
