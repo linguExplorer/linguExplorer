@@ -14,7 +14,7 @@
         />
         <div class="flex justify-center items-center sm:gap-4">
           <p class="lg:text-[18px] md:text-[14px] sm:text-[8px] text-[8px] font-vcr mr-1 sm:mr-4">Hast du schon einen Account?</p>
-          <button class="hover-button lg:max-w-[150px] md:max-w-[130px] sm:max-w-[100px] max-w-[100px]">
+          <button class="hover-button lg:max-w-[130px] md:max-w-[120px] sm:max-w-[100px] max-w-[90px]">
             <router-link to="/anmelden" class="nav-link">
               <img
                 src="@/assets/xx_Images/xx_Images/Buttons/button anmelden green.png"

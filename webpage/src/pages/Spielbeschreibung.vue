@@ -15,7 +15,7 @@
             <img 
               src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png" 
               alt="Jetzt spielen" 
-              class="lg:max-h-[50px] md:max-h-[45px] sm:max-h-[35px] max-h-[35px] px-2" 
+              class="lg:max-h-[46px] md:max-h-[45px] sm:max-h-[35px] max-h-[35px] px-2" 
             />
           </button>
         </div>
@@ -50,7 +50,7 @@
           </button>
 
           <img src="@/assets/xx_Images/xx_Images/Charactee New.png" alt="Character" 
-          class="lg:w-[370px] md:w-[270px] sm:w-[140px] w-[140px] absolute z-1 sm:translate-x-[-35vw] translate-x-[-25vw] lg:translate-y-[61.5vh] md:translate-y-[45vh] sm:translate-y-[30vh]  translate-y-[30vh]" />
+          class="lg:w-[370px] md:w-[270px] sm:w-[180px] w-[140px] absolute z-1 sm:translate-x-[-35vw] translate-x-[-25vw] lg:translate-y-[61.5vh] md:translate-y-[45vh] sm:translate-y-[34.5vh]  translate-y-[30vh]" />
       <!--</section>-->
     
 

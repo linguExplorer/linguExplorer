@@ -16,7 +16,7 @@
             <!-- Text -->
             <p class="lg:text-[18px] md:text-[14px] sm:text-[8px] text-[8px] font-vcr mr-1 sm:mr-4">Hast du noch keinen Account?</p>
             <!-- Button -->
-            <button class="hover-button max-w-[100px] sm:max-w-[150px]">
+            <button class="hover-button lg:max-w-[130px] md:max-w-[120px] sm:max-w-[100px] max-w-[90px]">
               <router-link to="/registrieren" class="nav-link" href="#">
                 <img
                   src="@/assets/xx_Images/xx_Images/Buttons/button registrieren green.png"

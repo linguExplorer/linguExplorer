@@ -1,14 +1,14 @@
 <template>
     <div class="bg-[#f6f5f1] w-full justify-center min-h-screen text-black justify-center">
-        <!--font-vcr m-0 flex flex-col -->
   
       <!-- Header -->
-      <header class="bg-[#99b305] text-black sticky top-0 z-10 w-full">
+      <header class="bg-[#99b305] text-black sticky top-0 z-10">
         <section class="w-full py-2 flex justify-between items-center px-4">
-          <img 
-            src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" 
-            alt="Logo" 
-            class="w-1/8 max-w-[150px] ml-4 sm:w-1/3 sm:max-w-[200px]" />
+            <img
+              src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png"
+              alt="Logo"
+              class="w-3/6 max-w-[180px] sm:max-w-[200px] mr-9"
+            />
         </section>
       </header>
   
@@ -16,7 +16,7 @@
       <div class="flex flex-col justify-center items-center px-10 sm:px-6 text-center mt-24">
         <!-- Überschrift -->
         <section class="w-full max-w-[500px] flex flex-col justify-center items-center gap-6">
-            <h1 class="font-pixelsplitter text-[25px] mb-4 sm:text-[40px] whitespace-nowrap">
+            <h1 class="font-pixelsplitter lg:text-[40px] md:text-[35px] sm:text-[30px] text-[25px] mb-4 whitespace-nowrap">
                 Passwort vergessen?
             </h1>
           <p class="text-[14px] font-vcr sm:text-[18px]">

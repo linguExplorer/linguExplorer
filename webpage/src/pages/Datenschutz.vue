@@ -15,7 +15,7 @@
             <img 
               src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png" 
               alt="Jetzt spielen" 
-              class="lg:max-h-[50px] md:max-h-[45px] sm:max-h-[35px] max-h-[35px] px-2" 
+              class="lg:max-h-[46px] md:max-h-[45px] sm:max-h-[35px] max-h-[35px] px-2" 
             />
           </button>
         </div>
