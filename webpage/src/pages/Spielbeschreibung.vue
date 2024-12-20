@@ -66,7 +66,7 @@
           <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" alt="Logo" class="w-1/3" />
           <h2 class="font-pixelsplitter lg:text-3xl md:text-2xl sm:text-xl text-xl">?</h2>
         </div>
-        <p class="font-vcr text-left px-20 pt-8 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] sm:px-40 pt-4 pb-8">
+        <p class="font-vcr text-left lg:px-40 md:px-30 sm:px-20 px-20 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] pt-4 pb-8">
           linguExplorer ist eine innovative Lernanwendung, die Schülerinnen und Schüler auf eine unterhaltsame Reise
           durch die englische Sprache mitnimmt. Diese Reise ist speziell darauf ausgelegt, den Herausforderungen der
           Fremdsprachenerlernung entgegenzutreten, die viele Jugendliche in ihrer Schullaufbahn bis zur Matura erleben.
@@ -75,14 +75,14 @@
 
       <li class="lg:w-[1050px] md:w-[700px] sm:w-[300px] w-[300px] flex flex-col items-center justify-center bg-[#f6f5f1] mt-24">
         <h2 class="font-pixelsplitter text-center px-14 pt-14 lg:text-3xl md:text-2xl sm:text-xl text-xl">Ziele des Spiels:</h2>
-        <p class="font-vcr text-left px-20 pt-8 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] sm:px-40 pt-4 pb-8">
+        <p class="font-vcr text-left lg:px-40 md:px-30 sm:px-20 px-20 pt-8 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] pt-4 pb-8">
           Das primäre Ziel von linguExplorer ist es, die Motivation der Spieler zu steigern, indem sie auf spielerische
           Weise die englische Sprache erlernen. Das Spiel verbindet Lernen und Spaß, um den Schülern zu helfen, ihre
           Englischkenntnisse langfristig zu verbessern. Durch die interaktiven und herausfordernden Aufgaben soll nicht
           nur das Lernen gefördert, sondern auch ein tieferes Verständnis und ein besseres Gefühl für die Sprache
           vermittelt werden.
         </p>
-        <p class="font-vcr text-left px-20 pt-8 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] sm:px-40 pt-4 pb-8" >
+        <p class="font-vcr text-left lg:px-40 md:px-30 sm:px-20 px-20 pt-8 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] pt-4 pb-8" >
           linguExplorer soll den Nutzern die Möglichkeit geben, durch regelmäßige Interaktion mit der Sprache ihr
           Selbstvertrauen und ihre Fähigkeiten im Umgang mit Englisch zu stärken, und dies auf eine Weise, die im
           traditionellen Unterricht oft fehlt.
@@ -91,17 +91,17 @@
 
       <li class="lg:w-[1050px] md:w-[700px] sm:w-[300px] w-[300px] flex flex-col items-center justify-center bg-[#f6f5f1] mt-24">
         <h2 class="font-pixelsplitter text-center px-14 pt-14 lg:text-3xl md:text-2xl sm:text-xl text-xl">Gameplay:</h2>
-        <p class="font-vcr text-left px-20 pt-8 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] sm:px-40 pt-4 pb-8">
+        <p class="font-vcr text-left lg:px-40 md:px-30 sm:px-20 px-20 pt-8 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] pt-4 pb-8">
           linguExplorer ist ein Singleplayer-Lernspiel, das auf der Kombination von Spielspaß und Bildung basiert, ein
           sogenanntes Serious Game. Das Hauptziel des Spiels ist es, Englischkenntnisse durch das Erforschen einer
           offenen Spielwelt zu verbessern. Die Spieler können sich auf einer Map bewegen und verschiedene Orte
           besuchen, die jeweils unterschiedliche Themenbereiche und sprachliche Herausforderungen repräsentieren.
         </p>
-        <p class="font-vcr text-left px-20 pt-8 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] sm:px-40 pt-4 pb-8">
+        <p class="font-vcr text-left lg:px-40 md:px-30 sm:px-20 px-20 pt-8 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] pt-4 pb-8">
           An diesen Orten stehen dem Spieler eine Vielzahl von Minispielen zur Verfügung, die den Fokus auf spezifische
           sprachliche Fertigkeiten legen.
         </p> 
-        <p class="font-vcr text-left px-20 pt-8 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] sm:px-40 pt-4 pb-8">
+        <p class="font-vcr text-left lg:px-40 md:px-30 sm:px-20 px-20 pt-8 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] pt-4 pb-8">
           Zusätzlich bietet das Spiel ein Phrasenheft als hilfreiches Werkzeug. Hier
           werden alle während des Spiels erlernten Vokabeln und Phrasen gesammelt. Dieses Phrasenheft steht den
           Spielern jederzeit zur Verfügung und ermöglicht es ihnen, Inhalte nachzuschlagen und ihren Lernfortschritt
@@ -114,8 +114,8 @@
 
 </main>
     
-<footer id="footer" class="bg-[#99b305] text-black text-xl">
-    <section class="max-w-full lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] mx-10 sm:mx-20 p-4 flex justify-between items-center">
+<footer id="footer" class="bg-[#99b305] text-black">
+    <section class="max-w-full lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] mx-10 sm:mx-20 p-[3px] flex justify-between items-center">
         <nav class="flex flex-row gap-4" aria-label="footer">
           <router-link to="/impressum"  href="#">
             <a href="#" class="hover:opacity-90 font-vcr">Impressum</a>
