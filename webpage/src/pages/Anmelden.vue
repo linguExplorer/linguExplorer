@@ -29,26 +29,30 @@
         </section>
       </header>
   
-      <main class="w-full mx-auto mt-[40px] sm:mt-[80px] px-4 sm:px-6 bg-[#f6f5f1]">
+      <main class="w-full mx-auto mt-[40px] sm:mt-[80px] px-4 sm:px-6">
         <img
           src="@/assets/xx_Images/xx_Images/cloud.png"
           alt="Wolke"
-          class="lg:min-w-[320px] md:min-w-[240px] sm:min-w-[160px] w-[160px] absolute z-2 translate-x-[-42vw] translate-y-[-10vh] sm:translate-y-[-12vh]"
+          class="lg:min-w-[320px] md:min-w-[240px] sm:min-w-[160px] w-[160px] absolute z-2 
+          translate-x-[-42vw] lg:translate-y-[-12vh] md:translate-y-[-12vh] sm:translate-y-[-10vh] translate-y-[-10vh]"
         />
         <img
           src="@/assets/xx_Images/xx_Images/sun.png"
           alt="Sonne"
-          class="lg:min-w-[150px] md:min-w-[100px] sm:min-w-[70px] w-[70px] absolute z-1 translate-x-[-38vw] lg:translate-y-[-3vh] md:translate-y-[-3vh] sm:translate-y-[-5vh] translate-y-[-5vh]"
+          class="lg:min-w-[150px] md:min-w-[100px] sm:min-w-[70px] w-[70px] absolute z-1 
+          translate-x-[-38vw] lg:translate-y-[-3vh] md:translate-y-[-3vh] sm:translate-y-[-5vh] translate-y-[-5vh]"
         />
         <img
           src="@/assets/xx_Images/xx_Images/Cloud2.png"
           alt="Wolke"
-          class="lg:min-w-[320px] md:min-w-[240px] sm:min-w-[160px] w-[160px] absolute z-2 translate-x-[-45vw] lg:translate-y-[7vh] md:translate-y-[3vh] sm:translate-y-[-2vh] translate-y-[-2vh]"
+          class="lg:min-w-[320px] md:min-w-[240px] sm:min-w-[160px] w-[160px] absolute z-2 
+          translate-x-[-45vw] lg:translate-y-[7vh] md:translate-y-[3vh] sm:translate-y-[-2vh] translate-y-[-2vh]"
         />
         <img
           src="@/assets/xx_Images/xx_Images/Cloud2.png"
           alt="Wolke"
-          class="lg:min-w-[320px] md:min-w-[240px] sm:min-w-[160px] w-[160px] absolute z-1 translate-x-[40vw] translate-y-[-3vh] sm:translate-x-[30vw] sm:translate-y-[-8vh]"
+          class="lg:min-w-[320px] md:min-w-[240px] sm:min-w-[160px] w-[160px] absolute z-1 
+          translate-x-[40vw] sm:translate-x-[30vw] sm:translate-y-[-8vh] translate-y-[-3vh]"
         />
   
         <section class="hover-button bg-[#f6f5f1] flex flex-col justify-center items-center gap-4 sm:gap-[0px] px-1 sm:px-0">
