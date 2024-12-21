@@ -21,11 +21,11 @@
             
 
                 <!-- Eingabeformular -->
-                <form @submit.prevent="submit" class="w-full flex flex-col justify-center items-center gap-4">
+                <form @submit.prevent="submit" class="lg:w-[500px] md:w-[400px] sm:w-[300px] w-[300px] flex flex-col justify-center items-center gap-4">
 
                     <div class="w-full px-8 sm:px-4">
                         <label for="password" 
-                        id="passwordLabel" class="font-vcr block text-left mb-2 text-[14px] sm:text-[18px]">Passwort (mind. 8 Zeichen)
+                        id="passwordLabel" class="font-vcr block text-left mb-2 lg:text-[18px] md:text-[16px] sm:text-[15px] text-[14px]">Passwort (mind. 8 Zeichen)
                         </label>
                         <input type="password" id="password" v-model="data.password" required minlength="8" 
                         class="font-vcr bg-white border-[#9cb405] border-[2px] p-2 text-sm w-full"/>
@@ -33,7 +33,7 @@
                     
                     <div class="w-full px-8 sm:px-4">
                         <label for="confirmPassword" 
-                        id="confirmPasswordLabel" class="font-vcr block text-left mb-2 text-[14px] sm:text-[18px]">Passwort wiederholen
+                        id="confirmPasswordLabel" class="font-vcr block text-left mb-2 lg:text-[18px] md:text-[16px] sm:text-[15px] text-[14px]">Passwort wiederholen
                         </label>
                         <input type="password" id="confirmPassword" v-model="confirmPassword" required minlength="8" 
                         class="font-vcr bg-white border-[#9cb405] border-[2px] p-2 text-sm w-full"/>
@@ -45,7 +45,7 @@
                     <!-- Speicher-Button -->
                     <button type="submit" class="hover-button w-full flex justify-center items-center mt-5" :disabled="!isFormValid" >
                         <img src="@/assets/xx_Images/xx_Images/Buttons/button speichern.png" alt="Speichern"
-                        class="max-w-[100px] sm:max-w-[150px] w-full" />
+                        class="lg:max-w-[150px] md:max-w-[130px] sm:max-w-[120px] max-w-[100px] w-full" />
                     </button>
 
                 </form>

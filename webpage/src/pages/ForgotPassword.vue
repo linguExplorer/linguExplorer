@@ -19,20 +19,20 @@
             <h1 class="font-pixelsplitter lg:text-[40px] md:text-[35px] sm:text-[30px] text-[25px] mb-4 whitespace-nowrap">
                 Passwort vergessen?
             </h1>
-          <p class="text-[14px] font-vcr sm:text-[18px]">
+          <p class="lg:text-[18px] md:text-[16px] sm:text-[15px] text-[14px] font-vcr">
             Gib hier die E-Mail-Adresse ein, um dein<br> Passwort zurückzusetzen
           </p>
   
           <!-- Eingabeformular -->
-          <form @submit.prevent="submit" class="w-full flex flex-col justify-center items-center gap-4">
+          <form @submit.prevent="submit" class="lg:w-[500px] md:w-[400px] sm:w-[300px] w-[300px] flex flex-col justify-center items-center gap-4">
             <div class="w-full">
-              <label for="email" class="font-vcr block text-left mb-2 text-[14px] sm:text-[18px]">E-Mail:</label>
+              <label for="email" class="font-vcr block text-left mb-2 lg:text-[18px] md:text-[16px] sm:text-[15px] text-[14px]">E-Mail:</label>
               <input 
                 type="email" 
                 id="email" 
                 v-model="data.email" 
                 required 
-                class="font-vcr bg-white border-[#9cb405] border-[2px] p-2 text-sm w-full"
+                class="w-full font-vcr bg-white border-[#9cb405] border-[2px] p-2 text-sm"
               />
             </div>
   
@@ -43,7 +43,7 @@
               <img 
                 src="@/assets/xx_Images/xx_Images/Buttons/button neues passwort.png" 
                 alt="Neues Passwort" 
-                class="max-w-[120px] sm:max-w-[200px] w-full"
+                class="lg:max-w-[200px] md:max-w-[160px] sm:max-w-[120px] max-w-[120px] w-full"
               />
             </button>
           </form>

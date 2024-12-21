@@ -57,7 +57,7 @@
   
           <form
             @submit.prevent="submit"
-            class="w-[240px] sm:w-[500px] flex flex-col justify-center items-center gap-4">
+            class="lg:w-[500px] md:w-[400px] sm:w-[300px] w-[300px] flex flex-col justify-center items-center gap-4">
           
             <div class="w-full">
               <label for="email" 
