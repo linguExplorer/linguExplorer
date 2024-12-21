@@ -1,11 +1,9 @@
 <template>
   <!-- Wrapper: Gedrehte Ansicht für kleine Bildschirme -->
   <div class="w-full h-full font-vcr text-black bg-[#f6f5f1] fixed flex items-center justify-center">
-    <!-- Rotierter Inhalt -->
-    <div class="transform origin-center lg:rotate-0 md:rotate-0 sm:rotate-90 rotate-90 flex flex-col">
-      
-      <!-- Rechts oben Button -->
-      <div class="absolute top-4 right-4">
+
+    <!-- Rechts oben Button -->
+    <div class="absolute lg:top-4 lg:right-4 md:top-4 md:right-4 sm:bottom-4 sm:right-4 bottom-4 right-4">
         <button class="hover-button">
           <router-link to="/accInfoSeite">
             <img
@@ -17,8 +15,11 @@
         </button>
       </div>
 
+    <!-- Rotierter Inhalt -->
+    <div class="transform origin-center lg:rotate-0 md:rotate-0 sm:rotate-90 rotate-90 flex flex-col">
+
       <!-- Header -->
-      <header class="w-full justify-left px-10">
+      <header class="w-full justify-left px-4">
         <img
           src="@/assets/xx_Images/xx_Images/wordmark/wordmark_scaled.png"
           alt="Linguexplorer"
@@ -27,7 +28,7 @@
       </header>
 
       <!-- Main Inhalt -->
-      <div class="lg:w-[1000px] md:w-[800px] sm:w-[500px] flex flex-row items-center justify-between px-4 py-4 gap-4">
+      <div class="lg:w-[900px] md:w-[600px] sm:w-[400px] w-[400px] flex flex-row items-center justify-between px-4 py-4 gap-4">
         <!-- Buttons links -->
         <div class="flex flex-col space-y-4 items-center">
           <button class="hover-button">
@@ -47,7 +48,7 @@
         </div>
 
         <!-- Charakter -->
-        <div class="flex justify-center">
+        <div class="flex justify-center lg:mt-[-60px] md:mt-[-50px] sm:mt-[-40px] mt-[-40px]">
           <img
             src="@/assets/xx_Images/xx_Images/MainCharacterFrontAnimationv2.gif"
             alt="Character Animation"
