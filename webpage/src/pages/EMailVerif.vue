@@ -32,7 +32,8 @@
         <img
           src="@/assets/xx_Images/xx_Images/Cloud2.png"
           alt="Wolke"
-          class="lg:min-w-[320px] md:min-w-[240px] sm:min-w-[160px] w-[160px] absolute z-1 translate-x-[40vw] translate-y-[-3vh] sm:translate-x-[30vw] sm:translate-y-[-8vh]"
+          class="lg:min-w-[320px] md:min-w-[240px] sm:min-w-[160px] w-[160px] absolute z-1 
+          lg:translate-x-[30vw] md:translate-x-[35vw] sm:translate-x-[40vw] translate-x-[40vw] sm:translate-y-[-8vh] translate-y-[-3vh]"
         />
     </main>
 
