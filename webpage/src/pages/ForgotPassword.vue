@@ -13,26 +13,26 @@
       </header>
   
       <!-- Main Content -->
-      <div class="flex flex-col justify-center items-center px-10 sm:px-6 text-center mt-24">
+      <div class="flex flex-col justify-center items-center px-10 sm:px-6 text-center lg:mt-40 md:mt-40 lg:mt-24 mt-24">
         <!-- Überschrift -->
         <section class="w-full max-w-[500px] flex flex-col justify-center items-center gap-6">
             <h1 class="font-pixelsplitter lg:text-[40px] md:text-[35px] sm:text-[30px] text-[25px] mb-4 whitespace-nowrap">
                 Passwort vergessen?
             </h1>
-          <p class="lg:text-[18px] md:text-[16px] sm:text-[15px] text-[14px] font-vcr">
+          <p class="lg:text-[17px] md:text-[16px] sm:text-[15px] text-[14px] font-vcr">
             Gib hier die E-Mail-Adresse ein, um dein<br> Passwort zurückzusetzen
           </p>
   
           <!-- Eingabeformular -->
           <form @submit.prevent="submit" class="lg:w-[500px] md:w-[400px] sm:w-[300px] w-[300px] flex flex-col justify-center items-center gap-4">
             <div class="w-full">
-              <label for="email" class="font-vcr block text-left mb-2 lg:text-[18px] md:text-[16px] sm:text-[15px] text-[14px]">E-Mail:</label>
+              <label for="email" class="font-vcr block text-left mb-0 lg:text-[16px] md:text-[15px] sm:text-[14px] text-[14px]">E-Mail:</label>
               <input 
                 type="email" 
                 id="email" 
                 v-model="data.email" 
                 required 
-                class="w-full font-vcr bg-white border-[#9cb405] border-[2px] p-2 text-sm"
+                class="w-full font-vcr bg-white border-[#9cb405] border-[2px] lg:p-2 md:p-1.5 sm:p-1 p-1 text-sm"
               />
             </div>
   

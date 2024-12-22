@@ -27,9 +27,8 @@
       </section>
     </header>
 
-    <main class="w-full mx-auto sm:mt-[80px] mt-[40px] px-4 sm:px-6">
-      <!-- Background Images -->
-      <img
+    <main class="w-full mx-auto mt-[40px] sm:mt-[80px] px-4 sm:px-6">
+        <img
           src="@/assets/xx_Images/xx_Images/cloud.png"
           alt="Wolke"
           class="lg:min-w-[320px] md:min-w-[240px] sm:min-w-[160px] w-[160px] absolute z-2 
@@ -51,13 +50,13 @@
           src="@/assets/xx_Images/xx_Images/Cloud2.png"
           alt="Wolke"
           class="lg:min-w-[320px] md:min-w-[240px] sm:min-w-[160px] w-[160px] absolute z-1 
-          translate-x-[40vw] sm:translate-x-[30vw] sm:translate-y-[-8vh] translate-y-[-3vh]"
+          lg:translate-x-[30vw] md:translate-x-[35vw] sm:translate-x-[40vw] translate-x-[40vw] sm:translate-y-[-8vh] translate-y-[-3vh]"
         />
 
       <!-- Registration Form -->
       <section class="hover-button bg-[#f6f5f1] flex flex-col justify-center items-center gap-4 sm:gap-0 px-1 sm:px-0">
 
-        <h1 class="font-pixelsplitter lg:text-[60px] md:text-[50px] sm:text-[30px] text-[30px] lg:mb-5 lg:mt-10 md:mb-5 md:mt-10 sm:mb-0 sm:mt-10 mb-0 mt-10">Registrieren</h1>
+        <h1 class="font-pixelsplitter lg:text-[60px] md:text-[50px] sm:text-[30px] text-[30px] lg:mb-2 lg:mt-[-55px] md:mb-2 md:mt-0 sm:mb-0 sm:mt-5 mb-0 mt-10">Registrieren</h1>
 
         <form 
         @submit.prevent="handleRegister" 
@@ -66,26 +65,26 @@
           <!-- Email Input -->
           <div class="w-full">
             <label for="email" 
-            class="font-vcr block text-left mb-2 lg:text-[16px] md:text-[15px] sm:text-[14px] text-[14px]">E-Mail</label>
+            class="font-vcr block text-left mb-0 lg:text-[16px] md:text-[15px] sm:text-[14px] text-[14px]">E-Mail</label>
             <input
               type="email"
               id="email"
               v-model="data.email"
               required
-              class="font-vcr bg-white border-[#9cb405] border-[2px] p-2 text-sm w-full"
+              class="font-vcr bg-white border-[#9cb405] border-[2px] lg:p-2 md:p-1.5 sm:p-1 p-1 text-sm w-full"
             />
             <p v-if="errorMessage" class="text-red-500 mt-2">{{ errorMessage }}</p>
           </div>
 
           <!-- Username Input -->
           <div class="w-full">
-            <label for="uname" class="font-vcr block text-left mb-2 lg:text-[16px] md:text-[15px] sm:text-[14px] text-[14px]">Benutzername</label>
+            <label for="uname" class="font-vcr block text-left mb-0 lg:text-[16px] md:text-[15px] sm:text-[14px] text-[14px]">Benutzername</label>
             <input
               type="text"
               id="uname"
               v-model="data.name"
               required
-              class="font-vcr bg-white border-[#9cb405] border-[2px] p-2 text-sm w-full"
+              class="font-vcr bg-white border-[#9cb405] border-[2px] lg:p-2 md:p-1.5 sm:p-1 p-1 text-sm w-full"
             />
             <p v-if="usernameError" class="text-red-500 mt-2">{{ usernameError }}</p>
           </div>
@@ -93,14 +92,14 @@
           <!-- Password Input -->
           <div class="input-group flex flex-col sm:mb-0 w-full">
             <label for="password" 
-            class="font-vcr block text-left mb-2 lg:text-[16px] md:text-[15px] sm:text-[14px] text-[14px]">Passwort</label>
+            class="font-vcr block text-left mb-0 lg:text-[16px] md:text-[15px] sm:text-[14px] text-[14px]">Passwort</label>
             <div class="input-group flex items-center">
               <input
                 :type="inputType"
                 id="password"
                 v-model="data.password"
                 required
-                class="font-vcr bg-white border-[#9cb405] border-[2px] p-2 text-sm w-full"
+                class="font-vcr bg-white border-[#9cb405] border-[2px] lg:p-2 md:p-1.5 sm:p-1 p-1 text-sm w-full"
               />
               <button @click="togglePasswordVisibility" type="button" class="focus:outline-none -ml-8">
                 <img src="@/assets/xx_Images/xx_Images/Buttons/show.png" alt="" class="w-4 mb-2 mt-2" />
@@ -110,16 +109,16 @@
           </div>
 
           <!-- Confirm Password Input -->
-          <div class="input-group flex flex-col mb-0 sm:mb-4 w-full">
+          <div class="input-group flex flex-col mb-0 w-full">
             <label for="confpassword" 
-            class="font-vcr block text-left mb-2 lg:text-[16px] md:text-[15px] sm:text-[14px] text-[14px]">Passwort Wiederholen</label>
+            class="font-vcr block text-left mb-0 lg:text-[16px] md:text-[15px] sm:text-[14px] text-[14px]">Passwort Wiederholen</label>
             <div class="input-group flex items-center mb-0">
               <input
                 :type="confirmInputType"
                 id="confpassword"
                 v-model="confirmPassword"
                 required
-                class="font-vcr bg-white border-[#9cb405] border-[2px] p-2 text-sm w-full"
+                class="font-vcr bg-white border-[#9cb405] border-[2px] lg:p-2 md:p-1.5 sm:p-1 p-1 text-sm w-full"
               />
               <button @click="toggleConfirmPasswordVisibility" type="button" class="focus:outline-none -ml-8">
                 <img src="@/assets/xx_Images/xx_Images/Buttons/show.png" alt="" class="w-4 mb-0 mt-2" />
@@ -131,17 +130,17 @@
           <!-- Privacy Policy Checkbox -->
           <div class="inline-flex items-center pt-0">
             <input type="checkbox" v-model="data.checked" id="check-with-link" class="h-5 w-5 cursor-pointer" />
-            <label for="check-with-link" class="cursor-pointer ml-2 font-vcr text-black text-[12px] sm:text-[14px]">
+            <label for="check-with-link" class="cursor-pointer ml-2 font-vcr text-black lg:text-[13px] md:text-[13px] sm:text-[12px] text-[12px]">
               Ich akzeptiere die linguExplorer
               <router-link to="/datenschutz" class="hover:text-[#99b305] underline">
                 Datenschutzerklärung
               </router-link>
             </label>
           </div>
-          <p v-if="!data.checked" class="text-red-500 text-center mt-0 text-[13px] sm:text-[15px]">Bitte akzeptieren Sie die Datenschutzerklärung um fortzufahren!</p>
+          <p v-if="!data.checked" class="text-red-500 text-center mt-0 lg:text-[13px] md:text-[13px] sm:text-[12px] text-[12px]">Bitte akzeptieren Sie die Datenschutzerklärung um fortzufahren!</p>
 
           <!-- Submit Button -->
-          <button type="submit" class="hover-button w-full lg:max-w-[150px] md:max-w-[145px] sm:max-w-[120px] max-w-[120px] mt-0" :disabled="!isFormValid">
+          <button type="submit" class="hover-button w-full lg:max-w-[150px] md:max-w-[145px] sm:max-w-[120px] max-w-[120px] mt-0 mb-0" :disabled="!isFormValid">
             <img src="@/assets/xx_Images/xx_Images/Buttons/button registrieren blue.png" alt="Registrieren" class="w-full hover:opacity-80" />
           </button>
         </form>
@@ -149,19 +148,15 @@
     </main>
 
     <!-- Footer -->
-    <footer class="mt-auto bg-[#f6f5f1]">
-        <section class="p-4 flex justify-end items-center">
-          <button class="hover-button max-w-[170px] sm:max-w-[200px] p-4">
-            <router-link to="/" class="nav-link" href="#">
-              <img
-                src="@/assets/xx_Images/xx_Images/Buttons/button zrk.png"
-                alt="Zurück"
-                class="hover:opacity-80"
-              />
-            </router-link>
-          </button>
-        </section>
-      </footer>
+    <footer class="mt-auto">
+      <section class="mx-auto p-4 flex justify-end items-center">
+        <button class="lg:max-w-[200px] md:max-w-[150px] sm:max-w-[100px] max-w-[100px] hover-button">
+          <router-link to="/" href="#">
+            <img src="@/assets/xx_Images/xx_Images/Buttons/button zrk.png" alt="Zurück" />
+          </router-link>
+        </button>
+      </section>
+    </footer>
   </div>
 </template>
 

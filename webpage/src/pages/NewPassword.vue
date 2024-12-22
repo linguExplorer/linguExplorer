@@ -12,7 +12,7 @@
         </section>
       </header>
         
-      <div class="flex flex-col justify-center items-center px-4 sm:px-6 text-center mt-24">
+      <div class="flex flex-col justify-center items-center px-4 sm:px-6 text-center lg:mt-40 md:mt-40 lg:mt-24 mt-24 ">
             <!-- Überschrift -->
             <section class="w-full max-w-[500px] flex flex-col justify-center items-center gap-6">
                 <h1 class="font-pixelsplitter lg:text-[40px] md:text-[35px] sm:text-[30px] text-[25px] mb-4 sm:whitespace-nowrap">
@@ -25,18 +25,18 @@
 
                     <div class="w-full px-8 sm:px-4">
                         <label for="password" 
-                        id="passwordLabel" class="font-vcr block text-left mb-2 lg:text-[18px] md:text-[16px] sm:text-[15px] text-[14px]">Passwort (mind. 8 Zeichen)
+                        id="passwordLabel" class="font-vcr block text-left mb-0 lg:text-[16px] md:text-[15px] sm:text-[14px] text-[14px]">Passwort (mind. 8 Zeichen)
                         </label>
                         <input type="password" id="password" v-model="data.password" required minlength="8" 
-                        class="font-vcr bg-white border-[#9cb405] border-[2px] p-2 text-sm w-full"/>
+                        class="font-vcr bg-white border-[#9cb405] border-[2px] lg:p-2 md:p-1.5 sm:p-1 p-1 text-sm w-full"/>
                     </div>
                     
                     <div class="w-full px-8 sm:px-4">
                         <label for="confirmPassword" 
-                        id="confirmPasswordLabel" class="font-vcr block text-left mb-2 lg:text-[18px] md:text-[16px] sm:text-[15px] text-[14px]">Passwort wiederholen
+                        id="confirmPasswordLabel" class="font-vcr block text-left mb-0 lg:text-[16px] md:text-[15px] sm:text-[14px] text-[14px]">Passwort wiederholen
                         </label>
                         <input type="password" id="confirmPassword" v-model="confirmPassword" required minlength="8" 
-                        class="font-vcr bg-white border-[#9cb405] border-[2px] p-2 text-sm w-full"/>
+                        class="font-vcr bg-white border-[#9cb405] border-[2px] lg:p-2 md:p-1.5 sm:p-1 p-1 text-sm w-full"/>
                         <p v-if="errorMessage" class="text-red-500 mt-2">
                         {{ errorMessage }}
                     </p>

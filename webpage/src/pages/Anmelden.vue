@@ -52,12 +52,12 @@
           src="@/assets/xx_Images/xx_Images/Cloud2.png"
           alt="Wolke"
           class="lg:min-w-[320px] md:min-w-[240px] sm:min-w-[160px] w-[160px] absolute z-1 
-          translate-x-[40vw] sm:translate-x-[30vw] sm:translate-y-[-8vh] translate-y-[-3vh]"
+          lg:translate-x-[30vw] md:translate-x-[35vw] sm:translate-x-[40vw] translate-x-[40vw] sm:translate-y-[-8vh] translate-y-[-3vh]"
         />
   
         <section class="hover-button bg-[#f6f5f1] flex flex-col justify-center items-center gap-4 sm:gap-[0px] px-1 sm:px-0">
           
-          <h1 class="font-pixelsplitter lg:text-[60px] md:text-[45px] sm:text-[30px] text-[30px] mb-5 mt-10 sm:mb-10 sm:mt-5">Anmelden</h1>
+          <h1 class="font-pixelsplitter lg:text-[60px] md:text-[45px] sm:text-[30px] text-[30px] sm:mb-10 mb-5 sm:mt-0 mt-10">Anmelden</h1>
   
           <form
             @submit.prevent="submit"
@@ -65,13 +65,13 @@
           
             <div class="w-full">
               <label for="email" 
-                class="font-vcr block text-left mb-2 lg:text-[16px] md:text-[15px] sm:text-[14px] text-[14px]">E-Mail</label>
+                class="font-vcr block text-left mb-0 lg:text-[16px] md:text-[15px] sm:text-[14px] text-[14px]">E-Mail</label>
                 <input
                   type="email"
                   id="email"
                   v-model="data.email"
                   required
-                  class="font-vcr bg-white border-[#9cb405] border-[2px] p-2 text-sm w-full"
+                  class="font-vcr bg-white border-[#9cb405] border-[2px] lg:p-2 md:p-1.5 sm:p-1 p-1 text-sm w-full"
                 />
                 <p v-if="emailError" class="text-red-500 mt-2">
                   {{ emailError }}
@@ -80,14 +80,14 @@
 
             <div class="input-group flex flex-col mb-0 sm:mb-4 w-full">
               <label for="password" 
-              class="font-vcr block text-left mb-2 lg:text-[16px] md:text-[15px] sm:text-[14px] text-[14px]">Passwort</label>
+              class="font-vcr block text-left mb-0 lg:text-[16px] md:text-[15px] sm:text-[14px] text-[14px]">Passwort</label>
               <div class="input-group flex items-center mb-4">
                 <input
                   :type="inputType"
                   id="password"
                   v-model="data.password"
                   required
-                  class="font-vcr bg-white border-[#9cb405] border-[2px] p-2 text-sm w-full"
+                  class="font-vcr bg-white border-[#9cb405] border-[2px] lg:p-2 md:p-1.5 sm:p-1 p-1 text-sm w-full"
                 />
                 
                 <button
@@ -126,7 +126,7 @@
         </section>
       </main>
   
-      <!-- Footer -->
+    <!-- Footer -->
     <footer class="mt-auto">
       <section class="mx-auto p-4 flex justify-end items-center">
         <button class="lg:max-w-[200px] md:max-w-[150px] sm:max-w-[100px] max-w-[100px] hover-button">

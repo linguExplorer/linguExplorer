@@ -96,8 +96,8 @@
       </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="mt-auto">
+     <!-- Footer -->
+     <footer class="mt-auto">
       <section class="mx-auto p-4 flex justify-end items-center">
         <button class="lg:max-w-[200px] md:max-w-[150px] sm:max-w-[100px] max-w-[100px] hover-button">
           <router-link to="/" href="#">
