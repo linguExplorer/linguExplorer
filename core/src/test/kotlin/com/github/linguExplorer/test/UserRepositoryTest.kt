@@ -14,7 +14,7 @@ class UserRepositoryTest {
     @BeforeEach
     fun setUp() {
         DatabaseManager();
-        userRepository = UserRepository()  // Initialisiere das Repository
+        userRepository = UserRepository()
     }
 
 
@@ -31,7 +31,7 @@ class UserRepositoryTest {
 
     @Test
     fun `test remove user`() {
-        userRepository.removeUser(id)
+        userRepository.deleteUserWithDependencies(id)
 
         val retrievedUser = userRepository.getUser(id)
 

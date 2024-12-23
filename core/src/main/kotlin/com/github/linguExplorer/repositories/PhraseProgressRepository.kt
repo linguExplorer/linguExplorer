@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class PhraseProgressRepository {
 
-    fun addPhraseProgress(phraseId: Int, userId: Int, isMastered: Boolean) =
+    fun addPhraseProgress(phraseId: Int, userId: Int, isMastered: Boolean = false) =
         transaction {
             PhraseProgress.insert {
                 it[this.phraseId] = phraseId
@@ -44,23 +44,20 @@ class PhraseProgressRepository {
         }
 
 
-    fun changeMasteredState(phraseProgressEntity: PhraseProgressEntity?) =
+    fun changeMasteredState(userId: Int, phraseId: Int) =
         transaction {
-            if (phraseProgressEntity != null) {
                 PhraseProgress.update({
-                    PhraseProgress.userId eq phraseProgressEntity.userId and
-                        (PhraseProgress.phraseId eq phraseProgressEntity.phraseId)
+                    PhraseProgress.userId eq userId and
+                        (PhraseProgress.phraseId eq phraseId)
                 }) {
                     it[isMastered] = true
                 }
-            } else {
-                return@transaction null
             }
         }
+
 
     private fun ResultRow.toPhraseProgress() = PhraseProgressEntity(
         this[PhraseProgress.phraseId],
         this[PhraseProgress.userId],
         this[PhraseProgress.isMastered]
     )
-}
