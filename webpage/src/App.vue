@@ -4,15 +4,19 @@
   <main>
     <CookieBanner></CookieBanner>
     <router-view />
+    <!-- Hauptmenü -->
+    <MainMenu />
   </main>
 </template>
 
 
 <script >
 import CookieBanner from './components/CookieBanner.vue';
+import MainMenu from './components/MainMenu.vue'
 export default {
   components: {
-    CookieBanner
+    CookieBanner,
+    MainMenu  //registrieren
   },
 }
 
