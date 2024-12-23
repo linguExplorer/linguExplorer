@@ -60,7 +60,6 @@
     </button>
   </section>
 
-
        <!-- Laptop Charakter -->
         <div class="hidden md:flex justify-center translate-x-[30vw] lg:translate-y-[-17vh] md:translate-y-[-13vh]">
           <img
@@ -91,16 +90,7 @@
             />
           </div>
         </section>
-
-        <!-- Gras-Bild unten -->
-        <!--<div class="absolute bottom-0 z-0 overflow-hidden">
-          <img
-            src="@/assets/xx_Images/xx_Images/gras_combined_scaled.png"
-            alt="Gras"
-            class="lg:translate-y-[90%] md:translate-y-[30%] sm:translate-y-[-90%]"
-          />
-        </div>-->
-
+      
   </div>
 </template>
 

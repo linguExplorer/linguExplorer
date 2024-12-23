@@ -31,16 +31,14 @@
       <img src="@/assets/xx_Images/xx_Images/cloud.png" alt="Wolke" class="lg:min-w-[320px] md:min-w-[220px] sm:min-w-[160px] w-[160px] absolute z-2 translate-x-[-50vw] translate-y-[3vh] sm:translate-x-[-38vw] sm:translate-y-[10vh]" />
       <img src="@/assets/xx_Images/xx_Images/Cloud2.png" alt="Wolke" class="lg:min-w-[320px] md:min-w-[230px] sm:min-w-[140px] w-[140px] absolute z-1 translate-x-[40vw] translate-y-[5vh] sm:translate-x-[30vw] sm:translate-y-[13vh]" />
       
-      <!--<section id="top" class="flex flex-col w-full justify-center items-center bg-cloud-background bg-cover">-->
           <h1 class="font-pixelsplitter lg:text-[68px] md:text-[48px] sm:text-[24px] text-[24px] mt-8 sm:mt-16">Willkommen</h1>
           <h1 class="font-pixelsplitter lg:text-[68px] md:text-[48px] sm:text-[24px] text-[24px] ">zu</h1>
       
-        <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_scaled.png" 
-        alt="Linguexplorer" 
-        class="lg:w-[550px] md:w-[450px] sm:w-[230px] w-[230px] mb-4 sm:mb-10" />
+          <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_scaled.png" 
+          alt="Linguexplorer" 
+          class="lg:w-[550px] md:w-[450px] sm:w-[230px] w-[230px] mb-4 sm:mb-10" />
 
       <!-- Button direkt unter dem Linguexplorer-Logo -->
-        <!-- Character Image - neben dem "Jetzt spielen" button -->
           <button class="hover-button">
             <router-link to="/anmelden" class="nav-link"  href="#">
             <img src="@/assets/xx_Images/xx_Images/Buttons/button play now.png" 
@@ -49,59 +47,57 @@
             </router-link>
           </button>
 
+           <!-- Character Image - neben dem "Jetzt spielen" button -->
           <img src="@/assets/xx_Images/xx_Images/Charactee New.png" alt="Character" 
           class="lg:w-[370px] md:w-[270px] sm:w-[180px] w-[140px] absolute z-1 sm:translate-x-[-35vw] translate-x-[-25vw] lg:translate-y-[61.5vh] md:translate-y-[45vh] sm:translate-y-[34.5vh]  translate-y-[30vh]" />
-      <!--</section>-->
     
-
     <!-- Gras Bild -->
-     <!--bg-cover-->
   <section class="bg-grass-background w-full relative z-0 lg:mt-[52px] md:mt-[-24px] sm:mt-[-12px] mt-[-12px]">
  <!--bg-[#ffb305]-->
     <ul class="list-none lg:mx-36 md:mx-20 sm:mx-9 mx-9 my-36 flex flex-col items-center ">
 
-      <li class="lg:w-[1050px] md:w-[700px] sm:w-[300px] w-[300px] flex flex-col items-center justify-center bg-[#f6f5f1] mt-0 sm:mt-32 ">
+      <li class="lg:w-[1050px] md:w-[700px] sm:w-[300px] w-[300px] flex flex-col items-center justify-center bg-[#f6f5f1] lg:mt-32 md:mt-20 sm:mt-0 mt-0">
         <div class="flex flex-row items-center justify-center gap-2 m-8">
           <h2 class="font-pixelsplitter lg:text-3xl md:text-2xl sm:text-xl text-xl">Was ist</h2>
           <img src="@/assets/xx_Images/xx_Images/wordmark/wordmark_hell_scaled.png" alt="Logo" class="w-1/3" />
           <h2 class="font-pixelsplitter lg:text-3xl md:text-2xl sm:text-xl text-xl">?</h2>
         </div>
-        <p class="font-vcr text-left lg:px-40 md:px-30 sm:px-20 px-20 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] pt-4 pb-8">
+        <p class="font-vcr text-left px-10 sm:px-20 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] pt-2 pb-16">
           linguExplorer ist eine innovative Lernanwendung, die Schülerinnen und Schüler auf eine unterhaltsame Reise
           durch die englische Sprache mitnimmt. Diese Reise ist speziell darauf ausgelegt, den Herausforderungen der
           Fremdsprachenerlernung entgegenzutreten, die viele Jugendliche in ihrer Schullaufbahn bis zur Matura erleben.
         </p>
       </li>
 
-      <li class="lg:w-[1050px] md:w-[700px] sm:w-[300px] w-[300px] flex flex-col items-center justify-center bg-[#f6f5f1] mt-24">
+      <li class="lg:w-[1050px] md:w-[700px] sm:w-[300px] w-[300px] flex flex-col items-center justify-center bg-[#f6f5f1] lg:mt-32 md:mt-20 sm:mt-20 mt-20">
         <h2 class="font-pixelsplitter text-center px-14 pt-14 lg:text-3xl md:text-2xl sm:text-xl text-xl">Ziele des Spiels:</h2>
-        <p class="font-vcr text-left lg:px-40 md:px-30 sm:px-20 px-20 pt-8 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] pt-4 pb-8">
+        <p class="font-vcr text-left px-10 sm:px-20 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] pt-12 pb-8">
           Das primäre Ziel von linguExplorer ist es, die Motivation der Spieler zu steigern, indem sie auf spielerische
           Weise die englische Sprache erlernen. Das Spiel verbindet Lernen und Spaß, um den Schülern zu helfen, ihre
           Englischkenntnisse langfristig zu verbessern. Durch die interaktiven und herausfordernden Aufgaben soll nicht
           nur das Lernen gefördert, sondern auch ein tieferes Verständnis und ein besseres Gefühl für die Sprache
           vermittelt werden.
         </p>
-        <p class="font-vcr text-left lg:px-40 md:px-30 sm:px-20 px-20 pt-8 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] pt-4 pb-8" >
+        <p class="font-vcr text-left px-10 sm:px-20 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] pt-0 pb-16" >
           linguExplorer soll den Nutzern die Möglichkeit geben, durch regelmäßige Interaktion mit der Sprache ihr
           Selbstvertrauen und ihre Fähigkeiten im Umgang mit Englisch zu stärken, und dies auf eine Weise, die im
           traditionellen Unterricht oft fehlt.
         </p>
       </li>
 
-      <li class="lg:w-[1050px] md:w-[700px] sm:w-[300px] w-[300px] flex flex-col items-center justify-center bg-[#f6f5f1] mt-24">
+      <li class="lg:w-[1050px] md:w-[700px] sm:w-[300px] w-[300px] flex flex-col items-center justify-center bg-[#f6f5f1] lg:mt-32 md:mt-20 sm:mt-20 mt-20">
         <h2 class="font-pixelsplitter text-center px-14 pt-14 lg:text-3xl md:text-2xl sm:text-xl text-xl">Gameplay:</h2>
-        <p class="font-vcr text-left lg:px-40 md:px-30 sm:px-20 px-20 pt-8 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] pt-4 pb-8">
+        <p class="font-vcr text-left px-10 sm:px-20 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] pt-12 pb-8">
           linguExplorer ist ein Singleplayer-Lernspiel, das auf der Kombination von Spielspaß und Bildung basiert, ein
           sogenanntes Serious Game. Das Hauptziel des Spiels ist es, Englischkenntnisse durch das Erforschen einer
           offenen Spielwelt zu verbessern. Die Spieler können sich auf einer Map bewegen und verschiedene Orte
           besuchen, die jeweils unterschiedliche Themenbereiche und sprachliche Herausforderungen repräsentieren.
         </p>
-        <p class="font-vcr text-left lg:px-40 md:px-30 sm:px-20 px-20 pt-8 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] pt-4 pb-8">
+        <p class="font-vcr text-left px-10 sm:px-20 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] pt-0 pb-8">
           An diesen Orten stehen dem Spieler eine Vielzahl von Minispielen zur Verfügung, die den Fokus auf spezifische
           sprachliche Fertigkeiten legen.
         </p> 
-        <p class="font-vcr text-left lg:px-40 md:px-30 sm:px-20 px-20 pt-8 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] pt-4 pb-8">
+        <p class="font-vcr text-left px-10 sm:px-20 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] pt-0 pb-16">
           Zusätzlich bietet das Spiel ein Phrasenheft als hilfreiches Werkzeug. Hier
           werden alle während des Spiels erlernten Vokabeln und Phrasen gesammelt. Dieses Phrasenheft steht den
           Spielern jederzeit zur Verfügung und ermöglicht es ihnen, Inhalte nachzuschlagen und ihren Lernfortschritt
