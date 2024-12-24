@@ -12,11 +12,11 @@
 
 <script >
 import CookieBanner from './components/CookieBanner.vue';
-import MainMenu from './components/MainMenu.vue'
+//import MainMenu from './components/MainMenu.vue'
 export default {
   components: {
-    CookieBanner,
-    MainMenu  //registrieren
+    CookieBanner//,
+    //MainMenu  //registrieren
   },
 }
 
