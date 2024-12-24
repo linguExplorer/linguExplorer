@@ -8,6 +8,6 @@ urlpatterns = [
     path('logout', LogoutView.as_view()),
     path('update-username', UpdateUsernameView.as_view()),
     path('resend', ResendEmail.as_view()),
-
-    path('activate/<uidb64>/<token>', views.activate, name='activate')
+    path('activate/<uidb64>/<token>', views.activate, name='activate'),
+    path('saves/<int:user_id>/', views.get_user_saves, name='get_user_saves'),
 ]

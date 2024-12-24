@@ -16,6 +16,13 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
+class SaveState(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    save_time = models.DateTimeField(auto_now_add=True)
+    save_data = models.JSONField()  # game save data as a JSON
+
+    def __str__(self):
+        return f"SaveState for {self.user.username} at {self.save_time}"
 
 @receiver(reset_password_token_created)
 def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):

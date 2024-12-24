@@ -166,3 +166,24 @@ class LogoutView(APIView):
         }
         return response;
 
+@api_view(['GET'])
+def get_user_saves(request, user_id):
+    # hier Logik implementieren um Spielstände aus DB zu laden
+    try:
+      saves = SaveState.objects.filter(user_id=user_id)
+
+      if not saves:
+           return Response({'message': 'No saves found'}, status=status.HTTP_404_NOT_FOUND)
+      
+      #Serialize
+      saves_list = []
+      for save in saves:
+        saves_list.append({
+                'id':save.id,
+                'save_time': save.save_time,
+                'save_data':save.save_data
+            })
+      
+      return Response(saves_list, status=status.HTTP_200_OK)
+    except SaveState.DoesNotExist:
+        return Response({'message': 'No saves found'}, status=status.HTTP_404_NOT_FOUND)

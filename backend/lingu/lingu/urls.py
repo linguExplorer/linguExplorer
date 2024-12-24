@@ -19,7 +19,8 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('users.urls')),
+    #path('api/', include('users.urls')),
+    path('users/', include('users.urls')),
     path('password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
     path('verification/', include('verify_email.urls'))
 ]
