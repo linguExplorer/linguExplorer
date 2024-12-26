@@ -13,6 +13,7 @@ import AccInfoSeite from "@/pages/AccInfoSeite.vue";
 import EMailVerif from "@/pages/EMailVerif.vue";
 import CookieBanner from "@/components/CookieBanner.vue";
 import AccInfoSeiteS from "@/pages/AccInfoSeiteS.vue";
+import Spieloptionen from "@/pages/Spieloptionen.vue";
 const routes = [
   {
     path: "/cookie",
@@ -85,6 +86,11 @@ const routes = [
     path: "/eMailVerif", // Route für EMailVerifpage
     name: "eMailVerif",
     component: EMailVerif,
+  },
+  {
+    path: '/Spieloptionen', // Route für Spieloptionen
+    name: 'Spieloptionen',
+    component: Spieloptionen
   },
   {
     path: "/about",
