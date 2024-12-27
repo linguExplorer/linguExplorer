@@ -14,11 +14,11 @@ class GameScreen : Screen {
     private val strawberry = Texture(Gdx.files.internal("assets/Minigames/Essen/phraseImages/test_strawberry.png"))
     private val basket = Texture(Gdx.files.internal("assets/Minigames/Essen/phraseImages/pixel_basket.jpg"))
 
-    private var strawberryX = 200f
-    private var strawberryY = 200f
+    private var strawberryX = 50f
+    private var strawberryY = 50f
 
-    private val basketX = 300f
-    private val basketY = 300f
+    private val basketX = 200f
+    private val basketY = 200f
 
     private var isDragging = false
     private var offsetX = 0f
@@ -69,10 +69,7 @@ class GameScreen : Screen {
             }
         } else {
             if (isDragging) {
-                // Überprüfen, ob Erdbeere im Korb ist
-                if (isMouseInsideImage(strawberryX, strawberryY, basketX, basketY, basket)) {
-                    isCollected = true // Sammelstatus setzen
-                }
+                isCollected = isImageInside(strawberryX, strawberryY, strawberry, basketX, basketY, basket)
             }
             isDragging = false
         }
@@ -81,6 +78,21 @@ class GameScreen : Screen {
     private fun isMouseInsideImage(mouseX: Float, mouseY: Float, imageX: Float, imageY: Float, image: Texture): Boolean {
         return mouseX in imageX..(imageX + image.width) && mouseY in imageY..(imageY + image.height)
     }
+
+    private fun isImageInside(imageX: Float, imageY: Float, image: Texture, basketX: Float, basketY: Float, basket: Texture): Boolean {
+        val imageLeft = imageX
+        val imageRight = imageX + image.width
+        val imageBottom = imageY
+        val imageTop = imageY + image.height
+
+        val basketLeft = basketX
+        val basketRight = basketX + basket.width
+        val basketBottom = basketY
+        val basketTop = basketY + basket.height
+
+        return imageRight > basketLeft && imageLeft < basketRight && imageTop > basketBottom && imageBottom < basketTop
+    }
+
 
     override fun resize(width: Int, height: Int) {}
 
