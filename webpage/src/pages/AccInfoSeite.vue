@@ -243,6 +243,9 @@ if (res.ok) {
     if (res.ok) {
       const err = await res.json();
       await router.push("/");
+
+      window.location.reload();
+
       toast.custom(shallowRef(ToastComponent_log), { duration: 3000,
     
     message: 'Dies ist eine benutzerdefinierte Toast-Nachricht!'
