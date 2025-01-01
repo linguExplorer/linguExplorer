@@ -246,10 +246,7 @@ if (res.ok) {
 
       window.location.reload();
 
-      toast.custom(shallowRef(ToastComponent_log), { duration: 3000,
-    
-    message: 'Dies ist eine benutzerdefinierte Toast-Nachricht!'
-  });
+
    
     }
   } catch (error) {

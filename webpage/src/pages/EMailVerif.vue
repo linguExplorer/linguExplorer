@@ -1,4 +1,9 @@
 <template>
+
+<div
+    v-if="isLoading"
+    class="absolute top-0 left-0 flex justify-center items-center h-screen w-full bg-white bg-opacity-50 z-50"></div>
+
   <div class="font-vcr m-0 text-black w-full min-h-screen bg-[#f6f5f1] flex flex-col justify-start relative">
 
     <!-- Header -->
@@ -95,9 +100,48 @@
 </template>
 
   <script>
-  
+  import { useStore } from "vuex";
+  import { onMounted, ref } from "vue";
+  import { useRoute } from 'vue-router';
+  import { shallowRef } from 'vue';
+  import { Toaster, toast } from "vue-sonner";
+
   export default {
     name: 'EMailVerif',
+    setup() {
+    const data = reactive({
+      email: ""
+    });
+    const router = useRouter();
+    const isLoading = ref(false);
+
+    data.email = this.$store.getters.getters.getEmail;
+
+    const resend = async () => {
+      isLoading.value = true;
+      try {
+        const res = await fetch("https://da.linguexplorer.com/api/resend", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) {
+          isLoading.value = false;
+          const err = await res.json();
+      
+        } 
+      } catch (error) {
+        console.error("Fehler beim Senden der Anfrage:", error);
+      }
+    };
+
+    return {
+      data,
+      resend,
+      isLoading,
+    };
+  }
   };
   </script>
 

@@ -104,6 +104,15 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+
+  scrollBehavior(to, from, savedPosition) {
+    // Wartet 50ms, um sicherzustellen, dass die Seite geladen ist, bevor zum oberen Rand gescrollt wird
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 50);
+    return { x: 0, y: 0 };
+  }
+  ,
 });
 
 export default router;
