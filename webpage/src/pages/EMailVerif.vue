@@ -101,7 +101,7 @@
 
   <script>
   import { useStore } from "vuex";
-  import { onMounted, ref } from "vue";
+  import { reactive, ref } from "vue";
   import { useRoute } from 'vue-router';
   import { shallowRef } from 'vue';
   import { Toaster, toast } from "vue-sonner";
@@ -112,10 +112,10 @@
     const data = reactive({
       email: ""
     });
-    const router = useRouter();
     const isLoading = ref(false);
+    const store = useStore();
 
-    data.email = this.$store.getters.getters.getEmail;
+    data.email = store.getters.getEmail;
 
     const resend = async () => {
       isLoading.value = true;
