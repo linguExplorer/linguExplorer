@@ -1,63 +1,57 @@
 <template>
-  <div class="font-vcr m-0 text-black w-full bg-[#f6f5f1] min-h-screen flex flex-col justify-between">
-    <!-- Header -->
-    <header class="flex justify-start mt-40 px-60 md:px-40">
-      <!-- Logo links oben -->
-      <img
-        src="@/assets/xx_Images/xx_Images/wordmark/wordmark_scaled.png"
-        alt="Linguexplorer"
-        class="w-8/12 max-w-[600px] sm:w-6/12 md:w-8/12"
-      />
-    </header>
-
-    <!-- Rechts oben Button -->
-    <div class="absolute top-4 right-4">
-      <button class="hover-button">
-        <router-link to="/accInfoSeite"  href="#">
-
-        <img
-          src="@/assets/xx_Images/xx_Images/Buttons/SettingsIcon.png"
-          alt="Nach oben"
-          class="max-h-[40px] w-[40px] sm:max-h-[60px] sm:w-[60px] hover:opacity-80"
-        />
-      </router-link>
-
-      </button>
-    </div>
-
-    <main class="flex flex-col items-center justify-center flex-grow mt-[-90px]">
-      <div class="flex flex-col lg:flex-row items-center justify-between gap-17 w-full max-w-5xl px-6">
-        <!-- Buttons links -->
-        <div class="flex flex-col space-y-9 items-center">
+  <div class="w-full h-full font-vcr text-black bg-[#f6f5f1] fixed flex items-center justify-center">
+      <div class="absolute lg:top-4 lg:right-4 md:top-4 md:right-4 sm:bottom-4 sm:right-4 bottom-4 right-4">
           <button class="hover-button">
-            <img
-              src="@/assets/xx_Images/xx_Images/Buttons/neuesSpiel_green.png"
-              alt="Jetzt spielen"
-              class="max-h-[45px] hover:opacity-80 sm:max-h-[55px]"
-            />
-          </button>
-
-          <button class="hover-button">
-            <img
-             src="@/assets/xx_Images/xx_Images/Buttons/spielstandLaden_green.png"
-              alt="Spielstand laden"
-              class="max-h-[45px] hover:opacity-80 sm:max-h-[55px]"
-            />
+            <router-link to="/accInfoSeite">
+              <img
+                src="@/assets/xx_Images/xx_Images/Buttons/SettingsIcon.png"
+                alt="Einstellungen"
+                class="lg:w-[60px] md:w-[50px] sm:w-[40px] w-[40px] hover:opacity-80"
+              />
+            </router-link>
           </button>
         </div>
 
-        <div class="flex justify-center mt-[-90px]">
+      <div class="transform origin-center lg:rotate-0 md:rotate-0 sm:rotate-90 rotate-90 flex flex-col">
+        <header class="w-full justify-left px-4">
           <img
-            src="@/assets/xx_Images/xx_Images/MainCharacterFrontAnimationv2.gif"
-            alt="Character Animation"
-            class="w-[150px] sm:w-[200px] md:w-[200px] lg:w-[250px]"
+            src="@/assets/xx_Images/xx_Images/wordmark/wordmark_scaled.png"
+            alt="Linguexplorer"
+            class="lg:w-[600px] md:w-[400px] sm:w-[250px] w-[250px]"
           />
+        </header>
+    
+        <div class="lg:w-[900px] md:w-[600px] sm:w-[400px] w-[400px] flex flex-row items-center justify-between px-4 py-4 gap-4">
+          <div class="flex flex-col space-y-4 items-center">
+            <button class="hover-button" @click="startNewGame">
+              <img
+                src="@/assets/xx_Images/xx_Images/Buttons/neuesSpiel_green.png"
+                alt="Jetzt spielen"
+                class="lg:h-[50px] md:h-[40px] sm:h-[30px] h-[30px] hover:opacity-80"
+              />
+            </button>
+            <button class="hover-button" @click="loadGame">
+              <img
+                src="@/assets/xx_Images/xx_Images/Buttons/spielstandLaden_green.png"
+                alt="Spielstand laden"
+                class="lg:h-[50px] md:h-[40px] sm:h-[30px] h-[30px] hover:opacity-80"
+              />
+            </button>
+            <div v-if="showNoSavesMessage" class="text-red-500 mt-2">
+                Keine Spielstände gefunden.
+              </div>
+          </div>
+          <div class="flex justify-center lg:mt-[-60px] md:mt-[-50px] sm:mt-[-40px] mt-[-40px]">
+            <img
+              src="@/assets/xx_Images/xx_Images/MainCharacterFrontAnimationv2.gif"
+              alt="Character Animation"
+              class="lg:w-[200px] md:w-[160px] sm:w-[100px] w-[100px]"
+            />
+          </div>
         </div>
       </div>
-    </main>
-
-  </div>
-</template>
+    </div>
+  </template>
 
 <script>
 import { onMounted , ref} from 'vue';
