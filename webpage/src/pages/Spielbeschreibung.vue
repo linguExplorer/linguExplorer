@@ -236,6 +236,10 @@
 import { mapState, mapActions } from "vuex";
 import { onMounted, ref } from "vue";
 import { useStore } from "vuex";
+import { Toaster, toast } from "vue-sonner";
+import { useRoute } from 'vue-router';
+import ToastComponent from "@/components/ToastComponent.vue";
+import { shallowRef } from 'vue';
 
 export default {
   name: "SpielbeschreibungPage",
@@ -243,6 +247,15 @@ export default {
     const message = ref("Du bist nicht mehr eingeloggt!");
     const store = useStore();
     onMounted(async () => {
+      const route = useRoute();
+
+      const error = route.query.error;
+      if (error === 'invalid-link') {
+        toast.custom(shallowRef(ToastComponent), { duration: 3000,
+    
+    message: 'Dies ist eine benutzerdefinierte Toast-Nachricht!'
+  });
+      }
       try {
         const res = await fetch("https://da.linguexplorer.com/api/user", {
           headers: { "Content-Type": "application/json" },

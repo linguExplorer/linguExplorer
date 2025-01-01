@@ -73,9 +73,7 @@
                 required
                 class="font-vcr bg-white border-[#9cb405] border-[2px] lg:p-2 md:p-1.5 sm:p-1 p-1 text-sm w-full"
               />
-              <p v-if="emailError" class="text-red-500 mt-2">
-                {{ emailError }}
-              </p>
+            
           </div>
 
           <div class="input-group flex flex-col mb-0 sm:mb-4 w-full">
@@ -102,13 +100,13 @@
                 />
               </button>
 
-              <p v-if="passwordError" class="text-red-500 mt-2">
-                {{ passwordError }}
-              </p>
-              <p v-if="passwordError" class="text-red-500 mt-2">
+             
+            
+            </div>
+            <p v-if="passwordError" class="text-red-500 mt-2 text-center">
               {{ passwordError }}
             </p>
-            </div>
+        
           </div>
 
           <!-- Fehlermeldung -->
@@ -186,7 +184,7 @@ export default {
           const err = await res.json();
           if (err.detail.length > 0) {
             if (err.detail.includes("User")) {
-              emailError.value = "Passwort oder E-Mail falsch";
+              passwordError.value = "Passwort oder E-Mail falsch";
             } else if (err.detail.includes("password")) {
               passwordError.value = "Passwort oder E-Mail falsch!";
             }

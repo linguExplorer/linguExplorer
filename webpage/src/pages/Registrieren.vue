@@ -197,9 +197,13 @@ export default {
       if (data.password !== confirmPassword.value) {
         errorPass.value = "Passwörter stimmen nicht überein.";
         return false;
-      } else {
+      } else  {
         errorPass.value = "";
-        return true;
+        
+        if(data.checked == true) {
+          return true;
+        }
+        return false;
       }
     });
 
