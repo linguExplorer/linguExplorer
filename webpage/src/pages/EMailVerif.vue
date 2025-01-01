@@ -110,20 +110,18 @@
     name: 'EMailVerif',
     setup() {
     const data = reactive({
-      email: ""
+      email: "rapax50122@chansd.com"
     });
     const isLoading = ref(false);
     const store = useStore();
 
-    data.email = store.getters.getEmail;
+    data.email = "rapax50122@chansd.com"
 
     const resend = async () => {
-      isLoading.value = true;
       try {
-        const res = await fetch("https://da.linguexplorer.com/api/resend", {
+        const res = await fetch("http://localhost:8000/api/resend", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          credentials: "include",
           body: JSON.stringify(data),
         });
         if (!res.ok) {
