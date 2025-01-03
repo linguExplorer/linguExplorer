@@ -1,5 +1,6 @@
       
 <template>
+  <!--Hauptmenü -->
   <div class="w-full h-full font-vcr text-black bg-[#f6f5f1] fixed flex items-center justify-center">
       <div class="absolute lg:top-4 lg:right-4 md:top-4 md:right-4 sm:bottom-4 sm:right-4 bottom-4 right-4">
           <button class="hover-button">
@@ -24,6 +25,7 @@
     
         <div class="lg:w-[900px] md:w-[600px] sm:w-[400px] w-[400px] flex flex-row items-center justify-between px-4 py-4 gap-4">
           <div class="flex flex-col space-y-4 items-center">
+            <!--Aktionsfenster, um einen neuen Spielstand zu starten-->
             <button class="hover-button" @click="startNewGame">
               <img
                 src="@/assets/xx_Images/xx_Images/Buttons/neuesSpiel_green.png"
@@ -31,6 +33,7 @@
                 class="lg:h-[50px] md:h-[40px] sm:h-[30px] h-[30px] hover:opacity-80"
               />
             </button>
+            <!--Aktionsfenster, um gespeicherte Spielstände zu laden-->
             <button class="hover-button" @click="loadGame">
               <img
                 src="@/assets/xx_Images/xx_Images/Buttons/spielstandLaden_green.png"
@@ -38,6 +41,7 @@
                 class="lg:h-[50px] md:h-[40px] sm:h-[30px] h-[30px] hover:opacity-80"
               />
             </button>
+            <!--kein Spielstand gefunden -> Nachricht-->
             <div v-if="showNoSavesMessage" class="text-red-500 mt-2">
                 Keine Spielstände gefunden.
               </div>
@@ -65,7 +69,8 @@
     methods: {
         startNewGame() {
            //Navigationslogik für neues Spiel
-           this.$router.push('/Spielbeschreibung');
+           //this.$router.push('/Spielbeschreibung');
+           this.$router.push('/newGame');
        },
       loadGame() {
         // Logik ob Spielstände vorhanden sind
