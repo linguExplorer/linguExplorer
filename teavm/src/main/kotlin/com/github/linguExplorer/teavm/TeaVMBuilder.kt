@@ -15,17 +15,13 @@ object TeaVMBuilder {
         val teaBuildConfiguration = TeaBuildConfiguration().apply {
             assetsPath.add(AssetFileHandle("../assets"))
             webappPath = File("build/dist").canonicalPath
-            // Register any extra classpath assets here:
-            // additionalAssetsClasspathFiles += "com/github/linguExplorer/asset.extension"
+            htmlTitle = "linguExplorer"
+            htmlWidth = 640
+            htmlHeight = 360
         }
-
-        // Register any classes or packages that require reflection here:
-        // TeaReflectionSupplier.addReflectionClass("com.github.linguExplorer.reflect")
 
         val tool = TeaBuilder.config(teaBuildConfiguration)
         tool.mainClass = "com.github.linguExplorer.teavm.TeaVMLauncher"
-        tool.optimizationLevel = TeaVMOptimizationLevel.FULL
-        tool.setObfuscated(true)
         TeaBuilder.build(tool)
     }
 }
