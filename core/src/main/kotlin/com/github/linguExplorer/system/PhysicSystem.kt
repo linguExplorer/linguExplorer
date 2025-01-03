@@ -1,10 +1,14 @@
 package com.github.linguExplorer.system
 
 import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.physics.box2d.*
 import com.badlogic.gdx.physics.box2d.World
+import com.github.linguExplorer.component.CollisionComponent
 import com.github.linguExplorer.component.ImageComponent
 import com.github.linguExplorer.component.PhysicComponent
+import com.github.linguExplorer.component.TiledComponent
 import com.github.quillraven.fleks.*
+import kotlinx.coroutines.flow.combineTransform
 import ktx.log.logger
 import ktx.math.component1
 import ktx.math.component2
@@ -14,10 +18,15 @@ class PhysicSystem (
     private val phWorld: World,
     private val imageCmps: ComponentMapper<ImageComponent>,
     private val physicCmps: ComponentMapper<PhysicComponent>,
-
-) :  IteratingSystem(
+    private val tiledCmps: ComponentMapper<TiledComponent>,
+    private val collisionCmps: ComponentMapper<CollisionComponent>,
+    ) : ContactListener,  IteratingSystem(
     interval = Fixed(1/60f)) {
 
+
+    init {
+        phWorld.setContactListener(this)
+    }
     override fun onUpdate() {
         if (phWorld.autoClearForces) {
             log.error { "AutoClear Forces must be set to false" }
@@ -62,8 +71,65 @@ class PhysicSystem (
     }
 
 
+
+    private val Fixture.entity:Entity
+        get() = this.body.userData as Entity
+
+    override fun beginContact(contact: Contact) {
+        val entityA :Entity= contact.fixtureA.entity
+        val entityB :Entity= contact.fixtureB.entity
+        val isEntityATiledCollisionSensor = entityA in tiledCmps && contact.fixtureA.isSensor
+        val isEntityBTiledCollisionFixture =  entityB in collisionCmps  && !contact.fixtureB.isSensor
+        val isEntityBTiledCollisionSensor = entityB in tiledCmps && contact.fixtureB.isSensor
+        val isEntityATiledCollisionFixture =  entityA in collisionCmps  && !contact.fixtureA.isSensor
+
+
+        when {
+            isEntityATiledCollisionSensor && isEntityBTiledCollisionFixture -> {
+                tiledCmps[entityA].nearbyEntities += entityB
+            }
+            isEntityBTiledCollisionSensor && isEntityATiledCollisionFixture -> {
+                tiledCmps[entityB].nearbyEntities += entityA
+            }
+
+        }
+
+    }
+
+    override fun endContact(contact: Contact) {
+
+        val entityA :Entity= contact.fixtureA.entity
+        val entityB :Entity= contact.fixtureB.entity
+        val isEntityATiledCollisionSensor = entityA in tiledCmps && contact.fixtureA.isSensor
+        val isEntityBTiledCollisionSensor = entityB in tiledCmps && contact.fixtureB.isSensor
+
+
+
+        when {
+            isEntityATiledCollisionSensor && !contact.fixtureB.isSensor -> {
+                tiledCmps[entityA].nearbyEntities -= entityB
+            }
+            isEntityBTiledCollisionSensor && !contact.fixtureA.isSensor -> {
+                tiledCmps[entityB].nearbyEntities -= entityA
+            }
+
+        }
+    }
+
+    private fun Fixture.isStaticBody() = this.body.type == BodyDef.BodyType.StaticBody
+    private fun Fixture.isDynamicBody() = this.body.type == BodyDef.BodyType.DynamicBody
+
+    override fun preSolve(contact: Contact, p1: Manifold) {
+        contact.isEnabled =
+            (contact.fixtureA.isStaticBody()  && contact.fixtureB.isDynamicBody())
+        || (contact.fixtureB.isStaticBody() && contact.fixtureA.isDynamicBody())
+    }
+
+    override fun postSolve(p0: Contact?, p1: ContactImpulse?) {
+    }
     companion object {
         private val log = logger<PhysicSystem>()
     }
+
 
 }

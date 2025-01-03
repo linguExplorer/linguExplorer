@@ -63,7 +63,7 @@ class RenderSystem(
                bgdLayers.clear()
                fgdLayers.clear()
                 event.map.forEachLayer<TiledMapTileLayer> { layer ->
-                    if(layer.name.startsWith("fgd_")) {
+                    if(layer.name.startsWith("fgd")) {
                         fgdLayers.add(layer)
                     }else {
                         bgdLayers.add(layer)

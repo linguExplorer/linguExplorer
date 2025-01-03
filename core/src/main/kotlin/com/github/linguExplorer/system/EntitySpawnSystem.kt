@@ -51,14 +51,28 @@ class EntitySpawnSystem (
                     }
                 }
                 add<AnimationComponent> {
-                    nextAnimation(cfg.model, AnimationType.IDLE)
+                    nextAnimation(cfg.model, cfg.aniType)
+
                 }
 
-                physicCmpFromImage(phWorld, imageCmp.image, BodyDef.BodyType.DynamicBody) {
+                physicCmpFromImage(phWorld, imageCmp.image, cfg.bodyType) {
                     phCmp, width, height ->
-                    box (width, height) {
-                        isSensor = false
-                        friction
+
+                    val w = width*cfg.physicScaling.x
+                    val h = height*cfg.physicScaling.y
+
+                    //hit box
+                    box (w, h, cfg.physicOffset) {
+                        isSensor = cfg.bodyType != BodyDef.BodyType.StaticBody
+
+                    }
+                    if (cfg.bodyType!= BodyDef.BodyType.StaticBody) {
+                        val collH = h* 0.4f
+                        val collOffset = vec2().apply { set(cfg.physicOffset) }
+
+                        collOffset.y -= h*0.5f - collH*0.5f
+
+                        box(w, collH, collOffset)
                     }
                 }
                 if (cfg.speedScaling > 0f ) {
@@ -70,6 +84,11 @@ class EntitySpawnSystem (
 
                 if(type == "Player") {
                     add<PlayerComponent>()
+                }
+
+                if(cfg.bodyType != BodyDef.BodyType.StaticBody) {
+                    //entfernen collision onjects
+                    add<CollisionComponent>()
                 }
             }
         }
@@ -87,7 +106,12 @@ class EntitySpawnSystem (
 
     private fun spawnCfg(type:String):SpawnCfg = cachedCfgs.getOrPut(type) {
         when  (type){
-            "Player" -> SpawnCfg(AnimationModel.PLAYER)
+            "Player" -> SpawnCfg(AnimationModel.PLAYER,
+                physicScaling = vec2(0.8f,0.5f),
+                physicOffset = vec2(0f,-6f* UNIT_SCALE),
+                aniType = AnimationType.RIGHT
+
+            )
             else -> gdxError("Type $type no Spawn config")
         }
     }

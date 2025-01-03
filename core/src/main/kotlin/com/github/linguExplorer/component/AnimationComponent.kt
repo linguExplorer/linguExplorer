@@ -12,7 +12,7 @@ enum class AnimationModel{
 
 }
 enum class AnimationType {
-    IDLE, RUN, BACK, LEFT, RIGHT;
+    IDLE, BACK, LEFT, RIGHT;
 
     val atlasKey: String = this.toString().lowercase()
 }

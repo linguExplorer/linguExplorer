@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.utils.Scaling
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.github.linguExplorer.component.*
+import com.github.linguExplorer.event.CollisionDespawnEvent
 import com.github.linguExplorer.event.MapChangeEvent
 import com.github.linguExplorer.event.fire
 import com.github.linguExplorer.input.PlayerKeyboardInputProcessor
@@ -56,6 +57,8 @@ class GameScreen : KtxScreen {
 
         systems {
             add<EntitySpawnSystem>()
+            add<CollisionSpawnSystem>()
+            add<CollisionDespawnSystem>()
             add<MoveSystem>()
             add<PhysicSystem>()
             add<AnimationSystem>()
