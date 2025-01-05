@@ -5,6 +5,7 @@ import com.github.linguExplorer.screen.GameScreen
 
 class linguExplorer : Game() {
     override fun create() {
+        //this.screen = MainMenuScreen(this)
         this.screen = GameScreen() // Setzt den GameScreen
     }
 }
