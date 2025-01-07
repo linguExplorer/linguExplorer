@@ -75,7 +75,7 @@ class GameScreen : KtxScreen {
                 stage.addListener(system)
             }
         }
-        currentMap = TmxMapLoader().load("assets/graphics/map/map1.tmx")
+        currentMap = TmxMapLoader().load("assets/graphics/map/main-map.tmx")
         stage.fire(MapChangeEvent(currentMap!!))
 
         PlayerKeyboardInputProcessor(world, world.mapper())
