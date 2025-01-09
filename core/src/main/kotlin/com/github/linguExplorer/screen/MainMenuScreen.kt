@@ -8,10 +8,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Rectangle
 
-// implementiert Interface Screen für Startbildschirm
 class MainMenuScreen : Screen {
 
-    // SpriteBatch für Zeichnen von Texturen
     private var batch: SpriteBatch = SpriteBatch()
     private var shapeRenderer: ShapeRenderer = ShapeRenderer()
 
@@ -21,46 +19,61 @@ class MainMenuScreen : Screen {
     private var loadGameTexture: Texture = Texture("xx_Images/Buttons/spielstandLaden_green.png")
     private var settingsIconTexture: Texture = Texture("xx_Images/SettingsIcon.png")
     private var wordmarkTexture: Texture = Texture("xx_Images/wordmark/wordmark_scaled.png")
-    //private var blobTexture: Texture = Texture("xx_Images/MainCharacterFrontAnimationv2.gif")
 
     // Rechtecke -> Positionierung von Buttons auf dem Bildschirm
     private val startNewGameButton = Rectangle()
     private val loadGameButton = Rectangle()
     private val settingsButton = Rectangle()
 
-    //Rechteck
+    // Rechteck für Overlay
     private val overlayColor = Color(0xf6.toFloat() / 255f, 0xf5.toFloat() / 255f, 0xf1.toFloat() / 255f, 1f)
     private val overlayWidth = 1200f
     private val overlayHeight = 700f
     private val settingsIconSize = 60f
 
-    // Methode Screen angezeigen
+    // Methode Screen anzeigen
     override fun show() {
-
         // Bildschirmgröße abrufen
         val screenWidth = Gdx.graphics.width.toFloat()
         val screenHeight = Gdx.graphics.height.toFloat()
 
-        // Position/Größe von Buttons
-        startNewGameButton.set(100f, screenHeight / 2 - 100f, 200f, 50f)
-        loadGameButton.set(100f, screenHeight / 2 - 200f, 200f, 50f)
+        // Position und Größe von Buttons
+        loadGameButton.set(100f, screenHeight / 2 - 100f, 200f, 50f)
+        startNewGameButton.set(100f, screenHeight / 2 - 200f, 200f, 50f)
         settingsButton.set(screenWidth - 70f, screenHeight - 70f, 60f, 60f)
     }
 
-
-    // in jedem Frame aufgerufen > Anzeige zu aktualisieren
+    // In jedem Frame aufgerufen -> Anzeige aktualisieren
     override fun render(delta: Float) {
+        // Hintergrundbild skalieren und zentrieren
+        val screenWidth = Gdx.graphics.width.toFloat()
+        val screenHeight = Gdx.graphics.height.toFloat()
+
+        // Skalierungsfaktor
+        val scale = 2.5f
+        val backgroundWidth = backgroundTexture.width.toFloat() * scale
+        val backgroundHeight = backgroundTexture.height.toFloat() * scale
+
+        // Berechnung der Skalierung des Hintergrundbildes, ohne Verzerrung:
+        val scaleX = screenWidth / backgroundWidth
+        val scaleY = screenHeight / backgroundHeight
+        val scaleFactor = Math.max(scaleX, scaleY)
+
+        // Berechnung der neuen Position für das Bild
+        val newWidth = backgroundWidth * scaleFactor
+        val newHeight = backgroundHeight * scaleFactor
+        val backgroundX = (screenWidth - newWidth) / 2
+        val backgroundY = (screenHeight - newHeight) / 2
+
         // Beginnt Zeichnen
         batch.begin()
         // Hintergrundbild zeichnen
-        batch.draw(backgroundTexture, 0f, 0f, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
+        batch.draw(backgroundTexture, backgroundX, backgroundY, newWidth, newHeight)
         batch.end()
 
         // Zeichne das rote Rechteck (Overlay)
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
         shapeRenderer.color = overlayColor
-        val screenWidth = Gdx.graphics.width.toFloat()
-        val screenHeight = Gdx.graphics.height.toFloat()
         val overlayX = screenWidth / 2 - overlayWidth / 2
         val overlayY = screenHeight / 2 - overlayHeight / 2
         shapeRenderer.rect(overlayX, overlayY, overlayWidth, overlayHeight)
@@ -75,18 +88,16 @@ class MainMenuScreen : Screen {
         val wordmarkY = screenHeight / 2 + 20f
         batch.draw(wordmarkTexture, wordmarkX, wordmarkY, wordmarkWidth, wordmarkHeight)
 
-
         // Position der Buttons
         val buttonX = screenWidth / 2 - 500f
-        val startNewGameButtonY = screenHeight / 2 - 205f
-        val loadGameButtonY = screenHeight / 2 - 90f
-
+        val startNewGameButtonY = screenHeight / 2 - 90f
+        val loadGameButtonY = screenHeight / 2 - 205f
 
         // Buttons
         batch.draw(startNewGameTexture, buttonX, startNewGameButtonY)
         batch.draw(loadGameTexture, buttonX, loadGameButtonY)
 
-        //Settings Button
+        // Settings Button
         val settingsX = screenWidth / 2 + overlayWidth / 2 - settingsIconSize - 10f // Rechte Ecke, mit etwas Abstand
         val settingsY = screenHeight / 2 + overlayHeight / 2 - settingsIconSize - 10f
         batch.draw(settingsIconTexture, settingsX, settingsY, settingsIconSize, settingsIconSize)
@@ -112,7 +123,7 @@ class MainMenuScreen : Screen {
     }
 
     override fun dispose() {
-        // Ressourcen freigeben wenn Screen nicht mehr benötigt
+        // Ressourcen freigeben, wenn Screen nicht mehr benötigt
         batch.dispose()
         shapeRenderer.dispose()
         backgroundTexture.dispose()
