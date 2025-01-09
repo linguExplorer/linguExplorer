@@ -2,7 +2,6 @@ package com.github.linguExplorer.screen
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
@@ -26,10 +25,19 @@ class MainMenuScreen : Screen {
     private val settingsButton = Rectangle()
 
     // Rechteck für Overlay
-    private val overlayColor = Color(0xf6.toFloat() / 255f, 0xf5.toFloat() / 255f, 0xf1.toFloat() / 255f, 1f)
-    private val overlayWidth = 1200f
-    private val overlayHeight = 700f
+    //private val overlayColor = Color(0xf6.toFloat() / 255f, 0xf5.toFloat() / 255f, 0xf1.toFloat() / 255f, 1f)
+    //private val overlayWidth = 1200f
+    //private val overlayHeight = 700f
     private val settingsIconSize = 60f
+
+    // horizontalen Offset
+    private var backgroundOffsetX = 0f
+
+    // Geschwindigkeit von Bewegung
+    private val scrollSpeed = 30f // Geschwindigkeit (höher=schneller)
+
+    // Breite speichern
+    private var newWidth : Float = 0f
 
     // Methode Screen anzeigen
     override fun show() {
@@ -54,36 +62,44 @@ class MainMenuScreen : Screen {
         val backgroundWidth = backgroundTexture.width.toFloat() * scale
         val backgroundHeight = backgroundTexture.height.toFloat() * scale
 
-        // Berechnung der Skalierung des Hintergrundbildes, ohne Verzerrung:
+        // Skalierung von Hintergrundbild berechnen
         val scaleX = screenWidth / backgroundWidth
         val scaleY = screenHeight / backgroundHeight
         val scaleFactor = Math.max(scaleX, scaleY)
 
-        // Berechnung der neuen Position für das Bild
-        val newWidth = backgroundWidth * scaleFactor
+        // neuen Position für Bild berechnen
+        newWidth = backgroundWidth * scaleFactor //Bildbreite
         val newHeight = backgroundHeight * scaleFactor
-        val backgroundX = (screenWidth - newWidth) / 2
         val backgroundY = (screenHeight - newHeight) / 2
+
+        // richtung der Bewegung
+        backgroundOffsetX -= scrollSpeed * delta // (bild geht so nach links)
+
+        // ob Bild sich wiederholen muss
+        if (backgroundOffsetX < -newWidth) {
+            backgroundOffsetX += newWidth
+        }
 
         // Beginnt Zeichnen
         batch.begin()
-        // Hintergrundbild zeichnen
-        batch.draw(backgroundTexture, backgroundX, backgroundY, newWidth, newHeight)
+        // zwei Hintergrundbilder nebeneinander!
+        batch.draw(backgroundTexture, backgroundOffsetX, backgroundY, newWidth, newHeight)
+        batch.draw(backgroundTexture, backgroundOffsetX + newWidth, backgroundY, newWidth, newHeight)
         batch.end()
 
-        // Zeichne das rote Rechteck (Overlay)
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
+        // Zeichne Rechteck
+        /*shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
         shapeRenderer.color = overlayColor
         val overlayX = screenWidth / 2 - overlayWidth / 2
         val overlayY = screenHeight / 2 - overlayHeight / 2
         shapeRenderer.rect(overlayX, overlayY, overlayWidth, overlayHeight)
-        shapeRenderer.end()
+        shapeRenderer.end()*/
 
         batch.begin()
         // Wordmark
-        val wordmarkHeight = 220f // Höhe
+        val wordmarkHeight = 220f
         val wordmarkAspectRatio = wordmarkTexture.width.toFloat() / wordmarkTexture.height.toFloat()
-        val wordmarkWidth = wordmarkHeight * wordmarkAspectRatio // Breite basierend auf Seitenverhältnis
+        val wordmarkWidth = wordmarkHeight * wordmarkAspectRatio
         val wordmarkX = screenWidth / 2 - 560f
         val wordmarkY = screenHeight / 2 + 20f
         batch.draw(wordmarkTexture, wordmarkX, wordmarkY, wordmarkWidth, wordmarkHeight)
@@ -98,8 +114,8 @@ class MainMenuScreen : Screen {
         batch.draw(loadGameTexture, buttonX, loadGameButtonY)
 
         // Settings Button
-        val settingsX = screenWidth / 2 + overlayWidth / 2 - settingsIconSize - 10f // Rechte Ecke, mit etwas Abstand
-        val settingsY = screenHeight / 2 + overlayHeight / 2 - settingsIconSize - 10f
+        val settingsX = screenWidth - settingsIconSize - 10f
+        val settingsY = screenHeight - settingsIconSize - 10f
         batch.draw(settingsIconTexture, settingsX, settingsY, settingsIconSize, settingsIconSize)
 
         // Beendet Zeichnen
