@@ -5,7 +5,7 @@ import org.jetbrains.exposed.sql.Table
 /**
  * Dieser Kommentar trifft auf alle weiteren Klassen zu
  */
-object User : Table() {
+object User : Table("user") {
     val id = integer("pk_user_id")
     val name = varchar("name", 20).default("Blobi")
 

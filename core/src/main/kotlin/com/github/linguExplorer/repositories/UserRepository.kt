@@ -31,7 +31,7 @@ class UserRepository {
             PhraseProgressHistory.deleteWhere { PhraseProgressHistory.userId eq userId }
 
             PhraseProgress.deleteWhere { PhraseProgress.userId eq userId }
-            User_Progress.deleteWhere { User_Progress.userId eq userId }
+            UserProgress.deleteWhere { UserProgress.userId eq userId }
             User.deleteWhere { User.id eq userId }
         }
     }

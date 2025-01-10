@@ -2,8 +2,6 @@ package com.github.linguExplorer.repositories
 
 import com.github.linguExplorer.models.PhraseProgress
 import com.github.linguExplorer.models.PhraseProgressEntity
-import com.github.linguExplorer.models.UserProgressEntity
-import com.github.linguExplorer.models.User_Progress
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction

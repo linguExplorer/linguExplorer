@@ -6,95 +6,136 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
+import com.badlogic.gdx.utils.viewport.ExtendViewport
+import com.badlogic.gdx.utils.viewport.Viewport
+import com.badlogic.gdx.math.Vector2
+import com.github.linguExplorer.minigames.EssenMinigame
+import com.github.linguExplorer.models.PhraseEntity
 
 class GameScreen : Screen {
 
     private val batch = SpriteBatch()
+    private val basketTexture = Texture(Gdx.files.internal("Minigames/Essen/test_basket.jpg"))
+    private val minigame = EssenMinigame()
 
-    private val strawberry = Texture(Gdx.files.internal("assets/Minigames/Essen/phraseImages/test_strawberry.png"))
-    private val basket = Texture(Gdx.files.internal("assets/Minigames/Essen/phraseImages/pixel_basket.jpg"))
-
-    private var strawberryX = 50f
-    private var strawberryY = 50f
-
-    private val basketX = 200f
-    private val basketY = 200f
+    // Viewport für responsives Layout
+    private val viewport: Viewport = ExtendViewport(800f, 600f)
+    private val basketBasePosition = Vector2(200f, 200f) // Basiskorbposition
+    private val basketSize = Vector2(150f, 150f) // Korbgröße (falls notwendig skalierbar)
 
     private var isDragging = false
     private var offsetX = 0f
     private var offsetY = 0f
-    private var isCollected = false
-    private var animationAlpha = 1f
 
-    override fun show() {}
+    init {
+        // Lade alle Phrasen des Themas "Essen" und die Minigame-Phrasen
+        minigame.loadAllPhrases()
+        minigame.loadMinigamePhrases()
+    }
+
+    // Lade Phrasen mit zugehörigen Assets
+    private val phrasesWithAssets = minigame.loadPhrasesWithAssets()
+
+    // Erstelle die Objekte (Phrasen + Texturen)
+    private val objects = phrasesWithAssets.map { (phrase, assetPath) ->
+        DraggableObject(
+            phrase = phrase,
+            texture = Texture(Gdx.files.internal(assetPath)),
+            x = (50..700).random().toFloat(),
+            y = (50..500).random().toFloat()
+        )
+    }
+
+    override fun show() {
+        Gdx.input.inputProcessor = null // Setze das Input-System (falls nötig)
+    }
 
     override fun render(delta: Float) {
         handleInput()
 
+        // Bildschirm bereinigen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
-        batch.begin()
-        batch.draw(basket, basketX, basketY)
+        // Viewport anwenden und Kamera aktualisieren
+        viewport.apply()
 
-        if (!isCollected) {
-            batch.draw(strawberry, strawberryX, strawberryY)
-        } else {
-            if (animationAlpha > 0) {
-                batch.setColor(1f, 1f, 1f, animationAlpha)
-                batch.draw(strawberry, strawberryX, strawberryY)
-                batch.setColor(1f, 1f, 1f, 1f)
-                animationAlpha -= delta
+        // Rendering starten
+        batch.projectionMatrix = viewport.camera.combined
+        batch.begin()
+
+        // Korb zeichnen
+        batch.draw(basketTexture, basketPosition.x, basketPosition.y, basketSize.x, basketSize.y)
+
+        // Objekte zeichnen
+        objects.forEach { obj ->
+            if (!obj.isCollected) {
+                batch.draw(obj.texture, obj.x, obj.y)
             }
         }
-
-
 
         batch.end()
     }
 
     private fun handleInput() {
-        val mouseX = Gdx.input.x.toFloat()
-        val mouseY = Gdx.graphics.height - Gdx.input.y.toFloat()
+        val mouseX = Gdx.input.x.toFloat() * viewport.worldWidth / Gdx.graphics.width
+        val mouseY = (Gdx.graphics.height - Gdx.input.y.toFloat()) * viewport.worldHeight / Gdx.graphics.height
 
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            if (!isDragging && isMouseInsideImage(mouseX, mouseY, strawberryX, strawberryY, strawberry)) {
-                isDragging = true
-                offsetX = mouseX - strawberryX
-                offsetY = mouseY - strawberryY
-            }
+            objects.forEach { obj ->
+                if (!isDragging && !obj.isCollected && isMouseInsideImage(mouseX, mouseY, obj)) {
+                    isDragging = true
+                    obj.isBeingDragged = true
+                    offsetX = mouseX - obj.x
+                    offsetY = mouseY - obj.y
+                }
 
-            if (isDragging && !isCollected) {
-                strawberryX = mouseX - offsetX
-                strawberryY = mouseY - offsetY
+                if (obj.isBeingDragged) {
+                    obj.x = mouseX - offsetX
+                    obj.y = mouseY - offsetY
+                }
             }
         } else {
-            if (isDragging) {
-                isCollected = isImageInside(strawberryX, strawberryY, strawberry, basketX, basketY, basket)
+            objects.forEach { obj ->
+                if (obj.isBeingDragged) {
+                    if (isImageInsideBasket(obj)) {
+                        obj.isCollected = true
+                        val isCorrect = minigame.phraseList.any { it.id == obj.phrase.id }
+                        println(isCorrect)
+                    }
+                    obj.isBeingDragged = false
+                }
             }
             isDragging = false
         }
     }
 
-    private fun isMouseInsideImage(mouseX: Float, mouseY: Float, imageX: Float, imageY: Float, image: Texture): Boolean {
-        return mouseX in imageX..(imageX + image.width) && mouseY in imageY..(imageY + image.height)
+    private val basketPosition: Vector2
+        get() = Vector2(
+            basketBasePosition.x * (viewport.worldWidth / 800f),
+            basketBasePosition.y * (viewport.worldHeight / 600f)
+        )
+
+    private fun isMouseInsideImage(mouseX: Float, mouseY: Float, obj: DraggableObject): Boolean {
+        return mouseX in obj.x..(obj.x + obj.texture.width) && mouseY in obj.y..(obj.y + obj.texture.height)
     }
 
-    private fun isImageInside(imageX: Float, imageY: Float, image: Texture, basketX: Float, basketY: Float, basket: Texture): Boolean {
-        val imageLeft = imageX
-        val imageRight = imageX + image.width
-        val imageBottom = imageY
-        val imageTop = imageY + image.height
+    private fun isImageInsideBasket(obj: DraggableObject): Boolean {
+        val imageLeft = obj.x
+        val imageRight = obj.x + obj.texture.width
+        val imageBottom = obj.y
+        val imageTop = obj.y + obj.texture.height
 
-        val basketLeft = basketX
-        val basketRight = basketX + basket.width
-        val basketBottom = basketY
-        val basketTop = basketY + basket.height
+        val basketLeft = basketPosition.x
+        val basketRight = basketPosition.x + basketSize.x
+        val basketBottom = basketPosition.y
+        val basketTop = basketPosition.y + basketSize.y
 
         return imageRight > basketLeft && imageLeft < basketRight && imageTop > basketBottom && imageBottom < basketTop
     }
 
-
-    override fun resize(width: Int, height: Int) {}
+    override fun resize(width: Int, height: Int) {
+        viewport.update(width, height, true)
+    }
 
     override fun hide() {}
 
@@ -104,7 +145,16 @@ class GameScreen : Screen {
 
     override fun dispose() {
         batch.dispose()
-        strawberry.dispose()
-        basket.dispose()
+        basketTexture.dispose()
+        objects.forEach { it.texture.dispose() }
     }
+
+    private data class DraggableObject(
+        val phrase: PhraseEntity,
+        val texture: Texture,
+        var x: Float,
+        var y: Float,
+        var isCollected: Boolean = false,
+        var isBeingDragged: Boolean = false
+    )
 }
