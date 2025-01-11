@@ -65,6 +65,15 @@ class GameScreen : Screen {
         objects.forEach { obj ->
             if (!obj.isCollected) {
                 batch.draw(obj.texture, obj.x, obj.y)
+            } else if (obj.fadeAlpha > 0f) {
+                batch.setColor(1f, 1f, 1f, obj.fadeAlpha)
+                batch.draw(obj.texture, obj.x, obj.y)
+                batch.setColor(1f, 1f, 1f, 1f)
+
+                obj.fadeAlpha -= delta * 1.5f
+                if (obj.fadeAlpha <= 0f) {
+                    obj.fadeAlpha = 0f
+                }
             }
         }
 
@@ -97,15 +106,16 @@ class GameScreen : Screen {
             }
         } else {
             // das image befindet sich im basket und die minigame funktioneren werden ausgeführt (!!)
-            // denke nicht, dass du da sowieso was ändern musst
+            // von den methoden her am besten nichts mehr ändern, aber du müsstest es trotzdem anpassen, um eben aktionen zu setzen, wenn die phrase falsch ist
             objects.forEach { obj ->
                 if (obj.isBeingDragged) {
+                    obj.isBeingDragged = false
                     if (isImageInsideBasket(obj)) {
                         obj.isCollected = true
+                        obj.fadeAlpha = 1f
                         val isCorrect = minigame.phraseList.any { it.id == obj.phrase.id }
                         minigame.phraseCheck(obj.phrase, isCorrect)
                     }
-                    obj.isBeingDragged = false
                 }
             }
             isDragging = false
@@ -162,6 +172,7 @@ class GameScreen : Screen {
         var x: Float,
         var y: Float,
         var isCollected: Boolean = false,
-        var isBeingDragged: Boolean = false
+        var isBeingDragged: Boolean = false,
+        var fadeAlpha: Float = 1f
     )
 }
