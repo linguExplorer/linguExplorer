@@ -18,7 +18,7 @@ class GameScreen : Screen {
     private val basketTexture = Texture(Gdx.files.internal("Minigames/Essen/test_basket.jpg"))
     private val minigame = EssenMinigame()
 
-    // Viewport für responsives Layout
+    // Viewport für responsive Layout
     private val viewport: Viewport = ExtendViewport(800f, 600f)
     private val basketBasePosition = Vector2(100f, 0f) // Basiskorbposition
     private val basketSize = Vector2(150f, 150f) // Korbgröße
@@ -28,15 +28,15 @@ class GameScreen : Screen {
     private var offsetY = 0f
 
     init {
-        // Lade alle Phrasen des Themas "Essen" und die Minigame-Phrasen
+        // initialisere das minigame (!!)
         minigame.loadAllPhrases()
         minigame.loadMinigamePhrases()
     }
 
-    // Lade Phrasen mit zugehörigen Assets
+    // lädt die Phrasen mit zugehörigen Assets (!!)
     private val phrasesWithAssets = minigame.loadPhrasesWithAssets()
 
-    // Erstelle die Objekte (Phrasen + Texturen)
+    // Erstellt die Objekte (Phrasen + Texturen miteinander verknüpft) (!!)
     private val objects = phrasesWithAssets.map { (phrase, assetPath) ->
         DraggableObject(
             phrase = phrase,
@@ -47,26 +47,21 @@ class GameScreen : Screen {
     }
 
     override fun show() {
-        Gdx.input.inputProcessor = null // Setze das Input-System (falls nötig)
+        Gdx.input.inputProcessor = null // Setzt das Input-System (falls nötig)
     }
 
     override fun render(delta: Float) {
         handleInput()
 
-        // Bildschirm bereinigen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
-        // Viewport anwenden und Kamera aktualisieren
         viewport.apply()
 
         // Rendering starten
         batch.projectionMatrix = viewport.camera.combined
         batch.begin()
 
-        // Korb zeichnen
         batch.draw(basketTexture, basketPosition.x, basketPosition.y, basketSize.x, basketSize.y)
-
-        // Objekte zeichnen
         objects.forEach { obj ->
             if (!obj.isCollected) {
                 batch.draw(obj.texture, obj.x, obj.y)
@@ -75,6 +70,7 @@ class GameScreen : Screen {
 
         batch.end()
 
+        //ist nur zum testen, wie lange das spiel braucht um sich zu schließen
         if (minigame.isGameComplete()) {
             minigame.storePhraseData()
             closeScreen()
@@ -100,6 +96,8 @@ class GameScreen : Screen {
                 }
             }
         } else {
+            // das image befindet sich im basket und die minigame funktioneren werden ausgeführt (!!)
+            // denke nicht, dass du da sowieso was ändern musst
             objects.forEach { obj ->
                 if (obj.isBeingDragged) {
                     if (isImageInsideBasket(obj)) {
@@ -139,8 +137,7 @@ class GameScreen : Screen {
     }
 
     private fun closeScreen() {
-        // Logic to close the screen
-        Gdx.app.exit() // Or use another method to navigate to a different screen
+        Gdx.app.exit()
     }
 
     override fun resize(width: Int, height: Int) {

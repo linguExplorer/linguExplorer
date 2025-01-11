@@ -57,7 +57,6 @@ class EssenMinigame {
         val progressRepo = PhraseProgressRepository()
         val historyRepo = PhraseProgressHistoryRepository()
 
-        // Lade Fortschritt und berechne Correct-Index in einem Schritt
         val progress = progressRepo.getPhraseProgress(phrase.id, userId)
         val correctIndex = progress.let { historyRepo.calculateCorrectIndex(userId, phrase.id) }
 
