@@ -2,6 +2,8 @@ package com.github.linguExplorer.screen
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
@@ -25,19 +27,17 @@ class MainMenuScreen : Screen {
     private val settingsButton = Rectangle()
 
     // Rechteck für Overlay
-    //private val overlayColor = Color(0xf6.toFloat() / 255f, 0xf5.toFloat() / 255f, 0xf1.toFloat() / 255f, 1f)
-    //private val overlayWidth = 1200f
-    //private val overlayHeight = 700f
+    private val overlayWidth = 1200f
+    private val overlayHeight = 700f
     private val settingsIconSize = 60f
 
     // horizontalen Offset
     private var backgroundOffsetX = 0f
+    private var backgroundOffsetY = 0f
 
     // Geschwindigkeit von Bewegung
-    private val scrollSpeed = 30f // Geschwindigkeit (höher=schneller)
-
-    // Breite speichern
-    private var newWidth : Float = 0f
+    private var speedX = 100f
+    private var speedY = 50f
 
     // Methode Screen anzeigen
     override fun show() {
@@ -51,49 +51,61 @@ class MainMenuScreen : Screen {
         settingsButton.set(screenWidth - 70f, screenHeight - 70f, 60f, 60f)
     }
 
-    // In jedem Frame aufgerufen -> Anzeige aktualisieren
     override fun render(delta: Float) {
-        // Hintergrundbild skalieren und zentrieren
+        // Bildschirmabmessungen
         val screenWidth = Gdx.graphics.width.toFloat()
         val screenHeight = Gdx.graphics.height.toFloat()
 
-        // Skalierungsfaktor
-        val scale = 2.5f
-        val backgroundWidth = backgroundTexture.width.toFloat() * scale
-        val backgroundHeight = backgroundTexture.height.toFloat() * scale
+        // Hintergrundgröße berechnen
+        val backgroundWidth = backgroundTexture.width.toFloat()
+        val backgroundHeight = backgroundTexture.height.toFloat()
 
-        // Skalierung von Hintergrundbild berechnen
-        val scaleX = screenWidth / backgroundWidth
-        val scaleY = screenHeight / backgroundHeight
+        // Skalierungsfaktor für den Hintergrund
+        val scale = 1.5f
+        val scaleX = screenWidth / backgroundWidth * scale
+        val scaleY = screenHeight / backgroundHeight * scale
         val scaleFactor = Math.max(scaleX, scaleY)
 
-        // neuen Position für Bild berechnen
-        newWidth = backgroundWidth * scaleFactor //Bildbreite
-        val newHeight = backgroundHeight * scaleFactor
-        val backgroundY = (screenHeight - newHeight) / 2
+        val scaledWidth = backgroundWidth * scaleFactor
+        val scaledHeight = backgroundHeight * scaleFactor
 
-        // richtung der Bewegung
-        backgroundOffsetX -= scrollSpeed * delta // (bild geht so nach links)
+        // Offset aktualisieren basierend auf Geschwindigkeit und Zeit
+        backgroundOffsetX += speedX * delta
+        backgroundOffsetY += speedY * delta
 
-        // ob Bild sich wiederholen muss
-        if (backgroundOffsetX < -newWidth) {
-            backgroundOffsetX += newWidth
+        // Kollisionsprüfung für die Ränder
+        if (backgroundOffsetX < -(scaledWidth - screenWidth)) {
+            backgroundOffsetX = -(scaledWidth - screenWidth)
+            speedX = -speedX // X-Richtung umkehren
+        } else if (backgroundOffsetX > 0) {
+            backgroundOffsetX = 0f
+            speedX = -speedX // X-Richtung umkehren
         }
 
-        // Beginnt Zeichnen
+        if (backgroundOffsetY < -(scaledHeight - screenHeight)) {
+            backgroundOffsetY = -(scaledHeight - screenHeight)
+            speedY = -speedY // Y-Richtung umkehren
+        } else if (backgroundOffsetY > 0) {
+            backgroundOffsetY = 0f
+            speedY = -speedY // Y-Richtung umkehren
+        }
+
+        // Hintergrund zeichnen
         batch.begin()
-        // zwei Hintergrundbilder nebeneinander!
-        batch.draw(backgroundTexture, backgroundOffsetX, backgroundY, newWidth, newHeight)
-        batch.draw(backgroundTexture, backgroundOffsetX + newWidth, backgroundY, newWidth, newHeight)
+        batch.draw(backgroundTexture, backgroundOffsetX, backgroundOffsetY, scaledWidth, scaledHeight)
         batch.end()
 
-        // Zeichne Rechteck
-        /*shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
+
+        //Zeichne Rechteck
+        val overlayColor = Color(0f, 0f, 0f, 0.65f)
+        Gdx.gl.glEnable(GL20.GL_BLEND)
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
         shapeRenderer.color = overlayColor
         val overlayX = screenWidth / 2 - overlayWidth / 2
         val overlayY = screenHeight / 2 - overlayHeight / 2
         shapeRenderer.rect(overlayX, overlayY, overlayWidth, overlayHeight)
-        shapeRenderer.end()*/
+        shapeRenderer.end()
+        Gdx.gl.glDisable(GL20.GL_BLEND)
 
         batch.begin()
         // Wordmark
