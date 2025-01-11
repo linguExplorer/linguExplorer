@@ -3,9 +3,6 @@ package com.github.linguExplorer.repositories
 import org.jetbrains.exposed.sql.transactions.transaction
 import com.github.linguExplorer.models.Phrase
 import com.github.linguExplorer.models.PhraseEntity
-import com.github.linguExplorer.models.PhraseProgress
-import com.github.linguExplorer.models.PhraseProgressHistory
-import com.github.linguExplorer.models.User_Progress.isMastered
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
@@ -22,6 +19,14 @@ class PhraseRepository {
         transaction {
             Phrase
                 .select { Phrase.topicId eq topicId }
+                .map { it.toPhrase() }
+        }
+
+
+    fun getAllPhrases(): List<PhraseEntity> =
+        transaction {
+            Phrase
+                .selectAll()
                 .map { it.toPhrase() }
         }
 
@@ -47,7 +52,7 @@ class PhraseRepository {
         allPhrases.shuffled().take(number)
     }*/
 
-    fun getPhrasesByTopicNameForUser(topic: String, userId: Int): List<PhraseEntity> =
+    /*fun getPhrasesByTopicNameForUser(topic: String, userId: Int): List<PhraseEntity> =
         transaction {
             val topicId = TopicRepository().getTopicIdByName(topic)
             val phaseProgressRepository = PhraseProgressRepository()
@@ -87,48 +92,44 @@ class PhraseRepository {
             val result = (unMasteredPhrases + masteredPhrases)
 
             return@transaction result
-        }
+        }*/
 
-    fun getLimitedPhrasesByTopicNameForUser(topic: String, userId: Int, size: Int): List<PhraseEntity> =
+    fun getLimitedPhrasesByTopicNameForUser(topicId: Int?, userId: Int, size: Int): List<PhraseEntity> =
         transaction {
-            val topicId = TopicRepository().getTopicIdByName(topic)
             val phaseProgressRepository = PhraseProgressRepository()
             val phaseProgressHistoryRepository = PhraseProgressHistoryRepository()
 
             if (topicId == null) return@transaction emptyList<PhraseEntity>()
 
+            // Alle Phrasen für das angegebene Thema laden
             val allPhrases = getPhrasesByTopicId(topicId)
 
+            // Alle Fortschritte für den Benutzer in einem Rutsch abfragen
+            val progressMap = phaseProgressRepository.getAllPhraseProgressForUser(userId)
+                .associateBy { it.phraseId }
+
+            val userHistory = phaseProgressHistoryRepository.getAllEntriesForUser(userId)
 
             val unMasteredPhrases = allPhrases.filter { phrase ->
-                val progress = phaseProgressRepository.getPhraseProgress(phrase.id, userId)
+                val progress = progressMap[phrase.id]
                 progress?.isMastered != true
-            }.sortedBy {
-                Math.random()
             }.sortedBy { phrase ->
-                val correctIndex = phaseProgressHistoryRepository.calculateCorrectIndex(userId, phrase.id)
+                val correctIndex = phaseProgressHistoryRepository.calculateCorrectIndex(phrase.id, userHistory)
                 correctIndex
-            }.sortedBy { phrase ->
-                val correctIndex = phaseProgressHistoryRepository.calculateCorrectIndex(userId, phrase.id)
-                if (correctIndex == -1.0) 1 else 0
-            }
+            }.sortedBy { Math.random() }  // Zufällige Reihenfolge
 
             val masteredPhrases = allPhrases.filter { phrase ->
-                val progress = phaseProgressRepository.getPhraseProgress(phrase.id, userId)
-                progress?.isMastered == true
+                val progress = progressMap[phrase.id]
+                progress?.isMastered == true  // Nur bearbeitete Phrasen
             }.sortedBy { phrase ->
-                val correctIndex = phaseProgressHistoryRepository.calculateCorrectIndex(userId, phrase.id)
+                val correctIndex = phaseProgressHistoryRepository.calculateCorrectIndex(phrase.id, userHistory)
                 correctIndex
-            }.sortedBy {
-                Math.random()
-            }.sortedBy { phrase ->
-                val correctIndex = phaseProgressHistoryRepository.calculateCorrectIndex(userId, phrase.id)
-                correctIndex
-            }
+            }.sortedBy { Math.random() }  // Zufällige Reihenfolge
 
-            val result = (unMasteredPhrases + masteredPhrases)
+            // Die beiden Listen zusammenfügen und auf die gewünschte Größe beschränken
+            val result = (unMasteredPhrases + masteredPhrases).take(size)
 
-            return@transaction result.take(size)
+            return@transaction result
         }
 
 

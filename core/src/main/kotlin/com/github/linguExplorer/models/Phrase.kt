@@ -3,7 +3,7 @@ package com.github.linguExplorer.models
 
 import org.jetbrains.exposed.sql.Table
 
-object Phrase : Table() {
+object Phrase : Table("phrase") {
     val id = integer("pk_phrase_id").autoIncrement()
     val phrase = varchar("phrase", 50)
     val translation = varchar("translation", 50)

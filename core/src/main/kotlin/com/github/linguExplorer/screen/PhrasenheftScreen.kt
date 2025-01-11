@@ -1,42 +1,62 @@
 package com.github.linguExplorer.screen
 
+import com.badlogic.gdx.Screen
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.Screen
-import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
+import com.badlogic.gdx.utils.viewport.ExtendViewport
+import com.badlogic.gdx.utils.viewport.Viewport
 import com.github.linguExplorer.repositories.PhraseProgressRepository
 import com.github.linguExplorer.repositories.PhraseRepository
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 
 class PhrasenheftScreen : Screen {
     private val font = BitmapFont()
     private val batch = SpriteBatch()
-    private val shapeRenderer = ShapeRenderer() // ShapeRenderer für abgerundete Rechtecke
+    private val shapeRenderer = ShapeRenderer()
 
-    private val phrases = PhraseProgressRepository().getAllPhraseProgressForUser(1)
+    private val phraseProgresses = PhraseProgressRepository().getAllPhraseProgressForUser(1)
+    private val phrases = phraseProgresses.map {
+        PhraseRepository().getPhrase(it.phraseId)!!.phrase to PhraseRepository().getPhrase(it.phraseId)!!.translation
+    }
 
     private var scrollPosition = 0f // Scroll-Position (startY wird angepasst)
     private val lineHeight = 30f // Höhe jeder Zeile
     private val spacing = 300f // Abstand zwischen Phrase und Übersetzung
     private val padding = 20f // Abstand vom Rand zum Inhalt
+    private var currentY = 0f // Wir definieren currentY hier und aktualisieren es in der render-Methode
 
-    override fun show() {}
+    // Define a viewport that adapts to screen size
+    private val viewport: Viewport = ExtendViewport(800f, 600f)
+
+    override fun show() {
+        // Set the viewport to match the screen dimensions
+        viewport.update(Gdx.graphics.width, Gdx.graphics.height, true)
+
+        // initialisiere currentY bei Bildschirmhöhe und der aktuellen Scroll-Position
+        currentY = viewport.screenHeight - padding * 2 + scrollPosition
+    }
 
     override fun render(delta: Float) {
+        // Update the viewport
+        viewport.apply()
+
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT) // Bildschirm löschen
-        batch.begin()
+
+        batch.begin() // Beginnt das Zeichnen
         font.color = Color.WHITE
 
         // Bildschirmgröße holen
-        val screenHeight = Gdx.graphics.height
-        val screenWidth = Gdx.graphics.width
+        val screenHeight = viewport.screenHeight
+        val screenWidth = viewport.screenWidth
 
         // Hintergrund zeichnen: abgerundetes Rechteck
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
         shapeRenderer.color = Color(0.6f, 0.8f, 0.6f, 1f) // Leicht grünliche Farbe
-        shapeRenderer.rect(padding, padding, screenWidth - padding * 2, screenHeight - padding * 2) // abgerundete Ecken mit Radius 20
+        shapeRenderer.rect(padding, padding, screenWidth - padding * 2, screenHeight - padding * 2) // abgerundete Ecken
         shapeRenderer.end()
 
         batch.end()
@@ -44,18 +64,21 @@ class PhrasenheftScreen : Screen {
         // Anzeige der Phrasen innerhalb des Hintergrunds
         batch.begin()
 
-        var startY = screenHeight - 50f + scrollPosition // StartY basierend auf der Scroll-Position
         val startX = 50f
+        var adjustedY = currentY + scrollPosition // Berücksichtige die Scroll-Position
 
         // Anzeige der Phrasen
         for (phrase in phrases) {
-            val phraseText = PhraseRepository().getPhrase(phrase.phraseId)?.phrase ?: ""
-            val translationText = PhraseRepository().getPhrase(phrase.phraseId)?.translation ?: ""
+            val phraseText = phrase.first
+            val translationText = phrase.second
 
-            font.draw(batch, phraseText, startX, startY)
-            font.draw(batch, translationText, startX + spacing, startY)
+            // Debugging: Gebe die Position aus, an der der Text gezeichnet wird
+            println("Drawing text at Y: $adjustedY")
 
-            startY -= lineHeight // Zeilenhöhe nach unten verschieben
+            font.draw(batch, phraseText, startX, adjustedY)
+            font.draw(batch, translationText, startX + spacing, adjustedY)
+
+            adjustedY -= lineHeight // Zeilenhöhe nach unten verschieben
         }
 
         batch.end()
@@ -71,7 +94,7 @@ class PhrasenheftScreen : Screen {
         }
 
         // Berechnung des maximalen Scrollwerts:
-        val totalContentHeight = phrases.size * lineHeight // Gesamthöhe des Inhalts (alle Phrasen)
+        val totalContentHeight = phrases.size * lineHeight // Gesamthöhe des Inhalts
         val maxScroll = totalContentHeight - screenHeight // Maximaler Scrollwert
 
         // Begrenzung, dass man nicht über das Ende der Liste hinaus scrollen kann
@@ -80,7 +103,10 @@ class PhrasenheftScreen : Screen {
         }
     }
 
-    override fun resize(width: Int, height: Int) {}
+    override fun resize(width: Int, height: Int) {
+        // Update the viewport on resize
+        viewport.update(width, height, true)
+    }
 
     override fun hide() {}
 
@@ -91,6 +117,6 @@ class PhrasenheftScreen : Screen {
     override fun dispose() {
         batch.dispose()
         font.dispose()
-        shapeRenderer.dispose() // ShapeRenderer freigeben
+        shapeRenderer.dispose()
     }
 }
