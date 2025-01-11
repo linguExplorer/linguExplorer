@@ -13,6 +13,5 @@ import com.github.linguExplorer.repositories.PhraseRepository
         var test = PhraseProgressRepository().getAllPhraseProgressForUser(userId)
         test.forEach { phrase ->
             println("${PhraseRepository().getPhrase(phrase.phraseId)} und das ist ${phrase.isMastered}")
-            println("${PhraseProgressHistoryRepository().calculateCorrectIndex(userId, phrase.phraseId)}")
         }
     }
