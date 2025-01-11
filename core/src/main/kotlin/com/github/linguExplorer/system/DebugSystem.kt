@@ -10,7 +10,7 @@ import ktx.assets.disposeSafely
 class DebugSystem(
     private val phWorld: World,
     private val stage: Stage
-) : IntervalSystem (enabled = true){
+) : IntervalSystem (enabled = false){
 
     private lateinit var physicRenderer:Box2DDebugRenderer
 
