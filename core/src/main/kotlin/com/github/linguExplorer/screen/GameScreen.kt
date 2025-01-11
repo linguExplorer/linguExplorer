@@ -20,8 +20,8 @@ class GameScreen : Screen {
 
     // Viewport für responsives Layout
     private val viewport: Viewport = ExtendViewport(800f, 600f)
-    private val basketBasePosition = Vector2(200f, 200f) // Basiskorbposition
-    private val basketSize = Vector2(150f, 150f) // Korbgröße (falls notwendig skalierbar)
+    private val basketBasePosition = Vector2(100f, 0f) // Basiskorbposition
+    private val basketSize = Vector2(150f, 150f) // Korbgröße
 
     private var isDragging = false
     private var offsetX = 0f
@@ -41,8 +41,8 @@ class GameScreen : Screen {
         DraggableObject(
             phrase = phrase,
             texture = Texture(Gdx.files.internal(assetPath)),
-            x = (50..700).random().toFloat(),
-            y = (50..500).random().toFloat()
+            x = (400..700).random().toFloat(),
+            y = (100..500).random().toFloat()
         )
     }
 
@@ -74,6 +74,11 @@ class GameScreen : Screen {
         }
 
         batch.end()
+
+        if (minigame.isGameComplete()) {
+            minigame.storePhraseData()
+            closeScreen()
+        }
     }
 
     private fun handleInput() {
@@ -100,7 +105,7 @@ class GameScreen : Screen {
                     if (isImageInsideBasket(obj)) {
                         obj.isCollected = true
                         val isCorrect = minigame.phraseList.any { it.id == obj.phrase.id }
-                        println(isCorrect)
+                        minigame.phraseCheck(obj.phrase, isCorrect)
                     }
                     obj.isBeingDragged = false
                 }
@@ -131,6 +136,11 @@ class GameScreen : Screen {
         val basketTop = basketPosition.y + basketSize.y
 
         return imageRight > basketLeft && imageLeft < basketRight && imageTop > basketBottom && imageBottom < basketTop
+    }
+
+    private fun closeScreen() {
+        // Logic to close the screen
+        Gdx.app.exit() // Or use another method to navigate to a different screen
     }
 
     override fun resize(width: Int, height: Int) {
