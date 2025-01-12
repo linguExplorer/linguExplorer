@@ -17,6 +17,18 @@ class PhraseProgressRepository {
             }
         }
 
+    fun addMultiplePhraseProgress(progresses: List<Triple<Int, Int, Boolean>>) =
+        transaction {
+            progresses.forEach { (phraseId, userId, isMastered) ->
+                PhraseProgress.insert {
+                    it[this.phraseId] = phraseId
+                    it[this.userId] = userId
+                    it[this.isMastered] = isMastered
+                }
+            }
+        }
+
+
     fun getPhraseProgress(phraseId: Int, userId: Int): PhraseProgressEntity? =
         transaction {
             PhraseProgress
@@ -44,6 +56,17 @@ class PhraseProgressRepository {
 
     fun changeMasteredState(userId: Int, phraseId: Int) =
         transaction {
+            PhraseProgress.update({
+                PhraseProgress.userId eq userId and
+                    (PhraseProgress.phraseId eq phraseId)
+            }) {
+                it[isMastered] = true
+            }
+        }
+
+    fun changeMultipleMasteredStates(userId: Int, phraseIds: List<Int>) =
+        transaction {
+            phraseIds.forEach { phraseId ->
                 PhraseProgress.update({
                     PhraseProgress.userId eq userId and
                         (PhraseProgress.phraseId eq phraseId)
@@ -52,10 +75,12 @@ class PhraseProgressRepository {
                 }
             }
         }
+}
 
 
-    private fun ResultRow.toPhraseProgress() = PhraseProgressEntity(
-        this[PhraseProgress.phraseId],
-        this[PhraseProgress.userId],
-        this[PhraseProgress.isMastered]
-    )
+private fun ResultRow.toPhraseProgress() = PhraseProgressEntity(
+    this[PhraseProgress.phraseId],
+    this[PhraseProgress.userId],
+    this[PhraseProgress.isMastered]
+)
+

@@ -1,4 +1,4 @@
-import com.github.linguExplorer.database.*
+/*import com.github.linguExplorer.database.*
 import com.github.linguExplorer.repositories.*
 import java.util.Scanner
 import kotlin.random.Random
@@ -110,3 +110,4 @@ fun game(scanner: Scanner, topicId: Int) {
 fun main() {
     startGame()
 }
+*/

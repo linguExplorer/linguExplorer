@@ -5,3 +5,4 @@ import com.github.linguExplorer.repositories.PhraseRepository
 
 val allPhrasesList = PhraseRepository().getAllPhrases()
 val allPhraseAssets = PhraseAssetRepository().getAllPhraseAssets()
+val phraseIndex = 0.75
