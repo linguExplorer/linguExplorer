@@ -16,135 +16,90 @@ import com.github.linguExplorer.models.PhraseEntity
 class GameScreen : Screen {
 
     private val batch = SpriteBatch()
-    private val basketTexture = Texture(Gdx.files.internal("Minigames/Essen/minispielEssen/basket.png"))
-    private val listTexture = Texture(Gdx.files.internal("Minigames/Essen/minispielEssen/list.png"))
-    private val timeTexture = Texture(Gdx.files.internal("Minigames/Essen/minispielEssen/time.png"))
-    private val pauseTexture = Texture(Gdx.files.internal("Minigames/Essen/minispielEssen/pause.png"))
-    private val shelfTexture = Texture(Gdx.files.internal("Minigames/Essen/minispielEssen/shelf.png"))
-    private val tryAgainButtonTexture = Texture(Gdx.files.internal("Minigames/Essen/minispielEssen/btn_tryAgain.png"))
-    private val quitButtonTexture = Texture(Gdx.files.internal("Minigames/Essen/minispielEssen/btn_quitMinigame.png"))
-    private val minigame = EssenMinigame()
-
-    // overlay Buttons
-    private val tryAgainButtonPosition = Vector2(430f, 150f)
-    private val quitButtonPosition = Vector2(430f, 80f)
-    private val tryAgainButtonSize = Vector2(180f, 150f)
-    private val quitButtonSize = Vector2(180f, 150f)
-
-    // Time
-    private var timeLeft = 20 // Startzeit in Sekunden
     private val font = BitmapFont()
-    // font Problem
-    //private val font = BitmapFont(Gdx.files.internal("Minigames/Essen/fonts/726a9c58b5a74175b5665675d666eea2-12.fnt"))
-
-    // Viewport für responsives Layout
     private val viewport: Viewport = ExtendViewport(800f, 600f)
 
-    //Korb
-    private val basketBasePosition = Vector2(40f, 20f) // Basiskorbposition
-    private val basketSize = Vector2(900f, 500f) // Korbgröße (falls notwendig skalierbar)
+    // Texturen
+    private val basketTexture = Texture(Gdx.files.internal("Minigames/Essen/basket.png"))
+    private val listTexture = Texture(Gdx.files.internal("Minigames/Essen/list.png"))
+    private val timeTexture = Texture(Gdx.files.internal("Minigames/Essen/time.png"))
+    private val pauseTexture = Texture(Gdx.files.internal("Minigames/Essen/pause.png"))
+    private val shelfTexture = Texture(Gdx.files.internal("Minigames/Essen/shelf.png"))
+    private val tryAgainButtonTexture = Texture(Gdx.files.internal("Minigames/Essen/btn_tryAgain.png"))
+    private val quitButtonTexture = Texture(Gdx.files.internal("Minigames/Essen/btn_quitMinigame.png"))
 
-    //Liste
+    // Positionen und Größen
+    private val basketPosition = Vector2(40f, 20f)
+    private val basketSize = Vector2(650f, 450f)
     private val listPosition = Vector2(480f, 20f)
-    private val listSize = Vector2(850f, 500f)
-
-    //Time
-    private val timePosition = Vector2(10f,200f)
-    private val timeSize = Vector2(720f, 400f)
-
-    // Pause-Button
-    private val pausePosition = Vector2(30f,200f)
+    private val listSize = Vector2(1200f, 600f)
+    private val pausePosition = Vector2(30f, 200f)
     private val pauseSize = Vector2(700f, 400f)
 
-    // Overlay
-    private val overlayColor = com.badlogic.gdx.graphics.Color(0f, 0f, 0f, 0.5f) // 50% Schwarz
+    private val shelfPosition1 = Vector2(200f, 150f)
+    private val shelfPosition2 = Vector2(200f, 20f)
+    private val shelfSize = Vector2(900f, 400f)
 
-    // Regale
-    private val shelfPosition1 = Vector2(200f,150f) // Oberes Regal
-    private val shelfPosition2 = Vector2(200f,20f) // Unteres Regal
-    private val shelfSize = Vector2(900f, 400f) // Regalgröße
+    private val tryAgainButtonPosition = Vector2(430f, 150f)
+    private val quitButtonPosition = Vector2(430f, 80f)
+    private val buttonSize = Vector2(180f, 150f)
 
+    private val timePosition = Vector2(10f, 200f)
+    private val timeSize = Vector2(700f, 400f)
+
+    // Zeit
+    private var timeLeft = 20
+    private var elapsedTime = 0f
+
+    // Spielstatus
     private var isDragging = false
     private var offsetX = 0f
     private var offsetY = 0f
+    private var gameEnded = false
 
-    private var gameEnded = false // Flag für das Ende des Spiels
+    private val minigame = EssenMinigame()
+    private val objects: List<DraggableObject>
 
     init {
-        // Lade alle Phrasen des Themas "Essen" und die Minigame-Phrasen
+        // Initialisierung
         minigame.loadAllPhrases()
         minigame.loadMinigamePhrases()
-    }
 
-    // Lade Phrasen mit zugehörigen Assets
-    private val phrasesWithAssets = minigame.loadPhrasesWithAssets()
-
-    // Erstelle die Objekte (Phrasen + Texturen)
-    private val objects = phrasesWithAssets.map { (phrase, assetPath) ->
-        DraggableObject(
-            phrase = phrase,
-            texture = Texture(Gdx.files.internal(assetPath)),
-            x = (-400..-400).random().toFloat(),
-            y = (-400..-400).random().toFloat()
-        )
+        objects = minigame.loadPhrasesWithAssets().map { (phrase, assetPath) ->
+            DraggableObject(
+                phrase = phrase,
+                texture = Texture(Gdx.files.internal(assetPath)),
+                x = (400..700).random().toFloat(),
+                y = (100..500).random().toFloat()
+            )
+        }
     }
 
     override fun show() {
-        Gdx.input.inputProcessor = null // Setze das Input-System (falls nötig)
+        Gdx.input.inputProcessor = null
     }
-
-    private var elapsedTime = 0f
 
     override fun render(delta: Float) {
         handleInput()
+        updateTime(delta)
 
-        // Zähle die verstrichene Zeit hinzu
-        elapsedTime += delta
-
-        // Wenn eine Sekunde vergangen ist, verringere die verbleibende Zeit
-        if (elapsedTime >= 1f) {
-            if (timeLeft > 0) {
-                timeLeft -= 1 // Zeit verringern
-            }
-            elapsedTime = 0f // Reset der verstrichenen Zeit
-        }
-
-
-        // Sekunden für die Anzeige (00:00) Berechnen
-        val minutes = timeLeft / 60
-        val seconds = timeLeft % 60
-        val timeText = String.format("%02d:%02d", minutes, seconds)
-
-        //hellblau Hintergrund
-        Gdx.gl.glClearColor(0.627f, 0.768f, 0.831f, 1f)
         // Bildschirm bereinigen
+        Gdx.gl.glClearColor(0.611f, 0.761f, 0.827f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
-        // Viewport anwenden und Kamera aktualisieren
         viewport.apply()
+        batch.projectionMatrix = viewport.camera.combined
 
         // Rendering starten
-        batch.projectionMatrix = viewport.camera.combined
         batch.begin()
 
-        // Korb zeichnen
+        // Hintergrundelemente
         batch.draw(basketTexture, basketPosition.x, basketPosition.y, basketSize.x, basketSize.y)
-
-        // Liste zeichnen
         batch.draw(listTexture, listPosition.x, listPosition.y, listSize.x, listSize.y)
-
-        // Zeit oben links
-        batch.draw(timeTexture, timePosition.x, timePosition.y, timeSize.x, timeSize.y)
-        // Zeit Text
-        font.color.set(0f, 0f, 0f, 1f)
-        font.draw(batch, timeText,  60f, 568f)
-
-        // Pause Button
         batch.draw(pauseTexture, pausePosition.x, pausePosition.y, pauseSize.x, pauseSize.y)
-
-        // Regale rechts
         batch.draw(shelfTexture, shelfPosition1.x, shelfPosition1.y, shelfSize.x, shelfSize.y)
         batch.draw(shelfTexture, shelfPosition2.x, shelfPosition2.y, shelfSize.x, shelfSize.y)
+        batch.draw(timeTexture, timePosition.x, timePosition.y, timeSize.x, timeSize.y)
 
         // Objekte zeichnen
         objects.forEach { obj ->
@@ -153,25 +108,22 @@ class GameScreen : Screen {
             }
         }
 
-        // Wenn Zeit abgelaufen transparente Overlay
-        if (timeLeft <= 0) {
-            // Setze die transparente Farbe für das Overlay (50% transparent)
-            //batch.setColor(overlayColor)
-            //batch.draw(basketTexture, 0f, 0f, 50f, 50f)
+        // Zeit zeichnen
+        font.draw(batch, formatTime(timeLeft), 60f, 568f)
 
-            // "Try Again" Text in der Mitte
-            font.color.set(1f, 1f, 1f, 1f) // Weißer Text
-            font.draw(batch, "GAME OVER", 475f, 350f) // In der Mitte
-
-            // Buttons zeichnen
-            batch.draw(tryAgainButtonTexture, tryAgainButtonPosition.x, tryAgainButtonPosition.y, tryAgainButtonSize.x, tryAgainButtonSize.y)
-            batch.draw(quitButtonTexture, quitButtonPosition.x, quitButtonPosition.y, quitButtonSize.x, quitButtonSize.y)
+        // Spielende-Overlay
+        if (gameEnded) {
+            font.draw(batch, "GAME OVER", 475f, 350f)
+            batch.draw(tryAgainButtonTexture, tryAgainButtonPosition.x, tryAgainButtonPosition.y, buttonSize.x, buttonSize.y)
+            batch.draw(quitButtonTexture, quitButtonPosition.x, quitButtonPosition.y, buttonSize.x, buttonSize.y)
         }
 
         batch.end()
     }
 
     private fun handleInput() {
+        if (gameEnded) return
+
         val mouseX = Gdx.input.x.toFloat() * viewport.worldWidth / Gdx.graphics.width
         val mouseY = (Gdx.graphics.height - Gdx.input.y.toFloat()) * viewport.worldHeight / Gdx.graphics.height
 
@@ -192,40 +144,42 @@ class GameScreen : Screen {
         } else {
             objects.forEach { obj ->
                 if (obj.isBeingDragged) {
+                    obj.isBeingDragged = false
                     if (isImageInsideBasket(obj)) {
                         obj.isCollected = true
-                        val isCorrect = minigame.phraseList.any { it.id == obj.phrase.id }
-                        println(isCorrect)
+                        minigame.phraseCheck(obj.phrase, true) // Passe hier an, wenn Falsch-Prüfung nötig
                     }
-                    obj.isBeingDragged = false
                 }
             }
             isDragging = false
         }
     }
 
-    private val basketPosition: Vector2
-        get() = Vector2(
-            basketBasePosition.x * (viewport.worldWidth / 800f),
-            basketBasePosition.y * (viewport.worldHeight / 600f)
-        )
+    private fun updateTime(delta: Float) {
+        elapsedTime += delta
+        if (elapsedTime >= 1f && timeLeft > 0) {
+            timeLeft--
+            elapsedTime = 0f
+        } else if (timeLeft <= 0) {
+            gameEnded = true
+        }
+    }
+
+    private fun formatTime(time: Int): String {
+        val minutes = time / 60
+        val seconds = time % 60
+        return String.format("%02d:%02d", minutes, seconds)
+    }
 
     private fun isMouseInsideImage(mouseX: Float, mouseY: Float, obj: DraggableObject): Boolean {
         return mouseX in obj.x..(obj.x + obj.texture.width) && mouseY in obj.y..(obj.y + obj.texture.height)
     }
 
     private fun isImageInsideBasket(obj: DraggableObject): Boolean {
-        val imageLeft = obj.x
-        val imageRight = obj.x + obj.texture.width
-        val imageBottom = obj.y
-        val imageTop = obj.y + obj.texture.height
-
-        val basketLeft = basketPosition.x
-        val basketRight = basketPosition.x + basketSize.x
-        val basketBottom = basketPosition.y
-        val basketTop = basketPosition.y + basketSize.y
-
-        return imageRight > basketLeft && imageLeft < basketRight && imageTop > basketBottom && imageBottom < basketTop
+        return obj.x + obj.texture.width > basketPosition.x &&
+            obj.x < basketPosition.x + basketSize.x &&
+            obj.y + obj.texture.height > basketPosition.y &&
+            obj.y < basketPosition.y + basketSize.y
     }
 
     override fun resize(width: Int, height: Int) {
@@ -233,17 +187,20 @@ class GameScreen : Screen {
     }
 
     override fun hide() {}
-
     override fun pause() {}
-
     override fun resume() {}
 
     override fun dispose() {
         batch.dispose()
-        basketTexture.dispose()
-        objects.forEach { it.texture.dispose() }
-        timeTexture.dispose()
         font.dispose()
+        basketTexture.dispose()
+        listTexture.dispose()
+        timeTexture.dispose()
+        pauseTexture.dispose()
+        shelfTexture.dispose()
+        tryAgainButtonTexture.dispose()
+        quitButtonTexture.dispose()
+        objects.forEach { it.texture.dispose() }
     }
 
     private data class DraggableObject(
