@@ -202,7 +202,7 @@ prettyPrint=false
 legacyOutput=false
 
 scaleFactors=[{suffix:"",factor:1,resampling:bicubic}]
-inputFiles=[{path:game,type:Input,dirFilePrefix:null,recursive:true,flattenPaths:false}]
+inputFiles=[{path:../../../Documents/player_p,type:Input,dirFilePrefix:null,recursive:true,flattenPaths:false}]
 keepInputFileExtensions=false
 
 

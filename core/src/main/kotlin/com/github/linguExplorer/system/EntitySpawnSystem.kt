@@ -101,7 +101,7 @@ class EntitySpawnSystem (
             gdxError("No Regions for $model")
         }
         val firstFrame = regions.first()
-        vec2(firstFrame.originalWidth* (UNIT_SCALE/4), firstFrame.originalHeight* (UNIT_SCALE/4))
+        vec2(firstFrame.originalWidth* (UNIT_SCALE/16), firstFrame.originalHeight* (UNIT_SCALE/16))
     }
 
     private fun spawnCfg(type:String):SpawnCfg = cachedCfgs.getOrPut(type) {
