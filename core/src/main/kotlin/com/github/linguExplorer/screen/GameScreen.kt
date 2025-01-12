@@ -15,13 +15,20 @@ import com.github.linguExplorer.models.PhraseEntity
 class GameScreen : Screen {
 
     private val batch = SpriteBatch()
-    private val basketTexture = Texture(Gdx.files.internal("Minigames/Essen/test_basket.jpg"))
+    private val basketTexture = Texture(Gdx.files.internal("Minigames/Essen/basket.png"))
+    private val listTexture = Texture(Gdx.files.internal("Minigames/Essen/list.png"))
+    private val pauseButtonTexture = Texture(Gdx.files.internal("Minigames/pause.png"))
+    private val playButtonTexture = Texture(Gdx.files.internal("Minigames/play.png"))
     private val minigame = EssenMinigame()
 
     // Viewport für responsive Layout
     private val viewport: Viewport = ExtendViewport(800f, 600f)
-    private val basketBasePosition = Vector2(100f, 0f) // Basiskorbposition
-    private val basketSize = Vector2(150f, 150f) // Korbgröße
+    private val basketBasePosition = Vector2(100f, 0f)
+    private val basketSize = Vector2(650f, 450f)
+    private val listBasePosition = Vector2(100f, 0f)
+    private val listSize = Vector2(1200f, 600f)
+    private val pauseButtonBasePosition = Vector2(100f, 0f)
+    private val pauseButtonSize = Vector2(900f, 500f)
 
     private var isDragging = false
     private var offsetX = 0f
@@ -53,6 +60,7 @@ class GameScreen : Screen {
     override fun render(delta: Float) {
         handleInput()
 
+        Gdx.gl.glClearColor(0.611f, 0.761f, 0.827f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
         viewport.apply()
@@ -61,7 +69,6 @@ class GameScreen : Screen {
         batch.projectionMatrix = viewport.camera.combined
         batch.begin()
 
-        batch.draw(basketTexture, basketPosition.x, basketPosition.y, basketSize.x, basketSize.y)
         objects.forEach { obj ->
             if (!obj.isCollected) {
                 batch.draw(obj.texture, obj.x, obj.y)
@@ -76,6 +83,10 @@ class GameScreen : Screen {
                 }
             }
         }
+
+        batch.draw(basketTexture, basketPosition.x, basketPosition.y, basketSize.x, basketSize.y)
+        batch.draw(listTexture, listPosition.x, listPosition.y, listSize.x, listSize.y)
+        batch.draw(pauseButtonTexture, pauseButtonPosition.x, pauseButtonPosition.y, pauseButtonSize.x, pauseButtonSize.y)
 
         batch.end()
 
@@ -126,6 +137,18 @@ class GameScreen : Screen {
         get() = Vector2(
             basketBasePosition.x * (viewport.worldWidth / 800f),
             basketBasePosition.y * (viewport.worldHeight / 600f)
+        )
+
+    private val listPosition: Vector2
+        get() = Vector2(
+            listBasePosition.x * (viewport.worldWidth / 800f),
+            listBasePosition.y * (viewport.worldHeight / 600f)
+        )
+
+    private val pauseButtonPosition: Vector2
+        get() = Vector2(
+            pauseButtonBasePosition.x * (viewport.worldWidth / 800f),
+            pauseButtonBasePosition.y
         )
 
     private fun isMouseInsideImage(mouseX: Float, mouseY: Float, obj: DraggableObject): Boolean {
