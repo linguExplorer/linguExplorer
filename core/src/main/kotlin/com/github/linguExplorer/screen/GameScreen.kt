@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
@@ -23,29 +24,81 @@ class GameScreen : Screen {
     private val basketTexture = Texture(Gdx.files.internal("Minigames/Essen/basket.png"))
     private val listTexture = Texture(Gdx.files.internal("Minigames/Essen/list.png"))
     private val timeTexture = Texture(Gdx.files.internal("Minigames/Essen/time.png"))
-    private val pauseTexture = Texture(Gdx.files.internal("Minigames/Essen/pause.png"))
+    private var pauseTexture = Texture(Gdx.files.internal("Minigames/Essen/pause.png"))
     private val shelfTexture = Texture(Gdx.files.internal("Minigames/Essen/shelf.png"))
     private val tryAgainButtonTexture = Texture(Gdx.files.internal("Minigames/Essen/btn_tryAgain.png"))
     private val quitButtonTexture = Texture(Gdx.files.internal("Minigames/Essen/btn_quitMinigame.png"))
 
     // Positionen und Größen
-    private val basketPosition = Vector2(40f, 20f)
+    private val basketBasePosition = Vector2(100f, 0f)
     private val basketSize = Vector2(650f, 450f)
-    private val listPosition = Vector2(480f, 20f)
+
+    private val listBasePosition = Vector2(150f, 0f)
     private val listSize = Vector2(1200f, 600f)
-    private val pausePosition = Vector2(30f, 200f)
+
+    private val pauseBasePosition = Vector2(30f, 200f)
     private val pauseSize = Vector2(700f, 400f)
 
-    private val shelfPosition1 = Vector2(200f, 150f)
-    private val shelfPosition2 = Vector2(200f, 20f)
+    private val shelfBasePosition1 = Vector2(200f, 150f)
+    private val shelfBasePosition2 = Vector2(200f, 20f)
     private val shelfSize = Vector2(900f, 400f)
 
-    private val tryAgainButtonPosition = Vector2(430f, 150f)
-    private val quitButtonPosition = Vector2(430f, 80f)
+    private val tryAgainButtonBasePosition = Vector2(430f, 150f)
+    private val quitButtonBasePosition = Vector2(430f, 80f)
     private val buttonSize = Vector2(180f, 150f)
 
-    private val timePosition = Vector2(10f, 200f)
+    private val timeBasePosition = Vector2(10f, 200f)
     private val timeSize = Vector2(700f, 400f)
+
+    // Getter für die dynamischen Positionen
+    private val basketPosition: Vector2
+        get() = Vector2(
+            basketBasePosition.x * (viewport.worldWidth / 800f),
+            basketBasePosition.y * (viewport.worldHeight / 600f)
+        )
+
+    private val listPosition: Vector2
+        get() = Vector2(
+            listBasePosition.x * (viewport.worldWidth / 800f),
+            listBasePosition.y * (viewport.worldHeight / 600f)
+        )
+
+    private val pausePosition: Vector2
+        get() = Vector2(
+            pauseBasePosition.x * (viewport.worldWidth / 800f),
+            pauseBasePosition.y * (viewport.worldHeight / 600f)
+        )
+
+    private val shelfPosition1: Vector2
+        get() = Vector2(
+            shelfBasePosition1.x * (viewport.worldWidth / 800f),
+            shelfBasePosition1.y * (viewport.worldHeight / 600f)
+        )
+
+    private val shelfPosition2: Vector2
+        get() = Vector2(
+            shelfBasePosition2.x * (viewport.worldWidth / 800f),
+            shelfBasePosition2.y * (viewport.worldHeight / 600f)
+        )
+
+    private val tryAgainButtonPosition: Vector2
+        get() = Vector2(
+            tryAgainButtonBasePosition.x * (viewport.worldWidth / 800f),
+            tryAgainButtonBasePosition.y * (viewport.worldHeight / 600f)
+        )
+
+    private val quitButtonPosition: Vector2
+        get() = Vector2(
+            quitButtonBasePosition.x * (viewport.worldWidth / 800f),
+            quitButtonBasePosition.y * (viewport.worldHeight / 600f)
+        )
+
+    private val timePosition: Vector2
+        get() = Vector2(
+            timeBasePosition.x * (viewport.worldWidth / 800f),
+            timeBasePosition.y * (viewport.worldHeight / 600f)
+        )
+
 
     // Zeit
     private var timeLeft = 20
@@ -109,6 +162,7 @@ class GameScreen : Screen {
         }
 
         // Zeit zeichnen
+        font.color = Color.BLACK
         font.draw(batch, formatTime(timeLeft), 60f, 568f)
 
         // Spielende-Overlay
@@ -128,6 +182,10 @@ class GameScreen : Screen {
         val mouseY = (Gdx.graphics.height - Gdx.input.y.toFloat()) * viewport.worldHeight / Gdx.graphics.height
 
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            if (mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) && mouseY in pausePosition.x..(pausePosition.x + pauseSize.x)) {
+                pauseTexture = Texture(Gdx.files.internal("Minigames/Essen/play.png"))
+
+            }
             objects.forEach { obj ->
                 if (!isDragging && !obj.isCollected && isMouseInsideImage(mouseX, mouseY, obj)) {
                     isDragging = true
