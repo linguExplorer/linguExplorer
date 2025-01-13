@@ -21,34 +21,34 @@ class GameScreen : Screen {
     private val viewport: Viewport = ExtendViewport(800f, 600f)
 
     // Texturen
-    private val basketTexture = Texture(Gdx.files.internal("Minigames/Essen/basket.png"))
-    private val listTexture = Texture(Gdx.files.internal("Minigames/Essen/list.png"))
-    private val timeTexture = Texture(Gdx.files.internal("Minigames/Essen/time.png"))
-    private var pauseTexture = Texture(Gdx.files.internal("Minigames/Essen/pause.png"))
-    private val shelfTexture = Texture(Gdx.files.internal("Minigames/Essen/shelf.png"))
-    private val tryAgainButtonTexture = Texture(Gdx.files.internal("Minigames/Essen/btn_tryAgain.png"))
-    private val quitButtonTexture = Texture(Gdx.files.internal("Minigames/Essen/btn_quitMinigame.png"))
+    private val basketTexture = Texture(Gdx.files.internal("Minigames/basket.png"))
+    private val listTexture = Texture(Gdx.files.internal("Minigames/list.png"))
+    private val timeTexture = Texture(Gdx.files.internal("Minigames/time.png"))
+    private var pauseTexture = Texture(Gdx.files.internal("Minigames/pausebutton.png"))
+    private val shelfTexture = Texture(Gdx.files.internal("Minigames/shelf.png"))
+    private val tryAgainButtonTexture = Texture(Gdx.files.internal("Minigames/btn_tryAgain.png"))
+    private val quitButtonTexture = Texture(Gdx.files.internal("Minigames/btn_quitMinigame.png"))
 
     // Positionen und Größen
-    private val basketBasePosition = Vector2(100f, 0f)
-    private val basketSize = Vector2(650f, 450f)
+    private val basketBasePosition = Vector2(60f, 0f)
+    private val basketSize = Vector2(350f, 260f)
 
-    private val listBasePosition = Vector2(150f, 0f)
-    private val listSize = Vector2(1200f, 600f)
+    private val listBasePosition = Vector2(550f, 0f)
+    private val listSize = Vector2(240f, 250f)
 
-    private val pauseBasePosition = Vector2(30f, 200f)
-    private val pauseSize = Vector2(700f, 400f)
+    private val pauseBasePosition = Vector2(180f, 530f)
+    private val pauseSize = Vector2(50f, 50f)
 
-    private val shelfBasePosition1 = Vector2(200f, 150f)
-    private val shelfBasePosition2 = Vector2(200f, 20f)
-    private val shelfSize = Vector2(900f, 400f)
+    private val shelfBasePosition1 = Vector2(350f, 450f)
+    private val shelfBasePosition2 = Vector2(350f, 300f)
+    private val shelfSize = Vector2(650f, 25f)
 
     private val tryAgainButtonBasePosition = Vector2(430f, 150f)
     private val quitButtonBasePosition = Vector2(430f, 80f)
     private val buttonSize = Vector2(180f, 150f)
 
-    private val timeBasePosition = Vector2(10f, 200f)
-    private val timeSize = Vector2(700f, 400f)
+    private val timeBasePosition = Vector2(20f, 530f)
+    private val timeSize = Vector2(150f, 50f)
 
     // Getter für die dynamischen Positionen
     private val basketPosition: Vector2
@@ -65,7 +65,7 @@ class GameScreen : Screen {
 
     private val pausePosition: Vector2
         get() = Vector2(
-            pauseBasePosition.x * (viewport.worldWidth / 800f),
+            pauseBasePosition.x,
             pauseBasePosition.y * (viewport.worldHeight / 600f)
         )
 
@@ -95,7 +95,7 @@ class GameScreen : Screen {
 
     private val timePosition: Vector2
         get() = Vector2(
-            timeBasePosition.x * (viewport.worldWidth / 800f),
+            timeBasePosition.x,
             timeBasePosition.y * (viewport.worldHeight / 600f)
         )
 
@@ -122,8 +122,16 @@ class GameScreen : Screen {
             DraggableObject(
                 phrase = phrase,
                 texture = Texture(Gdx.files.internal(assetPath)),
-                x = (400..700).random().toFloat(),
-                y = (100..500).random().toFloat()
+                resetPositionX = 370f,
+                resetPositionY = 480f,
+                basePositionX = 370f,
+                basePositionY = 480f,
+                positionX = 0f,
+                positionY = 0f,
+                positionOffsetX = 0f,
+                positionOffsetY = 0f,
+                sizeX = 50f,
+                sizeY = 50f
             )
         }
     }
@@ -155,10 +163,23 @@ class GameScreen : Screen {
         batch.draw(timeTexture, timePosition.x, timePosition.y, timeSize.x, timeSize.y)
 
         // Objekte zeichnen
+        var positionOffsetX = 0f
+        var positionOffsetY = 0f
+        var index = 0
         objects.forEach { obj ->
             if (!obj.isCollected) {
-                batch.draw(obj.texture, obj.x, obj.y)
+                if(index > 0 && index % 8 == 0) {
+                    positionOffsetX = 0f
+                    positionOffsetY -= 150f * (viewport.worldHeight / 600f)
+                }
+                obj.positionX = obj.basePositionX * (viewport.worldWidth / 800f) + positionOffsetX
+                obj.positionY = obj.basePositionY * (viewport.worldHeight / 600f) + positionOffsetY
+                obj.positionOffsetX = positionOffsetX
+                obj.positionOffsetY = positionOffsetY
+                batch.draw(obj.texture, obj.positionX, obj.positionY, obj.sizeX, obj.sizeY)
             }
+            positionOffsetX += 50f * (viewport.worldWidth / 800f)
+            index++
         }
 
         // Zeit zeichnen
@@ -183,20 +204,22 @@ class GameScreen : Screen {
 
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             if (mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) && mouseY in pausePosition.x..(pausePosition.x + pauseSize.x)) {
-                pauseTexture = Texture(Gdx.files.internal("Minigames/Essen/play.png"))
+                pauseTexture = Texture(Gdx.files.internal("Minigames/playbutton.png"))
 
             }
             objects.forEach { obj ->
                 if (!isDragging && !obj.isCollected && isMouseInsideImage(mouseX, mouseY, obj)) {
                     isDragging = true
                     obj.isBeingDragged = true
-                    offsetX = mouseX - obj.x
-                    offsetY = mouseY - obj.y
+                    offsetX = mouseX - obj.positionX
+                    offsetY = mouseY - obj.positionY
                 }
 
                 if (obj.isBeingDragged) {
-                    obj.x = mouseX - offsetX
-                    obj.y = mouseY - offsetY
+                    println(obj.basePositionX - mouseX - offsetX)
+                    obj.basePositionX = (mouseX - offsetX - obj.positionOffsetX) / (viewport.worldWidth / 800f)
+                    println(obj.basePositionX)
+                    obj.basePositionY = (mouseY - offsetY - obj.positionOffsetY) / (viewport.worldHeight / 600f)
                 }
             }
         } else {
@@ -206,6 +229,9 @@ class GameScreen : Screen {
                     if (isImageInsideBasket(obj)) {
                         obj.isCollected = true
                         minigame.phraseCheck(obj.phrase, true) // Passe hier an, wenn Falsch-Prüfung nötig
+                    } else {
+                        obj.basePositionX = obj.resetPositionX
+                        obj.basePositionY = obj.resetPositionY
                     }
                 }
             }
@@ -230,14 +256,14 @@ class GameScreen : Screen {
     }
 
     private fun isMouseInsideImage(mouseX: Float, mouseY: Float, obj: DraggableObject): Boolean {
-        return mouseX in obj.x..(obj.x + obj.texture.width) && mouseY in obj.y..(obj.y + obj.texture.height)
+        return mouseX in obj.positionX..(obj.positionX + obj.sizeX) && mouseY in obj.positionY..(obj.positionY + obj.sizeY)
     }
 
     private fun isImageInsideBasket(obj: DraggableObject): Boolean {
-        return obj.x + obj.texture.width > basketPosition.x &&
-            obj.x < basketPosition.x + basketSize.x &&
-            obj.y + obj.texture.height > basketPosition.y &&
-            obj.y < basketPosition.y + basketSize.y
+        return obj.positionX + obj.texture.width > basketPosition.x &&
+            obj.positionX < basketPosition.x + basketSize.x &&
+            obj.positionY + obj.texture.height > basketPosition.y &&
+            obj.positionY < basketPosition.y + basketSize.y
     }
 
     override fun resize(width: Int, height: Int) {
@@ -264,8 +290,16 @@ class GameScreen : Screen {
     private data class DraggableObject(
         val phrase: PhraseEntity,
         val texture: Texture,
-        var x: Float,
-        var y: Float,
+        var resetPositionX: Float,
+        var resetPositionY: Float,
+        var basePositionX: Float,
+        var basePositionY: Float,
+        var positionX: Float,
+        var positionY: Float,
+        var positionOffsetX: Float,
+        var positionOffsetY: Float,
+        var sizeX: Float,
+        var sizeY: Float,
         var isCollected: Boolean = false,
         var isBeingDragged: Boolean = false
     )

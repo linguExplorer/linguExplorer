@@ -22,7 +22,7 @@ class EssenMinigame {
         println(allPhrasesList[0])
         allPhrases = allPhrasesList.filter { phrase ->
             phrase.topicId == this.topicId
-        }
+        }.shuffled().take(16)
     }
 
     /**
