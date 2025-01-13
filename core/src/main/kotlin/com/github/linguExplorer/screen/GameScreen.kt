@@ -28,7 +28,9 @@ class GameScreen : Screen {
     private val listTexture = Texture(Gdx.files.internal("Minigames/list.png"))
     private val timeTexture = Texture(Gdx.files.internal("Minigames/time.png"))
     private var pauseTexture = Texture(Gdx.files.internal("Minigames/pausebutton.png"))
+    private var playTexture = Texture(Gdx.files.internal("Minigames/playbutton.png"))
     private val shelfTexture = Texture(Gdx.files.internal("Minigames/shelf.png"))
+    private val continueTexture = Texture(Gdx.files.internal("Minigames/btn_continue.png"))
     private val tryAgainButtonTexture = Texture(Gdx.files.internal("Minigames/btn_tryAgain.png"))
     private val quitButtonTexture = Texture(Gdx.files.internal("Minigames/btn_quitMinigame.png"))
 
@@ -104,7 +106,7 @@ class GameScreen : Screen {
 
 
     // Zeit
-    private var timeLeft = 20
+    private var timeLeft = 4
     private var elapsedTime = 0f
 
     // Spielstatus
@@ -143,9 +145,13 @@ class GameScreen : Screen {
         Gdx.input.inputProcessor = null
     }
 
+    private var isPaused = false // Spielstatus: pausiert oder nicht
+
     override fun render(delta: Float) {
-        handleInput()
-        updateTime(delta)
+        if (!isPaused) {
+            handleInput()
+            updateTime(delta)
+        }
 
         Gdx.gl.glClearColor(0.611f, 0.761f, 0.827f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
@@ -153,8 +159,9 @@ class GameScreen : Screen {
         viewport.apply()
         batch.projectionMatrix = viewport.camera.combined
 
-
         batch.begin()
+
+        // Zeichne Regale und andere Spielfunktionen
         batch.draw(shelfTexture, shelfPosition1.x, shelfPosition1.y, shelfSize.x, shelfSize.y)
         batch.draw(shelfTexture, shelfPosition2.x, shelfPosition2.y, shelfSize.x, shelfSize.y)
 
@@ -163,7 +170,7 @@ class GameScreen : Screen {
         var index = 0
         objects.forEach { obj ->
             if (!obj.isCollected) {
-                if(index > 0 && index % 8 == 0) {
+                if (index > 0 && index % 8 == 0) {
                     positionOffsetX = 0f
                     positionOffsetY -= 150f * (viewport.worldHeight / 600f)
                 }
@@ -182,68 +189,146 @@ class GameScreen : Screen {
 
         renderPhrasesOnScreen(batch, font, listPosition.x + 30f, listSize.y - 40f, 30f)
 
-        batch.draw(pauseTexture, pausePosition.x, pausePosition.y, pauseSize.x, pauseSize.y)
-        batch.draw(timeTexture, timePosition.x, timePosition.y, timeSize.x, timeSize.y)
+        // Pause- oder Play-Button anzeigen
+        if (isPaused) {
+            batch.draw(playTexture, pausePosition.x, pausePosition.y, pauseSize.x, pauseSize.y)
+        } else {
+            batch.draw(pauseTexture, pausePosition.x, pausePosition.y, pauseSize.x, pauseSize.y)
+        }
 
+        // Zeit
+        batch.draw(timeTexture, timePosition.x, timePosition.y, timeSize.x, timeSize.y)
         font.color = Color.BLACK
-        font.draw(batch, formatTime(timeLeft), 60f, 568f)
+        font.draw(batch, formatTime(timeLeft), 80f, 560f)
+
+        if (isPaused) {
+            batch.end() // Beende den Batch, bevor der ShapeRenderer verwendet wird
+            Gdx.gl.glEnable(GL20.GL_BLEND) // Aktiviert Blending
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
+            shapeRenderer.color = Color(0f, 0f, 0f, 0.5f) // Schwarz mit 50 % Transparenz
+            shapeRenderer.rect(0f, 0f, viewport.worldWidth, viewport.worldHeight)
+            shapeRenderer.end()
+            Gdx.gl.glDisable(GL20.GL_BLEND) // Deaktiviert Blending
+            batch.begin()
+
+            // "GAME PAUSED"-Text
+            font.color = Color.WHITE
+            val glyphLayout = GlyphLayout()
+            glyphLayout.setText(font, "GAME PAUSED")
+            val gamePausedX = (viewport.worldWidth - glyphLayout.width) / 2
+            val gamePausedY = (viewport.worldHeight + glyphLayout.height) / 2
+            font.draw(batch, "GAME PAUSED", gamePausedX, gamePausedY)
+
+            // Continue-Button anzeigen
+            val buttonX = (viewport.worldWidth - buttonSize.x) / 2
+            val continueButtonY = gamePausedY - glyphLayout.height - 100f
+            batch.draw(continueTexture, buttonX, continueButtonY, buttonSize.x, buttonSize.y)
+        }
 
         if (gameEnded) {
-            font.draw(batch, "GAME OVER", 475f, 350f)
-            batch.draw(tryAgainButtonTexture, tryAgainButtonPosition.x, tryAgainButtonPosition.y, buttonSize.x, buttonSize.y)
-            batch.draw(quitButtonTexture, quitButtonPosition.x, quitButtonPosition.y, buttonSize.x, buttonSize.y)
+            // Schwarzen Hintergrund anzeigen
+            batch.end() // Beende den Batch, bevor der ShapeRenderer verwendet wird
+            Gdx.gl.glEnable(GL20.GL_BLEND) // Aktiviert Blending
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
+            shapeRenderer.color = Color(0f, 0f, 0f, 0.5f) // Schwarz mit 50 % Transparenz
+            shapeRenderer.rect(0f, 0f, viewport.worldWidth, viewport.worldHeight)
+            shapeRenderer.end()
+            Gdx.gl.glDisable(GL20.GL_BLEND) // Deaktiviert Blending, wenn es nicht mehr benötigt wird
+            batch.begin() // Beginne den Batch wieder
+
+            // GAME OVER anzeigen
+            font.color = Color.WHITE
+            val glyphLayout = GlyphLayout()
+            glyphLayout.setText(font, "GAME OVER")
+            val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
+            val gameOverY = (viewport.worldHeight + glyphLayout.height) / 2
+            font.draw(batch, "GAME OVER", gameOverX, gameOverY)
+
+            // Buttons für "Try Again" und "Quit"
+            val extraSpacing = 120f // Zusätzlicher Abstand zwischen "GAME OVER" und "Try Again"
+            val buttonYSpacing = -70f // Abstand zwischen "Try Again" und "Quit"
+            val tryAgainButtonY = gameOverY - glyphLayout.height - extraSpacing
+            val quitButtonY = tryAgainButtonY - buttonSize.y - buttonYSpacing
+            val buttonX = (viewport.worldWidth - buttonSize.x) / 2
+            batch.draw(tryAgainButtonTexture, buttonX, tryAgainButtonY, buttonSize.x, buttonSize.y)
+            batch.draw(quitButtonTexture, buttonX, quitButtonY, buttonSize.x, buttonSize.y)
         }
 
         batch.end()
     }
 
+    private fun restartGame() {
+        // Zurücksetzen der Zeit
+        timeLeft = 4
+        elapsedTime = 0f
+
+        // Zurücksetzen des Spielfortschritts
+        objects.forEach { obj ->
+            obj.isCollected = false
+            obj.isBeingDragged = false
+            obj.basePositionX = obj.resetPositionX
+            obj.basePositionY = obj.resetPositionY
+        }
+
+        // Zurücksetzen des Spielstatus
+        gameEnded = false
+        isPaused = false
+    }
+
     private fun handleInput() {
-        if (gameEnded) return
+            val mouseX = Gdx.input.x.toFloat() * viewport.worldWidth / Gdx.graphics.width
+            val mouseY = (Gdx.graphics.height - Gdx.input.y.toFloat()) * viewport.worldHeight / Gdx.graphics.height
 
-        val mouseX = Gdx.input.x.toFloat() * viewport.worldWidth / Gdx.graphics.width
-        val mouseY = (Gdx.graphics.height - Gdx.input.y.toFloat()) * viewport.worldHeight / Gdx.graphics.height
-
-        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            if (mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) && mouseY in pausePosition.y..(pausePosition.y + pauseSize.y)) {
-                pauseTexture = Texture(Gdx.files.internal("Minigames/playbutton.png"))
-            }
-            objects.forEach { obj ->
-                if (!isDragging && !obj.isCollected && isMouseInsideImage(mouseX, mouseY, obj)) {
-                    isDragging = true
-                    obj.isBeingDragged = true
-                    offsetX = mouseX - obj.positionX
-                    offsetY = mouseY - obj.positionY
+            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                // Prüfe, ob der Pause/Play-Button geklickt wurde
+                if (mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) && mouseY in pausePosition.y..(pausePosition.y + pauseSize.y)) {
+                    // Pause/Play umschalten
+                    isPaused = !isPaused
+                    return
                 }
 
-                if (obj.isBeingDragged) {
-                    obj.basePositionX = (mouseX - offsetX - obj.positionOffsetX) / (viewport.worldWidth / 800f)
-                    obj.basePositionY = (mouseY - offsetY - obj.positionOffsetY) / (viewport.worldHeight / 600f)
+                // Wenn pausiert, prüfe "Continue"-Button
+
+            if (!isPaused) {
+                // DraggableObject-Logik nur ausführen, wenn das Spiel nicht pausiert ist
+                objects.forEach { obj ->
+                    if (!isDragging && !obj.isCollected && isMouseInsideImage(mouseX, mouseY, obj)) {
+                        isDragging = true
+                        obj.isBeingDragged = true
+                        offsetX = mouseX - obj.positionX
+                        offsetY = mouseY - obj.positionY
+                    }
+
+                    if (obj.isBeingDragged) {
+                        obj.basePositionX = (mouseX - offsetX - obj.positionOffsetX) / (viewport.worldWidth / 800f)
+                        obj.basePositionY = (mouseY - offsetY - obj.positionOffsetY) / (viewport.worldHeight / 600f)
+                    }
                 }
             }
         } else {
-            objects.forEach { obj ->
-                if (obj.isBeingDragged) {
-                    obj.isBeingDragged = false
-                    if (isImageInsideBasket(obj)) {
-                        val isCorrect = minigame.phraseList.any { it.id == obj.phrase.id }
-                        if(isCorrect) {
-                            obj.isCollected = true
-                            println("JACKPOT")
-                        }
-                        if (minigame.capturedPhrases.any { it.key.id != obj.phrase.id }) {
+            if (!isPaused) {
+                objects.forEach { obj ->
+                    if (obj.isBeingDragged) {
+                        obj.isBeingDragged = false
+                        if (isImageInsideBasket(obj)) {
+                            val isCorrect = minigame.phraseList.any { it.id == obj.phrase.id }
+                            if (isCorrect) {
+                                obj.isCollected = true
+                            }
                             minigame.phraseCheck(obj.phrase, isCorrect)
                         }
-                    }
 
-                    if (!obj.isCollected) {
-                        obj.basePositionX = obj.resetPositionX
-                        obj.basePositionY = obj.resetPositionY
+                        if (!obj.isCollected) {
+                            obj.basePositionX = obj.resetPositionX
+                            obj.basePositionY = obj.resetPositionY
+                        }
                     }
                 }
+                isDragging = false
             }
-            isDragging = false
         }
     }
+
 
     private fun updateTime(delta: Float) {
         elapsedTime += delta
