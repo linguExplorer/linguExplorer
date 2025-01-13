@@ -6,11 +6,22 @@ import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Rectangle
+import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.utils.viewport.ExtendViewport
+import com.github.linguExplorer.component.ImageComponent
 import com.github.linguExplorer.linguExplorer
+import com.github.linguExplorer.system.*
+import com.github.quillraven.fleks.World
+import com.github.quillraven.fleks.world
+
 import ktx.app.KtxScreen
+import ktx.assets.disposeSafely
 import ktx.log.logger
 
 class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
@@ -24,6 +35,12 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private var loadGameTexture: Texture = Texture("xx_Images/Buttons/spielstandLaden_green.png")
     private var settingsIconTexture: Texture = Texture("xx_Images/SettingsIcon.png")
     private var wordmarkTexture: Texture = Texture("xx_Images/wordmark/wordmark_scaled.png")
+
+//Spieler Textur
+    private val textureAtlas = TextureAtlas("assets/graphics/idle_animation.atlas")
+    private val playerTexture: Texture = Texture("assets/graphics/idle_animation.png")
+    private lateinit var gifAnimation: Animation<TextureRegion>
+    private var animationTime = 0f
 
     // Rechtecke für die Buttons
     private val startNewGameButton = Rectangle()
@@ -39,15 +56,22 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private var speedX = 100f
     private var speedY = 50f
 
+
+
+
     override fun show() {
         // Bildschirmgröße abrufen
         val screenWidth = Gdx.graphics.width.toFloat()
         val screenHeight = Gdx.graphics.height.toFloat()
 
+
+        gifAnimation = Animation(0.1f, textureAtlas.regions, Animation.PlayMode.LOOP)
         // Position und Größe der Buttons definieren
         startNewGameButton.set(100f, screenHeight / 2 - 200f, 200f, 50f)
         loadGameButton.set(100f, screenHeight / 2 - 100f, 200f, 50f)
         settingsButton.set(screenWidth - 70f, screenHeight - 70f, 60f, 60f)
+
+
     }
 
     override fun render(delta: Float) {
@@ -84,6 +108,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             backgroundOffsetY = 0f
             speedY = -speedY
         }
+
 
         batch.begin()
         batch.draw(backgroundTexture, backgroundOffsetX, backgroundOffsetY, scaledWidth, scaledHeight)
@@ -122,6 +147,11 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         val settingsY = screenHeight - settingsIconSize - 10f
         batch.draw(settingsIconTexture, settingsX, settingsY, settingsIconSize, settingsIconSize)
 
+
+        //Animierten Spieler zeichnen
+        animationTime += delta
+        val currentFrame = gifAnimation.getKeyFrame(animationTime)
+        batch.draw(currentFrame, screenWidth / 2 + 180f, screenHeight / 2 - 200f, 300f,300f)
         batch.end()
 
         // Prüfen, ob auf den Start-Button geklickt wurde
@@ -151,6 +181,8 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     override fun resume() {}
     override fun hide() {}
     override fun dispose() {
+        playerTexture.disposeSafely()
+        textureAtlas.disposeSafely()
         batch.dispose()
         shapeRenderer.dispose()
         backgroundTexture.dispose()
