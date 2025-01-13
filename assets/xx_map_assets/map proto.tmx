@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="1">
+ <tileset firstgid="1" source="grass.tsx"/>
+ <tileset firstgid="17" source="path.tsx"/>
+ <tileset firstgid="49" source="tree_01.tsx"/>
+ <tileset firstgid="65" source="house_01.tsx"/>
+ <tileset firstgid="114" source="house_02.tsx"/>
+ <layer id="1" name="Kachelebene 1" width="40" height="30">
+  <data encoding="base64" compression="zlib">
+   eJztwzENAAAMBKFb3r/l2ugACaumqqqqqk8fCIQXcQ==
+  </data>
+ </layer>
+ <layer id="2" name="Kachelebene 2" width="40" height="30">
+  <data encoding="base64" compression="zlib">
+   eJztlMsJgDAQBV8Nih6iNz8gYk+WYEmWYmmuYE6iRoVdCW9gTjlkeJAAhLzDAUsLjJl1yAmVWIq1dcgJ7PsG+66Zbs63vgK6fYMY+mdY7NeLTeCd7DvCvm887dN+v7Htp92X4N99fr8cmLd/+srcoM/vd2exq92Xym7dQ51iHyGExMIKrZsdmg==
+  </data>
+ </layer>
+ <layer id="4" name="Kachelebene 4" width="40" height="30">
+  <data encoding="base64" compression="zlib">
+   eJztzkVSXUEAQNG/NdyCa4K7wxwJ7u7ulkCC7JAzedRjBT3pW3XmN5OJxTKZLLLJIZc88ikIOZWqkCKKKeEHpZSFnEpVTgWVVFFNDbUhp1LVUU8DP/lFI00hp1I100IrbbTTQWfAp3RddNNDL330MxByKtUgQwwzwihjjDPBJL+ZYpqZIJffm2WOeRZYZIllVgJ+Ja2yxjobbLLFNjsBv5J22WOfAw454piTgF9Jp5xxzgWXXHHNTbitr265454HHnniD38DfiU988I//vPKG+98BPyKxWKxWCwWC9knp70w3Q==
+  </data>
+ </layer>
+ <layer id="3" name="Kachelebene 3" width="40" height="30">
+  <data encoding="base64" compression="zlib">
+   eJzt1UkKwCAQBVGvlHke7n+q1CqbuJGOdIj/QW2lUWhDkJJUVFNDrfMsMR31NNDoPEvMRDMttGY43/o+G+100PneWLfS38cq9/uIyD/or7bRXyDyLdppTyl34rHTUu7EY6dpz5frAhZGEak=
+  </data>
+ </layer>
+</map>

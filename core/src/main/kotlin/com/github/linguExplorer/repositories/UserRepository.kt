@@ -1,10 +1,9 @@
 package com.github.linguExplorer.repositories
 
+import com.github.linguExplorer.models.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
-import com.github.linguExplorer.models.UserEntity
-import com.github.linguExplorer.models.User
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
@@ -27,12 +26,15 @@ class UserRepository {
             insertStatement.resultedValues?.first()?.toUser()
         }
 
-    fun removeUser(id: Int): Boolean =
+    fun deleteUserWithDependencies(userId: Int) {
         transaction {
-            val deletedRows = User.deleteWhere { User.id eq id }
-            deletedRows > 0
-        }
+            PhraseProgressHistory.deleteWhere { PhraseProgressHistory.userId eq userId }
 
+            PhraseProgress.deleteWhere { PhraseProgress.userId eq userId }
+            User_Progress.deleteWhere { User_Progress.userId eq userId }
+            User.deleteWhere { User.id eq userId }
+        }
+    }
 
     companion object {
         private fun ResultRow.toUser() = UserEntity(

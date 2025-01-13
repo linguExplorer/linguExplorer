@@ -66,6 +66,9 @@ class PhraseRepository {
             }.sortedBy { phrase ->
                 val correctIndex = phaseProgressHistoryRepository.calculateCorrectIndex(userId, phrase.id)
                 correctIndex
+            }.sortedBy { phrase ->
+                val correctIndex = phaseProgressHistoryRepository.calculateCorrectIndex(userId, phrase.id)
+                if (correctIndex == -1.0) 1 else 0
             }
 
             val masteredPhrases = allPhrases.filter { phrase ->
@@ -84,6 +87,48 @@ class PhraseRepository {
             val result = (unMasteredPhrases + masteredPhrases)
 
             return@transaction result
+        }
+
+    fun getLimitedPhrasesByTopicNameForUser(topic: String, userId: Int, size: Int): List<PhraseEntity> =
+        transaction {
+            val topicId = TopicRepository().getTopicIdByName(topic)
+            val phaseProgressRepository = PhraseProgressRepository()
+            val phaseProgressHistoryRepository = PhraseProgressHistoryRepository()
+
+            if (topicId == null) return@transaction emptyList<PhraseEntity>()
+
+            val allPhrases = getPhrasesByTopicId(topicId)
+
+
+            val unMasteredPhrases = allPhrases.filter { phrase ->
+                val progress = phaseProgressRepository.getPhraseProgress(phrase.id, userId)
+                progress?.isMastered != true
+            }.sortedBy {
+                Math.random()
+            }.sortedBy { phrase ->
+                val correctIndex = phaseProgressHistoryRepository.calculateCorrectIndex(userId, phrase.id)
+                correctIndex
+            }.sortedBy { phrase ->
+                val correctIndex = phaseProgressHistoryRepository.calculateCorrectIndex(userId, phrase.id)
+                if (correctIndex == -1.0) 1 else 0
+            }
+
+            val masteredPhrases = allPhrases.filter { phrase ->
+                val progress = phaseProgressRepository.getPhraseProgress(phrase.id, userId)
+                progress?.isMastered == true
+            }.sortedBy { phrase ->
+                val correctIndex = phaseProgressHistoryRepository.calculateCorrectIndex(userId, phrase.id)
+                correctIndex
+            }.sortedBy {
+                Math.random()
+            }.sortedBy { phrase ->
+                val correctIndex = phaseProgressHistoryRepository.calculateCorrectIndex(userId, phrase.id)
+                correctIndex
+            }
+
+            val result = (unMasteredPhrases + masteredPhrases)
+
+            return@transaction result.take(size)
         }
 
 

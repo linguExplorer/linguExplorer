@@ -1,13 +1,10 @@
 package com.github.linguExplorer.repositories
 
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insert
 import com.github.linguExplorer.models.TopicEntity
 import com.github.linguExplorer.models.Topic
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.select
 
 class TopicRepository {
     fun getTopicById(id: Int?): TopicEntity? =
@@ -21,6 +18,25 @@ class TopicRepository {
                 return@transaction null
             }
         }
+
+    fun getTopics(): List<TopicEntity> =
+        transaction {
+            Topic
+                .selectAll()
+                .map { it.toTopic() }
+    }
+
+    fun getFirstTopic(): TopicEntity =
+        transaction {
+            Topic
+                .selectAll()
+                .orderBy(Topic.id to SortOrder.ASC)
+                .limit(1)
+                .map { it.toTopic() }
+                .singleOrNull()!!
+        }
+
+
 
     fun getTopicIdByName(topicName: String): Int? =
         transaction {

@@ -1,18 +1,15 @@
 package com.github.linguExplorer.repositories
 
-import com.github.linguExplorer.models.Topic
-import com.github.linguExplorer.models.TopicEntity
+import com.github.linguExplorer.models.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import com.github.linguExplorer.models.UserProgressEntity
-import com.github.linguExplorer.models.User_Progress
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class UserProgressRepository {
-    fun getUserProgress(userId: Int, topic: TopicEntity?): UserProgressEntity? =
+    fun getUserProgress(userId: Int, topicId: Int): UserProgressEntity? =
         transaction {
             User_Progress
-                .select { (User_Progress.userId eq userId) and (User_Progress.topicId eq topic!!.id) }
+                .select { (User_Progress.userId eq userId) and (User_Progress.topicId eq topicId) }
                 .map { it.toUserProgress() }
                 .singleOrNull()
         }
@@ -51,6 +48,18 @@ class UserProgressRepository {
                 return@transaction null
             }
         }
+
+    fun checkIfMastered(topic: String, userId: Int): Boolean {
+            val phraseList = PhraseRepository().getPhrasesByTopicName(topic)
+            val userProgressList = PhraseProgressRepository().getAllPhraseProgressForUser(userId)
+
+            val masteredProgressList = userProgressList.filter { progress ->
+                progress.isMastered && progress.phraseId in phraseList.map { it.id }
+            }
+
+            return phraseList.size == masteredProgressList.size
+        }
+
 
 
     companion object {

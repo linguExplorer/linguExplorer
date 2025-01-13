@@ -38,7 +38,7 @@ class PhraseProgressHistoryRepository {
             factorSum += factor
         }
 
-        return if (factorSum > 0) 1 - exp(-0.5 * (weightedSum / factorSum) * correctValues.size) else 0.0
+        return if (factorSum > 0) 1 - exp(-0.5 * (weightedSum / factorSum) * correctValues.size) else -1.0
     }
 
     private fun ResultRow.toPhraseProgressHistoryEntity() = PhraseProgressHistoryEntity(

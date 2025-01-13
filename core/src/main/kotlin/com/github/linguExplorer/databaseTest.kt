@@ -1,70 +1,112 @@
-package com.github.linguExplorer
-
-import com.github.linguExplorer.database.DatabaseManager
-import com.github.linguExplorer.repositories.PhraseProgressHistoryRepository
-import com.github.linguExplorer.repositories.PhraseRepository
-import com.github.linguExplorer.repositories.TopicRepository
-import com.github.linguExplorer.repositories.UserProgressRepository
+import com.github.linguExplorer.database.*
+import com.github.linguExplorer.repositories.*
+import java.util.Scanner
 import kotlin.random.Random
 
-fun main() {
+fun startGame() {
+    println("Das ist die Konsolenversion von linguExplorer")
+    println("Gib 'start' ein, um zu beginnen!")
 
-    DatabaseManager()
-    val phraseRepository = PhraseRepository()
-    //val user = userRepository.addUser(1000, "Max Mustermann")
-    //userRepository.removeUser(1000);
+    val scanner = Scanner(System.`in`)
+    val input = scanner.nextLine()
 
-    /*transaction {
-        // Setze Auto-Increment auf 1
-        exec("ALTER TABLE topic AUTO_INCREMENT = 1")
+    if (input.lowercase() == "start") {
+        DatabaseManager()
+        UserRepository().deleteUserWithDependencies(123)
+        createUser(scanner)
+    } else {
+        println("Fehler! Spiel zu Ende.")
     }
-    topicRepository.addTopic("Essen", "Es geht um Essen", );
-    print(topicRepository.getTopic(1))*/
-
-    val topicId = 1
-
-
-    /*val phrases = phraseRepository.getLimitedPhrasesByTopicName("Kleidung", Random.nextInt(10, 21))
-
-    // Ausgabe der resultierenden Phrasen
-    phrases.forEach { println(it) }
-    println(phrases.size)*/
-
-
-    /*val topic = TopicRepository().getTopicById(TopicRepository().getTopicIdByName("Essen"))
-    val userProgressRepository = UserProgressRepository()
-    userProgressRepository.addProgess(5, topic)
-
-    val userProgress = userProgressRepository.getUserProgress(5, topic)
-
-    userProgressRepository.changeMasteredState(userProgress);
-    val repository = PhraseProgressHistoryRepository()
-
-    repeat(10) {
-        val randomCorrect = listOf(true, false).random()
-        //repository.addPhraseProgress(userId = 1, phraseId = 13, correct = randomCorrect)
-    }
-    println(repository.calculateCorrectIndex(1, 13))*/
-
-    val repository = PhraseProgressHistoryRepository()
-    /*for (phraseId in 295..300) {
-
-        // Generiere zufällige Werte für 'isMastered' (true oder false)
-        repeat (Random.nextInt(0, 11)) {
-            val isMastered = Random.nextBoolean()
-            // Führe das Statement aus, um den Fortschritt hinzuzufügen
-            repository.addPhraseProgress(userId = 1, phraseId = phraseId, isMastered)
-        }
-    }*/
-
-    for (phraseId in 295..300) {
-        println("$phraseId: " + repository.calculateCorrectIndex(1, phraseId))
-    }
-
-    println("/n")
-
-    val phrases = phraseRepository.getPhrasesByTopicNameForUser("Kleidung", 1)
-    phrases.forEach { println("${it.id} " + it.phrase) }
-
 }
 
+fun createUser(scanner: Scanner) {
+    println("\nWie willst du heißen? Keine Angabe = Blob!")
+    val username = scanner.nextLine()
+    if (username.equals("")) {
+        UserRepository().addUser(123, "Blob")
+        println("Willkommen, Blob.");
+    } else {
+        UserRepository().addUser(123, username)
+        println("Willkommen, $username");
+    }
+
+    showTopics(scanner)
+}
+
+fun showTopics(scanner: Scanner) {
+    println("\nWähle dein Thema aus (Zahl)")
+    val topicList = TopicRepository().getTopics()
+    topicList.forEach { println("${it.id}: ${it.name}") }
+    val topicId = Integer.parseInt(scanner.nextLine())
+    if (checkIfTopicAvailable(123, topicId)) {
+        println("Topic ${TopicRepository().getTopicById(topicId)!!.name} ausgewählt!")
+        chooseNextOption(scanner, topicId)
+    } else {
+        println("Das darfst du nicht spielen")
+        showTopics(scanner)
+    }
+}
+
+fun chooseNextOption(scanner: Scanner, topicId: Int) {
+    println("Wähle deine nächste Aktion aus\nStatistiken sehen (1)\nSpiel spielen (2)\nZurück (3)")
+    val number = Integer.parseInt(scanner.nextLine())
+    if (number == 1) {
+        println("Dein aktueller Stand bei den Phrasen")
+        PhraseProgressRepository().getAllPhraseProgressForUser(123).forEach {
+            println("${PhraseRepository().getPhrase(it.phraseId)!!.phrase}\t${if(it.isMastered) "gemeistert" else "nicht gemeistert"}")
+        }
+        println("-------\nDeine Indexe")
+        println("Id\tPhrase\tIndex")
+        PhraseRepository().getPhrasesByTopicNameForUser(TopicRepository().getTopicById(topicId)!!.name, 123).forEach {
+            println("${it.id}\t${it.phrase}\t${PhraseProgressHistoryRepository().calculateCorrectIndex(123, it.id)}")
+        }
+
+        chooseNextOption(scanner, topicId)
+    } else if (number == 2) {
+        game(scanner, topicId)
+    } else if (number == 3) {
+        showTopics(scanner)
+    } else {
+        UserRepository().deleteUserWithDependencies(123)
+        println("Fehler! Spiel zu Ende.")
+    }
+}
+
+
+fun game(scanner: Scanner, topicId: Int) {
+    PhraseRepository().getLimitedPhrasesByTopicNameForUser(TopicRepository().
+    getTopicById(topicId)!!.name, 123, Random.nextInt(10,16)).forEach {
+        println("\nÜbersetze die folgende Phrase: '${it.phrase}'")
+        print("Deine Übersetzung: ")
+        val userTranslation = scanner.nextLine()
+
+        if (userTranslation.equals(it.translation, ignoreCase = true)) {
+            println("Richtig!")
+            if (PhraseProgressRepository().getPhraseProgress(it.id, 123) == null) {
+                PhraseProgressRepository().addPhraseProgress(it.id, 123)
+            }
+            PhraseProgressHistoryRepository().addPhraseProgress(123, it.id, true)
+            if (PhraseProgressHistoryRepository().calculateCorrectIndex(123, it.id) > 0.75 &&
+                !PhraseProgressRepository().getPhraseProgress(123, it.id)!!.isMastered) {
+                PhraseProgressRepository().changeMasteredState(123, it.id)
+                println("Du hast die Phrase gemeistert!")
+            }
+        } else {
+            println("Falsch!")
+            if (PhraseProgressRepository().getPhraseProgress(it.id, 123) == null) {
+                PhraseProgressRepository().addPhraseProgress(it.id, 123)
+            }
+            PhraseProgressHistoryRepository().addPhraseProgress(123, it.id, false)
+        }
+    }
+    println("Spiel zu Ende!")
+    if (UserProgressRepository().checkIfMastered(TopicRepository().getTopicById(topicId)!!.name, 123)) {
+        println("Geschafft!")
+    }
+    chooseNextOption(scanner, topicId)
+}
+
+
+fun main() {
+    startGame()
+}

@@ -23,6 +23,10 @@ object TeaVMBuilder {
 
 
             // additionalAssetsClasspathFiles += "com/github/linguExplorer/asset.extension"
+
+            htmlTitle = "linguExplorer"
+            htmlWidth = 640
+            htmlHeight = 360
         }
 
         // Register any classes or packages that require reflection here:
