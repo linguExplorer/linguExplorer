@@ -8,6 +8,8 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.GlyphLayout
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.badlogic.gdx.math.Vector2
@@ -19,6 +21,7 @@ class GameScreen : Screen {
     private val batch = SpriteBatch()
     private val font = BitmapFont()
     private val viewport: Viewport = ExtendViewport(800f, 600f)
+    private val shapeRenderer = ShapeRenderer()
 
     // Texturen
     private val basketTexture = Texture(Gdx.files.internal("Minigames/basket.png"))
@@ -115,8 +118,8 @@ class GameScreen : Screen {
 
     init {
         // Initialisierung
-        minigame.loadAllPhrases()
         minigame.loadMinigamePhrases()
+        minigame.loadAllPhrases()
 
         objects = minigame.loadPhrasesWithAssets().map { (phrase, assetPath) ->
             DraggableObject(
@@ -144,25 +147,17 @@ class GameScreen : Screen {
         handleInput()
         updateTime(delta)
 
-        // Bildschirm bereinigen
         Gdx.gl.glClearColor(0.611f, 0.761f, 0.827f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
         viewport.apply()
         batch.projectionMatrix = viewport.camera.combined
 
-        // Rendering starten
-        batch.begin()
 
-        // Hintergrundelemente
-        batch.draw(basketTexture, basketPosition.x, basketPosition.y, basketSize.x, basketSize.y)
-        batch.draw(listTexture, listPosition.x, listPosition.y, listSize.x, listSize.y)
-        batch.draw(pauseTexture, pausePosition.x, pausePosition.y, pauseSize.x, pauseSize.y)
+        batch.begin()
         batch.draw(shelfTexture, shelfPosition1.x, shelfPosition1.y, shelfSize.x, shelfSize.y)
         batch.draw(shelfTexture, shelfPosition2.x, shelfPosition2.y, shelfSize.x, shelfSize.y)
-        batch.draw(timeTexture, timePosition.x, timePosition.y, timeSize.x, timeSize.y)
 
-        // Objekte zeichnen
         var positionOffsetX = 0f
         var positionOffsetY = 0f
         var index = 0
@@ -182,11 +177,17 @@ class GameScreen : Screen {
             index++
         }
 
-        // Zeit zeichnen
+        batch.draw(basketTexture, basketPosition.x, basketPosition.y, basketSize.x, basketSize.y)
+        batch.draw(listTexture, listPosition.x, listPosition.y, listSize.x, listSize.y)
+
+        renderPhrasesOnScreen(batch, font, listPosition.x + 30f, listSize.y - 40f, 30f)
+
+        batch.draw(pauseTexture, pausePosition.x, pausePosition.y, pauseSize.x, pauseSize.y)
+        batch.draw(timeTexture, timePosition.x, timePosition.y, timeSize.x, timeSize.y)
+
         font.color = Color.BLACK
         font.draw(batch, formatTime(timeLeft), 60f, 568f)
 
-        // Spielende-Overlay
         if (gameEnded) {
             font.draw(batch, "GAME OVER", 475f, 350f)
             batch.draw(tryAgainButtonTexture, tryAgainButtonPosition.x, tryAgainButtonPosition.y, buttonSize.x, buttonSize.y)
@@ -203,9 +204,8 @@ class GameScreen : Screen {
         val mouseY = (Gdx.graphics.height - Gdx.input.y.toFloat()) * viewport.worldHeight / Gdx.graphics.height
 
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            if (mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) && mouseY in pausePosition.x..(pausePosition.x + pauseSize.x)) {
+            if (mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) && mouseY in pausePosition.y..(pausePosition.y + pauseSize.y)) {
                 pauseTexture = Texture(Gdx.files.internal("Minigames/playbutton.png"))
-
             }
             objects.forEach { obj ->
                 if (!isDragging && !obj.isCollected && isMouseInsideImage(mouseX, mouseY, obj)) {
@@ -216,9 +216,7 @@ class GameScreen : Screen {
                 }
 
                 if (obj.isBeingDragged) {
-                    println(obj.basePositionX - mouseX - offsetX)
                     obj.basePositionX = (mouseX - offsetX - obj.positionOffsetX) / (viewport.worldWidth / 800f)
-                    println(obj.basePositionX)
                     obj.basePositionY = (mouseY - offsetY - obj.positionOffsetY) / (viewport.worldHeight / 600f)
                 }
             }
@@ -227,9 +225,17 @@ class GameScreen : Screen {
                 if (obj.isBeingDragged) {
                     obj.isBeingDragged = false
                     if (isImageInsideBasket(obj)) {
-                        obj.isCollected = true
-                        minigame.phraseCheck(obj.phrase, true) // Passe hier an, wenn Falsch-Prüfung nötig
-                    } else {
+                        val isCorrect = minigame.phraseList.any { it.id == obj.phrase.id }
+                        if(isCorrect) {
+                            obj.isCollected = true
+                            println("JACKPOT")
+                        }
+                        if (minigame.capturedPhrases.any { it.key.id != obj.phrase.id }) {
+                            minigame.phraseCheck(obj.phrase, isCorrect)
+                        }
+                    }
+
+                    if (!obj.isCollected) {
                         obj.basePositionX = obj.resetPositionX
                         obj.basePositionY = obj.resetPositionY
                     }
@@ -253,6 +259,31 @@ class GameScreen : Screen {
         val minutes = time / 60
         val seconds = time % 60
         return String.format("%02d:%02d", minutes, seconds)
+    }
+
+    //TODO
+    fun renderPhrasesOnScreen(batch: SpriteBatch, font: BitmapFont, startX: Float, startY: Float, lineHeight: Float) {
+        var currentY = startY
+        val glyphLayout = GlyphLayout()
+
+        minigame.phraseList.forEach { phrase ->
+            val phraseObject = objects.find { it.phrase == phrase }
+            glyphLayout.setText(font, phrase.phrase)
+            val textWidth = glyphLayout.width
+            val textHeight = glyphLayout.height
+            font.draw(batch, phrase.phrase, startX, currentY)
+
+            if (phraseObject!!.isCollected) {
+                batch.end()
+                shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
+                shapeRenderer.color = Color.BLACK
+                shapeRenderer.rect(startX - 100f, currentY - (textHeight / 2), textWidth, 2f)
+                shapeRenderer.end()
+                batch.begin()
+            }
+
+            currentY -= lineHeight
+        }
     }
 
     private fun isMouseInsideImage(mouseX: Float, mouseY: Float, obj: DraggableObject): Boolean {

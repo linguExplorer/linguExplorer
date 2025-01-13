@@ -11,18 +11,30 @@ import kotlin.random.Random
 class EssenMinigame {
     internal lateinit var phraseList: List<PhraseEntity>
     private lateinit var allPhrases: List<PhraseEntity>
-    private val capturedPhrases = mutableMapOf<PhraseEntity, Boolean>()
+    internal val capturedPhrases = mutableMapOf<PhraseEntity, Boolean>()
     private var topicId = TopicRepository().getTopicIdByName("Essen")
 
     /**
      * Die Funktion greift auf allPhrasesList (aus LoadDatabaseLists) und filtert sie nach der Topic Id des Minigames
      * ich muss das so machen, weil ich sonst zu viele selects hätte und dadurch die Wartezeit zu lang ist :(
      */
+    /*
     fun loadAllPhrases() {
         println(allPhrasesList[0])
         allPhrases = allPhrasesList.filter { phrase ->
             phrase.topicId == this.topicId
         }.shuffled().take(16)
+    }*/
+    fun loadAllPhrases() {
+        val filteredPhrases = allPhrasesList.filter { phrase ->
+            phrase.topicId == this.topicId
+        }
+
+        val mandatoryPhrases = phraseList.filter { it in filteredPhrases }
+        val remainingPhrases = filteredPhrases.filter { it !in mandatoryPhrases }.shuffled()
+
+        allPhrases = (mandatoryPhrases + remainingPhrases).take(16)
+        allPhrases.shuffled()
     }
 
     /**
@@ -35,7 +47,7 @@ class EssenMinigame {
      */
     fun loadMinigamePhrases() {
         phraseList = PhraseRepository().getLimitedPhrasesByTopicNameForUser(
-            topicId, userId, Random.nextInt(10, 16)
+            topicId, userId, Random.nextInt(4, 8)
         )
     }
 
