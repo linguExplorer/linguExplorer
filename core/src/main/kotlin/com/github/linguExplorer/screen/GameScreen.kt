@@ -50,7 +50,8 @@ class GameScreen : Screen {
 
     private val tryAgainButtonBasePosition = Vector2(430f, 150f)
     private val quitButtonBasePosition = Vector2(430f, 80f)
-    private val buttonSize = Vector2(180f, 150f)
+    private val continueButtonBasePosition = Vector2(0f, 150f)
+    private val buttonSize = Vector2(250f, 220f)
 
     private val timeBasePosition = Vector2(20f, 530f)
     private val timeSize = Vector2(150f, 50f)
@@ -104,9 +105,15 @@ class GameScreen : Screen {
             timeBasePosition.y * (viewport.worldHeight / 600f)
         )
 
+    private val continueButtonPosition: Vector2
+        get() = Vector2(
+            (viewport.worldWidth / 2) - (buttonSize.x / 2),
+            continueButtonBasePosition.y * (viewport.worldHeight / 600f)
+        )
+
 
     // Zeit
-    private var timeLeft = 4
+    private var timeLeft = 30
     private var elapsedTime = 0f
 
     // Spielstatus
@@ -145,11 +152,11 @@ class GameScreen : Screen {
         Gdx.input.inputProcessor = null
     }
 
-    private var isPaused = false // Spielstatus: pausiert oder nicht
+    private var isPaused = false
 
     override fun render(delta: Float) {
+        handleInput()
         if (!isPaused) {
-            handleInput()
             updateTime(delta)
         }
 
@@ -187,6 +194,7 @@ class GameScreen : Screen {
         batch.draw(basketTexture, basketPosition.x, basketPosition.y, basketSize.x, basketSize.y)
         batch.draw(listTexture, listPosition.x, listPosition.y, listSize.x, listSize.y)
 
+        font.color = Color.BLACK
         renderPhrasesOnScreen(batch, font, listPosition.x + 30f, listSize.y - 40f, 30f)
 
         // Pause- oder Play-Button anzeigen
@@ -198,20 +206,18 @@ class GameScreen : Screen {
 
         // Zeit
         batch.draw(timeTexture, timePosition.x, timePosition.y, timeSize.x, timeSize.y)
-        font.color = Color.BLACK
         font.draw(batch, formatTime(timeLeft), 80f, 560f)
 
         if (isPaused) {
-            batch.end() // Beende den Batch, bevor der ShapeRenderer verwendet wird
-            Gdx.gl.glEnable(GL20.GL_BLEND) // Aktiviert Blending
+            batch.end()
+            Gdx.gl.glEnable(GL20.GL_BLEND)
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
-            shapeRenderer.color = Color(0f, 0f, 0f, 0.5f) // Schwarz mit 50 % Transparenz
+            shapeRenderer.color = Color(0f, 0f, 0f, 0.65f)
             shapeRenderer.rect(0f, 0f, viewport.worldWidth, viewport.worldHeight)
             shapeRenderer.end()
-            Gdx.gl.glDisable(GL20.GL_BLEND) // Deaktiviert Blending
+            Gdx.gl.glDisable(GL20.GL_BLEND)
             batch.begin()
 
-            // "GAME PAUSED"-Text
             font.color = Color.WHITE
             val glyphLayout = GlyphLayout()
             glyphLayout.setText(font, "GAME PAUSED")
@@ -220,9 +226,7 @@ class GameScreen : Screen {
             font.draw(batch, "GAME PAUSED", gamePausedX, gamePausedY)
 
             // Continue-Button anzeigen
-            val buttonX = (viewport.worldWidth - buttonSize.x) / 2
-            val continueButtonY = gamePausedY - glyphLayout.height - 100f
-            batch.draw(continueTexture, buttonX, continueButtonY, buttonSize.x, buttonSize.y)
+            batch.draw(continueTexture, continueButtonPosition.x, continueButtonPosition.y, buttonSize.x, buttonSize.y)
         }
 
         if (gameEnded) {
@@ -276,21 +280,18 @@ class GameScreen : Screen {
     }
 
     private fun handleInput() {
-            val mouseX = Gdx.input.x.toFloat() * viewport.worldWidth / Gdx.graphics.width
-            val mouseY = (Gdx.graphics.height - Gdx.input.y.toFloat()) * viewport.worldHeight / Gdx.graphics.height
+        val mouseX = Gdx.input.x.toFloat() * viewport.worldWidth / Gdx.graphics.width
+        val mouseY = (Gdx.graphics.height - Gdx.input.y.toFloat()) * viewport.worldHeight / Gdx.graphics.height
 
-            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-                // Prüfe, ob der Pause/Play-Button geklickt wurde
-                if (mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) && mouseY in pausePosition.y..(pausePosition.y + pauseSize.y)) {
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            if (!isPaused) {
+                if (mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) && mouseY in pausePosition.y..(pausePosition.y + pauseSize.y)
+                    && objects.find { it.isBeingDragged} == null) {
                     // Pause/Play umschalten
                     isPaused = !isPaused
                     return
                 }
 
-                // Wenn pausiert, prüfe "Continue"-Button
-
-            if (!isPaused) {
-                // DraggableObject-Logik nur ausführen, wenn das Spiel nicht pausiert ist
                 objects.forEach { obj ->
                     if (!isDragging && !obj.isCollected && isMouseInsideImage(mouseX, mouseY, obj)) {
                         isDragging = true
@@ -304,7 +305,13 @@ class GameScreen : Screen {
                         obj.basePositionY = (mouseY - offsetY - obj.positionOffsetY) / (viewport.worldHeight / 600f)
                     }
                 }
+            } else {
+                if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) && mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
+                    isPaused = !isPaused
+                }
             }
+        } else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            isPaused = true
         } else {
             if (!isPaused) {
                 objects.forEach { obj ->
