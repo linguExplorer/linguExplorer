@@ -11,6 +11,7 @@ import com.github.linguExplorer.component.*
 import com.github.linguExplorer.event.MapChangeEvent
 import com.github.linguExplorer.event.fire
 import com.github.linguExplorer.input.PlayerKeyboardInputProcessor
+import com.github.linguExplorer.linguExplorer
 import com.github.linguExplorer.system.*
 import com.github.quillraven.fleks.World
 import com.github.quillraven.fleks.world
@@ -20,7 +21,7 @@ import ktx.box2d.createWorld
 import ktx.log.logger
 import ktx.math.vec2
 
-class MapScreen : KtxScreen {
+class MapScreen(private val game: linguExplorer) : KtxScreen {
 
     private val stage :Stage = Stage(ExtendViewport(16f,9f))
     private val textureAtlas = TextureAtlas("assets/graphics/entities.atlas")
@@ -88,7 +89,7 @@ class MapScreen : KtxScreen {
         phWorld.disposeSafely()
 
     }
-    companion object {
+    companion object : KtxScreen {
         private  val log = logger<MapScreen>()
     }
 }

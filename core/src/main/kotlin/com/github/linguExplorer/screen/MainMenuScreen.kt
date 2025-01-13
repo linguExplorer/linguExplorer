@@ -10,8 +10,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Rectangle
 import com.github.linguExplorer.linguExplorer
+import ktx.app.KtxScreen
+import ktx.log.logger
 
-class MainMenuScreen(private val game: linguExplorer) : Screen {
+class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
 
     private var batch: SpriteBatch = SpriteBatch()
     private var shapeRenderer: ShapeRenderer = ShapeRenderer()
@@ -135,9 +137,10 @@ class MainMenuScreen(private val game: linguExplorer) : Screen {
 
             //TODO: Wieso ist das Feld in dem es richtig ist eine Etage über dem Button lmaooo
             if (screenX >= buttonX && screenX <= buttonX + startNewGameTexture.width &&
-                screenY >= startNewGameButtonY && screenY <= startNewGameButtonY + startNewGameTexture.height) {
+                screenY >= startNewGameButtonY + startNewGameTexture.height && screenY <= startNewGameButtonY + 2* startNewGameTexture.height) {
                 println("klappt")
-                game.startGame()
+                game.addScreen(MapScreen(game))
+                game.setScreen<MapScreen>()
             }
 
         }
@@ -155,5 +158,9 @@ class MainMenuScreen(private val game: linguExplorer) : Screen {
         loadGameTexture.dispose()
         settingsIconTexture.dispose()
         wordmarkTexture.dispose()
+    }
+
+    companion object {
+        private val log = logger<MapScreen>()
     }
 }
