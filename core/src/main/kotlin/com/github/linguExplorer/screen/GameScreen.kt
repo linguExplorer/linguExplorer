@@ -391,7 +391,7 @@ class GameScreen : Screen {
                 batch.end()
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
                 shapeRenderer.color = Color.BLACK
-                shapeRenderer.rect(startX - 100f, currentY - (textHeight / 2), textWidth, 2f)
+                shapeRenderer.rect(startX - 228f, currentY - (textHeight / 2) - 43f , textWidth, 2f)
                 shapeRenderer.end()
                 batch.begin()
             }
