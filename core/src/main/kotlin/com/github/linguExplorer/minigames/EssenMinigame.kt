@@ -33,8 +33,7 @@ class EssenMinigame {
         val mandatoryPhrases = phraseList.filter { it in filteredPhrases }
         val remainingPhrases = filteredPhrases.filter { it !in mandatoryPhrases }.shuffled()
 
-        allPhrases = (mandatoryPhrases + remainingPhrases).take(16)
-        allPhrases.shuffled()
+        allPhrases = (mandatoryPhrases + remainingPhrases).take(16).shuffled()
     }
 
     /**
