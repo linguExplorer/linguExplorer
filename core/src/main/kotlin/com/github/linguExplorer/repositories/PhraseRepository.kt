@@ -113,18 +113,34 @@ class PhraseRepository {
             val unMasteredPhrases = allPhrases.filter { phrase ->
                 val progress = progressMap[phrase.id]
                 progress?.isMastered != true
-            }.sortedBy { phrase ->
+            }.partition { phrase ->
                 val correctIndex = phaseProgressHistoryRepository.calculateCorrectIndex(phrase.id, userHistory)
-                correctIndex
-            }.sortedBy { Math.random() }  // Zufällige Reihenfolge
+                correctIndex == -1.0
+            }.let { (negativeIndexPhrases, otherPhrases) ->
+                val sortedOtherPhrases = otherPhrases.sortedWith(
+                    compareBy<PhraseEntity> {
+                        val correctIndex = phaseProgressHistoryRepository.calculateCorrectIndex(it.id, userHistory)
+                        when {
+                            correctIndex == 0.0 -> 0
+                            correctIndex > 0 && correctIndex < 1 -> 1
+                            else -> 2
+                        }
+                    }.thenBy { phrase ->
+                        phaseProgressHistoryRepository.calculateCorrectIndex(phrase.id, userHistory)
+                    }
+                )
+                val randomNegativeIndexPhrases = negativeIndexPhrases.shuffled()
+                sortedOtherPhrases + randomNegativeIndexPhrases
+            }
+
 
             val masteredPhrases = allPhrases.filter { phrase ->
                 val progress = progressMap[phrase.id]
-                progress?.isMastered == true  // Nur bearbeitete Phrasen
+                progress?.isMastered == true
             }.sortedBy { phrase ->
                 val correctIndex = phaseProgressHistoryRepository.calculateCorrectIndex(phrase.id, userHistory)
                 correctIndex
-            }.sortedBy { Math.random() }  // Zufällige Reihenfolge
+            }
 
             // Die beiden Listen zusammenfügen und auf die gewünschte Größe beschränken
             val result = (unMasteredPhrases + masteredPhrases).take(size)

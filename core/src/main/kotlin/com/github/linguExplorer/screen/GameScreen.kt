@@ -351,9 +351,11 @@ class GameScreen : Screen {
                 }
             }
         } else {
-            if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) && mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
-                minigame.storePhraseData()
-                Gdx.app.exit()
+            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) && mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
+                    minigame.storePhraseData()
+                    Gdx.app.exit()
+                }
             }
         }
     }

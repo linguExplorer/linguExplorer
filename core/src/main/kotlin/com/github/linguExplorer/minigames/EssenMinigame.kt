@@ -47,7 +47,7 @@ class EssenMinigame {
     fun loadMinigamePhrases() {
         phraseList = PhraseRepository().getLimitedPhrasesByTopicNameForUser(
             topicId, userId, Random.nextInt(4, 8)
-        )
+        ).shuffled()
     }
 
     /**
