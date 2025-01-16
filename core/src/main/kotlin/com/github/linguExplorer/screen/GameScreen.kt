@@ -434,7 +434,8 @@ class GameScreen : Screen {
                 batch.end()
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
                 shapeRenderer.color = Color.BLACK
-                shapeRenderer.rect(startX - 228f, currentY - (textHeight / 2) - 43f , textWidth, 3.5f)
+                val lineYPosition = currentY - (textHeight / 2) - 43f
+                shapeRenderer.rect(startX - 228f, lineYPosition , textWidth, 3.5f)
                 shapeRenderer.end()
                 batch.begin()
             }
