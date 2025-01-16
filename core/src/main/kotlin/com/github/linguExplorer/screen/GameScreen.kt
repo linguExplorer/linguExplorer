@@ -13,13 +13,14 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.utils.Align
 import com.github.linguExplorer.minigames.EssenMinigame
 import com.github.linguExplorer.models.PhraseEntity
 
 class GameScreen : Screen {
 
     private val batch = SpriteBatch()
-    private val font = BitmapFont()
+    private lateinit var font: BitmapFont
     private val viewport: Viewport = ExtendViewport(800f, 600f)
     private val shapeRenderer = ShapeRenderer()
 
@@ -50,7 +51,7 @@ class GameScreen : Screen {
 
     private val tryAgainButtonBasePosition = Vector2(430f, 150f)
     private val quitButtonBasePosition = Vector2(430f, 80f)
-    private val continueButtonBasePosition = Vector2(0f, 150f)
+    private val continueButtonBasePosition = Vector2(0f, 125f)
     private val buttonSize = Vector2(250f, 220f)
 
     private val timeBasePosition = Vector2(20f, 530f)
@@ -120,6 +121,7 @@ class GameScreen : Screen {
     private var isDragging = false
     private var offsetX = 0f
     private var offsetY = 0f
+    private var gameStarted = false
     private var gameEnded = false
     private var isCompleted = false
 
@@ -157,47 +159,51 @@ class GameScreen : Screen {
 
     override fun render(delta: Float) {
         handleInput()
-        if (!isPaused && !gameEnded) {
+        if (!isPaused && !gameEnded && gameStarted) {
             updateTime(delta)
         }
 
         Gdx.gl.glClearColor(0.611f, 0.761f, 0.827f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+        font = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
 
         viewport.apply()
         batch.projectionMatrix = viewport.camera.combined
+        font.color = Color.BLACK
 
         batch.begin()
 
         // Zeichne Regale und andere Spielfunktionen
         batch.draw(shelfTexture, shelfPosition1.x, shelfPosition1.y, shelfSize.x, shelfSize.y)
         batch.draw(shelfTexture, shelfPosition2.x, shelfPosition2.y, shelfSize.x, shelfSize.y)
+        batch.draw(listTexture, listPosition.x, listPosition.y, listSize.x, listSize.y)
 
         var positionOffsetX = 0f
         var positionOffsetY = 0f
         var index = 0
-        objects.forEach { obj ->
-            if (index > 0 && index % 8 == 0) {
-                positionOffsetX = 0f
-                positionOffsetY -= 150f * (viewport.worldHeight / 600f)
-            }
-            if (!obj.isCollected) {
-                obj.positionX = obj.basePositionX * (viewport.worldWidth / 800f) + positionOffsetX
-                obj.positionY = obj.basePositionY * (viewport.worldHeight / 600f) + positionOffsetY
-                obj.positionOffsetX = positionOffsetX
-                obj.positionOffsetY = positionOffsetY
-                batch.draw(obj.texture, obj.positionX, obj.positionY, obj.sizeX, obj.sizeY)
 
+        if (gameStarted) {
+            objects.forEach { obj ->
+                if (index > 0 && index % 8 == 0) {
+                    positionOffsetX = 0f
+                    positionOffsetY -= 150f * (viewport.worldHeight / 600f)
+                }
+                if (!obj.isCollected) {
+                    obj.positionX = obj.basePositionX * (viewport.worldWidth / 800f) + positionOffsetX
+                    obj.positionY = obj.basePositionY * (viewport.worldHeight / 600f) + positionOffsetY
+                    obj.positionOffsetX = positionOffsetX
+                    obj.positionOffsetY = positionOffsetY
+                    batch.draw(obj.texture, obj.positionX, obj.positionY, obj.sizeX, obj.sizeY)
+
+                }
+                index++
+                positionOffsetX += 50f * (viewport.worldWidth / 800f)
             }
-            index++
-            positionOffsetX += 50f * (viewport.worldWidth / 800f)
+
+            renderPhrasesOnScreen(batch, font, listPosition.x + 30f, listSize.y - 40f, 30f)
         }
 
         batch.draw(basketTexture, basketPosition.x, basketPosition.y, basketSize.x, basketSize.y)
-        batch.draw(listTexture, listPosition.x, listPosition.y, listSize.x, listSize.y)
-
-        font.color = Color.BLACK
-        renderPhrasesOnScreen(batch, font, listPosition.x + 30f, listSize.y - 40f, 30f)
 
         if(minigame.isGameComplete()) {
             gameEnded = true
@@ -213,7 +219,8 @@ class GameScreen : Screen {
 
         // Zeit
         batch.draw(timeTexture, timePosition.x, timePosition.y, timeSize.x, timeSize.y)
-        font.draw(batch, formatTime(timeLeft), 80f, 560f)
+        font.data.setScale(0.3f, 0.3f)
+        font.draw(batch, formatTime(timeLeft), timePosition.x + 20f, timePosition.y + timeSize.y / 1.4f)
 
         if (isPaused) {
             batch.end()
@@ -225,12 +232,37 @@ class GameScreen : Screen {
             Gdx.gl.glDisable(GL20.GL_BLEND)
             batch.begin()
 
+            font = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
             font.color = Color.WHITE
             val glyphLayout = GlyphLayout()
+            font.data.setScale(0.7f, 0.7f)
             glyphLayout.setText(font, "GAME PAUSED")
             val gamePausedX = (viewport.worldWidth - glyphLayout.width) / 2
-            val gamePausedY = (viewport.worldHeight + glyphLayout.height) / 2
+            val gamePausedY = (viewport.worldHeight / 2) + glyphLayout.height + 10f
             font.draw(batch, "GAME PAUSED", gamePausedX, gamePausedY)
+
+            // Continue-Button anzeigen
+            batch.draw(continueTexture, continueButtonPosition.x, continueButtonPosition.y, buttonSize.x, buttonSize.y)
+        }
+
+        if (!gameStarted) {
+            batch.end()
+            Gdx.gl.glEnable(GL20.GL_BLEND)
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
+            shapeRenderer.color = Color(0f, 0f, 0f, 0.65f)
+            shapeRenderer.rect(0f, 0f, viewport.worldWidth, viewport.worldHeight)
+            shapeRenderer.end()
+            Gdx.gl.glDisable(GL20.GL_BLEND)
+            batch.begin()
+
+            //TODO der text ist soooo knapp nicht in der mitte :((
+            font.color = Color.WHITE
+            val glyphLayout = GlyphLayout()
+            font.data.setScale(0.4f, 0.4f)
+            glyphLayout.setText(font, "Put the items on the list in the basket", Color.WHITE, viewport.worldWidth * 0.75f, Align.center, true)
+            val gamePausedX = (viewport.worldWidth - glyphLayout.width) / 2
+            val gamePausedY = (viewport.worldHeight / 2) + glyphLayout.height
+            font.draw(batch, "Put the items on the list in the basket", gamePausedX, gamePausedY, viewport.worldWidth * 0.75f, Align.center, true)
 
             // Continue-Button anzeigen
             batch.draw(continueTexture, continueButtonPosition.x, continueButtonPosition.y, buttonSize.x, buttonSize.y)
@@ -248,28 +280,30 @@ class GameScreen : Screen {
 
             font.color = Color.WHITE
             val glyphLayout = GlyphLayout()
+            font = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
+            font.data.setScale(0.7f, 0.7f)
 
             if (isCompleted) {
                 glyphLayout.setText(font, "CONGRATULATIONS")
                 val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
-                val gameOverY = (viewport.worldHeight + glyphLayout.height) / 2 + 50f
+                val gameOverY = (viewport.worldHeight / 2) + glyphLayout.height + 10f
                 font.draw(batch, "CONGRATULATIONS", gameOverX, gameOverY)
-
-                batch.draw(continueTexture, continueButtonPosition.x, continueButtonPosition.y, buttonSize.x, buttonSize.y)
             } else {
                 glyphLayout.setText(font, "GAME OVER")
                 val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
-                val gameOverY = (viewport.worldHeight + glyphLayout.height) / 2
+                val gameOverY = (viewport.worldHeight) / 2 + glyphLayout.height + 10f
                 font.draw(batch, "GAME OVER", gameOverX, gameOverY)
 
-                val extraSpacing = 120f // Zusätzlicher Abstand zwischen "GAME OVER" und "Try Again"
+                /*val extraSpacing = 120f // Zusätzlicher Abstand zwischen "GAME OVER" und "Try Again"
                 val buttonYSpacing = -70f // Abstand zwischen "Try Again" und "Quit"
                 val tryAgainButtonY = gameOverY - glyphLayout.height - extraSpacing
                 val quitButtonY = tryAgainButtonY - buttonSize.y - buttonYSpacing
                 val buttonX = (viewport.worldWidth - buttonSize.x) / 2
                 batch.draw(tryAgainButtonTexture, buttonX, tryAgainButtonY, buttonSize.x, buttonSize.y)
-                batch.draw(quitButtonTexture, buttonX, quitButtonY, buttonSize.x, buttonSize.y)
+                batch.draw(quitButtonTexture, buttonX, quitButtonY, buttonSize.x, buttonSize.y)*/
             }
+
+            batch.draw(continueTexture, continueButtonPosition.x, continueButtonPosition.y, buttonSize.x, buttonSize.y)
         }
 
         batch.end()
@@ -297,7 +331,7 @@ class GameScreen : Screen {
         val mouseX = Gdx.input.x.toFloat() * viewport.worldWidth / Gdx.graphics.width
         val mouseY = (Gdx.graphics.height - Gdx.input.y.toFloat()) * viewport.worldHeight / Gdx.graphics.height
 
-        if (!gameEnded) {
+        if (!gameEnded && gameStarted) {
             if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                 if (!isPaused) {
                     if (mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) && mouseY in pausePosition.y..(pausePosition.y + pauseSize.y)
@@ -350,6 +384,12 @@ class GameScreen : Screen {
                     isDragging = false
                 }
             }
+        } else if (!gameStarted) {
+            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) && mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
+                    gameStarted = true
+                }
+            }
         } else {
             if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                 if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) && mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
@@ -387,13 +427,14 @@ class GameScreen : Screen {
             glyphLayout.setText(font, phrase.phrase)
             val textWidth = glyphLayout.width
             val textHeight = glyphLayout.height
+            font.data.setScale(0.2f, 0.2f)
             font.draw(batch, phrase.phrase, startX, currentY)
 
             if (phraseObject!!.isCollected) {
                 batch.end()
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
                 shapeRenderer.color = Color.BLACK
-                shapeRenderer.rect(startX - 228f, currentY - (textHeight / 2) - 43f , textWidth, 2f)
+                shapeRenderer.rect(startX - 228f, currentY - (textHeight / 2) - 43f , textWidth, 3.5f)
                 shapeRenderer.end()
                 batch.begin()
             }

@@ -55,7 +55,6 @@ class EssenMinigame {
      */
     fun loadPhrasesWithAssets(): List<Pair<PhraseEntity, String>> {
         //nur bestimmte Bilder laden
-        //val allowedAssets = listOf("Minigames/Essen/foods/apple.png", "Minigames/Essen/foods/bacon.png")
         return allPhrases.flatMap { phrase ->
             allPhraseAssets.filter { asset ->
                 asset.phraseId == phrase.id
