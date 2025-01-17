@@ -422,7 +422,7 @@ class GameScreen : Screen {
     fun renderPhrasesOnScreen(batch: SpriteBatch, font: BitmapFont, startX: Float, startY: Float, lineHeight: Float) {
         var currentY = startY
         val glyphLayout = GlyphLayout()
-        val lineOffset = 5f //--- neu Linie näher oder weiter vom Text zu positionieren
+        val lineOffset = 63f //--- neu Linie näher oder weiter vom Text zu positionieren
 
         // geht durch Liste der Phrasen
         minigame.phraseList.forEach { phrase ->
@@ -433,7 +433,9 @@ class GameScreen : Screen {
             glyphLayout.setText(font, phrase.phrase)
             val textWidth = glyphLayout.width
             val textHeight = glyphLayout.height
+
             font.data.setScale(0.2f, 0.2f)
+            val textY = currentY + (textHeight / 2f) // --- Die vertikale Mitte des Textes
             font.draw(batch, phrase.phrase, startX, currentY)
 
             //ob Object schon eingesammelt wurde
@@ -445,7 +447,7 @@ class GameScreen : Screen {
                 shapeRenderer.rect(startX - 228f, currentY - (textHeight / 2) - 43f, textWidth, 3.5f)
                 /*shapeRenderer.rect(
                     startX - 228f,
-                    currentY - textHeight/2 - 43f, // 2 - textgap, //-43f damit erste linie weiter unten!
+                    currentY - lineHeight - (textHeight/2),
                     textWidth,
                     3.5f
                 )*/
