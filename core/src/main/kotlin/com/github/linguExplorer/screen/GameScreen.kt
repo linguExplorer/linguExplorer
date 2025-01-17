@@ -23,6 +23,7 @@ class GameScreen : Screen {
     private lateinit var font: BitmapFont
     private val viewport: Viewport = ExtendViewport(800f, 600f)
     private val shapeRenderer = ShapeRenderer()
+    var textgap = 2f
 
     // Texturen
     private val basketTexture = Texture(Gdx.files.internal("Minigames/basket.png"))
@@ -421,24 +422,37 @@ class GameScreen : Screen {
     fun renderPhrasesOnScreen(batch: SpriteBatch, font: BitmapFont, startX: Float, startY: Float, lineHeight: Float) {
         var currentY = startY
         val glyphLayout = GlyphLayout()
+        val lineOffset = 5f //--- neu Linie näher oder weiter vom Text zu positionieren
 
+        // geht durch Liste der Phrasen
         minigame.phraseList.forEach { phrase ->
+            //Object das zur aktuellen Phrase gehört
             val phraseObject = objects.find { it.phrase == phrase }
+            //Breite des Textes der Phrase berechnen
+            font.data.setScale(0.2f, 0.2f)
             glyphLayout.setText(font, phrase.phrase)
             val textWidth = glyphLayout.width
             val textHeight = glyphLayout.height
             font.data.setScale(0.2f, 0.2f)
             font.draw(batch, phrase.phrase, startX, currentY)
 
+            //ob Object schon eingesammelt wurde
             if (phraseObject!!.isCollected) {
                 batch.end()
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
                 shapeRenderer.color = Color.BLACK
-                shapeRenderer.rect(startX - 228f, currentY - (textHeight / 2) - 43f , textWidth, 3.5f)
+                // x-Position des Textes , y-Position des Textes, Breite vom Text, Dicke der Linie
+                shapeRenderer.rect(startX - 228f, currentY - (textHeight / 2) - 43f, textWidth, 3.5f)
+                /*shapeRenderer.rect(
+                    startX - 228f,
+                    currentY - textHeight/2 - 43f, // 2 - textgap, //-43f damit erste linie weiter unten!
+                    textWidth,
+                    3.5f
+                )*/
                 shapeRenderer.end()
                 batch.begin()
             }
-
+            //y-Position für nächste Phrase um lineHeight verringern
             currentY -= lineHeight
         }
     }
