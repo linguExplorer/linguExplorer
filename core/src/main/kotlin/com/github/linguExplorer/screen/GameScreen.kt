@@ -127,7 +127,7 @@ class GameScreen : Screen {
 
 
     // Zeit
-    private var timeLeft = 4
+    private var timeLeft = 30
     private var elapsedTime = 0f
 
     // Spielstatus
@@ -496,26 +496,22 @@ class GameScreen : Screen {
 
             font.data.setScale(0.2f, 0.2f)
             val textY = currentY + (textHeight / 2f) // --- Die vertikale Mitte des Textes
+            // HIER wird der Text gezeichnet
             font.draw(batch, phrase.phrase, startX, currentY)
 
+            val currentLineHeight = textHeight * 1.5f
             //ob Object schon eingesammelt wurde
             if (phraseObject!!.isCollected) {
                 batch.end()
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
                 shapeRenderer.color = Color.BLACK
                 // x-Position des Textes , y-Position des Textes, Breite vom Text, Dicke der Linie
-                shapeRenderer.rect(startX - 228f, currentY - (textHeight / 2) - 43f, textWidth, 3.5f)
-                /*shapeRenderer.rect(
-                    startX - 228f,
-                    currentY - lineHeight - (textHeight/2),
-                    textWidth,
-                    3.5f
-                )*/
+                shapeRenderer.rect(startX - 228f, (currentY/1.25f) - (textHeight/2) - 1f, textWidth, 3.5f)
                 shapeRenderer.end()
                 batch.begin()
             }
             //y-Position für nächste Phrase um lineHeight verringern
-            currentY -= lineHeight
+            currentY -= currentLineHeight//lineHeight
         }
     }
 
