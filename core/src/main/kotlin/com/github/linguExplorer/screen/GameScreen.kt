@@ -58,6 +58,18 @@ class GameScreen : Screen {
     private val timeBasePosition = Vector2(20f, 530f)
     private val timeSize = Vector2(150f, 50f)
 
+    //Error Text
+    private var showErrorText = false
+    private var errorTextTimer = 0f
+    private val errorTextDuration = 2f // Dauer
+    private var errorTextPositionX = 0f
+    private var errorTextPositionY = 0f
+
+    //Positionen der Objekte im Korb
+    private val collectedObjectPositions = mutableListOf<Vector2>()
+    private val collectedObjectSpacing = 55f // Abstand zwischen den Objekten im Korb
+    private var currentBasketRow = 0
+
     // Getter für die dynamischen Positionen
     private val basketPosition: Vector2
         get() = Vector2(
@@ -115,7 +127,7 @@ class GameScreen : Screen {
 
 
     // Zeit
-    private var timeLeft = 30
+    private var timeLeft = 4
     private var elapsedTime = 0f
 
     // Spielstatus
@@ -164,6 +176,13 @@ class GameScreen : Screen {
             updateTime(delta)
         }
 
+        if(showErrorText){
+            errorTextTimer += delta
+            if(errorTextTimer >= errorTextDuration){
+                showErrorText = false
+            }
+        }
+
         Gdx.gl.glClearColor(0.611f, 0.761f, 0.827f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         font = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
@@ -178,6 +197,17 @@ class GameScreen : Screen {
         batch.draw(shelfTexture, shelfPosition1.x, shelfPosition1.y, shelfSize.x, shelfSize.y)
         batch.draw(shelfTexture, shelfPosition2.x, shelfPosition2.y, shelfSize.x, shelfSize.y)
         batch.draw(listTexture, listPosition.x, listPosition.y, listSize.x, listSize.y)
+
+
+        // Fehlertext wird hier gezeichnet
+        if (showErrorText) {
+            font.color = Color.RED
+            font.data.setScale(0.3f, 0.3f)
+            val glyphLayout = GlyphLayout()
+            glyphLayout.setText(font, "False!")
+            font.draw(batch, "False!", errorTextPositionX, errorTextPositionY)
+        }
+
 
         var positionOffsetX = 0f
         var positionOffsetY = 0f
@@ -194,9 +224,9 @@ class GameScreen : Screen {
                     obj.positionY = obj.basePositionY * (viewport.worldHeight / 600f) + positionOffsetY
                     obj.positionOffsetX = positionOffsetX
                     obj.positionOffsetY = positionOffsetY
-                    batch.draw(obj.texture, obj.positionX, obj.positionY, obj.sizeX, obj.sizeY)
-
                 }
+
+                batch.draw(obj.texture, obj.positionX, obj.positionY, obj.sizeX, obj.sizeY)
                 index++
                 positionOffsetX += 50f * (viewport.worldWidth / 800f)
             }
@@ -289,11 +319,13 @@ class GameScreen : Screen {
                 val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
                 val gameOverY = (viewport.worldHeight / 2) + glyphLayout.height + 10f
                 font.draw(batch, "CONGRATULATIONS", gameOverX, gameOverY)
+                batch.draw(continueTexture, continueButtonPosition.x, continueButtonPosition.y, buttonSize.x, buttonSize.y)
             } else {
                 glyphLayout.setText(font, "GAME OVER")
                 val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
                 val gameOverY = (viewport.worldHeight) / 2 + glyphLayout.height + 10f
                 font.draw(batch, "GAME OVER", gameOverX, gameOverY)
+                batch.draw(quitButtonTexture, continueButtonPosition.x, continueButtonPosition.y, buttonSize.x, buttonSize.y)
 
                 /*val extraSpacing = 120f // Zusätzlicher Abstand zwischen "GAME OVER" und "Try Again"
                 val buttonYSpacing = -70f // Abstand zwischen "Try Again" und "Quit"
@@ -303,8 +335,6 @@ class GameScreen : Screen {
                 batch.draw(tryAgainButtonTexture, buttonX, tryAgainButtonY, buttonSize.x, buttonSize.y)
                 batch.draw(quitButtonTexture, buttonX, quitButtonY, buttonSize.x, buttonSize.y)*/
             }
-
-            batch.draw(continueTexture, continueButtonPosition.x, continueButtonPosition.y, buttonSize.x, buttonSize.y)
         }
 
         batch.end()
@@ -326,6 +356,8 @@ class GameScreen : Screen {
         // Zurücksetzen des Spielstatus
         gameEnded = false
         isPaused = false
+        collectedObjectPositions.clear()
+        currentBasketRow = 0
     }
 
     private fun handleInput() {
@@ -369,9 +401,37 @@ class GameScreen : Screen {
                         if (obj.isBeingDragged) {
                             obj.isBeingDragged = false
                             if (isImageInsideBasket(obj)) {
+                                //ob das Objekt in der Liste
                                 val isCorrect = minigame.phraseList.any { it.id == obj.phrase.id }
                                 if (isCorrect) {
+                                    //Objekt als eingesammelt markieren
                                     obj.isCollected = true
+                                    val initialXOffset = 40f //weiter rechts zeichnen
+                                    // Position des Objekts im Korb berechnen
+                                    // Startposition Korb + Abstand Rand + Position in Reihe % 5 * Abstand zwischen Objekten
+                                    val basketX = basketPosition.x + initialXOffset + (collectedObjectPositions.size % 5) * collectedObjectSpacing
+                                    // Startposition Korbs + Abstand + Reihennummer * Abstand zwischen Objekten
+                                    val basketY = basketPosition.y + 20f + (currentBasketRow * collectedObjectSpacing)
+
+                                    obj.positionX = basketX
+                                    obj.positionY = basketY
+
+                                    // Position speichern
+                                    collectedObjectPositions.add(Vector2(basketX, basketY))
+                                    // neue Reihe? weil mehr als 5
+                                    if(collectedObjectPositions.size % 5 == 0)
+                                        currentBasketRow++
+                                } else {
+                                    // Text mit "Fehler!" anzeigen
+                                    showErrorText = true
+                                    errorTextTimer = 0f
+
+                                    val glyphLayout = GlyphLayout()
+                                    font.data.setScale(0.3f, 0.3f)
+                                    glyphLayout.setText(font, "Fehler!")
+
+                                    errorTextPositionX = (viewport.worldWidth - glyphLayout.width) / 2
+                                    errorTextPositionY = viewport.worldHeight / 2
                                 }
                                 minigame.phraseCheck(obj.phrase, isCorrect)
                             }
