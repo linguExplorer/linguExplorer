@@ -23,10 +23,10 @@ fun createUser(scanner: Scanner) {
     println("\nWie willst du heißen? Keine Angabe = Blob!")
     val username = scanner.nextLine()
     if (username.equals("")) {
-        UserRepository().addUser(123, "Blob")
+        //UserRepository().addUser(123, "Blob")
         println("Willkommen, Blob.");
     } else {
-        UserRepository().addUser(123, username)
+        //UserRepository().addUser(123, username)
         println("Willkommen, $username");
     }
 

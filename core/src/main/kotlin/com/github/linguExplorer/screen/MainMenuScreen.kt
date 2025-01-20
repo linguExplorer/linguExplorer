@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.github.linguExplorer.component.ImageComponent
 import com.github.linguExplorer.linguExplorer
+import com.github.linguExplorer.repositories.UserRepository
 import com.github.linguExplorer.system.*
 import com.github.quillraven.fleks.World
 import com.github.quillraven.fleks.world
@@ -169,6 +170,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             if (screenX >= buttonX && screenX <= buttonX + startNewGameTexture.width &&
                 screenY >= startNewGameButtonY + startNewGameTexture.height && screenY <= startNewGameButtonY + 2* startNewGameTexture.height) {
                 println("klappt")
+                UserRepository().addUser(3)
                 game.addScreen(MapScreen(game))
                 game.setScreen<MapScreen>()
             }
