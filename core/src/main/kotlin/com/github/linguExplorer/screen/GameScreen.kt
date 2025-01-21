@@ -65,6 +65,9 @@ class GameScreen : Screen {
     private var errorTextPositionX = 0f
     private var errorTextPositionY = 0f
 
+    // roter Strich
+    private var errorLine = false
+
     //Positionen der Objekte im Korb
     private val collectedObjectPositions = mutableListOf<Vector2>()
     private val collectedObjectSpacing = 55f // Abstand zwischen den Objekten im Korb
@@ -180,6 +183,7 @@ class GameScreen : Screen {
             errorTextTimer += delta
             if(errorTextTimer >= errorTextDuration){
                 showErrorText = false
+                errorLine = false
             }
         }
 
@@ -205,7 +209,7 @@ class GameScreen : Screen {
             font.data.setScale(0.3f, 0.3f)
             val glyphLayout = GlyphLayout()
             glyphLayout.setText(font, "False!")
-            font.draw(batch, "False!", errorTextPositionX, errorTextPositionY)
+            //font.draw(batch, "False!", errorTextPositionX, errorTextPositionY)
         }
 
 
@@ -426,6 +430,9 @@ class GameScreen : Screen {
                                     showErrorText = true
                                     errorTextTimer = 0f
 
+                                    //Fehlerzustand für Linie
+                                    errorLine = true
+
                                     val glyphLayout = GlyphLayout()
                                     font.data.setScale(0.3f, 0.3f)
                                     glyphLayout.setText(font, "Fehler!")
@@ -502,7 +509,11 @@ class GameScreen : Screen {
             if (phraseObject!!.isCollected) {
                 batch.end()
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
-                shapeRenderer.color = Color.BLACK
+                if(errorLine){
+                    shapeRenderer.color = Color.RED
+                } else {
+                    shapeRenderer.color = Color.BLACK
+                }
                 // x-Position des Textes , y-Position des Textes, Breite vom Text, Dicke der Linie
                 shapeRenderer.rect(startX - 228f, (currentY/1.25f) - (textHeight/2) - 1f, textWidth, 3.5f)
                 shapeRenderer.end()
