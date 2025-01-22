@@ -48,6 +48,7 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
             add<EntitySpawnSystem>()
             add<CollisionSpawnSystem>()
             add<CollisionDespawnSystem>()
+            add<MapChangeSystem>()
             add<MoveSystem>()
             add<PhysicSystem>()
             add<AnimationSystem>()
@@ -66,6 +67,8 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
         }
         currentMap = TmxMapLoader().load("assets/graphics/map/main-map.tmx")
         stage.fire(MapChangeEvent(currentMap!!))
+
+
 
         PlayerKeyboardInputProcessor(world, world.mapper())
 
