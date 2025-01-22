@@ -8,8 +8,8 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 class UserProgressRepository {
     fun getUserProgress(userId: Int, topicId: Int): UserProgressEntity? =
         transaction {
-            User_Progress
-                .select { (User_Progress.userId eq userId) and (User_Progress.topicId eq topicId) }
+            UserProgress
+                .select { (UserProgress.userId eq userId) and (UserProgress.topicId eq topicId) }
                 .map { it.toUserProgress() }
                 .singleOrNull()
         }
@@ -18,10 +18,10 @@ class UserProgressRepository {
     fun addProgess(userId: Int, topic: TopicEntity?): UserProgressEntity? =
         transaction {
             if (topic != null) {
-                val insertStatement = User_Progress.insert {
-                    it[User_Progress.userId] = userId
-                    it[User_Progress.topicId] = topic.id
-                    it[User_Progress.isMastered] = false
+                val insertStatement = UserProgress.insert {
+                    it[UserProgress.userId] = userId
+                    it[UserProgress.topicId] = topic.id
+                    it[UserProgress.isMastered] = false
                 }
                 insertStatement.resultedValues?.first()?.toUserProgress()
             } else {
@@ -31,16 +31,16 @@ class UserProgressRepository {
 
     fun removeUserProgresses(userId: Int): Boolean =
         transaction {
-            val deletedRows = Topic.deleteWhere { User_Progress.userId eq id }
+            val deletedRows = Topic.deleteWhere { UserProgress.userId eq id }
             deletedRows > 0
         }
 
     fun changeMasteredState(userProgressEntity: UserProgressEntity?) =
         transaction {
             if (userProgressEntity != null) {
-                User_Progress.update({
-                    User_Progress.userId eq userProgressEntity.userId and
-                        (User_Progress.topicId eq userProgressEntity.topicId)
+                UserProgress.update({
+                    UserProgress.userId eq userProgressEntity.userId and
+                        (UserProgress.topicId eq userProgressEntity.topicId)
                 }) {
                     it[isMastered] = true
                 }
@@ -64,9 +64,9 @@ class UserProgressRepository {
 
     companion object {
         private fun ResultRow.toUserProgress() = UserProgressEntity(
-            this[User_Progress.userId],
-            this[User_Progress.topicId],
-            this[User_Progress.isMastered],
+            this[UserProgress.userId],
+            this[UserProgress.topicId],
+            this[UserProgress.isMastered],
         )
     }
 }
