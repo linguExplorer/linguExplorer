@@ -17,7 +17,7 @@ import com.badlogic.gdx.utils.Align
 import com.github.linguExplorer.minigames.EssenMinigame
 import com.github.linguExplorer.models.PhraseEntity
 
-class GameScreen : Screen {
+class MinigameEssenScreen : Screen {
 
     private val batch = SpriteBatch()
     private lateinit var font: BitmapFont
@@ -235,6 +235,7 @@ class GameScreen : Screen {
                 positionOffsetX += 50f * (viewport.worldWidth / 800f)
             }
 
+
             renderPhrasesOnScreen(batch, font, listPosition.x + 30f, listSize.y - 40f, 30f)
         }
 
@@ -379,17 +380,22 @@ class GameScreen : Screen {
                         return
                     }
 
-                    objects.forEach { obj ->
-                        if (!isDragging && !obj.isCollected && isMouseInsideImage(mouseX, mouseY, obj)) {
-                            isDragging = true
-                            obj.isBeingDragged = true
-                            offsetX = mouseX - obj.positionX
-                            offsetY = mouseY - obj.positionY
-                        }
+                    if (!showErrorText) {
 
-                        if (obj.isBeingDragged) {
-                            obj.basePositionX = (mouseX - offsetX - obj.positionOffsetX) / (viewport.worldWidth / 800f)
-                            obj.basePositionY = (mouseY - offsetY - obj.positionOffsetY) / (viewport.worldHeight / 600f)
+                        objects.forEach { obj ->
+                            if (!isDragging && !obj.isCollected && isMouseInsideImage(mouseX, mouseY, obj)) {
+                                isDragging = true
+                                obj.isBeingDragged = true
+                                offsetX = mouseX - obj.positionX
+                                offsetY = mouseY - obj.positionY
+                            }
+
+                            if (obj.isBeingDragged) {
+                                obj.basePositionX =
+                                    (mouseX - offsetX - obj.positionOffsetX) / (viewport.worldWidth / 800f)
+                                obj.basePositionY =
+                                    (mouseY - offsetY - obj.positionOffsetY) / (viewport.worldHeight / 600f)
+                            }
                         }
                     }
                 } else {
@@ -410,12 +416,12 @@ class GameScreen : Screen {
                                 if (isCorrect) {
                                     //Objekt als eingesammelt markieren
                                     obj.isCollected = true
-                                    val initialXOffset = 40f //weiter rechts zeichnen
+                                    val initialXOffset = 50f //weiter rechts zeichnen
                                     // Position des Objekts im Korb berechnen
                                     // Startposition Korb + Abstand Rand + Position in Reihe % 5 * Abstand zwischen Objekten
                                     val basketX = basketPosition.x + initialXOffset + (collectedObjectPositions.size % 5) * collectedObjectSpacing
                                     // Startposition Korbs + Abstand + Reihennummer * Abstand zwischen Objekten
-                                    val basketY = basketPosition.y + 20f + (currentBasketRow * collectedObjectSpacing)
+                                    val basketY = basketPosition.y + 10f + (currentBasketRow * collectedObjectSpacing)
 
                                     obj.positionX = basketX
                                     obj.positionY = basketY
@@ -514,13 +520,12 @@ class GameScreen : Screen {
                 } else {
                     shapeRenderer.color = Color.BLACK
                 }
-                // x-Position des Textes , y-Position des Textes, Breite vom Text, Dicke der Linie
-                shapeRenderer.rect(startX - 228f, (currentY/1.25f) - (textHeight/2) - 1f, textWidth, 3.5f)
+
+                shapeRenderer.rect(listBasePosition.x + textWidth / 2 + 10f, (currentY/1.25f) - (textHeight/2) - 1f, textWidth, 3.5f)
                 shapeRenderer.end()
                 batch.begin()
             }
-            //y-Position für nächste Phrase um lineHeight verringern
-            currentY -= currentLineHeight//lineHeight
+            currentY -= currentLineHeight
         }
     }
 

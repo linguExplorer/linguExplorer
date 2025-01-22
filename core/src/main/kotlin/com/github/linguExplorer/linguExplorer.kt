@@ -2,12 +2,12 @@ package com.github.linguExplorer
 
 import com.badlogic.gdx.Game
 import com.github.linguExplorer.database.DatabaseManager
-import com.github.linguExplorer.screen.GameScreen
+import com.github.linguExplorer.screen.MinigameEssenScreen
 
 class linguExplorer : Game() {
     override fun create() {
         DatabaseManager()
-        this.screen = GameScreen() // Setzt den GameScreen
+        this.screen = MinigameEssenScreen() // Setzt den GameScreen
     }
 }
 
