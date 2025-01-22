@@ -5,51 +5,69 @@ import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.github.linguExplorer.component.MGComponent
-import com.github.linguExplorer.component.PhysicComponent
+import com.github.linguExplorer.component.*
 import com.github.linguExplorer.component.PhysicComponent.Companion.physicCmpFromShape2D
 import com.github.linguExplorer.event.MapChangeEvent
 import com.github.linguExplorer.event.fire
 import com.github.linguExplorer.linguExplorer
+import com.github.linguExplorer.screen.LoadingScreen
 import com.github.linguExplorer.screen.MainMenuScreen
 import com.github.linguExplorer.screen.MapScreen
+import com.github.linguExplorer.screen.MinigameEssenScreen
 import com.github.quillraven.fleks.AllOf
 import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.IteratingSystem
+import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
+import ktx.math.component1
+import ktx.math.component2
 
 import ktx.tiled.id
 import ktx.tiled.layer
 import ktx.tiled.property
 import ktx.tiled.shape
+import java.util.*
+import kotlin.concurrent.schedule
+import kotlin.reflect.KClass
 
 @AllOf([MGComponent::class])
 class MapChangeSystem (
+    private val moveCmps: ComponentMapper<MoveComponent>,
     private val  phWorld: World,
     private val mgCmps: ComponentMapper<MGComponent>,
-  // private val game: linguExplorer?,
+    private val phCmps: ComponentMapper<PhysicComponent>,
+    private val gameStage: Stage,
+    private val game: linguExplorer,
 
     ): IteratingSystem(), EventListener {
 
-
-        private var game : linguExplorer? = null;
+    private val cachedCfgs = mutableMapOf<String, SpawnCfg>()
     private var currentMap: TiledMap? = null;
 
     override fun onTickEntity(entity: Entity) {
         val (id, toGame, triggerEntities) = mgCmps[entity]
         if(triggerEntities.isNotEmpty()) {
             println("Collision to mini Game")
-            setMap()
 
+            setMap(game)
             triggerEntities.clear()
         }
     }
 
- fun setMap() {
+
+
+
+ fun setMap(game : linguExplorer?) {
         currentMap?.disposeSafely()
-        game?.addScreen(MainMenuScreen(game!!))
-        game?.setScreen<MainMenuScreen>()
+
+
+
+         if (game!!.containsScreen<MinigameEssenScreen>()) {
+             game.removeScreen<MinigameEssenScreen>()
+          }
+     game.addScreen(MinigameEssenScreen(game))
+     game.setScreen<MinigameEssenScreen>()
 
     }
 

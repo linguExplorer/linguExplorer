@@ -37,6 +37,7 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
             add(stage)
             add(textureAtlas)
             add(phWorld)
+            add(game)
         }
 
         components {
@@ -65,6 +66,7 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
                 stage.addListener(system)
             }
         }
+
         currentMap = TmxMapLoader().load("assets/graphics/map/main-map.tmx")
         stage.fire(MapChangeEvent(currentMap!!))
 

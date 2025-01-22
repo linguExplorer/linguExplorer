@@ -14,10 +14,12 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Align
+import com.github.linguExplorer.linguExplorer
 import com.github.linguExplorer.minigames.EssenMinigame
 import com.github.linguExplorer.models.PhraseEntity
+import ktx.app.KtxScreen
 
-class MinigameEssenScreen : Screen {
+class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
 
     private val batch = SpriteBatch()
     private lateinit var font: BitmapFont
@@ -468,11 +470,21 @@ class MinigameEssenScreen : Screen {
             if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                 if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) && mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
                     minigame.storePhraseData()
-                    Gdx.app.exit()
+
+                    if (game.containsScreen<MapScreen>()) {
+                        game.removeScreen<MapScreen>()
+                    }
+                    game.addScreen(MapScreen(game))
+
+
+                    game.setScreen<MapScreen>()
                 }
             }
         }
     }
+
+
+//Big Boy marker ////
 
 
     private fun updateTime(delta: Float) {

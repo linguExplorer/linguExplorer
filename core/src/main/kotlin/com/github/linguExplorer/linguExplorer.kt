@@ -18,6 +18,8 @@ class linguExplorer : KtxGame<KtxScreen>() {
         addScreen(MainMenuScreen(this)) // Setzt den GameScreen
         setScreen<MainMenuScreen>()
     }
+
+
     companion object {
         const val UNIT_SCALE = 1/16f
     }
