@@ -83,6 +83,8 @@ TEMPLATES = [
     },
 ]
 
+DJANGO_REST_PASSWORDRESET_TOKEN_EXPIRE_TIME = 15
+
 WSGI_APPLICATION = 'lingu.wsgi.application'
 
 
