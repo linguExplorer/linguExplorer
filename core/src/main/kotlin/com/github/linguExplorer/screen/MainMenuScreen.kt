@@ -170,6 +170,10 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             if (screenX >= buttonX && screenX <= buttonX + startNewGameTexture.width &&
                 screenY >= startNewGameButtonY + startNewGameTexture.height && screenY <= startNewGameButtonY + 2* startNewGameTexture.height) {
                 println("klappt")
+                if (UserRepository().getUser(3) != null) {
+                    UserRepository().deleteUserWithDependencies(3)
+                }
+
                 UserRepository().addUser(3)
                 game.addScreen(MapScreen(game))
                 game.setScreen<MapScreen>()
