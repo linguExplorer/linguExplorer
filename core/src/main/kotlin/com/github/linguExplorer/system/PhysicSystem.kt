@@ -3,10 +3,7 @@ package com.github.linguExplorer.system
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.box2d.*
 import com.badlogic.gdx.physics.box2d.World
-import com.github.linguExplorer.component.CollisionComponent
-import com.github.linguExplorer.component.ImageComponent
-import com.github.linguExplorer.component.PhysicComponent
-import com.github.linguExplorer.component.TiledComponent
+import com.github.linguExplorer.component.*
 import com.github.quillraven.fleks.*
 import kotlinx.coroutines.flow.combineTransform
 import ktx.log.logger
@@ -20,6 +17,9 @@ class PhysicSystem (
     private val physicCmps: ComponentMapper<PhysicComponent>,
     private val tiledCmps: ComponentMapper<TiledComponent>,
     private val collisionCmps: ComponentMapper<CollisionComponent>,
+    private val mgCmps: ComponentMapper<MGComponent>,
+    private val playerCmps : ComponentMapper<PlayerComponent>,
+
     ) : ContactListener,  IteratingSystem(
     interval = Fixed(1/60f)) {
 
@@ -92,6 +92,15 @@ class PhysicSystem (
                 tiledCmps[entityB].nearbyEntities += entityA
             }
 
+            //Go to Game
+
+            entityA in mgCmps && entityB in playerCmps && contact.fixtureB.isSensor -> {
+                mgCmps[entityA].triggerEntities += entityB
+            }
+
+            entityB in mgCmps && entityA in playerCmps && contact.fixtureB.isSensor -> {
+                mgCmps[entityB].triggerEntities += entityA
+            }
         }
 
     }

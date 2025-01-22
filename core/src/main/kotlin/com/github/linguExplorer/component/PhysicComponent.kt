@@ -32,6 +32,7 @@ class PhysicComponent {
             x: Int,
             y: Int,
             shape: Shape2D,
+            isWindow: Boolean = false,
         ): PhysicComponent {
             when (shape) {
                 is Rectangle -> {
@@ -49,10 +50,16 @@ class PhysicComponent {
                                 vec2(bodyW, 0f),
                                 vec2(bodyW, bodyH),
                                 vec2(0f, bodyH)
-                            )
-                            circle(SPAWN_AREA_SIZE+4f) {
-                                isSensor = true
+                            )  {
+                                this.isSensor = isWindow
                             }
+
+                            if(!isWindow) {
+                                circle(SPAWN_AREA_SIZE+4f) {
+                                    isSensor = true
+                                }
+                            }
+
                         }
                     }
 
@@ -82,6 +89,8 @@ class PhysicComponent {
             }
 
         }
+
+
 
         class PhysicComponentListener : ComponentListener<PhysicComponent> {
             override fun onComponentAdded(entity: Entity, component: PhysicComponent) {
