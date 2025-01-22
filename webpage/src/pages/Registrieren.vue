@@ -32,19 +32,19 @@
           src="@/assets/xx_Images/xx_Images/cloud.png"
           alt="Wolke"
           class="lg:min-w-[320px] md:min-w-[240px] sm:min-w-[160px] w-[160px] absolute z-2 
-          translate-x-[-42vw] lg:translate-y-[-12vh] md:translate-y-[-12vh] sm:translate-y-[-10vh] translate-y-[-10vh]"
+        translate-x-[-42vw] xxl:translate-x-[-40vw] xxl:translate-y-[-8vh] lg:translate-y-[-12vh] md:translate-y-[-12vh] sm:translate-y-[-10vh] translate-y-[-10vh]"
         />
         <img
           src="@/assets/xx_Images/xx_Images/sun.png"
           alt="Sonne"
           class="lg:min-w-[150px] md:min-w-[100px] sm:min-w-[70px] w-[70px] absolute z-1 
-          translate-x-[-38vw] lg:translate-y-[-3vh] md:translate-y-[-3vh] sm:translate-y-[-5vh] translate-y-[-5vh]"
+        translate-x-[-38vw]  xxl:translate-y-[-2vh] lg:translate-y-[-3vh] md:translate-y-[-3vh] sm:translate-y-[-5vh] translate-y-[-5vh]"
         />
         <img
           src="@/assets/xx_Images/xx_Images/Cloud2.png"
           alt="Wolke"
           class="lg:min-w-[320px] md:min-w-[240px] sm:min-w-[160px] w-[160px] absolute z-2 
-          translate-x-[-45vw] lg:translate-y-[7vh] md:translate-y-[3vh] sm:translate-y-[-2vh] translate-y-[-2vh]"
+        translate-x-[-45vw] xxl:translate-x-[-42vw]  xxl:translate-y-[6vh] lg:translate-y-[7vh] md:translate-y-[3vh] sm:translate-y-[-2vh] translate-y-[-2vh]"
         />
         <img
           src="@/assets/xx_Images/xx_Images/Cloud2.png"

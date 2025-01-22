@@ -43,17 +43,17 @@
       <img
         src="@/assets/xx_Images/xx_Images/sun.png"
         alt="Sonne"
-        class="lg:min-w-[150px] md:min-w-[100px] sm:min-w-[70px] w-[70px] absolute z-1 translate-x-[-40vw] translate-y-[0vh] sm:translate-x-[-45.3vw] sm:translate-y-[3vh]"
+        class=" xxl:min-w-[150px] g:min-w-[150px] md:min-w-[100px] sm:min-w-[70px] w-[70px] absolute z-1  xxl:translate-x-[-42vw]  xxl:translate-y-[3vw] translate-x-[-40vw] translate-y-[0vh] sm:translate-x-[-45.3vw] sm:translate-y-[3vh]"
       />
       <img
         src="@/assets/xx_Images/xx_Images/cloud.png"
         alt="Wolke"
-        class="lg:min-w-[320px] md:min-w-[220px] sm:min-w-[160px] w-[160px] absolute z-2 translate-x-[-50vw] translate-y-[3vh] sm:translate-x-[-38vw] sm:translate-y-[10vh]"
+        class="  lg:min-w-[320px] md:min-w-[220px] sm:min-w-[160px] w-[160px] absolute z-2 xxl:translate-x-[-36.5vw] translate-x-[-50vw] translate-y-[3vh] sm:translate-x-[-38vw] sm:translate-y-[10vh]"
       />
       <img
         src="@/assets/xx_Images/xx_Images/Cloud2.png"
         alt="Wolke"
-        class="lg:min-w-[320px] md:min-w-[230px] sm:min-w-[140px] w-[140px] absolute z-1 translate-x-[40vw] translate-y-[5vh] sm:translate-x-[30vw] sm:translate-y-[13vh]"
+        class=" xxl:min-w-[340px] lg:min-w-[320px] md:min-w-[230px] sm:min-w-[140px] w-[140px] absolute z-1 translate-x-[40vw] translate-y-[5vh] sm:translate-x-[30vw] sm:translate-y-[13vh]"
       />
 
       <h1
@@ -101,7 +101,7 @@
       <img
         src="@/assets/xx_Images/xx_Images/Charactee New.png"
         alt="Character"
-        class="lg:w-[370px] md:w-[270px] sm:w-[180px] w-[140px] absolute z-1 sm:translate-x-[-35vw] translate-x-[-25vw] lg:translate-y-[61.5vh] md:translate-y-[45vh] sm:translate-y-[34.5vh] translate-y-[30vh]"
+        class= "xxl:min-w-[400px] lg:w-[370px] md:w-[270px] sm:w-[180px] w-[140px] absolute z-1 sm:translate-x-[-35vw] translate-x-[-25vw] xxl:lg:translate-y-[44vh] lg:translate-y-[61.5vh] md:translate-y-[45vh] sm:translate-y-[34.5vh] translate-y-[30vh]"
       />
 
       <!-- Gras Bild -->
