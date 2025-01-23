@@ -12,13 +12,10 @@ import com.github.linguExplorer.screen.MinigameEssenScreen
 
 class LoadingScreen(private val game: linguExplorer) : KtxScreen {
     private val batch = SpriteBatch()
-    private var startTime: Long = 0
-
+    private var startTime = 0f
+    private var elapsedTime = 1f
+    private var isLoaded = false
     override fun show() {
-
-        startTime = System.currentTimeMillis()
-
-
 
     }
 
@@ -30,19 +27,13 @@ class LoadingScreen(private val game: linguExplorer) : KtxScreen {
 
         batch.end()
 
-
-        if (isLoaded()) {
-
-
+        if(startTime < elapsedTime) {
+            startTime += delta
+        } else {
             game.addScreen(MinigameEssenScreen(game))
 
             game.setScreen<MinigameEssenScreen>()
         }
-    }
-
-    private fun isLoaded(): Boolean {
-
-        return true
     }
 
     override fun hide() {
