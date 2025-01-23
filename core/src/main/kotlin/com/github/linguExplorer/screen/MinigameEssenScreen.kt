@@ -265,7 +265,7 @@ class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
             Gdx.gl.glEnable(GL20.GL_BLEND)
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
             shapeRenderer.color = Color(0f, 0f, 0f, 0.65f)
-            shapeRenderer.rect(0f, 0f, viewport.worldWidth, viewport.worldHeight)
+            shapeRenderer.rect(0f, 0f, viewport.screenWidth.toFloat(), viewport.screenHeight.toFloat())
             shapeRenderer.end()
             Gdx.gl.glDisable(GL20.GL_BLEND)
             batch.begin()
@@ -288,7 +288,7 @@ class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
             Gdx.gl.glEnable(GL20.GL_BLEND)
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
             shapeRenderer.color = Color(0f, 0f, 0f, 0.65f)
-            shapeRenderer.rect(0f, 0f, viewport.worldWidth, viewport.worldHeight)
+            shapeRenderer.rect(0f, 0f, viewport.screenWidth.toFloat(), viewport.screenHeight.toFloat())
             shapeRenderer.end()
             Gdx.gl.glDisable(GL20.GL_BLEND)
             batch.begin()
@@ -311,7 +311,7 @@ class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
             Gdx.gl.glEnable(GL20.GL_BLEND)
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
             shapeRenderer.color = Color(0f, 0f, 0f, 0.5f)
-            shapeRenderer.rect(0f, 0f, viewport.worldWidth, viewport.worldHeight)
+            shapeRenderer.rect(0f, 0f, viewport.screenWidth.toFloat(), viewport.screenHeight.toFloat())
             shapeRenderer.end()
             Gdx.gl.glDisable(GL20.GL_BLEND)
             batch.begin()
@@ -470,21 +470,11 @@ class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
             if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                 if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) && mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
                     minigame.storePhraseData()
-
-                    if (game.containsScreen<MapScreen>()) {
-                        game.removeScreen<MapScreen>()
-                    }
-                    game.addScreen(MapScreen(game))
-
-
-                    game.setScreen<MapScreen>()
+                    Gdx.app.exit()
                 }
             }
         }
     }
-
-
-//Big Boy marker ////
 
 
     private fun updateTime(delta: Float) {
@@ -533,7 +523,10 @@ class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
                     shapeRenderer.color = Color.BLACK
                 }
 
-                shapeRenderer.rect(listBasePosition.x + textWidth / 2 + 10f, (currentY/1.25f) - (textHeight/2) - 1f, textWidth, 3.5f)
+                shapeRenderer.rect(listBasePosition.x * (viewport.screenWidth / 800f) + 30f,
+                    (currentY - textHeight/2 - 1.75f) * (viewport.screenHeight / 600f),
+                    textWidth * (viewport.screenWidth / 800f),
+                    3.5f * (viewport.screenHeight / 600f))
                 shapeRenderer.end()
                 batch.begin()
             }
