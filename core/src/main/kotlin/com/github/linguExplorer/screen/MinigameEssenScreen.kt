@@ -18,6 +18,8 @@ import com.github.linguExplorer.linguExplorer
 import com.github.linguExplorer.minigames.EssenMinigame
 import com.github.linguExplorer.models.PhraseEntity
 import ktx.app.KtxScreen
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
 
@@ -25,6 +27,7 @@ class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
     private lateinit var font: BitmapFont
     private val viewport: Viewport = ExtendViewport(800f, 600f)
     private val shapeRenderer = ShapeRenderer()
+    private val executor: ExecutorService = Executors.newFixedThreadPool(1)
     var textgap = 2f
 
     // Texturen
@@ -469,7 +472,7 @@ class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
         } else {
             if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                 if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) && mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
-                    minigame.storePhraseData()
+                    storePhraseDataAsync()
                     Gdx.app.exit()
                 }
             }
@@ -543,6 +546,12 @@ class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
             obj.positionX < basketPosition.x + basketSize.x &&
             obj.positionY + obj.texture.height > basketPosition.y &&
             obj.positionY < basketPosition.y + basketSize.y
+    }
+
+    private fun storePhraseDataAsync() {
+        executor.submit {
+            minigame.storePhraseData()
+        }
     }
 
     override fun resize(width: Int, height: Int) {
