@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.linguExplorer.component.*
 import com.github.linguExplorer.component.PhysicComponent.Companion.physicCmpFromShape2D
+import com.github.linguExplorer.event.ActivateKeyEvent
 import com.github.linguExplorer.event.GameChangeEvent
 import com.github.linguExplorer.event.MapChangeEvent
 import com.github.linguExplorer.event.fire
@@ -46,14 +47,20 @@ class MapChangeSystem (
     private val cachedCfgs = mutableMapOf<String, SpawnCfg>()
     private var currentMap: TiledMap? = null;
 
+    val cfg = cachedCfgs.getOrPut("Player") { SpawnCfg(AnimationModel.PLAYER) }
+    var key = false;
 
     override fun onTickEntity(entity: Entity) {
         val (id, toGame, triggerEntities) = mgCmps[entity]
         if(triggerEntities.isNotEmpty()) {
             println("Collision to mini Game")
-            gameStage.fire(GameChangeEvent(game))
 
-            game.setScreen<LoadingScreen>()
+           if (key == true) {
+               println("ja")
+               game.setScreen<LoadingScreen>()
+           }
+
+
 
             triggerEntities.clear()
         }
@@ -96,6 +103,13 @@ class MapChangeSystem (
             }
 
             return true
+        }
+
+        if (event is ActivateKeyEvent) {
+            key = true
+
+        } else {
+            key = false
         }
         return false
     }

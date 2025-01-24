@@ -74,8 +74,13 @@ class RenderSystem(
 
            }
 
+
            is GameChangeEvent -> {
+
                println("Game change Event")
+
+
+
            }
        }
         return false

@@ -15,3 +15,5 @@ data class MapChangeEvent(val map:TiledMap) : Event()
 class CollisionDespawnEvent(val cell: Cell) : Event()
 
 class GameChangeEvent(val game: linguExplorer) : Event()
+
+class ActivateKeyEvent(val game: linguExplorer) : Event()
