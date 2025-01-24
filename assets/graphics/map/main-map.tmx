@@ -40,10 +40,10 @@
   </data>
  </layer>
  <objectgroup id="13" name="entities">
-  <object id="9" type="Player" gid="3" x="109" y="196.5" width="48" height="48"/>
+  <object id="9" type="Player" gid="3" x="497.667" y="533.167" width="48" height="48"/>
  </objectgroup>
  <objectgroup color="#aa55ff" id="14" name="trigger">
-  <object id="10" x="500.424" y="484.667" width="40.2609" height="8.54545">
+  <object id="10" x="508.072" y="480.167" width="25.7154" height="8.54545">
    <properties>
     <property name="toGame" value="SM"/>
    </properties>

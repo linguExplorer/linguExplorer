@@ -50,7 +50,6 @@ class MapChangeSystem (
         if(triggerEntities.isNotEmpty()) {
             println("Collision to mini Game")
 
-            //setMap(game)
             game.setScreen<LoadingScreen>()
 
             triggerEntities.clear()

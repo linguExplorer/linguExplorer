@@ -473,7 +473,13 @@ class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
             if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                 if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) && mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
                     storePhraseDataAsync()
-                    Gdx.app.exit()
+
+
+                    if (game!!.containsScreen<MapScreen>()) {
+                        game.removeScreen<MapScreen>()
+                    }
+                    game.addScreen(MapScreen(game))
+                    game.setScreen<MapScreen>()
                 }
             }
         }
