@@ -55,10 +55,10 @@ class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
     private val shelfBasePosition2 = Vector2(350f, 300f)
     private val shelfSize = Vector2(650f, 25f)
 
-    private val tryAgainButtonBasePosition = Vector2(430f, 150f)
-    private val quitButtonBasePosition = Vector2(430f, 80f)
-    private val continueButtonBasePosition = Vector2(0f, 125f)
-    private val buttonSize = Vector2(250f, 220f)
+    private val tryAgainButtonBasePosition = Vector2(430f, 200f)
+    private val quitButtonBasePosition = Vector2(430f, 130f)
+    private val continueButtonBasePosition = Vector2(0f, 175f)
+    private val buttonSize = Vector2(250f, 70f)
 
     private val timeBasePosition = Vector2(20f, 530f)
     private val timeSize = Vector2(150f, 50f)
@@ -134,6 +134,14 @@ class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
         )
 
 
+    private var continueButtonScale = 1f
+    private var pauseButtonScale = 1f
+    private var continueButtonTargetScale = 1f
+    private var pauseButtonTargetScale = 1f
+
+    private val scaleSpeed = 5f
+
+
     // Zeit
     private var timeLeft = 30
     private var elapsedTime = 0f
@@ -200,6 +208,10 @@ class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
         batch.projectionMatrix = viewport.camera.combined
         font.color = Color.BLACK
 
+        continueButtonScale += (continueButtonTargetScale - continueButtonScale) * scaleSpeed * delta
+        pauseButtonScale += (pauseButtonTargetScale - pauseButtonScale) * scaleSpeed * delta
+
+
         batch.begin()
 
         // Zeichne Regale und andere Spielfunktionen
@@ -252,11 +264,16 @@ class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
         }
 
         // Pause- oder Play-Button anzeigen
-        if (isPaused || gameEnded) {
-            batch.draw(playTexture, pausePosition.x, pausePosition.y, pauseSize.x, pauseSize.y)
-        } else {
-            batch.draw(pauseTexture, pausePosition.x, pausePosition.y, pauseSize.x, pauseSize.y)
-        }
+        val texture: Texture = if (isPaused || gameEnded) playTexture else pauseTexture
+        pauseButtonScale = if (isPaused || gameEnded) 1f else pauseButtonScale
+
+        batch.draw(
+            texture,
+            pausePosition.x - (pauseSize.x * (pauseButtonScale - 1f) / 2),
+            pausePosition.y - (pauseSize.y * (pauseButtonScale - 1f) / 2),
+            pauseSize.x * pauseButtonScale,
+            pauseSize.y * pauseButtonScale
+        )
 
         // Zeit
         batch.draw(timeTexture, timePosition.x, timePosition.y, timeSize.x, timeSize.y)
@@ -283,7 +300,13 @@ class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
             font.draw(batch, "GAME PAUSED", gamePausedX, gamePausedY)
 
             // Continue-Button anzeigen
-            batch.draw(continueTexture, continueButtonPosition.x, continueButtonPosition.y, buttonSize.x, buttonSize.y)
+            batch.draw(
+                continueTexture,
+                continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
+                continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
+                buttonSize.x * continueButtonScale,
+                buttonSize.y * continueButtonScale
+            )
         }
 
         if (!gameStarted) {
@@ -306,7 +329,15 @@ class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
             font.draw(batch, "Put the items on the list in the basket", gamePausedX, gamePausedY, viewport.worldWidth * 0.75f, Align.center, true)
 
             // Continue-Button anzeigen
-            batch.draw(continueTexture, continueButtonPosition.x, continueButtonPosition.y, buttonSize.x, buttonSize.y)
+            batch.draw(
+                continueTexture,
+                continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
+                continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
+                buttonSize.x * continueButtonScale,
+                buttonSize.y * continueButtonScale
+            )
+
+            //batch.draw(continueTexture, continueButtonPosition.x, continueButtonPosition.y, buttonSize.x, buttonSize.y)
         }
 
         if (gameEnded) {
@@ -329,13 +360,25 @@ class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
                 val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
                 val gameOverY = (viewport.worldHeight / 2) + glyphLayout.height + 10f
                 font.draw(batch, "CONGRATULATIONS", gameOverX, gameOverY)
-                batch.draw(continueTexture, continueButtonPosition.x, continueButtonPosition.y, buttonSize.x, buttonSize.y)
+                batch.draw(
+                    continueTexture,
+                    continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
+                    continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
+                    buttonSize.x * continueButtonScale,
+                    buttonSize.y * continueButtonScale
+                )
             } else {
                 glyphLayout.setText(font, "GAME OVER")
                 val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
                 val gameOverY = (viewport.worldHeight) / 2 + glyphLayout.height + 10f
                 font.draw(batch, "GAME OVER", gameOverX, gameOverY)
-                batch.draw(quitButtonTexture, continueButtonPosition.x, continueButtonPosition.y, buttonSize.x, buttonSize.y)
+                batch.draw(
+                    quitButtonTexture,
+                    continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
+                    continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
+                    buttonSize.x * continueButtonScale,
+                    buttonSize.y * continueButtonScale
+                )
 
                 /*val extraSpacing = 120f // Zusätzlicher Abstand zwischen "GAME OVER" und "Try Again"
                 val buttonYSpacing = -70f // Abstand zwischen "Try Again" und "Quit"
@@ -374,7 +417,22 @@ class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
         val mouseX = Gdx.input.x.toFloat() * viewport.worldWidth / Gdx.graphics.width
         val mouseY = (Gdx.graphics.height - Gdx.input.y.toFloat()) * viewport.worldHeight / Gdx.graphics.height
 
+        continueButtonTargetScale = if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) &&
+            mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
+            1.1f
+        } else {
+            1f
+        }
+
+
         if (!gameEnded && gameStarted) {
+            pauseButtonTargetScale = if (mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) &&
+                mouseY in pausePosition.y..(pausePosition.y + pauseSize.y)) {
+                1.1f
+            } else {
+                1f
+            }
+
             if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                 if (!isPaused) {
                     if (mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) && mouseY in pausePosition.y..(pausePosition.y + pauseSize.y)
