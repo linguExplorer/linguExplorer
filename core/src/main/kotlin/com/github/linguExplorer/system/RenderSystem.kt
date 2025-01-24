@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.linguExplorer.component.ImageComponent
+import com.github.linguExplorer.event.GameChangeEvent
 import com.github.linguExplorer.event.MapChangeEvent
 import com.github.linguExplorer.linguExplorer.Companion.UNIT_SCALE
 import com.github.quillraven.fleks.*
@@ -71,6 +72,10 @@ class RenderSystem(
                 }
                 return true
 
+           }
+
+           is GameChangeEvent -> {
+               println("Game change Event")
            }
        }
         return false

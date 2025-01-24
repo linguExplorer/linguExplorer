@@ -3,19 +3,19 @@
  <image source="../map-objects.png" width="4096" height="2048"/>
  <tile id="768">
   <objectgroup draworder="index" id="2">
-   <object id="1" x="3.85043" y="0" width="12.1496" height="9.32897"/>
+   <object id="1" x="3.85043" y="-0.478261" width="12.1496" height="9.80723"/>
    <object id="2" x="11.03" y="6.04282" width="4.96999" height="9.95718"/>
   </objectgroup>
  </tile>
  <tile id="769">
   <objectgroup draworder="index" id="2">
-   <object id="1" x="0" y="0.125" width="16" height="15.875"/>
+   <object id="1" x="0" y="-0.396739" width="16" height="16.3967"/>
   </objectgroup>
  </tile>
  <tile id="770">
   <objectgroup draworder="index" id="2">
    <object id="1" x="0" y="0" width="4.40591" height="15.8803"/>
-   <object id="2" x="0" y="0" width="10" height="9.02982"/>
+   <object id="2" x="0" y="-0.347826" width="10" height="9.37765"/>
   </objectgroup>
  </tile>
  <tile id="1025">
