@@ -72,7 +72,7 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
 
 
 
-        PlayerKeyboardInputProcessor(world, world.mapper())
+        PlayerKeyboardInputProcessor(world, stage, world.mapper())
 
     }
 

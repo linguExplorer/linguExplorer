@@ -69,10 +69,6 @@ class MoveSystem(
                 else -> AnimationType.IDLE
             }
 
-        if (moveCmp.sin > 0f ) {
-            gameStage.fire(ActivateKeyEvent(game))
-
-        }
 
 
         animationCmps.getOrNull(entity)?.let { aniCmp ->

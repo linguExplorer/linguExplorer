@@ -4,8 +4,11 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.Input.Keys.*
 import com.badlogic.gdx.InputMultiplexer
+import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.linguExplorer.component.MoveComponent
 import com.github.linguExplorer.component.PlayerComponent
+import com.github.linguExplorer.event.ActivateKeyEvent
+import com.github.linguExplorer.event.fire
 import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.World
 import ktx.app.KtxInputAdapter
@@ -13,6 +16,7 @@ import ktx.app.KtxInputAdapter
 
 class PlayerKeyboardInputProcessor(
     world: World,
+    private val gameStage: Stage,
     private val moveCmps: ComponentMapper<MoveComponent>
 ) : KtxInputAdapter {
 
@@ -40,7 +44,10 @@ class PlayerKeyboardInputProcessor(
 
         if (keycode.isMovementKey()) {
             when (keycode) {
-                UP -> playerSin = 1f
+                UP -> {
+                    playerSin = 1f
+                    gameStage.fire(ActivateKeyEvent())
+                }
                 DOWN  -> playerSin = -1f
                 RIGHT  -> playerCos = 1f
                 LEFT -> playerCos = -1f
@@ -66,5 +73,10 @@ class PlayerKeyboardInputProcessor(
         return false
 
     }
+
+
+    //Klick Steuerung
+
+
 
 }

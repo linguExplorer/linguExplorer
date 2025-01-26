@@ -1,5 +1,6 @@
 package com.github.linguExplorer.system
 
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.scenes.scene2d.Event
@@ -11,6 +12,7 @@ import com.github.linguExplorer.event.ActivateKeyEvent
 import com.github.linguExplorer.event.GameChangeEvent
 import com.github.linguExplorer.event.MapChangeEvent
 import com.github.linguExplorer.event.fire
+import com.github.linguExplorer.input.PlayerKeyboardInputProcessor
 import com.github.linguExplorer.linguExplorer
 import com.github.linguExplorer.screen.LoadingScreen
 import com.github.linguExplorer.screen.MainMenuScreen
@@ -55,7 +57,8 @@ class MapChangeSystem (
         if(triggerEntities.isNotEmpty()) {
             println("Collision to mini Game")
 
-           if (key == true) {
+
+            if (key) {
                println("ja")
                game.setScreen<LoadingScreen>()
            }
@@ -106,11 +109,16 @@ class MapChangeSystem (
         }
 
         if (event is ActivateKeyEvent) {
-            key = true
+
+                key = true
+                println("ActivateKeyEvent: key = true")
 
         } else {
-            key = false
+                key = false
+                println("Andere Ereignisse: key = false")
+
         }
+
         return false
     }
 

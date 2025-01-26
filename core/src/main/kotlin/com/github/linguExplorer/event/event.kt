@@ -16,4 +16,4 @@ class CollisionDespawnEvent(val cell: Cell) : Event()
 
 class GameChangeEvent(val game: linguExplorer) : Event()
 
-class ActivateKeyEvent(val game: linguExplorer) : Event()
+class ActivateKeyEvent() : Event()
