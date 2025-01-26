@@ -17,6 +17,7 @@ import com.github.quillraven.fleks.World
 import com.github.quillraven.fleks.world
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
+import ktx.box2d.body
 import ktx.box2d.createWorld
 import ktx.log.logger
 import ktx.math.vec2
@@ -72,7 +73,7 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
 
 
 
-        PlayerKeyboardInputProcessor(world, stage, world.mapper())
+        PlayerKeyboardInputProcessor(world, stage, world.mapper(), world.mapper(), stage )
 
     }
 
