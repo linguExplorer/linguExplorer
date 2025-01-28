@@ -20,12 +20,14 @@ import ktx.assets.disposeSafely
 import ktx.box2d.createWorld
 import ktx.log.logger
 import ktx.math.vec2
+import com.badlogic.gdx.scenes.scene2d.ui.Image
+
 
 class MapScreen(private val game: linguExplorer) : KtxScreen {
 
     private val stage :Stage = Stage(ExtendViewport(16f,9f))
-    private val textureAtlas = TextureAtlas("assets/graphics/entities.atlas")
-    private val playerTexture: Texture = Texture("assets/graphics/entities.png")
+    private val textureAtlas = TextureAtlas("com/github/linguExplorer/assets/graphics/entities.atlas")
+    private val playerTexture: Texture = Texture("com/github/linguExplorer/assets/graphics/entities.png")
     private var currentMap: TiledMap? = null;
     private val phWorld = createWorld(gravity = vec2()).apply {
         autoClearForces = false
@@ -67,14 +69,48 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
             }
         }
 
-        currentMap = TmxMapLoader().load("assets/graphics/map/main-map.tmx")
+        // Karte laden
+        currentMap = TmxMapLoader().load("com/github/linguExplorer/assets/graphics/map/main-map.tmx")
         stage.fire(MapChangeEvent(currentMap!!))
 
+        // fixe Bilder hinzufügen
+        //addUIImages()
 
-
+        // Spieler-Eingabeverarbeitung
         PlayerKeyboardInputProcessor(world, stage, world.mapper())
 
     }
+
+    //fixe Bilder Methode
+    /*private fun addUIImages() {
+        // Bilder laden
+        val backpackTexture = Texture("assets/Symbolgrafiken/Rucksack/v2/Backpack2.png")
+        val mapTexture = Texture("assets/Symbolgrafiken/Map/v2/Map2.png")
+        val phrasingBookTexture = Texture("assets/Symbolgrafiken/Phrasenheft/Phrasenheft2-1.png.png")
+        val progressBarTexture = Texture("assets/Symbolgrafiken/Prozentleiste/v2/Prozentleiste2-1.png.png")
+        val moneyBagTexture = Texture("assets/Symbolgrafiken/Coinbag/v2/MoneyBag2-2.png.png")
+
+        // Images für jedes Bild
+        val backpackImage = com.badlogic.gdx.scenes.scene2d.ui.Image(backpackTexture)
+        val mapImage = com.badlogic.gdx.scenes.scene2d.ui.Image(mapTexture)
+        val phrasingBookImage = com.badlogic.gdx.scenes.scene2d.ui.Image(phrasingBookTexture)
+        val progressBarImage = com.badlogic.gdx.scenes.scene2d.ui.Image(progressBarTexture)
+        val moneyBagImage = com.badlogic.gdx.scenes.scene2d.ui.Image(moneyBagTexture)
+
+        // Position
+        backpackImage.setPosition(0f, 0f)  // Links unten
+        mapImage.setPosition(100f, 0f)     // Ein bisschen nach rechts verschoben (z.B. für das Map-Bild)
+        phrasingBookImage.setPosition(200f, 0f) // Noch ein weiteres nach rechts verschieben
+        progressBarImage.setPosition(300f, 0f) // Beispiel
+        moneyBagImage.setPosition(400f, 0f)   // Noch weiter nach rechts verschoben
+
+        // Stage
+        stage.addActor(backpackImage)
+        stage.addActor(mapImage)
+        stage.addActor(phrasingBookImage)
+        stage.addActor(progressBarImage)
+        stage.addActor(moneyBagImage)
+    }*/
 
     override fun resize(width: Int, height: Int) {
         stage.viewport.update(width, height, true)
@@ -92,7 +128,6 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
         world.dispose()
         currentMap?.disposeSafely()
         phWorld.disposeSafely()
-
     }
     companion object : KtxScreen {
         private  val log = logger<MapScreen>()

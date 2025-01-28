@@ -2,7 +2,6 @@ package com.github.linguExplorer.screen
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
-import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
@@ -12,13 +11,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Rectangle
-import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.utils.viewport.ExtendViewport
-import com.github.linguExplorer.component.ImageComponent
 import com.github.linguExplorer.linguExplorer
 import com.github.linguExplorer.system.*
-import com.github.quillraven.fleks.World
-import com.github.quillraven.fleks.world
 
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
@@ -37,8 +31,8 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private var wordmarkTexture: Texture = Texture("xx_Images/wordmark/wordmark_scaled.png")
 
 //Spieler Textur
-    private val textureAtlas = TextureAtlas("assets/graphics/idle_animation.atlas")
-    private val playerTexture: Texture = Texture("assets/graphics/idle_animation.png")
+    private val textureAtlas = TextureAtlas("com/github/linguExplorer/assets/graphics/idle_animation.atlas")
+    private val playerTexture: Texture = Texture("com/github/linguExplorer/assets/graphics/idle_animation.png")
     private lateinit var gifAnimation: Animation<TextureRegion>
     private var animationTime = 0f
 
