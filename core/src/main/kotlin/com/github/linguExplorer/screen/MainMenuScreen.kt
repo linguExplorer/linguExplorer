@@ -31,8 +31,8 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private var wordmarkTexture: Texture = Texture("xx_Images/wordmark/wordmark_scaled.png")
 
 //Spieler Textur
-    private val textureAtlas = TextureAtlas("com/github/linguExplorer/assets/graphics/idle_animation.atlas")
-    private val playerTexture: Texture = Texture("com/github/linguExplorer/assets/graphics/idle_animation.png")
+    private val textureAtlas = TextureAtlas("graphics/idle_animation.atlas")
+    private val playerTexture: Texture = Texture("graphics/idle_animation.png")
     private lateinit var gifAnimation: Animation<TextureRegion>
     private var animationTime = 0f
 
