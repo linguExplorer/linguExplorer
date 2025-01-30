@@ -99,14 +99,14 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
         val backpackTexture = Texture("graphics/map-objects/Rucksack/v2/Backpack2.png")
         val mapTexture = Texture("graphics/map-objects/Map/v2/Map2.png")
         val phrasingBookTexture = Texture("graphics/map-objects/Phrasenheft/v2/Phrasenheft2-1.png.png")
-        val progressBarTexture = Texture("graphics/map-objects/Prozentleiste/v2/Prozentleiste2-1.png.png")
+        //val progressBarTexture = Texture("graphics/map-objects/Prozentleiste/v2/Prozentleiste2-1.png.png")
         val moneyBagTexture = Texture("graphics/map-objects/Coinbag/v2/MoneyBag2-2.png.png")
 
         // Images für jedes Bild
         val backpackImage = com.badlogic.gdx.scenes.scene2d.ui.Image(backpackTexture)
         val mapImage = com.badlogic.gdx.scenes.scene2d.ui.Image(mapTexture)
         val phrasingBookImage = com.badlogic.gdx.scenes.scene2d.ui.Image(phrasingBookTexture)
-        val progressBarImage = com.badlogic.gdx.scenes.scene2d.ui.Image(progressBarTexture)
+        //val progressBarImage = com.badlogic.gdx.scenes.scene2d.ui.Image(progressBarTexture)
         val moneyBagImage = com.badlogic.gdx.scenes.scene2d.ui.Image(moneyBagTexture)
 
         // Größe
@@ -114,21 +114,21 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
         backpackImage.setSize(imageSize, imageSize)
         mapImage.setSize(imageSize, imageSize)
         phrasingBookImage.setSize(imageSize, imageSize)
-        progressBarImage.setSize(imageSize, imageSize-1f)
+        //progressBarImage.setSize(imageSize, imageSize-1f)
         moneyBagImage.setSize(imageSize, imageSize)
 
         // Position
-        backpackImage.setPosition(-0.2f, 0f)  // Links unten
-        mapImage.setPosition(0f, 6.5f)     // Links oben
-        phrasingBookImage.setPosition(14.5f, 0.5f) // Noch ein weiteres nach rechts verschieben
-        progressBarImage.setPosition(0f, 8f) // Beispiel
-        moneyBagImage.setPosition(14.5f, 7f)   // Noch weiter nach rechts verschoben
+        backpackImage.setPosition(12.8f, 7.2f)  // rechts oben
+        mapImage.setPosition(0f, 6.5f)     // links oben
+        phrasingBookImage.setPosition(14.5f, 0.5f) // rechts unten
+        //progressBarImage.setPosition(0f, 8f) // Beispiel
+        moneyBagImage.setPosition(14.5f, 7f)   // rechts oben
 
         // Bilder zur UI-Stage hinzufügen
         uiStage.addActor(backpackImage)
         uiStage.addActor(mapImage)
         uiStage.addActor(phrasingBookImage)
-        uiStage.addActor(progressBarImage)
+        //uiStage.addActor(progressBarImage)
         uiStage.addActor(moneyBagImage)
     }
 
