@@ -51,6 +51,7 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
             add<CollisionSpawnSystem>()
             add<CollisionDespawnSystem>()
             add<MapChangeSystem>()
+            add<PathSystem>()
             add<MoveSystem>()
             add<PhysicSystem>()
             add<AnimationSystem>()

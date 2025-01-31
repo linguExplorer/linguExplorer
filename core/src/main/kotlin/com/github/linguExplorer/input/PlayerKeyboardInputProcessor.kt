@@ -12,6 +12,10 @@ import com.github.linguExplorer.event.ActivateKeyEvent
 import com.github.linguExplorer.event.fire
 import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.World
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import ktx.app.KtxInputAdapter
 import ktx.math.component1
 import ktx.math.component2
@@ -30,6 +34,13 @@ class PlayerKeyboardInputProcessor(
     private var playerSin = 0f
     private var playerCos = 0f
     private val playerEntities = world.family(allOf = arrayOf(PlayerComponent::class))
+    private var isClick = false
+
+    private var mouseX: Float = 0f
+    private var mouseY: Float = 0f
+    private var isCheckingDistance: Boolean = false
+    private var dist  = 0f
+
 
     init {
         Gdx.input.inputProcessor = this
@@ -50,6 +61,9 @@ class PlayerKeyboardInputProcessor(
     }
 
     override fun keyDown(keycode: Int): Boolean {
+
+
+isCheckingDistance = false
 
         if (keycode.isMovementKey()) {
             when (keycode) {
@@ -86,44 +100,76 @@ class PlayerKeyboardInputProcessor(
 
 
     //Klick Steuerung
+
+
+    @OptIn(DelicateCoroutinesApi::class)
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+
 
 
         if (button == Input.Buttons.LEFT) {
 
+
+            isCheckingDistance = true
+            GlobalScope.launch {
+                checkDistanceContinuously()
+            }
+
+
+                val mousePosition = stage.viewport.unproject(vec2(screenX.toFloat(), screenY.toFloat()))
+                mouseX= mousePosition.x
+                mouseY = mousePosition.y
+
+                println("Mouse: $mouseX, $mouseY ")
+
+
+
+
+        }
+
+        return true
+    }
+
+
+    suspend fun checkDistanceContinuously() {
+        while (isCheckingDistance) {
             playerEntities.forEach { player ->
                 val playerPosition = phCmps[player].body.position
                 val (playerX, playerY) = playerPosition
 
-
-                val mousePosition = stage.viewport.unproject(vec2(screenX.toFloat(), screenY.toFloat()))
-                val mouseWorldX = mousePosition.x
-                val mouseWorldY = mousePosition.y
-
-                println("Mouse: $mouseWorldX, $mouseWorldY Spieler: $playerX, $playerY")
-                // Richtung berechnen
-                val deltaX = mouseWorldX - playerX
-                val deltaY = mouseWorldY - playerY
-
-                val distance = kotlin.math.sqrt(deltaX * deltaX + deltaY * deltaY)
+                // Distanz berechnen
+                val deltaX = mouseX - playerX
+                val deltaY = mouseY - playerY
+                dist = kotlin.math.sqrt(deltaX * deltaX + deltaY * deltaY)
 
 
-                if (distance > 0.1f) {
-                    playerCos = deltaX / distance
-                    playerSin = deltaY / distance
+                if (dist > 0.5f) {
+                    playerCos = deltaX / dist
+                    playerSin = deltaY / dist
                 } else {
                     playerCos = 0f
                     playerSin = 0f
+
+                    isCheckingDistance = false
                 }
 
-                println("Bewegung Richtung Maus: cos=$playerCos, sin=$playerSin, Distabce: $distance")
+
             }
+            updatePlayerMovement()
 
+            delay(16)
         }
-        updatePlayerMovement()
-
-        return true
     }
+
+
+
+
+
+
+
+
+
+
 
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         if (button == Input.Buttons.LEFT) {

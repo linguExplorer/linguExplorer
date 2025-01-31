@@ -18,6 +18,8 @@ class PhysicSystem (
     private val tiledCmps: ComponentMapper<TiledComponent>,
     private val collisionCmps: ComponentMapper<CollisionComponent>,
     private val mgCmps: ComponentMapper<MGComponent>,
+    private val pathCmps: ComponentMapper<PathComponent>,
+
     private val playerCmps : ComponentMapper<PlayerComponent>,
 
     ) : ContactListener,  IteratingSystem(
@@ -101,6 +103,17 @@ class PhysicSystem (
             entityB in mgCmps && entityA in playerCmps && contact.fixtureB.isSensor -> {
                 mgCmps[entityB].triggerEntities += entityA
             }
+
+            //Path Coll
+
+            entityA in pathCmps && entityB in playerCmps && contact.fixtureB.isSensor -> {
+                pathCmps[entityA].triggerEntities += entityB
+            }
+
+            entityB in pathCmps && entityA in playerCmps && contact.fixtureB.isSensor -> {
+                pathCmps[entityB].triggerEntities += entityA
+            }
+
         }
 
     }

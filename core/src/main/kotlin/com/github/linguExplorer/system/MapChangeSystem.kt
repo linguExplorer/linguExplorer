@@ -111,11 +111,11 @@ class MapChangeSystem (
         if (event is ActivateKeyEvent) {
 
                 key = true
-                println("ActivateKeyEvent: key = true")
+              //  println("ActivateKeyEvent: key = true")
 
         } else {
                 key = false
-                println("Andere Ereignisse: key = false")
+              //  println("Andere Ereignisse: key = false")
 
         }
 
