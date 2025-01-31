@@ -160,6 +160,7 @@ class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
     init {
         // Initialisierung
         minigame.loadMinigamePhrases()
+        minigame.phraseList.forEach { println(it.phrase) }
         minigame.loadAllPhrases()
 
         objects = minigame.loadPhrasesWithAssets().map { (phrase, assetPath) ->

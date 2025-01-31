@@ -7,6 +7,7 @@ import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.github.linguExplorer.screen.MainMenuScreen
 import com.github.linguExplorer.screen.MapScreen
+import com.github.linguExplorer.screen.MinigameKleidungScreen
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
 
@@ -15,8 +16,11 @@ class linguExplorer : KtxGame<KtxScreen>() {
     override fun create() {
         DatabaseManager()
         Gdx.app.logLevel = Application.LOG_DEBUG // Debug mode aktivieren
-        addScreen(MainMenuScreen(this)) // Setzt den GameScreen
-        setScreen<MainMenuScreen>()
+       // addScreen(MainMenuScreen(this)) // Setzt den GameScreen
+        //setScreen<MainMenuScreen>()
+
+        addScreen(MinigameKleidungScreen(this))
+        setScreen<MinigameKleidungScreen>()
     }
 
 
@@ -25,4 +29,4 @@ class linguExplorer : KtxGame<KtxScreen>() {
     }
 }
 
-var userId = 1
+var userId = 123
