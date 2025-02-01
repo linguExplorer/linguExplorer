@@ -2,12 +2,9 @@ package com.github.linguExplorer
 
 import com.badlogic.gdx.Game
 import com.github.linguExplorer.database.DatabaseManager
-import com.github.linguExplorer.screen.MinigameEssenScreen
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
-import com.github.linguExplorer.screen.MainMenuScreen
-import com.github.linguExplorer.screen.MapScreen
-import com.github.linguExplorer.screen.MinigameKleidungScreen
+import com.github.linguExplorer.screen.*
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
 
@@ -19,8 +16,19 @@ class linguExplorer : KtxGame<KtxScreen>() {
        // addScreen(MainMenuScreen(this)) // Setzt den GameScreen
         //setScreen<MainMenuScreen>()
 
+        //addScreen(MinigameKleidungScreen(this))
+        //setScreen<MinigameKleidungScreen>()
+
+        // Screens
+        addScreen(LoadingScreen(this))
+        addScreen(MainMenuScreen(this))
+        addScreen(MapScreen(this))
+        addScreen(MinigameEssenScreen(this))
         addScreen(MinigameKleidungScreen(this))
-        setScreen<MinigameKleidungScreen>()
+        addScreen(MinigameKleidungShoppenScreen(this))
+
+        // Startscreen
+        setScreen<MinigameKleidungShoppenScreen>()
     }
 
 
