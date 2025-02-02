@@ -32,8 +32,8 @@ class MinigameKleidungShoppenScreen(private val game: linguExplorer) : KtxScreen
 
     // Texturen
     //private val basketTexture = Texture(Gdx.files.internal("Minigames/basket.png"))
-    private val basketTexture = Texture(Gdx.files.internal("Minigames/Kleidung/bagblue.png"))//geänderte Textur
-    private val listTexture = Texture(Gdx.files.internal("Minigames/Kleidung/bagpurple.png")) // geänderte Textur
+    private val BagBlueTexture = Texture(Gdx.files.internal("Minigames/Kleidung/bagblue.png"))//geänderte Textur
+    private val PurpleBagTexture = Texture(Gdx.files.internal("Minigames/Kleidung/bagpurple.png")) // geänderte Textur
     private val timeTexture = Texture(Gdx.files.internal("Minigames/time.png"))
     private var pauseTexture = Texture(Gdx.files.internal("Minigames/pausebutton.png"))
     private var playTexture = Texture(Gdx.files.internal("Minigames/playbutton.png"))
@@ -43,17 +43,18 @@ class MinigameKleidungShoppenScreen(private val game: linguExplorer) : KtxScreen
     private val quitButtonTexture = Texture(Gdx.files.internal("Minigames/btn_quitMinigame.png"))
 
     // Positionen und Größen
-    private val basketBasePosition = Vector2(60f, 0f)
-    private val basketSize = Vector2(350f, 260f)
+    private val blueBagBasePosition = Vector2(646f, 0f)
+    private val blueBagSize = Vector2(210f, 280f)
 
-    private val listBasePosition = Vector2(550f, 0f)
-    private val listSize = Vector2(240f, 250f)
+    private val purpleBagBasePosition = Vector2(646f, 320f)
+    private val purpleBagSize = Vector2(240f, 250f)
 
     private val pauseBasePosition = Vector2(180f, 530f)
     private val pauseSize = Vector2(50f, 50f)
 
-    private val shelfBasePosition1 = Vector2(350f, 450f)
-    private val shelfBasePosition2 = Vector2(350f, 300f)
+    // Neue Regalpositionen
+    private val shelfBasePosition1 = Vector2(0f, 370f)
+    private val shelfBasePosition2 = Vector2(-80f, 250f)
     private val shelfSize = Vector2(650f, 25f)
 
     private val tryAgainButtonBasePosition = Vector2(430f, 200f)
@@ -82,14 +83,14 @@ class MinigameKleidungShoppenScreen(private val game: linguExplorer) : KtxScreen
     // Getter für die dynamischen Positionen
     private val basketPosition: Vector2
         get() = Vector2(
-            basketBasePosition.x * (viewport.worldWidth / 800f),
-            basketBasePosition.y * (viewport.worldHeight / 600f)
+            blueBagBasePosition.x * (viewport.worldWidth / 800f),
+            blueBagBasePosition.y * (viewport.worldHeight / 600f)
         )
 
     private val listPosition: Vector2
         get() = Vector2(
-            listBasePosition.x * (viewport.worldWidth / 800f),
-            listBasePosition.y * (viewport.worldHeight / 600f)
+            purpleBagBasePosition.x * (viewport.worldWidth / 800f),
+            purpleBagBasePosition.y * (viewport.worldHeight / 600f)
         )
 
     private val pausePosition: Vector2
@@ -164,14 +165,18 @@ class MinigameKleidungShoppenScreen(private val game: linguExplorer) : KtxScreen
         minigame.phraseList.forEach { println(it.phrase) }
         minigame.loadAllPhrases()
 
+        val horizontalOffset = 100f // horizontalen Offset ändern
+        val verticalOffset = 150f // vertikalen Offset ändern
+
         objects = minigame.loadPhrasesWithAssets().map { (phrase, assetPath) ->
             DraggableObject(
                 phrase = phrase,
                 texture = Texture(Gdx.files.internal(assetPath)),
-                resetPositionX = 370f,
-                resetPositionY = 480f,
-                basePositionX = 370f,
-                basePositionY = 480f,
+                // Angepasste Startposition der Objekte, genau am linken Rand
+                resetPositionX = if (assetPath.contains("Shirt") || assetPath.contains("Dress")) shelfBasePosition1.x + horizontalOffset else shelfBasePosition2.x + horizontalOffset,
+                resetPositionY = if (assetPath.contains("Shirt") || assetPath.contains("Dress")) shelfBasePosition1.y + verticalOffset else shelfBasePosition2.y + verticalOffset,
+                basePositionX = if (assetPath.contains("Shirt") || assetPath.contains("Dress")) shelfBasePosition1.x + horizontalOffset else shelfBasePosition2.x + horizontalOffset,
+                basePositionY = if (assetPath.contains("Shirt") || assetPath.contains("Dress")) shelfBasePosition1.y + verticalOffset else shelfBasePosition2.y + verticalOffset,
                 positionX = 0f,
                 positionY = 0f,
                 positionOffsetX = 0f,
@@ -220,7 +225,7 @@ class MinigameKleidungShoppenScreen(private val game: linguExplorer) : KtxScreen
         // Zeichne Regale und andere Spielfunktionen
         batch.draw(shelfTexture, shelfPosition1.x, shelfPosition1.y, shelfSize.x, shelfSize.y)
         batch.draw(shelfTexture, shelfPosition2.x, shelfPosition2.y, shelfSize.x, shelfSize.y)
-        batch.draw(listTexture, listPosition.x, listPosition.y, listSize.x, listSize.y)
+        batch.draw(PurpleBagTexture, listPosition.x, listPosition.y, purpleBagSize.x, purpleBagSize.y)
 
 
         // Fehlertext wird hier gezeichnet
@@ -255,11 +260,10 @@ class MinigameKleidungShoppenScreen(private val game: linguExplorer) : KtxScreen
                 positionOffsetX += 50f * (viewport.worldWidth / 800f)
             }
 
-
-            renderPhrasesOnScreen(batch, font, listPosition.x + 30f, listSize.y - 40f, 30f)
+            renderPhrasesOnScreen(batch, font, listPosition.x + 30f, purpleBagSize.y - 40f, 30f)
         }
 
-        batch.draw(basketTexture, basketPosition.x, basketPosition.y, basketSize.x, basketSize.y)
+        batch.draw(BagBlueTexture, basketPosition.x, basketPosition.y, blueBagSize.x, blueBagSize.y)
 
         if(minigame.isGameComplete()) {
             gameEnded = true
@@ -565,7 +569,11 @@ class MinigameKleidungShoppenScreen(private val game: linguExplorer) : KtxScreen
 
     //TODO
     fun renderPhrasesOnScreen(batch: SpriteBatch, font: BitmapFont, startX: Float, startY: Float, lineHeight: Float) {
-        var currentY = startY
+        //var currentY = startY
+        val textOffsetX = 30f
+        val textOffsetY = 70f
+        var currentY = purpleBagBasePosition.y * (viewport.worldHeight / 600f) + purpleBagSize.y * (viewport.worldHeight / 600f) - textOffsetY
+
         val glyphLayout = GlyphLayout()
 
         // geht durch Liste der Phrasen
@@ -593,7 +601,7 @@ class MinigameKleidungShoppenScreen(private val game: linguExplorer) : KtxScreen
                     shapeRenderer.color = Color.BLACK
                 }
 
-                shapeRenderer.rect(listBasePosition.x * (viewport.screenWidth / 800f) + 30f,
+                shapeRenderer.rect(purpleBagBasePosition.x * (viewport.screenWidth / 800f) + 30f,
                     (currentY - textHeight/2 - 1.75f) * (viewport.screenHeight / 600f),
                     textWidth * (viewport.screenWidth / 800f),
                     3.5f * (viewport.screenHeight / 600f))
@@ -610,9 +618,9 @@ class MinigameKleidungShoppenScreen(private val game: linguExplorer) : KtxScreen
 
     private fun isImageInsideBasket(obj: DraggableObject): Boolean {
         return obj.positionX + obj.texture.width > basketPosition.x &&
-            obj.positionX < basketPosition.x + basketSize.x &&
+            obj.positionX < basketPosition.x + blueBagSize.x &&
             obj.positionY + obj.texture.height > basketPosition.y &&
-            obj.positionY < basketPosition.y + basketSize.y
+            obj.positionY < basketPosition.y + blueBagSize.y
     }
 
     private fun storePhraseDataAsync() {
@@ -632,8 +640,8 @@ class MinigameKleidungShoppenScreen(private val game: linguExplorer) : KtxScreen
     override fun dispose() {
         batch.dispose()
         font.dispose()
-        basketTexture.dispose()
-        listTexture.dispose()
+        BagBlueTexture.dispose()
+        PurpleBagTexture.dispose()
         timeTexture.dispose()
         pauseTexture.dispose()
         shelfTexture.dispose()
