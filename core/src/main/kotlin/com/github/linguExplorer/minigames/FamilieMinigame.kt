@@ -13,12 +13,13 @@ class FamilieMinigame : MinigameSystem() {
 
     override fun loadMinigamePhrases() {
         phraseList = PhraseRepository()
-            .getLimitedPhrasesByTopicNameForUser(topicId, userId, Random.nextInt(4, 5))
+            .getLimitedPhrasesByTopicNameForUser(topicId, userId, Random.nextInt(11, 16))
             .shuffled()
 
     }
 
     override fun loadPhrasesWithAssets(): List<Pair<PhraseEntity, String>> {
+        println(phraseList.size)
         return phraseList.flatMap { phrase ->
             allPhraseAssets.filter { it.phraseId == phrase.id }
                 .map { asset -> Pair(phrase, asset.resource) }

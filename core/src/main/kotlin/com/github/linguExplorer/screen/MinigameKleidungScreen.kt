@@ -27,10 +27,9 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
 
     private val tagTexture = Texture(Gdx.files.internal("Minigames/Kleidung/tag.png"))
     private val reversedTagTexture = Texture(Gdx.files.internal("Minigames/Kleidung/tag_reversed.png"))
-    private val timeTexture = Texture(Gdx.files.internal("Minigames/time.png"))
+    private val textFieldTexture = Texture(Gdx.files.internal("Minigames/time.png"))
     private var pauseTexture = Texture(Gdx.files.internal("Minigames/pausebutton.png"))
     private var playTexture = Texture(Gdx.files.internal("Minigames/playbutton.png"))
-
 
     private val tagSize = Vector2(200f, 90f)
     private val pauseBasePosition = Vector2(180f, 530f)
@@ -55,6 +54,8 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
     private var continueButtonTargetScale = 1f
     private var pauseButtonTargetScale = 1f
     private val scaleSpeed = 5f
+    private var phraseCountMax = 0
+    private var phraseCorrectCounter = 0
 
     private var timeLeft = 30
     private var elapsedTime = 0f
@@ -65,6 +66,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
 
     private val minigame = FamilieMinigame()
     private var objects: List<Pair<DraggableObject, DraggableObject>> = listOf()
+    private var shownPhrases: List<Pair<PhraseEntity, String>>? = null
     private var firstSelected: DraggableObject? = null
     private var incorrectSelectionTimer = 0f // Timer für die rote Umrandung
 
@@ -73,80 +75,41 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
         font = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
         minigame.loadMinigamePhrases()
         minigame.loadAllPhrases()
+        phraseCountMax = minigame.phraseList.size
 
-        val tempObjects = mutableListOf<Pair<DraggableObject, DraggableObject>>()
-        val usedPositions = mutableListOf<Pair<Float, Float>>()
+        setObjects()
+    }
 
-        minigame.loadPhrasesWithAssets().forEach { (phrase, assetPath) ->
-            val texture = Texture(Gdx.files.internal(assetPath))
-            val sizeX = 40f
-            val sizeY = 40f
-            var positionX: Float
-            var positionY: Float
-            var positionX2: Float
-            var positionY2: Float
-            var isOverlapping: Boolean
+    private fun positionObjectWithoutOverlap(obj: DraggableObject, usedPositions: List<DraggableObject>, margin: Float) {
+        var positionX: Float
+        var positionY: Float
+        var isOverlapping: Boolean
 
-            println("${phrase.phrase}\n")
+        do {
+            positionX = (Random.nextFloat() + 0.1f) * ((viewport.worldWidth * 0.9f) - tagSize.x)
+            positionY = (Random.nextFloat() + 0.1f) * ((viewport.worldHeight * 0.82f) - tagSize.y)
 
-            do {
-                println("neu")
-                positionX = (Random.nextFloat() + 0.1f) * ((viewport.worldWidth * 0.9f) - tagSize.x)
-                positionY = (Random.nextFloat() + 0.1f) * ((viewport.worldHeight * 0.9f) - tagSize.y)
-                positionX2 = (Random.nextFloat() + 0.1f) * ((viewport.worldWidth * 0.9f) - tagSize.x)
-                positionY2 = (Random.nextFloat() + 0.1f) * ((viewport.worldHeight * 0.9f) - tagSize.y)
+            obj.positionX = positionX
+            obj.positionY = positionY
 
-                isOverlapping = usedPositions.any { (x, y) ->
-                    (isOverlapping(x, y, positionX - 30 , positionY - 30, tagSize.x + 30, tagSize.y + 30))
-                        || (isOverlapping(x, y, positionX2 - 30, positionY2 - 30, tagSize.x + 30, tagSize.y + 30))
-                        || (isOverlapping(x, y, 0f, viewport.worldHeight - 100f, 200f, 100f))
-                }
+            isOverlapping = usedPositions.any { usedObj ->
+                isOverlappingWithMargin(obj, usedObj, margin)
+            }
 
-                if (!isOverlapping) {
-                    println("false")
-                    isOverlapping = (isOverlapping(positionX, positionY, positionX2 - 30, positionY2 - 30, tagSize.x + 60, tagSize.y + 60))
-                }
-                println("hallo?")
-                if (isOverlapping) {
-                    println("ALARM, ALARM!!")
-                } else {
-                    println ("nicht mehr alarm!!")
-                }
-
-            } while (isOverlapping)
-
-            usedPositions.add(positionX to positionY)
-            usedPositions.add(positionX2 to positionY2)
-
-            val objectEnglish = DraggableObject(
-                phrase = phrase,
-                texture = texture,
-                positionX = positionX,
-                positionY = positionY,
-                sizeX = sizeX,
-                sizeY = sizeY,
-                isEnglishPhrase = true
-            )
-
-            val objectGerman = DraggableObject(
-                phrase = phrase,
-                texture = texture,
-                positionX = positionX2,
-                positionY = positionY2,
-                sizeX = sizeX,
-                sizeY = sizeY
-            )
-
-            tempObjects.add(objectEnglish to objectGerman)
-        }
-
-        objects = tempObjects
+        } while (isOverlapping)
     }
 
     override fun render(delta: Float) {
         handleInput()
         if (!isPaused && !gameEnded && gameStarted) {
             updateTime(delta)
+        }
+
+        // Überprüfe, ob alle Objekte gematcht sind
+        if (objects.all { it.first.isMatched && it.second.isMatched }) {
+
+            // Mische die Positionen
+            setObjects()
         }
 
         Gdx.gl.glClearColor(0.6509804f, 0.5882353f, 0.6431373f, 1f)
@@ -174,14 +137,12 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
             pauseSize.y * pauseButtonScale
         )
 
-        batch.draw(timeTexture, timePosition.x, timePosition.y, timeSize.x, timeSize.y)
+        batch.draw(textFieldTexture, timePosition.x, timePosition.y, timeSize.x, timeSize.y)
         font.data.setScale(0.3f, 0.3f)
         font.draw(batch, formatTime(timeLeft), timePosition.x + 20f, timePosition.y + timeSize.y / 1.4f)
 
-        if (minigame.isGameComplete()) {
-            gameEnded = true
-            isCompleted = true
-        }
+        batch.draw(textFieldTexture, viewport.worldWidth - timePosition.x - timeSize.x, timePosition.y, timeSize.x, timeSize.y)
+        font.draw(batch, "$phraseCorrectCounter/$phraseCountMax", viewport.worldWidth - timePosition.x - timeSize.x + 20f, timePosition.y + timeSize.y / 1.4f)
 
         if (incorrectSelectionTimer > 0f) {
             incorrectSelectionTimer -= Gdx.graphics.deltaTime
@@ -193,6 +154,52 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
         }
 
         batch.end()
+    }
+
+    private fun setObjects() {
+        val tempObjects = mutableListOf<Pair<DraggableObject, DraggableObject>>()
+        val usedPositions = mutableListOf<DraggableObject>()
+        val margin = 20f // Mindestabstand zwischen den Objekten
+
+        shownPhrases = minigame.loadPhrasesWithAssets().take(4)
+        minigame.phraseList = minigame.phraseList.drop(4)
+
+        shownPhrases!!.forEach { (phrase, assetPath) ->
+            val texture = Texture(Gdx.files.internal(assetPath))
+            val sizeX = 40f
+            val sizeY = 40f
+
+            val objectEnglish = DraggableObject(
+                phrase = phrase,
+                texture = texture,
+                positionX = 0f,
+                positionY = 0f,
+                sizeX = sizeX,
+                sizeY = sizeY,
+                isEnglishPhrase = true
+            )
+
+            val objectGerman = DraggableObject(
+                phrase = phrase,
+                texture = texture,
+                positionX = 0f,
+                positionY = 0f,
+                sizeX = sizeX,
+                sizeY = sizeY
+            )
+
+            // Positioniere das englische Objekt
+            positionObjectWithoutOverlap(objectEnglish, usedPositions, margin)
+            usedPositions.add(objectEnglish)
+
+            // Positioniere das deutsche Objekt
+            positionObjectWithoutOverlap(objectGerman, usedPositions, margin)
+            usedPositions.add(objectGerman)
+
+            tempObjects.add(objectEnglish to objectGerman)
+        }
+
+        objects = tempObjects
     }
 
     private fun drawDraggableObject(obj: DraggableObject, isTranslation: Boolean = false) {
@@ -250,6 +257,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                             // Richtige Auswahl: Grüne Umrandung
                             firstSelected!!.isMatched = true
                             obj.isMatched = true
+                            phraseCorrectCounter++
                             minigame.phraseCheck(firstSelected!!.phrase, true)
                         } else {
                             // Falsche Auswahl: Rote Umrandung für 1 Sekunde
@@ -283,7 +291,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
 
     private fun isMouseOverObject(mouseX: Float, mouseY: Float, obj: DraggableObject): Boolean {
         return mouseX >= obj.positionX && mouseX <= obj.positionX + tagSize.x &&
-            mouseY >= obj.positionY && mouseY <= obj.positionY + tagSize.y
+                mouseY >= obj.positionY && mouseY <= obj.positionY + tagSize.y
     }
 
     private fun updateTime(delta: Float) {
@@ -325,11 +333,11 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
         }
     }
 
-    private fun isOverlapping(x1: Float, y1: Float, x2: Float, y2: Float, width: Float, height: Float): Boolean {
-        return x1 < x2 + width &&
-            x1 + width > x2 &&
-            y1 < y2 + height &&
-            y1 + height > y2
+    private fun isOverlappingWithMargin(obj1: DraggableObject, obj2: DraggableObject, margin: Float): Boolean {
+        return obj1.positionX < obj2.positionX + tagSize.x + margin &&
+            obj1.positionX + tagSize.x + margin > obj2.positionX &&
+            obj1.positionY < obj2.positionY + tagSize.y + margin &&
+            obj1.positionY + tagSize.y + margin > obj2.positionY
     }
 
     private data class DraggableObject(

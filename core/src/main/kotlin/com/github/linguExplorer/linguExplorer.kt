@@ -16,19 +16,10 @@ class linguExplorer : KtxGame<KtxScreen>() {
        // addScreen(MainMenuScreen(this)) // Setzt den GameScreen
         //setScreen<MainMenuScreen>()
 
-        //addScreen(MinigameKleidungScreen(this))
-        //setScreen<MinigameKleidungScreen>()
+        addScreen(MinigameKleidungScreen(this))
+        setScreen<MinigameKleidungScreen>()
 
         // Screens
-        addScreen(LoadingScreen(this))
-        addScreen(MainMenuScreen(this))
-        addScreen(MapScreen(this))
-        addScreen(MinigameEssenScreen(this))
-        addScreen(MinigameKleidungScreen(this))
-        addScreen(MinigameKleidungShoppenScreen(this))
-
-        // Startscreen
-        setScreen<MinigameKleidungShoppenScreen>()
     }
 
 
