@@ -161,5 +161,6 @@ EMAIL_HOST_USER = "team@linguexplorer.com"
 EMAIL_FROM = "team@linguexplorer.com"
 EMAIL_HOST_PASSWORD = "nxqdjnxmrvhsgdcp"
 
+PASSWORD_RESET_TIMEOUT=14400
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
