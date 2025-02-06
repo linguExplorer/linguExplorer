@@ -61,6 +61,9 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
         }
     }
 
+    private val pathSystem = world.system<PathSystem>()
+
+
     override fun show() {
         log.debug { "Game Screen gets shown" }
         world.systems.forEach { system ->
@@ -73,8 +76,7 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
         stage.fire(MapChangeEvent(currentMap!!))
 
 
-
-        PlayerKeyboardInputProcessor(world, stage, world.mapper(), world.mapper(), stage )
+        PlayerKeyboardInputProcessor(world, stage, world.mapper(), world.mapper(), stage, pathSystem )
 
     }
 

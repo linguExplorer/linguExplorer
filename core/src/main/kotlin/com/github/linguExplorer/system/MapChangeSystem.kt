@@ -8,16 +8,10 @@ import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.linguExplorer.component.*
 import com.github.linguExplorer.component.PhysicComponent.Companion.physicCmpFromShape2D
-import com.github.linguExplorer.event.ActivateKeyEvent
-import com.github.linguExplorer.event.GameChangeEvent
-import com.github.linguExplorer.event.MapChangeEvent
-import com.github.linguExplorer.event.fire
+import com.github.linguExplorer.event.*
 import com.github.linguExplorer.input.PlayerKeyboardInputProcessor
 import com.github.linguExplorer.linguExplorer
-import com.github.linguExplorer.screen.LoadingScreen
-import com.github.linguExplorer.screen.MainMenuScreen
-import com.github.linguExplorer.screen.MapScreen
-import com.github.linguExplorer.screen.MinigameEssenScreen
+import com.github.linguExplorer.screen.*
 import com.github.quillraven.fleks.AllOf
 import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.Entity
@@ -54,12 +48,15 @@ class MapChangeSystem (
 
     override fun onTickEntity(entity: Entity) {
         val (id, toGame, triggerEntities) = mgCmps[entity]
+
+
         if(triggerEntities.isNotEmpty()) {
-            println("Collision to mini Game")
+            println("Collision to $toGame")
 
 
             if (key) {
                println("ja")
+                game.addScreen(LoadingScreen(game, gameStage))
                game.setScreen<LoadingScreen>()
            }
 
@@ -80,7 +77,7 @@ class MapChangeSystem (
          if (game!!.containsScreen<MinigameEssenScreen>()) {
              game.removeScreen<MinigameEssenScreen>()
           }
-     game.addScreen(MinigameEssenScreen(game))
+     game.addScreen(MinigameEssenScreen(game, gameStage))
      game.setScreen<MinigameEssenScreen>()
 
     }
@@ -108,6 +105,9 @@ class MapChangeSystem (
             return true
         }
 
+        if (event is GameEndEvent) {
+            println("Spiel beendet neuer Spawn")
+        }
         if (event is ActivateKeyEvent) {
 
                 key = true

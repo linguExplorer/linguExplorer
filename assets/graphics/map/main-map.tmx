@@ -50,7 +50,7 @@
   </object>
  </objectgroup>
  <objectgroup color="#ffaa00" id="16" name="path">
-  <object id="11" x="410" y="194.667" width="46.6667" height="377.333">
+  <object id="11" x="410" y="201.334" width="46.6667" height="360.666">
    <properties>
     <property name="id" type="int" value="1"/>
     <property name="path" value="vert"/>
@@ -62,13 +62,13 @@
     <property name="path" value="vert"/>
    </properties>
   </object>
-  <object id="13" x="500.273" y="573.5" width="56" height="111">
+  <object id="13" x="498.773" y="522.333" width="56" height="153.667">
    <properties>
     <property name="id" type="int" value="3"/>
     <property name="path" value="vert"/>
    </properties>
   </object>
-  <object id="14" x="292.667" y="575.667" width="56" height="110">
+  <object id="14" x="292.667" y="584.167" width="56" height="138.333">
    <properties>
     <property name="id" type="int" value="4"/>
     <property name="path" value="vert"/>
@@ -80,37 +80,37 @@
     <property name="path" value="vert"/>
    </properties>
   </object>
-  <object id="17" x="110.333" y="262" width="114" height="55.3333">
+  <object id="17" x="115.666" y="262" width="108.667" height="55.3333">
    <properties>
     <property name="id" type="int" value="6"/>
     <property name="path" value="hor"/>
    </properties>
   </object>
-  <object id="18" x="225.5" y="241" width="179.5" height="76.5">
+  <object id="18" x="229.5" y="241" width="195.5" height="76.5">
    <properties>
     <property name="id" type="int" value="5"/>
     <property name="path" value="hor"/>
    </properties>
   </object>
-  <object id="19" x="459.667" y="271.333" width="369.667" height="59.3333">
+  <object id="19" x="436" y="270.666" width="397.334" height="59.3333">
    <properties>
     <property name="id" type="int" value="1"/>
     <property name="path" value="hor"/>
    </properties>
   </object>
-  <object id="20" x="458.5" y="497.5" width="212.5" height="42.5">
+  <object id="20" x="432" y="497.5" width="239" height="42.5">
    <properties>
     <property name="id" type="int" value="2"/>
     <property name="path" value="hor"/>
    </properties>
   </object>
-  <object id="21" x="112" y="535.667" width="441.333" height="34.6667">
+  <object id="21" x="112.5" y="544.834" width="428.333" height="26">
    <properties>
     <property name="id" type="int" value="3"/>
     <property name="path" value="hor"/>
    </properties>
   </object>
-  <object id="22" x="294" y="687" width="262" height="60">
+  <object id="22" x="358" y="687" width="198" height="60">
    <properties>
     <property name="id" type="int" value="4"/>
     <property name="path" value="hor"/>

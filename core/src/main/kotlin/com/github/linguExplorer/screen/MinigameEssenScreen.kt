@@ -13,7 +13,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.Align
+import com.github.linguExplorer.event.GameEndEvent
+import com.github.linguExplorer.event.fire
 import com.github.linguExplorer.linguExplorer
 import com.github.linguExplorer.minigames.EssenMinigame
 import com.github.linguExplorer.models.PhraseEntity
@@ -21,13 +24,17 @@ import ktx.app.KtxScreen
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
+class MinigameEssenScreen(private val game: linguExplorer,
+private val stage: Stage
+
+) : KtxScreen {
 
     private val batch = SpriteBatch()
     private lateinit var font: BitmapFont
     private val viewport: Viewport = ExtendViewport(800f, 600f)
     private val shapeRenderer = ShapeRenderer()
     private val executor: ExecutorService = Executors.newFixedThreadPool(1)
+
     var textgap = 2f
 
     // Texturen
@@ -531,6 +538,8 @@ class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
             if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                 if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) && mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
                     storePhraseDataAsync()
+
+                    stage.fire(GameEndEvent("SM"))
 
 
                     if (game!!.containsScreen<MapScreen>()) {

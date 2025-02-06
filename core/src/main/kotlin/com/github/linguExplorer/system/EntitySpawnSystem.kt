@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.utils.Scaling
 import com.github.linguExplorer.component.*
 import com.github.linguExplorer.component.PhysicComponent.Companion.physicCmpFromImage
+import com.github.linguExplorer.event.GameEndEvent
 import com.github.linguExplorer.event.MapChangeEvent
 import com.github.linguExplorer.linguExplorer.Companion.UNIT_SCALE
 import com.github.quillraven.fleks.AllOf
@@ -35,6 +36,7 @@ class EntitySpawnSystem (
 
     private val cachedCfgs = mutableMapOf<String, SpawnCfg>()
     private val cachedSizes = mutableMapOf<AnimationModel, Vector2>()
+    private var tempLocation: Pair<Float, Float>? = null
 
     override fun onTickEntity(entity: Entity) {
         with(SpawnCmps[entity]) {
@@ -118,7 +120,19 @@ class EntitySpawnSystem (
 
     override fun handle(event: Event): Boolean {
         when (event) {
+
+                is GameEndEvent -> {
+
+                    println("[GameEndEvent] Received. Setting tempLocation.")
+                    tempLocation = 31.104187f to 10.677063f
+                    println(tempLocation)
+                    return true
+                }
+
+
             is MapChangeEvent -> {
+                println("[MapChangeEvent] Received. tempLocation = $tempLocation")
+
                 val entityLayer = event.map.layer("entities")
                 entityLayer.objects.forEach {
                     mapObj ->
@@ -126,13 +140,25 @@ class EntitySpawnSystem (
                     world.entity {
                         add<SpawnComponent> {
                             this.type = type
-                            this.location.set(mapObj.x*UNIT_SCALE, mapObj.y* UNIT_SCALE)
+                            this.location.set(
+
+                                tempLocation?.first ?: (mapObj.x * UNIT_SCALE),
+                                tempLocation?.second ?: (mapObj.y * UNIT_SCALE)
+                            )
+                            println(this.location)
                         }
                     }
+                }
+                if (tempLocation != null) {
+                    println("TempLocation wurde verwendet und zurückgesetzt.")
+                    tempLocation = null
                 }
                 return true
             }
         }
+
+
+
         return false
     }
 }
