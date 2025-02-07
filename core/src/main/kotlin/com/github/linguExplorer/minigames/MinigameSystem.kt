@@ -12,7 +12,7 @@ import kotlin.random.Random
 abstract class MinigameSystem {
     internal lateinit var phraseList: List<PhraseEntity>
     internal lateinit var allPhrases: List<PhraseEntity>
-    internal val capturedPhrases = mutableMapOf<PhraseEntity, Boolean>()
+    internal val capturedPhrases = mutableMapOf<PhraseEntity, MutableSet<Boolean>>()
     abstract val topicName: String
     abstract var topicId: Int
 
@@ -29,15 +29,16 @@ abstract class MinigameSystem {
     }
 
     fun phraseCheck(phrase: PhraseEntity, correct: Boolean) {
-        capturedPhrases[phrase] = correct
+        capturedPhrases.getOrPut(phrase) { mutableSetOf() }.add(correct)
     }
 
     /**
      * Prüft, ob das Spiel abgeschlossen ist
      */
     fun isGameComplete(): Boolean {
-        return phraseList.all { capturedPhrases[it] == true }
+        return phraseList.all { capturedPhrases[it]?.contains(true) == true }
     }
+
 
     /**
      * Speichert die erfassten Daten in die Datenbank
@@ -52,7 +53,7 @@ abstract class MinigameSystem {
         val phrasesProgress = mutableListOf<Triple<Int, Int, Boolean>>()
         val phraseStateUpdates = mutableListOf<Int>()
 
-        capturedPhrases.forEach { (phrase, correct) ->
+        capturedPhrases.forEach { (phrase, correctSet) ->  // correctSet ist jetzt ein Set<Boolean>
             val relevantProgress = userProgress.find { it.phraseId == phrase.id }
             val correctIndex = historyRepo.calculateCorrectIndex(phrase.id, userHistory)
 
@@ -60,11 +61,14 @@ abstract class MinigameSystem {
                 phrasesProgress.add(Triple(phrase.id, userId, false))
             }
 
-            phrasesGameHistory.add(Pair(phrase.id, correct))
+            // Beide möglichen Werte aus dem Set verarbeiten (max. 1x true und 1x false pro Phrase)
+            correctSet.forEach { correct ->
+                phrasesGameHistory.add(Pair(phrase.id, correct))
 
-            if (correct && correctIndex > phraseIndex && relevantProgress?.isMastered == false) {
-                phraseStateUpdates.add(phrase.id)
-                println("Du hast die Phrase gemeistert!")
+                if (correct && correctIndex > phraseIndex && relevantProgress?.isMastered == false) {
+                    phraseStateUpdates.add(phrase.id)
+                    println("Du hast die Phrase gemeistert!")
+                }
             }
         }
 
@@ -74,6 +78,7 @@ abstract class MinigameSystem {
             progressRepo.changeMultipleMasteredStates(userId, phraseStateUpdates)
         }
     }
+
 
     /**
      * Abstrakte Methode zur Phrasen-Ladung. Die Subklassen bestimmen die Details.

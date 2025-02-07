@@ -1,6 +1,5 @@
 package com.github.linguExplorer
 
-import com.badlogic.gdx.Game
 import com.github.linguExplorer.database.DatabaseManager
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
