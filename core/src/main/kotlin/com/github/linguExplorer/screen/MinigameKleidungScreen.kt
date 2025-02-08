@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
@@ -163,9 +164,22 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
         val verticalOffset = 150f // vertikalen Offset ändern
 
         objects = minigame.loadPhrasesWithAssets().map { (phrase, assetPath) ->
+            val texture = Texture(Gdx.files.internal(assetPath))
+
+            // Pixmap laden für Originalabmessungen
+            val pixmap = Pixmap(Gdx.files.internal(assetPath))
+            val originalWidth = pixmap.width.toFloat()
+            val originalHeight = pixmap.height.toFloat()
+            pixmap.dispose() //Pixmap freigeben
+
+            val targetWidth = 50f //gewünschte Breite Kleidung!!
+
+            // Höhe mit Seitenverhältnis berechnen
+            val aspectRatio = originalHeight / originalWidth
+            val targetHeight = targetWidth * aspectRatio
             DraggableObject(
                 phrase = phrase,
-                texture = Texture(Gdx.files.internal(assetPath)),
+                texture = texture,
                 resetPositionX = if (assetPath.contains("Shirt") || assetPath.contains("Dress")) shelfBasePosition1.x + horizontalOffset else shelfBasePosition2.x + horizontalOffset,
                 resetPositionY = if (assetPath.contains("Shirt") || assetPath.contains("Dress")) shelfBasePosition1.y + verticalOffset else shelfBasePosition2.y + verticalOffset,
                 basePositionX = if (assetPath.contains("Shirt") || assetPath.contains("Dress")) shelfBasePosition1.x + horizontalOffset else shelfBasePosition2.x + horizontalOffset,
@@ -174,8 +188,10 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                 positionY = 0f,
                 positionOffsetX = 0f,
                 positionOffsetY = 0f,
-                sizeX = 50f,
-                sizeY = 50f
+                //sizeX = 100f, //Größe KLeidung
+                //sizeY = 100f //Größe KLeidung
+                sizeX = targetWidth,
+                sizeY = targetHeight
             )
         }
     }
@@ -552,7 +568,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                 }
 
                 shapeRenderer.rect(
-                    startX * (viewport.worldWidth/800f),
+                    startX * (viewport.worldWidth/800f) + 320f,
                     (currentY - textHeight / 2 - 1.75f) * (viewport.screenHeight / 600f),
                     textWidth * (viewport.screenWidth / 800f),
                     3.5f * (viewport.screenHeight / 600f)
