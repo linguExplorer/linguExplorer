@@ -374,9 +374,13 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
             batch.draw(obj.texture, obj.positionX + 10f, obj.positionY + obj.sizeX / 2 + 5f, obj.sizeX, obj.sizeY)
         }
 
+
         font.data.setScale(0.15f, 0.15f)
         val glyphLayout = GlyphLayout()
         if (!isTranslation) {
+            if (obj.phrase.phrase.length >= 10) {
+                font.data.setScale(0.11f, 0.11f)
+            }
             glyphLayout.setText(font, obj.phrase.phrase)
             font.draw(batch, obj.phrase.phrase, obj.positionX + (tagSize.x / 3), obj.positionY + obj.sizeY + glyphLayout.height / 2 + 5f)
         } else {

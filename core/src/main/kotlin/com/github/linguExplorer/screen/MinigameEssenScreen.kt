@@ -231,6 +231,7 @@ class MinigameEssenScreen(private val game: linguExplorer) : KtxScreen {
         }
 
 
+
         var positionOffsetX = 0f
         var positionOffsetY = 0f
         var index = 0
