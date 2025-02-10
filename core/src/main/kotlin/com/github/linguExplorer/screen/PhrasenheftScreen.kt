@@ -33,7 +33,7 @@ class PhrasenheftScreen : KtxScreen {
     private val lineHeight = 55f // Höhe jeder Zeile
     private val spacing = 280f // Abstand zwischen Phrase und Übersetzung
     private val padding = 20f // Abstand vom Rand zum Inhalt
-    private var currentY = 577f // Wir definieren currentY hier und aktualisieren es in der render-Methode
+    private var currentY = 775f // Wir definieren currentY hier und aktualisieren es in der render-Methode
 
 
 
@@ -54,11 +54,28 @@ class PhrasenheftScreen : KtxScreen {
     private val viewport: Viewport = ExtendViewport(800f, 600f)
 
 
+    private var maxPages= (phrases.size/10f)//wie viele Phrasen max
+    private var currentPage = 1
 
+    private val nextPosition: Vector2
+        get() = Vector2(
+            viewport.screenWidth/2 + 600f,
+            (viewport.screenHeight - heftSize.y) - 200f
+        )
+
+
+    private val backPosition: Vector2
+        get() = Vector2(
+            viewport.screenWidth/2 - 690f,
+            (viewport.screenHeight  - heftSize.y) - 200f
+        )
 
 
 
     override fun show() {
+
+        Gdx.input.inputProcessor = null
+
         viewport.update(Gdx.graphics.width, Gdx.graphics.height, true)
         viewport.camera.position.set(viewport.worldWidth / 2, viewport.worldHeight / 2, 0f)
         viewport.camera.update()
@@ -66,8 +83,9 @@ class PhrasenheftScreen : KtxScreen {
 
     override fun render(delta: Float) {
         // Update the viewport
-        viewport.apply()
+        handleInput()
 
+        viewport.apply()
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT) // Bildschirm löschen
 
         batch.begin() // Beginnt das Zeichnen
@@ -91,29 +109,67 @@ class PhrasenheftScreen : KtxScreen {
 
         batch.draw(heftTexture, (screenWidth/2f - heftSize.x/2f) , (screenHeight/2f - heftSize.y/2f), heftSize.x, heftSize.y)
 
-        batch.draw(backTexture, screenWidth/2 - 690f , (screenHeight  - heftSize.y) - 200f, backSize.x, backSize.y)
-        batch.draw(nextTexture, screenWidth/2 + 600f , (screenHeight  - heftSize.y) - 200f, backSize.x, backSize.y)
+        if((currentPage-1) > 0) {
+            batch.draw(backTexture, screenWidth/2 - 690f , (screenHeight  - heftSize.y) - 200f, backSize.x, backSize.y)
+
+        }
+        if((currentPage-1) + 1 <=  maxPages-1f) {
+            batch.draw(nextTexture, nextPosition.x , nextPosition.y, backSize.x, backSize.y)
+
+        }
         batch.draw(sortTexture,screenWidth/2 - 690f, (screenHeight/2f + heftSize.y/2f) - sortSize.y , sortSize.x, sortSize.y)
 
         val startX = screenWidth/4f + 30f
-        var adjustedX = 0f
         var adjustedY = currentY // Berücksichtige die Scroll-Position
 
+
+
+
+
+
+        val phrasesPerPage = 20
+        var multiplikator = 10
+        val phrasesPerColumn = 10
         // Anzeige der Phrasen
+
+
         for ((index, phrase) in phrases.withIndex()) {
 
-            if (index > 0 && index % 10 == 0) {
-                adjustedX += 550f
-                adjustedY = currentY
+
+            val pageStartIndex = if(currentPage == 1) {
+                currentPage * 0
+            } else {
+                (currentPage * 10)+1
+
             }
 
-            val phraseText = phrase.first
-            val translationText = phrase.second
-            font.draw(batch, phraseText, startX + adjustedX, adjustedY)
-            font.draw(batch, translationText, startX + spacing + adjustedX, adjustedY)
 
-            adjustedY -= lineHeight // Zeilenhöhe nach unten verschieben
-            println(index)
+            val pageEndIndex = pageStartIndex + phrasesPerPage
+
+
+            if(index >= pageStartIndex && index <= pageEndIndex+1 ) {
+
+                val phraseText = phrase.first
+                val translationText = phrase.second
+
+
+
+                val columnOffset = if ((index - pageStartIndex) <= phrasesPerColumn) {
+                    0f
+                } else {
+                    550f
+                }
+
+                font.draw(batch, phraseText, startX + columnOffset, adjustedY)
+                font.draw(batch, translationText, startX + spacing + columnOffset, adjustedY)
+
+                adjustedY -= lineHeight
+
+                if ((index - pageStartIndex) == phrasesPerColumn) {
+                    adjustedY = currentY // Setze die Y-Position zurück
+                }
+            }
+
         }
 
 
@@ -142,11 +198,47 @@ class PhrasenheftScreen : KtxScreen {
 
 
 
-    override fun resize(width: Int, height: Int) {
+    private fun handleInput() {
+        val mouseX = Gdx.input.x.toFloat() * viewport.screenWidth/ Gdx.graphics.width
+        val mouseY = (Gdx.graphics.height - Gdx.input.y.toFloat()) * viewport.screenHeight / Gdx.graphics.height
+
+
+        if (Gdx.input.justTouched()) {
+
+
+                if (mouseX in nextPosition.x..(nextPosition.x + backSize.x) && mouseY in nextPosition.y..(nextPosition.y + backSize.y)
+                ) {
+
+                    if((currentPage-1) + 1 <  maxPages-1f) {
+                        currentPage++
+
+                    }
+                    println("Button Next, $currentPage")
+
+                }
+
+            if (mouseX in backPosition.x..(backPosition.x + backSize.x) && mouseY in backPosition.y..(backPosition.y + backSize.y)
+            ) {
+
+                if((currentPage-1) - 1 >=  0) {
+                    currentPage--
+
+                }
+                println("Button Back, $currentPage")
+            }
+
+            }
+
+    }
+
+
+        override fun resize(width: Int, height: Int) {
         // Update the viewport on resize
 
         viewport.update(width, height, true)
     }
+
+
 
     override fun hide() {}
 
