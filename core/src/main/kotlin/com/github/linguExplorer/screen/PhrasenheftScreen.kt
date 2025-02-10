@@ -23,9 +23,9 @@ class PhrasenheftScreen : KtxScreen {
     private val shapeRenderer = ShapeRenderer()
 
 
-    private val phraseProgresses = PhraseProgressRepository().getAllPhraseProgressForUser(1)
-    private val phrases = phraseProgresses.map {
-        PhraseRepository().getPhrase(it.phraseId)!!.phrase to PhraseRepository().getPhrase(it.phraseId)!!.translation
+    private val phrasesOfProgress = PhraseProgressRepository().getAllPhrasesOfUserProgress(123)
+    private val phrases = phrasesOfProgress.map {
+        it.phrase to it.translation
 
     }
 
@@ -33,7 +33,7 @@ class PhrasenheftScreen : KtxScreen {
     private val lineHeight = 55f // Höhe jeder Zeile
     private val spacing = 280f // Abstand zwischen Phrase und Übersetzung
     private val padding = 20f // Abstand vom Rand zum Inhalt
-    private var currentY = -177f // Wir definieren currentY hier und aktualisieren es in der render-Methode
+    private var currentY = 577f // Wir definieren currentY hier und aktualisieren es in der render-Methode
 
 
 
@@ -95,21 +95,25 @@ class PhrasenheftScreen : KtxScreen {
         batch.draw(nextTexture, screenWidth/2 + 600f , (screenHeight  - heftSize.y) - 200f, backSize.x, backSize.y)
         batch.draw(sortTexture,screenWidth/2 - 690f, (screenHeight/2f + heftSize.y/2f) - sortSize.y , sortSize.x, sortSize.y)
 
-        val startX = screenWidth/4f
-        var adjustedY = currentY + scrollPosition // Berücksichtige die Scroll-Position
+        val startX = screenWidth/4f + 30f
+        var adjustedX = 0f
+        var adjustedY = currentY // Berücksichtige die Scroll-Position
 
         // Anzeige der Phrasen
-        for (phrase in phrases) {
+        for ((index, phrase) in phrases.withIndex()) {
+
+            if (index > 0 && index % 10 == 0) {
+                adjustedX += 550f
+                adjustedY = currentY
+            }
+
             val phraseText = phrase.first
             val translationText = phrase.second
-
-            // Debugging: Gebe die Position aus, an der der Text gezeichnet wird
-            println("Drawing text at Y: $adjustedY")
-
-            font.draw(batch, phraseText, startX, adjustedY)
-            font.draw(batch, translationText, startX + spacing, adjustedY)
+            font.draw(batch, phraseText, startX + adjustedX, adjustedY)
+            font.draw(batch, translationText, startX + spacing + adjustedX, adjustedY)
 
             adjustedY -= lineHeight // Zeilenhöhe nach unten verschieben
+            println(index)
         }
 
 

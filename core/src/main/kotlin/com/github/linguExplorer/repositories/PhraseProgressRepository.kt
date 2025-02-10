@@ -1,5 +1,6 @@
 package com.github.linguExplorer.repositories
 
+import com.github.linguExplorer.models.PhraseEntity
 import com.github.linguExplorer.models.PhraseProgress
 import com.github.linguExplorer.models.PhraseProgressEntity
 import org.jetbrains.exposed.sql.*
@@ -52,6 +53,16 @@ class PhraseProgressRepository {
                 .select { PhraseProgress.userId eq userId }
                 .map { it.toPhraseProgress() }
         }
+
+    fun getAllPhrasesOfUserProgress(userId: Int): List<PhraseEntity> =
+        transaction {
+            PhraseProgress
+                .select { PhraseProgress.userId eq userId }
+                .mapNotNull { progress ->
+                    PhraseRepository().getPhrase(progress[PhraseProgress.phraseId])
+                }
+        }
+
 
 
     fun changeMasteredState(userId: Int, phraseId: Int) =
