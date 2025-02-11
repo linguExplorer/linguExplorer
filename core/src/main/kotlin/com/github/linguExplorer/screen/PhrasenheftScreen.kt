@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
@@ -18,7 +19,7 @@ import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
 
 class PhrasenheftScreen : KtxScreen {
-    private val font = BitmapFont()
+    private var font = BitmapFont()
     private val batch = SpriteBatch()
     private val shapeRenderer = ShapeRenderer()
 
@@ -30,10 +31,10 @@ class PhrasenheftScreen : KtxScreen {
     }
 
     private var scrollPosition = 0f // Scroll-Position (startY wird angepasst)
-    private val lineHeight = 55f // Höhe jeder Zeile
-    private val spacing = 280f // Abstand zwischen Phrase und Übersetzung
+    private val lineHeight = 56f // Höhe jeder Zeile
+    private val spacing = 260f // Abstand zwischen Phrase und Übersetzung
     private val padding = 20f // Abstand vom Rand zum Inhalt
-    private var currentY = 775f // Wir definieren currentY hier und aktualisieren es in der render-Methode
+    private var currentY = 778f // Wir definieren currentY hier und aktualisieren es in der render-Methode
 
 
 
@@ -89,7 +90,9 @@ class PhrasenheftScreen : KtxScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT) // Bildschirm löschen
 
         batch.begin() // Beginnt das Zeichnen
+        font = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
         font.color = Color.BLACK
+        font.data.setScale(0.2f, 0.2f)
 
         // Bildschirmgröße holen
         val screenHeight = viewport.screenHeight
@@ -119,7 +122,7 @@ class PhrasenheftScreen : KtxScreen {
         }
         batch.draw(sortTexture,screenWidth/2 - 690f, (screenHeight/2f + heftSize.y/2f) - sortSize.y , sortSize.x, sortSize.y)
 
-        val startX = screenWidth/4f + 30f
+        val startX = screenWidth/4f + 70f
         var adjustedY = currentY // Berücksichtige die Scroll-Position
 
 
@@ -133,26 +136,20 @@ class PhrasenheftScreen : KtxScreen {
         // Anzeige der Phrasen
 
 
+        val layout = GlyphLayout()
+
         for ((index, phrase) in phrases.withIndex()) {
-
-
-            val pageStartIndex = if(currentPage == 1) {
-                currentPage * 0
+            val pageStartIndex = if (currentPage == 1) {
+                0
             } else {
-                (currentPage * 10)+1
-
+                (currentPage * 10) + 1
             }
-
 
             val pageEndIndex = pageStartIndex + phrasesPerPage
 
-
-            if(index >= pageStartIndex && index <= pageEndIndex+1 ) {
-
+            if (index >= pageStartIndex && index <= pageEndIndex + 1) {
                 val phraseText = phrase.first
                 val translationText = phrase.second
-
-
 
                 val columnOffset = if ((index - pageStartIndex) <= phrasesPerColumn) {
                     0f
@@ -160,17 +157,29 @@ class PhrasenheftScreen : KtxScreen {
                     550f
                 }
 
-                font.draw(batch, phraseText, startX + columnOffset, adjustedY)
-                font.draw(batch, translationText, startX + spacing + columnOffset, adjustedY)
+                // Berechne die Breite des Phrasentextes
+                layout.setText(font, phraseText)
+                val phraseTextWidth = layout.width
+
+                layout.setText(font, translationText)
+                val translationTextWidth = layout.width
+
+                // Zentriere den Phrasentext
+                val phraseX = startX + columnOffset - (phraseTextWidth / 2)
+                font.draw(batch, phraseText, phraseX, adjustedY)
+
+                // Zentriere den Übersetzungstext
+                val translationX = startX + spacing + columnOffset - (translationTextWidth / 2)
+                font.draw(batch, translationText, translationX, adjustedY)
 
                 adjustedY -= lineHeight
 
                 if ((index - pageStartIndex) == phrasesPerColumn) {
-                    adjustedY = currentY // Setze die Y-Position zurück
+                    adjustedY = currentY
                 }
             }
-
         }
+
 
 
 
