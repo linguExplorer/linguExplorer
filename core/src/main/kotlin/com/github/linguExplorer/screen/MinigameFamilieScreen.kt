@@ -35,7 +35,6 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
     private var pauseTexture = Texture(Gdx.files.internal("Minigames/pausebutton.png"))
     private var playTexture = Texture(Gdx.files.internal("Minigames/playbutton.png"))
     private val continueTexture = Texture(Gdx.files.internal("Minigames/btn_continue.png"))
-    private val tryAgainButtonTexture = Texture(Gdx.files.internal("Minigames/btn_tryAgain.png"))
     private val quitButtonTexture = Texture(Gdx.files.internal("Minigames/btn_quitMinigame.png"))
 
     private val tagSize = Vector2(200f, 90f)
@@ -43,7 +42,6 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
     private val pauseSize = Vector2(50f, 50f)
     private val timeBasePosition = Vector2(20f, 530f)
     private val timeSize = Vector2(150f, 50f)
-    private val tryAgainButtonBasePosition = Vector2(430f, 200f)
     private val quitButtonBasePosition = Vector2(430f, 130f)
     private val continueButtonBasePosition = Vector2(0f, 175f)
     private val buttonSize = Vector2(250f, 70f)
@@ -58,12 +56,6 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
         get() = Vector2(
             timeBasePosition.x,
             timeBasePosition.y * (viewport.worldHeight / 600f)
-        )
-
-    private val tryAgainButtonPosition: Vector2
-        get() = Vector2(
-            tryAgainButtonBasePosition.x * (viewport.worldWidth / 800f),
-            tryAgainButtonBasePosition.y * (viewport.worldHeight / 600f)
         )
 
     private val quitButtonPosition: Vector2
@@ -87,7 +79,7 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
     private var phraseCountMax = 0
     private var phraseCorrectCounter = 0
 
-    private var timeLeft = 30
+    private var timeLeft = 45
     private var elapsedTime = 0f
     private var isPaused = false
     private var gameStarted = false
@@ -95,9 +87,9 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
     private var isCompleted = false
 
     private val minigame = FamilieMinigame()
-    private var objects: List<Pair<DraggableObject, DraggableObject>> = listOf()
+    private var objects: List<Pair<TagObject, TagObject>> = listOf()
     private var shownPhrases: List<Pair<PhraseEntity, String>>? = null
-    private var firstSelected: DraggableObject? = null
+    private var firstSelected: TagObject? = null
     private var incorrectSelectionTimer = 0f // Timer für die rote Umrandung
 
     override fun show() {
@@ -110,7 +102,7 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
         setObjects()
     }
 
-    private fun positionObjectWithoutOverlap(obj: DraggableObject, usedPositions: List<DraggableObject>, margin: Float) {
+    private fun positionObjectWithoutOverlap(obj: TagObject, usedPositions: List<TagObject>) {
         var positionX: Float
         var positionY: Float
         var isOverlapping: Boolean
@@ -123,7 +115,7 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
             obj.positionY = positionY
 
             isOverlapping = usedPositions.any { usedObj ->
-                isOverlappingWithMargin(obj, usedObj, margin)
+                isOverlappingWithMargin(obj, usedObj, 30f)
             }
 
         } while (isOverlapping)
@@ -155,8 +147,8 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
 
         if (gameStarted) {
             objects.forEach { (obj1, obj2) ->
-                drawDraggableObject(obj1)
-                drawDraggableObject(obj2, true)
+                drawTagObject(obj1)
+                drawTagObject(obj2, true)
             }
         }
 
@@ -230,10 +222,10 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
             font.color = Color.WHITE
             val glyphLayout = GlyphLayout()
             font.data.setScale(0.4f, 0.4f)
-            glyphLayout.setText(font, "Put the items on the list in the basket", Color.WHITE, viewport.worldWidth * 0.75f, Align.center, true)
+            glyphLayout.setText(font, "Match the correct pairs")
             val gamePausedX = (viewport.worldWidth - glyphLayout.width) / 2
             val gamePausedY = (viewport.worldHeight / 2) + glyphLayout.height
-            font.draw(batch, "Put the items on the list in the basket", gamePausedX, gamePausedY, viewport.worldWidth * 0.75f, Align.center, true)
+            font.draw(batch, "Match the correct pairs", gamePausedX, gamePausedY)
 
             // Continue-Button anzeigen
             batch.draw(
@@ -286,14 +278,6 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
                     buttonSize.x * continueButtonScale,
                     buttonSize.y * continueButtonScale
                 )
-
-                /*val extraSpacing = 120f // Zusätzlicher Abstand zwischen "GAME OVER" und "Try Again"
-                val buttonYSpacing = -70f // Abstand zwischen "Try Again" und "Quit"
-                val tryAgainButtonY = gameOverY - glyphLayout.height - extraSpacing
-                val quitButtonY = tryAgainButtonY - buttonSize.y - buttonYSpacing
-                val buttonX = (viewport.worldWidth - buttonSize.x) / 2
-                batch.draw(tryAgainButtonTexture, buttonX, tryAgainButtonY, buttonSize.x, buttonSize.y)
-                batch.draw(quitButtonTexture, buttonX, quitButtonY, buttonSize.x, buttonSize.y)*/
             }
         }
 
@@ -301,9 +285,8 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
     }
 
     private fun setObjects() {
-        val tempObjects = mutableListOf<Pair<DraggableObject, DraggableObject>>()
-        val usedPositions = mutableListOf<DraggableObject>()
-        val margin = 20f // Mindestabstand zwischen den Objekten
+        val tempObjects = mutableListOf<Pair<TagObject, TagObject>>()
+        val usedPositions = mutableListOf<TagObject>()
 
         if(minigame.isGameComplete()) {
             gameEnded = true
@@ -319,7 +302,7 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
             val sizeX = 40f
             val sizeY = 40f
 
-            val objectEnglish = DraggableObject(
+            val objectEnglish = TagObject(
                 phrase = phrase,
                 texture = texture,
                 positionX = 0f,
@@ -329,7 +312,7 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
                 isEnglishPhrase = true
             )
 
-            val objectGerman = DraggableObject(
+            val objectGerman = TagObject(
                 phrase = phrase,
                 texture = texture,
                 positionX = 0f,
@@ -339,11 +322,11 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
             )
 
             // Positioniere das englische Objekt
-            positionObjectWithoutOverlap(objectEnglish, usedPositions, margin)
+            positionObjectWithoutOverlap(objectEnglish, usedPositions)
             usedPositions.add(objectEnglish)
 
             // Positioniere das deutsche Objekt
-            positionObjectWithoutOverlap(objectGerman, usedPositions, margin)
+            positionObjectWithoutOverlap(objectGerman, usedPositions)
             usedPositions.add(objectGerman)
 
             tempObjects.add(objectEnglish to objectGerman)
@@ -352,7 +335,7 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
         objects = tempObjects
     }
 
-    private fun drawDraggableObject(obj: DraggableObject, isTranslation: Boolean = false) {
+    private fun drawTagObject(obj: TagObject, isTranslation: Boolean = false) {
         val texture = if (!isTranslation) reversedTagTexture else tagTexture
 
         val borderColor = when {
@@ -394,95 +377,122 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
         val mouseY = (Gdx.graphics.height - Gdx.input.y.toFloat()) * viewport.worldHeight / Gdx.graphics.height
 
         continueButtonTargetScale = if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) &&
-            mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
-            1.1f
-        } else {
-            1f
-        }
+            mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) 1.1f else 1f
 
-        if (!gameEnded && gameStarted) {
-            if (Gdx.input.justTouched()) {
-                if (!isPaused) {
-                    if (mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) && mouseY in pausePosition.y..(pausePosition.y + pauseSize.y)) {
-                        isPaused = !isPaused
-                        return
-                    }
-                    val clickedObject = objects.flatMap { listOf(it.first, it.second) }
-                        .firstOrNull { obj -> !obj.isMatched && isMouseOverObject(mouseX, mouseY, obj) }
-
-                    clickedObject?.let { obj ->
-                        if (firstSelected == null) {
-                            // Erstes Objekt auswählen
-                            firstSelected = obj
-                            obj.isSelected = true
-                        } else {
-                            // Zweites Objekt auswählen
-                            if (firstSelected!!.isEnglishPhrase != obj.isEnglishPhrase) {
-                                // Überprüfen, ob die Objekte zusammengehören
-                                val partner = getPartner(firstSelected!!)
-                                if (partner == obj) {
-                                    // Richtige Auswahl: Grüne Umrandung
-                                    firstSelected!!.isMatched = true
-                                    obj.isMatched = true
-                                    phraseCorrectCounter++
-                                    val englishObject = if (firstSelected!!.isEnglishPhrase) firstSelected!! else obj
-                                    minigame.phraseCheck(englishObject.phrase, true)
-                                } else {
-                                    // Falsche Auswahl: Rote Umrandung für 1 Sekunde
-                                    firstSelected!!.isWrong = true
-                                    obj.isWrong = true
-                                    incorrectSelectionTimer = 1f
-                                    val englishObject = if (firstSelected!!.isEnglishPhrase) firstSelected!! else obj
-                                    minigame.phraseCheck(englishObject.phrase, false)
-                                }
-
-                                firstSelected!!.isSelected = false
-                                firstSelected = null
-                                obj.isSelected = false
-                            } else {
-                                // Zwei Objekte der gleichen Sprache ausgewählt: Setze das letzte ausgewählte Objekt als firstSelected
-                                firstSelected!!.isSelected = false
-                                firstSelected = obj
-                                firstSelected!!.isSelected = true
-                            }
-                        }
-                    } ?: run {
-                        // Kein Objekt ausgewählt: Auswahl zurücksetzen
-                        firstSelected?.isSelected = false
-                        firstSelected = null
-                    }
-                } else if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) && mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
-                        isPaused = !isPaused
-                }
-            } else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-                isPaused = true
-            }
-        } else if (!gameStarted) {
-            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-                if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) && mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
-                    gameStarted = true
-                }
-            }
-        } else if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) && mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
-                storePhraseDataAsync()
-
-
-                if (game!!.containsScreen<MapScreen>()) {
-                    game.removeScreen<MapScreen>()
-                }
-                game.addScreen(MapScreen(game))
-                game.setScreen<MapScreen>()
-            }
+        when {
+            !gameEnded && gameStarted -> handleGameInput(mouseX, mouseY)
+            !gameStarted && Gdx.input.isButtonPressed(Input.Buttons.LEFT) -> handleGameStart(mouseX, mouseY)
+            Gdx.input.isButtonPressed(Input.Buttons.LEFT) -> handleGameEnd(mouseX, mouseY)
         }
     }
 
-    private fun getPartner(obj: DraggableObject): DraggableObject? {
+
+
+    private fun handleGameInput(mouseX: Float, mouseY: Float) {
+        if (Gdx.input.justTouched()) {
+            when {
+                !isPaused && isPauseButtonClicked(mouseX, mouseY) -> togglePause()
+                !isPaused -> handleObjectSelection(mouseX, mouseY)
+                isContinueButtonClicked(mouseX, mouseY) -> togglePause()
+            }
+        } else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            isPaused = true
+        }
+    }
+
+    private fun handleGameStart(mouseX: Float, mouseY: Float) {
+        if (isContinueButtonClicked(mouseX, mouseY)) {
+            gameStarted = true
+        }
+    }
+
+    private fun handleGameEnd(mouseX: Float, mouseY: Float) {
+        if (isContinueButtonClicked(mouseX, mouseY)) {
+            storePhraseDataAsync()
+            transitionToMapScreen()
+        }
+    }
+
+    private fun handleObjectSelection(mouseX: Float, mouseY: Float) {
+        val clickedObject = objects.flatMap { listOf(it.first, it.second) }
+            .firstOrNull { obj -> !obj.isMatched && isMouseOverObject(mouseX, mouseY, obj) }
+
+        clickedObject?.let { obj ->
+            when {
+                firstSelected == null -> selectFirstObject(obj)
+                firstSelected!!.isEnglishPhrase != obj.isEnglishPhrase -> checkMatch(obj)
+                else -> reselectObject(obj)
+            }
+        } ?: deselectFirstObject()
+    }
+
+    private fun selectFirstObject(obj: TagObject) {
+        firstSelected = obj.apply { isSelected = true }
+    }
+
+    private fun checkMatch(obj: TagObject) {
+        val partner = getPartner(firstSelected!!)
+        val isCorrectMatch = partner == obj
+
+        firstSelected!!.isMatched = isCorrectMatch
+        obj.isMatched = isCorrectMatch
+
+        val englishObject = if (firstSelected!!.isEnglishPhrase) firstSelected!! else obj
+        minigame.phraseCheck(englishObject.phrase, isCorrectMatch)
+
+        if (!isCorrectMatch) {
+            firstSelected!!.isWrong = true
+            obj.isWrong = true
+            incorrectSelectionTimer = 1f
+        } else {
+            phraseCorrectCounter++
+        }
+
+        resetSelection()
+    }
+
+    private fun reselectObject(obj: TagObject) {
+        firstSelected!!.isSelected = false
+        firstSelected = obj.apply { isSelected = true }
+    }
+
+    private fun deselectFirstObject() {
+        firstSelected?.isSelected = false
+        firstSelected = null
+    }
+
+    private fun resetSelection() {
+        firstSelected!!.isSelected = false
+        firstSelected = null
+    }
+
+    private fun isPauseButtonClicked(mouseX: Float, mouseY: Float) =
+        mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) &&
+            mouseY in pausePosition.y..(pausePosition.y + pauseSize.y)
+
+    private fun isContinueButtonClicked(mouseX: Float, mouseY: Float) =
+        mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) &&
+            mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)
+
+    private fun togglePause() {
+        isPaused = !isPaused
+    }
+
+    private fun transitionToMapScreen() {
+        if (game.containsScreen<MapScreen>()) {
+            game.removeScreen<MapScreen>()
+        }
+        game.addScreen(MapScreen(game))
+        game.setScreen<MapScreen>()
+    }
+
+
+    private fun getPartner(obj: TagObject): TagObject? {
         return objects.firstOrNull { pair -> pair.first == obj || pair.second == obj }
             ?.let { pair -> if (pair.first == obj) pair.second else pair.first }
     }
 
-    private fun isMouseOverObject(mouseX: Float, mouseY: Float, obj: DraggableObject): Boolean {
+    private fun isMouseOverObject(mouseX: Float, mouseY: Float, obj: TagObject): Boolean {
         return mouseX >= obj.positionX && mouseX <= obj.positionX + tagSize.x &&
                 mouseY >= obj.positionY && mouseY <= obj.positionY + tagSize.y
     }
@@ -526,14 +536,14 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
         }
     }
 
-    private fun isOverlappingWithMargin(obj1: DraggableObject, obj2: DraggableObject, margin: Float): Boolean {
+    private fun isOverlappingWithMargin(obj1: TagObject, obj2: TagObject, margin: Float): Boolean {
         return obj1.positionX < obj2.positionX + tagSize.x + margin &&
             obj1.positionX + tagSize.x + margin > obj2.positionX &&
             obj1.positionY < obj2.positionY + tagSize.y + margin &&
             obj1.positionY + tagSize.y + margin > obj2.positionY
     }
 
-    private data class DraggableObject(
+    private data class TagObject(
         val phrase: PhraseEntity,
         val texture: Texture,
         var positionX: Float,
