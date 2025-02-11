@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.badlogic.gdx.math.Vector2
@@ -155,43 +156,110 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
     private val minigame = KleidungMinigame()
     private val objects: List<DraggableObject>
 
+    // Liste der Dateinamen, die nach unten verschoben werden sollen
+    private val objectsToMoveDown = listOf("blouse.png", "coat.png", "dress.png", "jacket.png", "jeans.png", "skirt.png", "trousers.png")
+
+    // Positionen unter dem Regal
+    private val bottomPositions = mutableListOf<Vector2>()
+
     init {
         // Initialisierung
         minigame.loadMinigamePhrases()
         minigame.loadAllPhrases()
 
-        val horizontalOffset = 100f // horizontalen Offset ändern
-        val verticalOffset = 150f // vertikalen Offset ändern
+        // Positionen UNTER dem Regal (Y-Wert angepasst)
+        bottomPositions.add(Vector2(50f, 100f))  // Position 1
+        bottomPositions.add(Vector2(150f, 100f)) // Position 2
+        bottomPositions.add(Vector2(250f, 100f)) // Position 3
+        bottomPositions.add(Vector2(350f, 100f)) // Position 4
+        bottomPositions.add(Vector2(450f, 100f)) // Position 5
 
-        objects = minigame.loadPhrasesWithAssets().map { (phrase, assetPath) ->
+        val horizontalOffset = 100f
+        val verticalOffset = 150f
+
+        val phrasesWithAssets = minigame.loadPhrasesWithAssets()
+
+        // Separate Listen für Regal- und Bottom-Objekte
+        val bottomObjects = mutableListOf<Pair<PhraseEntity, String>>()
+        val shelfObjects = mutableListOf<Pair<PhraseEntity, String>>()
+
+        phrasesWithAssets.forEach { (phrase, assetPath) ->
+            if (objectsToMoveDown.any { assetPath.contains(it) }) {
+                bottomObjects.add(phrase to assetPath)
+            } else {
+                shelfObjects.add(phrase to assetPath)
+            }
+        }
+
+        // Mische die Bottom-Objekte zufällig
+        bottomObjects.shuffle()
+
+        // Erstelle die DraggableObjects
+        objects = mutableListOf<DraggableObject>()
+
+        // Bottom-Objekte erstellen
+        bottomObjects.forEachIndexed { index, (phrase, assetPath) ->
             val texture = Texture(Gdx.files.internal(assetPath))
-
-            // Pixmap laden für Originalabmessungen
             val pixmap = Pixmap(Gdx.files.internal(assetPath))
             val originalWidth = pixmap.width.toFloat()
             val originalHeight = pixmap.height.toFloat()
-            pixmap.dispose() //Pixmap freigeben
-
-            val targetWidth = 50f //gewünschte Breite Kleidung!!
-
-            // Höhe mit Seitenverhältnis berechnen
+            pixmap.dispose()
+            val targetWidth = 50f
             val aspectRatio = originalHeight / originalWidth
             val targetHeight = targetWidth * aspectRatio
-            DraggableObject(
-                phrase = phrase,
-                texture = texture,
-                resetPositionX = if (assetPath.contains("Shirt") || assetPath.contains("Dress")) shelfBasePosition1.x + horizontalOffset else shelfBasePosition2.x + horizontalOffset,
-                resetPositionY = if (assetPath.contains("Shirt") || assetPath.contains("Dress")) shelfBasePosition1.y + verticalOffset else shelfBasePosition2.y + verticalOffset,
-                basePositionX = if (assetPath.contains("Shirt") || assetPath.contains("Dress")) shelfBasePosition1.x + horizontalOffset else shelfBasePosition2.x + horizontalOffset,
-                basePositionY = if (assetPath.contains("Shirt") || assetPath.contains("Dress")) shelfBasePosition1.y + verticalOffset else shelfBasePosition2.y + verticalOffset,
-                positionX = 0f,
-                positionY = 0f,
-                positionOffsetX = 0f,
-                positionOffsetY = 0f,
-                //sizeX = 100f, //Größe KLeidung
-                //sizeY = 100f //Größe KLeidung
-                sizeX = targetWidth,
-                sizeY = targetHeight
+
+            // Position aus der Liste bottomPositions nehmen (index-basiert, nicht entfernen)
+            val position = bottomPositions[index % bottomPositions.size] //Modulo Operator
+            val resetPositionX = position.x
+            val resetPositionY = position.y
+
+            objects.add(
+                DraggableObject(
+                    phrase = phrase,
+                    texture = texture,
+                    resetPositionX = resetPositionX,
+                    resetPositionY = resetPositionY,
+                    basePositionX = resetPositionX,
+                    basePositionY = resetPositionY,
+                    positionX = 0f,
+                    positionY = 0f,
+                    positionOffsetX = 0f,
+                    positionOffsetY = 0f,
+                    sizeX = targetWidth,
+                    sizeY = targetHeight
+                )
+            )
+        }
+
+        //Regal-Objekte erstellen
+        shelfObjects.forEach { (phrase, assetPath) ->
+            val texture = Texture(Gdx.files.internal(assetPath))
+            val pixmap = Pixmap(Gdx.files.internal(assetPath))
+            val originalWidth = pixmap.width.toFloat()
+            val originalHeight = pixmap.height.toFloat()
+            pixmap.dispose()
+            val targetWidth = 50f
+            val aspectRatio = originalHeight / originalWidth
+            val targetHeight = targetWidth * aspectRatio
+
+            val resetPositionX = if (assetPath.contains("Shirt") || assetPath.contains("Dress")) shelfBasePosition1.x + horizontalOffset else shelfBasePosition2.x + horizontalOffset
+            val resetPositionY = if (assetPath.contains("Shirt") || assetPath.contains("Dress")) shelfBasePosition1.y + verticalOffset else shelfBasePosition2.y + verticalOffset
+
+            objects.add(
+                DraggableObject(
+                    phrase = phrase,
+                    texture = texture,
+                    resetPositionX = resetPositionX,
+                    resetPositionY = resetPositionY,
+                    basePositionX = resetPositionX,
+                    basePositionY = resetPositionY,
+                    positionX = 0f,
+                    positionY = 0f,
+                    positionOffsetX = 0f,
+                    positionOffsetY = 0f,
+                    sizeX = targetWidth,
+                    sizeY = targetHeight
+                )
             )
         }
     }
