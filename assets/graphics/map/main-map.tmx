@@ -40,7 +40,7 @@
   </data>
  </layer>
  <objectgroup id="13" name="entities">
-  <object id="9" type="Player" gid="3" x="497.667" y="533.167" width="48" height="48"/>
+  <object id="9" type="Player" gid="3" x="339.667" y="497.667" width="48" height="48"/>
  </objectgroup>
  <objectgroup color="#aa55ff" id="14" name="trigger">
   <object id="10" x="508.072" y="480.167" width="25.7154" height="8.54545">
@@ -49,7 +49,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup color="#ffaa00" id="16" name="path">
+ <objectgroup color="#ffaa00" id="16" name="path" visible="0">
   <object id="11" x="410" y="201.334" width="46.6667" height="360.666">
    <properties>
     <property name="id" type="int" value="1"/>
@@ -98,7 +98,7 @@
     <property name="path" value="hor"/>
    </properties>
   </object>
-  <object id="20" x="432" y="497.5" width="239" height="42.5">
+  <object id="20" x="428" y="495" width="239" height="42.5">
    <properties>
     <property name="id" type="int" value="2"/>
     <property name="path" value="hor"/>
