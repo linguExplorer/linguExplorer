@@ -53,7 +53,7 @@ abstract class MinigameSystem {
         val phrasesProgress = mutableListOf<Triple<Int, Int, Boolean>>()
         val phraseStateUpdates = mutableListOf<Int>()
 
-        capturedPhrases.forEach { (phrase, correctSet) ->  // correctSet ist jetzt ein Set<Boolean>
+        capturedPhrases.forEach { (phrase, correctSet) ->
             val relevantProgress = userProgress.find { it.phraseId == phrase.id }
             val correctIndex = historyRepo.calculateCorrectIndex(phrase.id, userHistory)
 
