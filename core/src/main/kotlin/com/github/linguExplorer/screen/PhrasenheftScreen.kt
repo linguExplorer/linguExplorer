@@ -1,5 +1,6 @@
 package com.github.linguExplorer.screen
 
+import ch.qos.logback.core.pattern.color.BlackCompositeConverter
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
@@ -30,12 +31,10 @@ class PhrasenheftScreen : KtxScreen {
 
     }
 
-    private var scrollPosition = 0f // Scroll-Position (startY wird angepasst)
-    private val lineHeight = 56f // Höhe jeder Zeile
-    private val spacing = 260f // Abstand zwischen Phrase und Übersetzung
-    private val padding = 20f // Abstand vom Rand zum Inhalt
-    private var currentY = 778f // Wir definieren currentY hier und aktualisieren es in der render-Methode
-
+    private val lineHeight = 56f
+    private val spacing = 260f
+    private val padding = 20f
+    private var currentY = 778f
 
 
 
@@ -90,9 +89,10 @@ class PhrasenheftScreen : KtxScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT) // Bildschirm löschen
 
         batch.begin() // Beginnt das Zeichnen
-        font = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
+        font = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
+        val layout = GlyphLayout()
         font.color = Color.BLACK
-        font.data.setScale(0.2f, 0.2f)
+        font.data.setScale(0.3f, 0.3f)
 
         // Bildschirmgröße holen
         val screenHeight = viewport.screenHeight
@@ -112,6 +112,7 @@ class PhrasenheftScreen : KtxScreen {
 
         batch.draw(heftTexture, (screenWidth/2f - heftSize.x/2f) , (screenHeight/2f - heftSize.y/2f), heftSize.x, heftSize.y)
 
+
         if((currentPage-1) > 0) {
             batch.draw(backTexture, screenWidth/2 - 690f , (screenHeight  - heftSize.y) - 200f, backSize.x, backSize.y)
 
@@ -127,6 +128,19 @@ class PhrasenheftScreen : KtxScreen {
 
 
 
+        layout.setText(font, "English")
+        var titleTextWidth = layout.width
+        var titleX = startX - (titleTextWidth / 2)
+        font.draw(batch, "English", titleX, adjustedY + 75f)
+        titleX += 550f
+        font.draw(batch, "English", titleX, adjustedY + 75f)
+        layout.setText(font, "Deutsch")
+        titleTextWidth = layout.width
+        titleX = startX + spacing - (titleTextWidth / 2)
+        font.draw(batch, "Deutsch", titleX, adjustedY + 75f)
+        titleX += 550f
+        font.draw(batch, "Deutsch", titleX, adjustedY + 75f)
+
 
 
 
@@ -135,8 +149,10 @@ class PhrasenheftScreen : KtxScreen {
         val phrasesPerColumn = 10
         // Anzeige der Phrasen
 
+        font = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
+        font.data.setScale(0.2f, 0.2f)
+        font.color = Color.BLACK
 
-        val layout = GlyphLayout()
 
         for ((index, phrase) in phrases.withIndex()) {
             val pageStartIndex = if (currentPage == 1) {
@@ -184,25 +200,6 @@ class PhrasenheftScreen : KtxScreen {
 
 
         batch.end()
-
-        // Wenn die Pfeiltaste nach unten gedrückt wird, die Scroll-Position anpassen
-        if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.DOWN)) {
-            scrollPosition -= lineHeight // Scrollen nach unten
-        }
-
-        // Begrenzung, dass man nicht zu weit nach oben scrollen kann
-        if (scrollPosition > 0) {
-            scrollPosition = 0f // Nicht weiter nach oben als der Anfang
-        }
-
-        // Berechnung des maximalen Scrollwerts:
-        val totalContentHeight = phrases.size * lineHeight // Gesamthöhe des Inhalts
-        val maxScroll = totalContentHeight - screenHeight // Maximaler Scrollwert
-
-        // Begrenzung, dass man nicht über das Ende der Liste hinaus scrollen kann
-        if (scrollPosition < -maxScroll) {
-            scrollPosition = -maxScroll // Nicht weiter nach unten als das Ende der Liste
-        }
     }
 
 
