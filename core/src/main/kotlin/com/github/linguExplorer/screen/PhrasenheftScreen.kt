@@ -71,6 +71,11 @@ class PhrasenheftScreen : KtxScreen {
         )
 
 
+    private val sortPosition: Vector2
+        get() = Vector2(
+            viewport.screenWidth/2 - 690f,
+            (viewport.screenHeight/2f + heftSize.y/2f) - sortSize.y
+        )
 
     override fun show() {
 
@@ -114,14 +119,14 @@ class PhrasenheftScreen : KtxScreen {
 
 
         if((currentPage-1) > 0) {
-            batch.draw(backTexture, screenWidth/2 - 690f , (screenHeight  - heftSize.y) - 200f, backSize.x, backSize.y)
+            batch.draw(backTexture, backPosition.x , backPosition.y, backSize.x, backSize.y)
 
         }
         if((currentPage-1) + 1 <=  maxPages-1f) {
             batch.draw(nextTexture, nextPosition.x , nextPosition.y, backSize.x, backSize.y)
 
         }
-        batch.draw(sortTexture,screenWidth/2 - 690f, (screenHeight/2f + heftSize.y/2f) - sortSize.y , sortSize.x, sortSize.y)
+        batch.draw(sortTexture,sortPosition.x, sortPosition.y, sortSize.x, sortSize.y)
 
         val startX = screenWidth/4f + 70f
         var adjustedY = currentY // Berücksichtige die Scroll-Position
@@ -231,6 +236,13 @@ class PhrasenheftScreen : KtxScreen {
 
                 }
                 println("Button Back, $currentPage")
+            }
+
+            if (mouseX in sortPosition.x..(sortPosition.x + sortSize.x) && mouseY in sortPosition.y..(sortPosition.y + sortSize.y)
+            ) {
+
+
+                println("Sort Button clicked")
             }
 
             }
