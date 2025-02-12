@@ -1,21 +1,17 @@
 package com.github.linguExplorer.screen
 
-import ch.qos.logback.core.pattern.color.BlackCompositeConverter
-import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.github.linguExplorer.repositories.PhraseProgressRepository
-import com.github.linguExplorer.repositories.PhraseRepository
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
 
@@ -24,9 +20,14 @@ class PhrasenheftScreen : KtxScreen {
     private val batch = SpriteBatch()
     private val shapeRenderer = ShapeRenderer()
 
+    private enum class SortState {
+        ASCENDING_PHRASE, DESCENDING_PHRASE, ASCENDING_TRANSLATION, DESCENDING_TRANSLATION
+    }
+    private var currentSortState = SortState.ASCENDING_PHRASE
+    private var sortText = "Phrase aufsteigend"
 
     private val phrasesOfProgress = PhraseProgressRepository().getAllPhrasesOfUserProgress(123)
-    private val phrases = phrasesOfProgress.map {
+    private var phrases = phrasesOfProgress.map {
         it.phrase to it.translation
 
     }
@@ -87,51 +88,43 @@ class PhrasenheftScreen : KtxScreen {
     }
 
     override fun render(delta: Float) {
-        // Update the viewport
         handleInput()
 
         viewport.apply()
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT) // Bildschirm löschen
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
-        batch.begin() // Beginnt das Zeichnen
+        batch.begin()
         font = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
         val layout = GlyphLayout()
         font.color = Color.BLACK
         font.data.setScale(0.3f, 0.3f)
 
-        // Bildschirmgröße holen
         val screenHeight = viewport.screenHeight
         val screenWidth = viewport.screenWidth
 
-        // Hintergrund zeichnen: abgerundetes Rechteck
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
-        shapeRenderer.color = Color(156 / 255f, 194 / 255f, 211 / 255f, 1f) // Leicht grünliche Farbe
-        shapeRenderer.rect(padding, padding, screenWidth - padding * 2, screenHeight - padding * 2) // abgerundete Ecken
+        shapeRenderer.color = Color(156 / 255f, 194 / 255f, 211 / 255f, 1f)
+        shapeRenderer.rect(padding, padding, screenWidth - padding * 2, screenHeight - padding * 2)
         shapeRenderer.end()
-
 
         batch.end()
 
-        // Anzeige der Phrasen innerhalb des Hintergrunds
         batch.begin()
 
-        batch.draw(heftTexture, (screenWidth/2f - heftSize.x/2f) , (screenHeight/2f - heftSize.y/2f), heftSize.x, heftSize.y)
+        val heftX = screenWidth / 2f - heftSize.x / 2f
+        val heftY = screenHeight / 2f - heftSize.y / 2f
+        batch.draw(heftTexture, heftX, heftY, heftSize.x, heftSize.y)
 
-
-        if((currentPage-1) > 0) {
-            batch.draw(backTexture, backPosition.x , backPosition.y, backSize.x, backSize.y)
-
+        if ((currentPage - 1) > 0) {
+            batch.draw(backTexture, backPosition.x, backPosition.y, backSize.x, backSize.y)
         }
-        if((currentPage-1) + 1 <=  maxPages-1f) {
-            batch.draw(nextTexture, nextPosition.x , nextPosition.y, backSize.x, backSize.y)
-
+        if ((currentPage - 1) + 1 <= maxPages - 1f) {
+            batch.draw(nextTexture, nextPosition.x, nextPosition.y, backSize.x, backSize.y)
         }
-        batch.draw(sortTexture,sortPosition.x, sortPosition.y, sortSize.x, sortSize.y)
+        batch.draw(sortTexture, sortPosition.x, sortPosition.y, sortSize.x, sortSize.y)
 
-        val startX = screenWidth/4f + 70f
-        var adjustedY = currentY // Berücksichtige die Scroll-Position
-
-
+        val startX = screenWidth / 4f + 70f
+        var adjustedY = currentY
 
         layout.setText(font, "English")
         var titleTextWidth = layout.width
@@ -146,29 +139,23 @@ class PhrasenheftScreen : KtxScreen {
         titleX += 550f
         font.draw(batch, "Deutsch", titleX, adjustedY + 75f)
 
-
-
-
         val phrasesPerPage = 20
-        var multiplikator = 10
         val phrasesPerColumn = 10
-        // Anzeige der Phrasen
 
         font = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
         font.data.setScale(0.2f, 0.2f)
         font.color = Color.BLACK
 
-
         for ((index, phrase) in phrases.withIndex()) {
             val pageStartIndex = if (currentPage == 1) {
                 0
             } else {
-                (currentPage * 10) + 1
+                (currentPage * 10) + 2
             }
 
             val pageEndIndex = pageStartIndex + phrasesPerPage
 
-            if (index >= pageStartIndex && index <= pageEndIndex + 1) {
+            if (index in pageStartIndex..pageEndIndex + 1) {
                 val phraseText = phrase.first
                 val translationText = phrase.second
 
@@ -178,18 +165,15 @@ class PhrasenheftScreen : KtxScreen {
                     550f
                 }
 
-                // Berechne die Breite des Phrasentextes
                 layout.setText(font, phraseText)
                 val phraseTextWidth = layout.width
 
                 layout.setText(font, translationText)
                 val translationTextWidth = layout.width
 
-                // Zentriere den Phrasentext
                 val phraseX = startX + columnOffset - (phraseTextWidth / 2)
                 font.draw(batch, phraseText, phraseX, adjustedY)
 
-                // Zentriere den Übersetzungstext
                 val translationX = startX + spacing + columnOffset - (translationTextWidth / 2)
                 font.draw(batch, translationText, translationX, adjustedY)
 
@@ -201,11 +185,23 @@ class PhrasenheftScreen : KtxScreen {
             }
         }
 
+        val sideText = "Phrasenheft sortiert nach: $sortText"
+        val textX = heftX - 50f
+        val textY = heftY + heftSize.y / 2f
 
+        val fontRotationMatrix = batch.transformMatrix.cpy()
+        fontRotationMatrix.setToRotation(0f, 0f, 1f, 90f)
+        batch.transformMatrix = fontRotationMatrix
 
+        font.data.setScale(0.15f, 0.15f)
+        layout.setText(font, sideText)
+        font.draw(batch, sideText, textX, -textY + layout.width / 2f)
+
+        batch.transformMatrix.idt()
 
         batch.end()
     }
+
 
 
 
@@ -240,9 +236,26 @@ class PhrasenheftScreen : KtxScreen {
 
             if (mouseX in sortPosition.x..(sortPosition.x + sortSize.x) && mouseY in sortPosition.y..(sortPosition.y + sortSize.y)
             ) {
+                currentSortState = when (currentSortState) {
+                    SortState.ASCENDING_PHRASE -> SortState.DESCENDING_PHRASE
+                    SortState.DESCENDING_PHRASE -> SortState.ASCENDING_TRANSLATION
+                    SortState.ASCENDING_TRANSLATION -> SortState.DESCENDING_TRANSLATION
+                    SortState.DESCENDING_TRANSLATION -> SortState.ASCENDING_PHRASE
+                }
 
+                phrases = when (currentSortState) {
+                    SortState.ASCENDING_PHRASE -> phrases.sortedBy { it.first }
+                    SortState.DESCENDING_PHRASE -> phrases.sortedByDescending { it.first }
+                    SortState.ASCENDING_TRANSLATION -> phrases.sortedBy { it.second }
+                    SortState.DESCENDING_TRANSLATION -> phrases.sortedByDescending { it.second }
+                }
 
-                println("Sort Button clicked")
+                sortText = when (currentSortState) {
+                    SortState.ASCENDING_PHRASE -> "Phrase aufsteigend"
+                    SortState.DESCENDING_PHRASE -> "Phrase absteigend"
+                    SortState.ASCENDING_TRANSLATION -> "Übersetzung aufsteigend"
+                    SortState.DESCENDING_TRANSLATION -> "Übersetzung absteigend"
+                }
             }
 
             }
