@@ -11,11 +11,14 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.github.linguExplorer.linguExplorer
 import com.github.linguExplorer.repositories.PhraseProgressRepository
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
 
-class PhrasenheftScreen : KtxScreen {
+class PhrasenheftScreen (
+    private val game: linguExplorer
+): KtxScreen {
     private var font = BitmapFont()
     private val batch = SpriteBatch()
     private val shapeRenderer = ShapeRenderer()
@@ -45,11 +48,14 @@ class PhrasenheftScreen : KtxScreen {
     private val sortTexture = Texture(Gdx.files.internal("Phrasenheft/Sort.png"))
     private val nextTexture = Texture(Gdx.files.internal("Phrasenheft/weiter.png"))
     private val backTexture = Texture(Gdx.files.internal("Phrasenheft/zurueck.png"))
+    private val closeTexture = Texture(Gdx.files.internal("Phrasenheft/red_X.png"))
+
 
     private val heftSize = Vector2(heftTexture.width.toFloat()*8, heftTexture.height.toFloat()*8)
     private val nextSize = Vector2(backTexture.width.toFloat()*8, backTexture.height.toFloat()*8)
     private val backSize = Vector2(backTexture.width.toFloat()*8, backTexture.height.toFloat()*8)
     private val sortSize = Vector2(sortTexture.width.toFloat()*6, sortTexture.height.toFloat()*6)
+    private val closeSize = Vector2(closeTexture.width.toFloat()*2, closeTexture.height.toFloat()*2)
 
 
     private val viewport: Viewport = ExtendViewport(800f, 600f)
@@ -75,6 +81,12 @@ class PhrasenheftScreen : KtxScreen {
     private val sortPosition: Vector2
         get() = Vector2(
             viewport.screenWidth/2 - 690f,
+            (viewport.screenHeight/2f + heftSize.y/2f) - sortSize.y
+        )
+
+    private val closePosition: Vector2
+        get() = Vector2(
+            viewport.screenWidth/2 + 690f,
             (viewport.screenHeight/2f + heftSize.y/2f) - sortSize.y
         )
 
@@ -122,6 +134,8 @@ class PhrasenheftScreen : KtxScreen {
             batch.draw(nextTexture, nextPosition.x, nextPosition.y, backSize.x, backSize.y)
         }
         batch.draw(sortTexture, sortPosition.x, sortPosition.y, sortSize.x, sortSize.y)
+        batch.draw(closeTexture, closePosition.x, closePosition.y, closeSize.x, closeSize.y)
+
 
         val startX = screenWidth / 4f + 70f
         var adjustedY = currentY
@@ -257,6 +271,15 @@ class PhrasenheftScreen : KtxScreen {
                     SortState.DESCENDING_TRANSLATION -> "Übersetzung absteigend"
                 }
             }
+
+
+            if (mouseX in closePosition.x..(closePosition.x + closeSize.x) && mouseY in closePosition.y..(closePosition.y + closeSize.y)
+            ) {
+
+                game.removeScreen<PhrasenheftScreen>()
+            }
+
+
 
             }
 
