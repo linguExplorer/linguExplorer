@@ -8,6 +8,6 @@ import com.github.linguExplorer.screen.PhrasenheftScreen
 class linguExplorer : Game() {
     override fun create() {
         DatabaseManager()
-        this.screen = PhrasenheftScreen(this) // Setzt den GameScreen
+        this.screen = PhrasenheftScreen() // Setzt den GameScreen
     }
 }

@@ -17,7 +17,6 @@ import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
 
 class PhrasenheftScreen (
-    private val game: linguExplorer
 ): KtxScreen {
     private var font = BitmapFont()
     private val batch = SpriteBatch()
@@ -55,7 +54,7 @@ class PhrasenheftScreen (
     private val nextSize = Vector2(backTexture.width.toFloat()*8, backTexture.height.toFloat()*8)
     private val backSize = Vector2(backTexture.width.toFloat()*8, backTexture.height.toFloat()*8)
     private val sortSize = Vector2(sortTexture.width.toFloat()*6, sortTexture.height.toFloat()*6)
-    private val closeSize = Vector2(closeTexture.width.toFloat()*2, closeTexture.height.toFloat()*2)
+    private val closeSize = Vector2(closeTexture.width.toFloat()*1.25f, closeTexture.height.toFloat()*1.25f)
 
 
     private val viewport: Viewport = ExtendViewport(800f, 600f)
@@ -86,10 +85,13 @@ class PhrasenheftScreen (
 
     private val closePosition: Vector2
         get() = Vector2(
-            viewport.screenWidth/2 + 690f,
-            (viewport.screenHeight/2f + heftSize.y/2f) - sortSize.y
+            viewport.screenWidth.toFloat() - 150f,
+            (viewport.screenHeight - 50f) - sortSize.y
         )
 
+
+    private val textX = sortPosition.x
+    private val textY = sortPosition.y
     override fun show() {
 
         Gdx.input.inputProcessor = null
@@ -156,6 +158,8 @@ class PhrasenheftScreen (
         val phrasesPerPage = 20
         val phrasesPerColumn = 10
 
+
+
         font = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
         font.data.setScale(0.2f, 0.2f)
         font.color = Color.BLACK
@@ -199,19 +203,18 @@ class PhrasenheftScreen (
             }
         }
 
-        val sideText = "Phrasenheft sortiert nach: $sortText"
-        val textX = heftX - 50f
-        val textY = heftY + heftSize.y / 2f
+        val sideText = "Sortiert nach: $sortText"
 
-        val fontRotationMatrix = batch.transformMatrix.cpy()
-        fontRotationMatrix.setToRotation(0f, 0f, 1f, 90f)
-        batch.transformMatrix = fontRotationMatrix
+
+        //val fontRotationMatrix = batch.transformMatrix.cpy()
+        //fontRotationMatrix.setToRotation(0f, 0f, 1f, 90f)
+        //batch.transformMatrix = fontRotationMatrix
 
         font.data.setScale(0.15f, 0.15f)
         layout.setText(font, sideText)
-        font.draw(batch, sideText, textX, -textY + layout.width / 2f)
+        font.draw(batch, sideText, sortPosition.x, sortPosition.y + sortSize.y + 30f )
 
-        batch.transformMatrix.idt()
+       // batch.transformMatrix.idt()
 
         batch.end()
     }
@@ -275,8 +278,8 @@ class PhrasenheftScreen (
 
             if (mouseX in closePosition.x..(closePosition.x + closeSize.x) && mouseY in closePosition.y..(closePosition.y + closeSize.y)
             ) {
+                println("NEIN!!")
 
-                game.removeScreen<PhrasenheftScreen>()
             }
 
 
