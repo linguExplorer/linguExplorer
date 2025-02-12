@@ -168,11 +168,16 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
         minigame.loadAllPhrases()
 
         // Positionen UNTER dem Regal (Y-Wert angepasst)
-        bottomPositions.add(Vector2(50f, 100f))  // Position 1
-        bottomPositions.add(Vector2(150f, 100f)) // Position 2
-        bottomPositions.add(Vector2(250f, 100f)) // Position 3
-        bottomPositions.add(Vector2(350f, 100f)) // Position 4
-        bottomPositions.add(Vector2(450f, 100f)) // Position 5
+        bottomPositions.add(Vector2(50f, 50f))   // Position 1
+        bottomPositions.add(Vector2(100f, 50f))  // Position 2
+        bottomPositions.add(Vector2(150f, 50f))  // Position 3
+        bottomPositions.add(Vector2(200f, 50f))  // Position 4
+        bottomPositions.add(Vector2(250f, 50f))  // Position 5
+        bottomPositions.add(Vector2(260f, 200f))   // Position 6
+        bottomPositions.add(Vector2(260f, 200f))  // Position 7
+        bottomPositions.add(Vector2(260f, 200f))  // Position 8
+        bottomPositions.add(Vector2(260f, 200f))  // Position 9
+        bottomPositions.add(Vector2(260f, 200f))  // Position 10
 
         val horizontalOffset = 100f
         val verticalOffset = 150f
@@ -198,15 +203,16 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
         objects = mutableListOf<DraggableObject>()
 
         // Bottom-Objekte erstellen
+        val bottomTargetWidth = 100f // Größere Breite für Bottom-Objekte
+
         bottomObjects.forEachIndexed { index, (phrase, assetPath) ->
             val texture = Texture(Gdx.files.internal(assetPath))
             val pixmap = Pixmap(Gdx.files.internal(assetPath))
             val originalWidth = pixmap.width.toFloat()
             val originalHeight = pixmap.height.toFloat()
             pixmap.dispose()
-            val targetWidth = 50f
             val aspectRatio = originalHeight / originalWidth
-            val targetHeight = targetWidth * aspectRatio
+            val targetHeight = bottomTargetWidth * aspectRatio
 
             // Position aus der Liste bottomPositions nehmen (index-basiert, nicht entfernen)
             val position = bottomPositions[index % bottomPositions.size] //Modulo Operator
@@ -225,7 +231,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                     positionY = 0f,
                     positionOffsetX = 0f,
                     positionOffsetY = 0f,
-                    sizeX = targetWidth,
+                    sizeX = bottomTargetWidth,
                     sizeY = targetHeight
                 )
             )
@@ -656,7 +662,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
         return obj.positionX + obj.texture.width > blueBagPosition.x &&
             obj.positionX < blueBagPosition.x + blueBagSize.x &&
             obj.positionY + obj.texture.height > blueBagPosition.y &&
-            obj.positionY < blueBagPosition.y + blueBagSize.y
+            obj.positionY < blueBagSize.y
     }
 
     private fun storePhraseDataAsync() {
