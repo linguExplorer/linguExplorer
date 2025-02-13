@@ -19,6 +19,7 @@ import com.github.linguExplorer.linguExplorer
 import com.github.linguExplorer.minigames.KleidungMinigame
 import com.github.linguExplorer.models.PhraseEntity
 import ktx.app.KtxScreen
+import java.sql.DriverManager.println
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -207,6 +208,12 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
 
         bottomObjects.forEachIndexed { index, (phrase, assetPath) ->
             val texture = Texture(Gdx.files.internal(assetPath))
+            //Pfad der Hänger-Textur erstellen
+            val hangerAssetPath = assetPath.replace(".png", "").replace("phraseImages/", "phraseImages/H_") + ".png"
+            Gdx.app.log("DEBUG","Asset Path: $assetPath") // Zeige den ursprünglichen Asset-Pfad
+            Gdx.app.log("DEBUG","Hanger Asset Path: $hangerAssetPath") // Zeige den generierten Hanger-Pfad
+            //Sicherstellen dass die Datei existiert
+            val hangerTexture = if (Gdx.files.internal(hangerAssetPath).exists()) Texture(Gdx.files.internal(hangerAssetPath)) else null
             val pixmap = Pixmap(Gdx.files.internal(assetPath))
             val originalWidth = pixmap.width.toFloat()
             val originalHeight = pixmap.height.toFloat()
@@ -219,10 +226,14 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
             val resetPositionX = position.x
             val resetPositionY = position.y
 
+            val currentTexture = hangerTexture ?: texture // Initialisiere currentTexture mit der HangerTextur, falls vorhanden
+
             objects.add(
                 DraggableObject(
                     phrase = phrase,
                     texture = texture,
+                    hangerTexture = hangerTexture,
+                    currentTexture = currentTexture, // Setze die aktuelle Textur
                     resetPositionX = resetPositionX,
                     resetPositionY = resetPositionY,
                     basePositionX = resetPositionX,
@@ -237,8 +248,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
             )
         }
 
-        //Regal-Objekte erstellen
-        shelfObjects.forEach { (phrase, assetPath) ->
+        shelfObjects.forEach { (phrase, assetPath) ->  // Korrekte Signatur für ohne Index
             val texture = Texture(Gdx.files.internal(assetPath))
             val pixmap = Pixmap(Gdx.files.internal(assetPath))
             val originalWidth = pixmap.width.toFloat()
@@ -251,10 +261,15 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
             val resetPositionX = if (assetPath.contains("Shirt") || assetPath.contains("Dress")) shelfBasePosition1.x + horizontalOffset else shelfBasePosition2.x + horizontalOffset
             val resetPositionY = if (assetPath.contains("Shirt") || assetPath.contains("Dress")) shelfBasePosition1.y + verticalOffset else shelfBasePosition2.y + verticalOffset
 
+            // Regalobjekte haben keine Hanger-Textur
+            val currentTexture = texture // Initialisiere currentTexture
+
             objects.add(
                 DraggableObject(
                     phrase = phrase,
                     texture = texture,
+                    hangerTexture = null, // KEINE Hanger-Textur für Regalobjekte
+                    currentTexture = currentTexture, // Setze die aktuelle Textur
                     resetPositionX = resetPositionX,
                     resetPositionY = resetPositionY,
                     basePositionX = resetPositionX,
@@ -337,7 +352,8 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                 }
 
                 if (!obj.isCollected) {
-                    batch.draw(obj.texture, obj.positionX, obj.positionY, obj.sizeX, obj.sizeY)
+                    // Zeichne die aktuelle Textur
+                    batch.draw(obj.currentTexture, obj.positionX, obj.positionY, obj.sizeX, obj.sizeY)
                 }
                 index++
                 positionOffsetX += 50f * (viewport.worldWidth / 800f)
@@ -521,6 +537,8 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                             if (!isDragging && !obj.isCollected && isMouseInsideImage(mouseX, mouseY, obj)) {
                                 isDragging = true
                                 obj.isBeingDragged = true
+                                //Setze Textur auf normal wenn aufgehoben
+                                obj.currentTexture = obj.texture
                                 offsetX = mouseX - obj.positionX
                                 offsetY = mouseY - obj.positionY
                             }
@@ -574,6 +592,9 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                                 // Objekt zurück an die Startposition setzen
                                 obj.basePositionX = obj.resetPositionX
                                 obj.basePositionY = obj.resetPositionY
+
+                                //Setze Textur auf HangerTextur wenn vorhanden, andernfalls normale Textur
+                                obj.currentTexture = obj.hangerTexture ?: obj.texture
                             }
                         }
                     }
@@ -695,6 +716,8 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
     private data class DraggableObject(
         val phrase: PhraseEntity,
         val texture: Texture,
+        val hangerTexture: Texture?,
+        var currentTexture: Texture,
         var resetPositionX: Float,
         var resetPositionY: Float,
         var basePositionX: Float,
