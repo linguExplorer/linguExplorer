@@ -210,8 +210,8 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
             val texture = Texture(Gdx.files.internal(assetPath))
             //Pfad der Hänger-Textur erstellen
             val hangerAssetPath = assetPath.replace(".png", "").replace("phraseImages/", "phraseImages/H_") + ".png"
-            Gdx.app.log("DEBUG","Asset Path: $assetPath") // Zeige den ursprünglichen Asset-Pfad
-            Gdx.app.log("DEBUG","Hanger Asset Path: $hangerAssetPath") // Zeige den generierten Hanger-Pfad
+            Gdx.app.log("DEBUG","Asset Path: $assetPath") // ursprünglichen Asset-Pfad
+            Gdx.app.log("DEBUG","Hanger Asset Path: $hangerAssetPath") // generierten Hanger-Pfad
             //Sicherstellen dass die Datei existiert
             val hangerTexture = if (Gdx.files.internal(hangerAssetPath).exists()) Texture(Gdx.files.internal(hangerAssetPath)) else null
             val pixmap = Pixmap(Gdx.files.internal(assetPath))
@@ -221,19 +221,19 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
             val aspectRatio = originalHeight / originalWidth
             val targetHeight = bottomTargetWidth * aspectRatio
 
-            // Position aus der Liste bottomPositions nehmen (index-basiert, nicht entfernen)
+            // Position aus der Liste bottomPositions nehmen
             val position = bottomPositions[index % bottomPositions.size] //Modulo Operator
             val resetPositionX = position.x
             val resetPositionY = position.y
 
-            val currentTexture = hangerTexture ?: texture // Initialisiere currentTexture mit der HangerTextur, falls vorhanden
+            val currentTexture = hangerTexture ?: texture // Initialisieren von currentTexture mit der HangerTextur, falls vorhanden
 
             objects.add(
                 DraggableObject(
                     phrase = phrase,
                     texture = texture,
                     hangerTexture = hangerTexture,
-                    currentTexture = currentTexture, // Setze die aktuelle Textur
+                    currentTexture = currentTexture, // aktuelle Textur
                     resetPositionX = resetPositionX,
                     resetPositionY = resetPositionY,
                     basePositionX = resetPositionX,
@@ -269,7 +269,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                     phrase = phrase,
                     texture = texture,
                     hangerTexture = null, // KEINE Hanger-Textur für Regalobjekte
-                    currentTexture = currentTexture, // Setze die aktuelle Textur
+                    currentTexture = currentTexture, //aktuelle Textur
                     resetPositionX = resetPositionX,
                     resetPositionY = resetPositionY,
                     basePositionX = resetPositionX,
