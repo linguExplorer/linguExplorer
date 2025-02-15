@@ -27,6 +27,9 @@ dependencies {
   implementation "org.teavm:teavm-jso-impl:$teaVMVersion"
   implementation "org.teavm:teavm-jso:$teaVMVersion"
   implementation "org.teavm:teavm-tooling:$teaVMVersion"
+  implementation 'org.jetbrains.exposed:exposed-dao:0.37.3'
+  implementation 'org.jetbrains.exposed:exposed-jdbc:0.37.3'
+
   implementation project(':core')
 }
 
