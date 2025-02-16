@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="32" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="3">
+ <tileset firstgid="1" source="../map1.tsx"/>
+ <tileset firstgid="513" name="entities" tilewidth="48" tileheight="48" tilecount="1" columns="0">
+  <grid orientation="orthogonal" width="1" height="1"/>
+  <tile id="1">
+   <image source="../images/p_idle.png" width="48" height="48"/>
+  </tile>
+ </tileset>
+ <layer id="1" name="ground" width="32" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjZGBgYKQilkTC1DR31P5R+0ftH372S5KAR+2nf/yP2k8+Hg72j+LhjQExAgzp
+  </data>
+ </layer>
+ <layer id="2" name="bgd_1" width="32" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzt1bdNBFEUBdAZIKYHTAN4UkwDeFJMA3hqwEl4asBJeGrASXjawBNyNlsh0GhnZ0cEe6UTfb13v37yg6CYTMIwCEoopSxMv79CZyVVVBegv8XOVtpo/2X/z/PhhO8wYN8gQ3/sjjpPKknsjnrLQif7rbJTnv5ViskzNdRSRz0NNNJEc8TsDLPMMc9CjP4OOumimx566aM/YnaTLbbZYTdG/wijjDHOBJNMMR0xe8Y5F1xyFaN/kSWWWWGVNdbZiLEv1+yxzwGHHHHMCacp9F9zwy133PPAI08p9D/zwitvvPPBJ18p9OebzH/yn/6DXP+3bzR0NnU=
+  </data>
+ </layer>
+ <layer id="3" name="fgd" width="32" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzt1TsOgzAQRVGbUEHIHgJUQFhIQtgDEhW//ZfcBonaRmMEftLpLL3xNKPUPaK1UgEeCLV8/5vOFBlyB/1HxmSX3e5db/n/K+3SJNsuI8R4IsFLeI4CJSp8UAv3f/FDgz9a4f4BIybMWIT7fXzOEH9b3cbmtq4fhAh1
+  </data>
+ </layer>
+ <objectgroup id="4" name="entities">
+  <object id="2" type="Player" gid="514" x="125" y="296.5" width="48" height="48"/>
+ </objectgroup>
+</map>
