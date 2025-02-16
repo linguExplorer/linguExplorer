@@ -13,11 +13,10 @@ import com.github.linguExplorer.component.*
 import com.github.linguExplorer.component.PhysicComponent.Companion.physicCmpFromImage
 import com.github.linguExplorer.event.GameEndEvent
 import com.github.linguExplorer.event.MapChangeEvent
+import com.github.linguExplorer.linguExplorer
 import com.github.linguExplorer.linguExplorer.Companion.UNIT_SCALE
-import com.github.quillraven.fleks.AllOf
-import com.github.quillraven.fleks.ComponentMapper
-import com.github.quillraven.fleks.Entity
-import com.github.quillraven.fleks.IteratingSystem
+import com.github.linguExplorer.screen.MapScreen
+import com.github.quillraven.fleks.*
 import ktx.app.gdxError
 import ktx.box2d.box
 import ktx.math.vec2
@@ -30,13 +29,16 @@ import ktx.tiled.y
 class EntitySpawnSystem (
     private val phWorld : World,
     private val atlas: TextureAtlas,
-    private val SpawnCmps:ComponentMapper<SpawnComponent>
+    private val SpawnCmps:ComponentMapper<SpawnComponent>,
+    @Qualifier("tempX") private val tempX: Float,
+    @Qualifier("tempY") private val tempY: Float
 
-): EventListener, IteratingSystem() {
+    ): EventListener, IteratingSystem() {
+
+
 
     private val cachedCfgs = mutableMapOf<String, SpawnCfg>()
     private val cachedSizes = mutableMapOf<AnimationModel, Vector2>()
-    private var tempLocation: Pair<Float, Float>? = null
 
     override fun onTickEntity(entity: Entity) {
         with(SpawnCmps[entity]) {
@@ -124,14 +126,14 @@ class EntitySpawnSystem (
                 is GameEndEvent -> {
 
                     println("[GameEndEvent] Received. Setting tempLocation.")
-                    tempLocation = 31.104187f to 10.677063f
-                    println(tempLocation)
+                    //tempLocation = 31.104187f to 15.677063f
+                   // println(tempLocation)
                     return true
                 }
 
 
             is MapChangeEvent -> {
-                println("[MapChangeEvent] Received. tempLocation = $tempLocation")
+                println("[MapChangeEvent] Received. tempLocation = $tempX")
 
                 val entityLayer = event.map.layer("entities")
                 entityLayer.objects.forEach {
@@ -142,17 +144,15 @@ class EntitySpawnSystem (
                             this.type = type
                             this.location.set(
 
-                                tempLocation?.first ?: (mapObj.x * UNIT_SCALE),
-                                tempLocation?.second ?: (mapObj.y * UNIT_SCALE)
+                                tempX ?: (mapObj.x * UNIT_SCALE),
+                                tempY ?: (mapObj.y * UNIT_SCALE)
+
                             )
                             println(this.location)
                         }
                     }
                 }
-                if (tempLocation != null) {
-                    println("TempLocation wurde verwendet und zurückgesetzt.")
-                    tempLocation = null
-                }
+
                 return true
             }
         }

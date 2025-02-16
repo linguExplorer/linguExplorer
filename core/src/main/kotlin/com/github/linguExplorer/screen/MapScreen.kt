@@ -17,12 +17,11 @@ import com.github.quillraven.fleks.World
 import com.github.quillraven.fleks.world
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
-import ktx.box2d.body
 import ktx.box2d.createWorld
 import ktx.log.logger
 import ktx.math.vec2
 
-class MapScreen(private val game: linguExplorer) : KtxScreen {
+class MapScreen(private val game: linguExplorer, private val tempX: Float, private val tempY : Float) : KtxScreen {
 
     private val stage :Stage = Stage(ExtendViewport(16f,9f))
     private val textureAtlas = TextureAtlas("assets/graphics/entities.atlas")
@@ -32,6 +31,8 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
         autoClearForces = false
     }
 
+
+
     private val world: World= world {
 
         injectables {
@@ -39,6 +40,8 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
             add(textureAtlas)
             add(phWorld)
             add(game)
+            add("tempX", tempX)
+            add("tempY", tempY)
         }
 
         components {
@@ -60,6 +63,7 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
             add<DebugSystem>()
         }
     }
+
 
     private val pathSystem = world.system<PathSystem>()
 

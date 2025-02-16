@@ -545,7 +545,7 @@ private val stage: Stage
                     if (game!!.containsScreen<MapScreen>()) {
                         game.removeScreen<MapScreen>()
                     }
-                    game.addScreen(MapScreen(game))
+                    game.addScreen(MapScreen(game, 31.104187f,15.677063f))
                     game.setScreen<MapScreen>()
                 }
             }
