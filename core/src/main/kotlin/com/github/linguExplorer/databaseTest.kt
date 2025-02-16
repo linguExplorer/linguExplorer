@@ -57,7 +57,7 @@ fun chooseNextOption(scanner: Scanner, topicId: Int) {
         }
         println("-------\nDeine Indexe")
         println("Id\tPhrase\tIndex")
-        PhraseRepository().getPhrasesByTopicNameForUser(TopicRepository().getTopicById(topicId)!!.name, 123).forEach {
+        PhraseRepository().getPhrasesByTopicNameForUser(1, 123).forEach {
             println("${it.id}\t${it.phrase}\t${PhraseProgressHistoryRepository().calculateCorrectIndex(123, it.id)}")
         }
 

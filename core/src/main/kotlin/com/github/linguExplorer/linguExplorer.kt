@@ -2,6 +2,8 @@ package com.github.linguExplorer
 
 import com.badlogic.gdx.Game
 import com.github.linguExplorer.database.DatabaseManager
+import com.github.linguExplorer.screen.GameScreen
+import com.github.linguExplorer.screen.PhrasenheftScreen
 import com.github.linguExplorer.screen.MinigameEssenScreen
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
