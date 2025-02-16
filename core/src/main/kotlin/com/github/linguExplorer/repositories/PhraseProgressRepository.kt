@@ -1,8 +1,9 @@
 package com.github.linguExplorer.repositories
 
-import com.github.linguExplorer.models.PhraseEntity
 import com.github.linguExplorer.models.PhraseProgress
 import com.github.linguExplorer.models.PhraseProgressEntity
+import com.github.linguExplorer.models.UserProgressEntity
+import com.github.linguExplorer.models.User_Progress
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -17,18 +18,6 @@ class PhraseProgressRepository {
                 it[this.isMastered] = isMastered
             }
         }
-
-    fun addMultiplePhraseProgress(progresses: List<Triple<Int, Int, Boolean>>) =
-        transaction {
-            progresses.forEach { (phraseId, userId, isMastered) ->
-                PhraseProgress.insert {
-                    it[this.phraseId] = phraseId
-                    it[this.userId] = userId
-                    it[this.isMastered] = isMastered
-                }
-            }
-        }
-
 
     fun getPhraseProgress(phraseId: Int, userId: Int): PhraseProgressEntity? =
         transaction {
@@ -54,30 +43,9 @@ class PhraseProgressRepository {
                 .map { it.toPhraseProgress() }
         }
 
-    fun getAllPhrasesOfUserProgress(userId: Int): List<PhraseEntity> =
-        transaction {
-            PhraseProgress
-                .select { PhraseProgress.userId eq userId }
-                .mapNotNull { progress ->
-                    PhraseRepository().getPhrase(progress[PhraseProgress.phraseId])
-                }
-        }
-
-
 
     fun changeMasteredState(userId: Int, phraseId: Int) =
         transaction {
-            PhraseProgress.update({
-                PhraseProgress.userId eq userId and
-                    (PhraseProgress.phraseId eq phraseId)
-            }) {
-                it[isMastered] = true
-            }
-        }
-
-    fun changeMultipleMasteredStates(userId: Int, phraseIds: List<Int>) =
-        transaction {
-            phraseIds.forEach { phraseId ->
                 PhraseProgress.update({
                     PhraseProgress.userId eq userId and
                         (PhraseProgress.phraseId eq phraseId)
@@ -86,12 +54,10 @@ class PhraseProgressRepository {
                 }
             }
         }
-}
 
 
-private fun ResultRow.toPhraseProgress() = PhraseProgressEntity(
-    this[PhraseProgress.phraseId],
-    this[PhraseProgress.userId],
-    this[PhraseProgress.isMastered]
-)
-
+    private fun ResultRow.toPhraseProgress() = PhraseProgressEntity(
+        this[PhraseProgress.phraseId],
+        this[PhraseProgress.userId],
+        this[PhraseProgress.isMastered]
+    )

@@ -6,9 +6,9 @@ import java.util.logging.Level
 import java.util.logging.Logger
 
 fun DatabaseManager() {
-    val jdbcUrl = "jdbc:mysql://213.130.147.61:4000/linguexplorer"
+    val jdbcUrl = "jdbc:mysql://localhost:3306/linguExplorer"
     val username = "root"
-    val password = "my-secret-pw"
+    val password = ""
 
     Database.connect(jdbcUrl, driver = "com.mysql.cj.jdbc.Driver", user = username, password = password)
 
