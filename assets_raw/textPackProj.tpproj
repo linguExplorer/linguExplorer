@@ -11,8 +11,8 @@ fast=false
 filterMag=Nearest
 filterMin=Nearest
 ignoreBlankImages=true
-maxHeight=2048
-maxWidth=2176
+maxHeight=4096
+maxWidth=4096
 minHeight=16
 minWidth=16
 paddingX=0
@@ -34,7 +34,7 @@ prettyPrint=false
 legacyOutput=false
 
 scaleFactors=[{suffix:"",factor:1,resampling:bicubic}]
-inputFiles=[{path:CharacterSprite.png,type:Input,regionName:null}]
+inputFiles=[{path:CharacterSprite.png,type:Input,regionName:null},{path:NC_1,type:Input,dirFilePrefix:null,recursive:true,flattenPaths:false}]
 keepInputFileExtensions=false
 
 
@@ -244,7 +244,7 @@ prettyPrint=false
 legacyOutput=false
 
 scaleFactors=[{suffix:"",factor:1,resampling:bicubic}]
-inputFiles=[{path:../../../Documents/player_p,type:Input,dirFilePrefix:null,recursive:true,flattenPaths:false}]
+inputFiles=[{path:../../../Documents/player_p,type:Input,dirFilePrefix:null,recursive:true,flattenPaths:false},{path:NC_1,type:Input,dirFilePrefix:null,recursive:true,flattenPaths:false}]
 keepInputFileExtensions=false
 
 

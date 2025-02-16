@@ -104,8 +104,16 @@ class EntitySpawnSystem (
         if(regions.isEmpty) {
             gdxError("No Regions for $model")
         }
+
+
         val firstFrame = regions.first()
-        vec2(firstFrame.originalWidth* (UNIT_SCALE/16), firstFrame.originalHeight* (UNIT_SCALE/16))
+        if(model.atlasKey == "nc") {
+            vec2(firstFrame.originalWidth* (UNIT_SCALE), firstFrame.originalHeight* (UNIT_SCALE))
+
+        } else {
+            vec2(firstFrame.originalWidth* (UNIT_SCALE/16), firstFrame.originalHeight* (UNIT_SCALE/16))
+
+        }
     }
 
     private fun spawnCfg(type:String):SpawnCfg = cachedCfgs.getOrPut(type) {
@@ -116,20 +124,21 @@ class EntitySpawnSystem (
                 aniType = AnimationType.RIGHT
 
             )
+
+            "NC_1" -> SpawnCfg(AnimationModel.NC,
+                physicScaling = vec2(0.8f,0.5f),
+                physicOffset = vec2(0f,-6f* UNIT_SCALE),
+                aniType = AnimationType.IDLE
+
+            )
             else -> gdxError("Type $type no Spawn config")
         }
+
+
     }
 
     override fun handle(event: Event): Boolean {
         when (event) {
-
-                is GameEndEvent -> {
-
-                    println("[GameEndEvent] Received. Setting tempLocation.")
-                    //tempLocation = 31.104187f to 15.677063f
-                   // println(tempLocation)
-                    return true
-                }
 
 
             is MapChangeEvent -> {
@@ -140,16 +149,32 @@ class EntitySpawnSystem (
                     mapObj ->
                     val type = mapObj.type ?: gdxError("MapObject $mapObj no type")
                     world.entity {
-                        add<SpawnComponent> {
-                            this.type = type
-                            this.location.set(
 
-                                tempX ?: (mapObj.x * UNIT_SCALE),
-                                tempY ?: (mapObj.y * UNIT_SCALE)
+                        if (type == "Player") {
+                            add<SpawnComponent> {
+                                this.type = type
+                                this.location.set(
 
-                            )
-                            println(this.location)
+                                    tempX ,
+                                    tempY
+
+                                )
+                                println("Playe found and spawned")
+                            }
+                        } else {
+                            add<SpawnComponent> {
+                                this.type = type
+                                this.location.set(
+
+                                   (mapObj.x * UNIT_SCALE),
+                                    (mapObj.y * UNIT_SCALE)
+
+                                )
+                            }
                         }
+
+
+
                     }
                 }
 
