@@ -11,12 +11,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.utils.Scaling
 import com.github.linguExplorer.component.*
 import com.github.linguExplorer.component.PhysicComponent.Companion.physicCmpFromImage
+import com.github.linguExplorer.event.GameEndEvent
 import com.github.linguExplorer.event.MapChangeEvent
+import com.github.linguExplorer.linguExplorer
 import com.github.linguExplorer.linguExplorer.Companion.UNIT_SCALE
-import com.github.quillraven.fleks.AllOf
-import com.github.quillraven.fleks.ComponentMapper
-import com.github.quillraven.fleks.Entity
-import com.github.quillraven.fleks.IteratingSystem
+import com.github.linguExplorer.screen.MapScreen
+import com.github.quillraven.fleks.*
 import ktx.app.gdxError
 import ktx.box2d.box
 import ktx.math.vec2
@@ -29,9 +29,13 @@ import ktx.tiled.y
 class EntitySpawnSystem (
     private val phWorld : World,
     private val atlas: TextureAtlas,
-    private val SpawnCmps:ComponentMapper<SpawnComponent>
+    private val SpawnCmps:ComponentMapper<SpawnComponent>,
+    @Qualifier("tempX") private val tempX: Float,
+    @Qualifier("tempY") private val tempY: Float
 
-): EventListener, IteratingSystem() {
+    ): EventListener, IteratingSystem() {
+
+
 
     private val cachedCfgs = mutableMapOf<String, SpawnCfg>()
     private val cachedSizes = mutableMapOf<AnimationModel, Vector2>()
@@ -118,7 +122,19 @@ class EntitySpawnSystem (
 
     override fun handle(event: Event): Boolean {
         when (event) {
+
+                is GameEndEvent -> {
+
+                    println("[GameEndEvent] Received. Setting tempLocation.")
+                    //tempLocation = 31.104187f to 15.677063f
+                   // println(tempLocation)
+                    return true
+                }
+
+
             is MapChangeEvent -> {
+                println("[MapChangeEvent] Received. tempLocation = $tempX")
+
                 val entityLayer = event.map.layer("entities")
                 entityLayer.objects.forEach {
                     mapObj ->
@@ -126,13 +142,23 @@ class EntitySpawnSystem (
                     world.entity {
                         add<SpawnComponent> {
                             this.type = type
-                            this.location.set(mapObj.x*UNIT_SCALE, mapObj.y* UNIT_SCALE)
+                            this.location.set(
+
+                                tempX ?: (mapObj.x * UNIT_SCALE),
+                                tempY ?: (mapObj.y * UNIT_SCALE)
+
+                            )
+                            println(this.location)
                         }
                     }
                 }
+
                 return true
             }
         }
+
+
+
         return false
     }
 }

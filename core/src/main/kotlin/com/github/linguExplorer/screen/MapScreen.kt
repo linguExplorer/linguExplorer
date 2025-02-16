@@ -25,7 +25,7 @@ import ktx.math.vec2
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 
 
-class MapScreen(private val game: linguExplorer) : KtxScreen {
+class MapScreen(private val game: linguExplorer, private val tempX: Float, private val tempY : Float) : KtxScreen {
 
     private val stage :Stage = Stage(ExtendViewport(16f,9f))
     private val textureAtlas = TextureAtlas(/*"com/github/linguExplorer/assets/ */ "graphics/entities.atlas")
@@ -35,6 +35,8 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
         autoClearForces = false
     }
 
+
+
     private val world: World= world {
 
         injectables {
@@ -42,6 +44,8 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
             add(textureAtlas)
             add(phWorld)
             add(game)
+            add("tempX", tempX)
+            add("tempY", tempY)
         }
 
         components {
@@ -54,6 +58,7 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
             add<CollisionSpawnSystem>()
             add<CollisionDespawnSystem>()
             add<MapChangeSystem>()
+            add<PathSystem>()
             add<MoveSystem>()
             add<PhysicSystem>()
             add<AnimationSystem>()
@@ -62,6 +67,10 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
             add<DebugSystem>()
         }
     }
+
+
+    private val pathSystem = world.system<PathSystem>()
+
 
     override fun show() {
         log.debug { "Game Screen gets shown" }
@@ -80,6 +89,8 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
 
         // Spieler-Eingabeverarbeitung
         //PlayerKeyboardInputProcessor(world, stage, world.mapper())
+
+        PlayerKeyboardInputProcessor(world, stage, world.mapper(), world.mapper(), stage, pathSystem )
 
         val playerInputProcessor = PlayerKeyboardInputProcessor(world, stage, world.mapper())
         // InputMultiplexer um Spielfigur + UI zu verarbeiten

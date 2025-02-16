@@ -12,6 +12,7 @@ import com.github.quillraven.fleks.IteratingSystem
 import ktx.math.component1
 import ktx.math.component2
 import java.util.*
+import kotlinx.coroutines.*
 
 @AllOf([MoveComponent::class, PhysicComponent::class])
 class MoveSystem(
