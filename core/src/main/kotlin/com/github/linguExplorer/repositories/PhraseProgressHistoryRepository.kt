@@ -51,16 +51,18 @@ class PhraseProgressHistoryRepository {
     fun calculateCorrectIndex(phraseId: Int, entryValues: List<PhraseProgressHistoryEntity>): Double {
         var weightedSum = 0.0
         var factorSum = 0.0
+        var size = 0
 
         entryValues.filter { entry ->
             entry.phraseId == phraseId
         }.forEachIndexed { index, entry ->
+            size++
             val factor = index + 1
             weightedSum += (if (entry.correct == 1) 1 else 0) * factor
             factorSum += factor
         }
 
-        return if (factorSum > 0) 1 - exp(-0.5 * (weightedSum / factorSum) * entryValues.size) else -1.0
+        return if (factorSum > 0) 1 - exp(-0.5 * (weightedSum / factorSum) * size) else -1.0
     }
 
 
