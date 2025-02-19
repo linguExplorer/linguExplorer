@@ -36,7 +36,7 @@ class EntitySpawnSystem (
     ): EventListener, IteratingSystem() {
 
 
-
+    private val playerEntities = world.family(allOf = arrayOf(PlayerComponent::class))
     private val cachedCfgs = mutableMapOf<String, SpawnCfg>()
     private val cachedSizes = mutableMapOf<AnimationModel, Vector2>()
 
@@ -148,9 +148,14 @@ class EntitySpawnSystem (
                 entityLayer.objects.forEach {
                     mapObj ->
                     val type = mapObj.type ?: gdxError("MapObject $mapObj no type")
+
+                    if(type == "Player" && playerEntities.isNotEmpty) {
+                        return@forEach
+                    }
                     world.entity {
 
                         if (type == "Player") {
+
                             add<SpawnComponent> {
                                 this.type = type
                                 this.location.set(

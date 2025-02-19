@@ -7,7 +7,10 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.scenes.scene2d.EventListener
+import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.Touchable
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.github.linguExplorer.component.*
 import com.github.linguExplorer.event.MapChangeEvent
@@ -90,15 +93,18 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         val playerInputProcessor = PlayerKeyboardInputProcessor(world, stage, world.mapper(), world.mapper(), stage, pathSystem)
         // InputMultiplexer um Spielfigur + UI zu verarbeiten
         val inputMultiplexer = InputMultiplexer()
+        inputMultiplexer.addProcessor(uiStage)
+        inputMultiplexer.addProcessor(stage)
         inputMultiplexer.addProcessor(playerInputProcessor)
-        inputMultiplexer.addProcessor(stage)   // Spielfigur und Welt-Stage
+        // Spielfigur und Welt-Stage
         //inputMultiplexer.addProcessor(uiStage) // UI-Stage*/
 
         Gdx.input.inputProcessor = inputMultiplexer //Multiplexer als Input-Prozessor setzen
     }
 
-    private val uiStage: Stage = Stage(ExtendViewport(16f, 9f)) // Eine Stage speziell für die UI
-
+    private val uiStage: Stage = Stage(ExtendViewport(16f, 9f).apply {
+        setWorldSize(16f, 9f)
+    })
     //fixe Bilder Methode
     private fun addUIImages() {
         // Bilder laden
@@ -110,8 +116,12 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
 
         // Images für jedes Bild
         val backpackImage = com.badlogic.gdx.scenes.scene2d.ui.Image(backpackTexture)
+        backpackImage.touchable = Touchable.enabled
+
         val mapImage = com.badlogic.gdx.scenes.scene2d.ui.Image(mapTexture)
         val phrasingBookImage = com.badlogic.gdx.scenes.scene2d.ui.Image(phrasingBookTexture)
+        backpackImage.touchable = Touchable.enabled
+
         //val progressBarImage = com.badlogic.gdx.scenes.scene2d.ui.Image(progressBarTexture)
         val moneyBagImage = com.badlogic.gdx.scenes.scene2d.ui.Image(moneyBagTexture)
 
@@ -136,6 +146,30 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         uiStage.addActor(phrasingBookImage)
         //uiStage.addActor(progressBarImage)
         uiStage.addActor(moneyBagImage)
+
+
+
+        backpackImage.addListener(object : ClickListener() {
+            override fun clicked(event: InputEvent?, x: Float, y: Float) {
+                println("Backpack clicked")
+
+            }
+        })
+
+        phrasingBookImage.addListener(object : ClickListener() {
+            override fun clicked(event: InputEvent?, x: Float, y: Float) {
+                println("Phrasebook clicked")
+
+                if (!game.containsScreen<PhrasenheftScreen>()) {
+                    game.addScreen(PhrasenheftScreen(game))
+                }
+                game.setScreen<PhrasenheftScreen>()
+
+
+            }
+        })
+
+
     }
 
 
@@ -147,16 +181,14 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
 
     override fun resize(width: Int, height: Int) {
         stage.viewport.update(width, height, true)
+        uiStage.viewport.update(width, height, true)
+
     }
 
     override fun render(delta: Float) {
 
         world.update(delta.coerceAtMost(0.25f))
 
-
-        // Zeichne die Welt (z.B. Karte)
-        stage.act(Math.min(delta, 1 / 30f)) // Update für die Haupt-Stage
-        stage.draw()
 
         // Zeichne die UI-Stage
         uiStage.act(Math.min(delta, 1 / 30f)) // Update für die UI-Stage
