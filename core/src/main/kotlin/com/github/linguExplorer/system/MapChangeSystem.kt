@@ -58,6 +58,15 @@ class MapChangeSystem (
                println("ja")
                 game.addScreen(LoadingScreen(game, gameStage))
                game.setScreen<LoadingScreen>()
+
+
+                if (game!!.containsScreen<LoadingScreen>()) {
+                    game.removeScreen<LoadingScreen>()
+                }
+                game.addScreen(LoadingScreen(game, gameStage))
+                game.setScreen<LoadingScreen>()
+
+
            }
 
 
