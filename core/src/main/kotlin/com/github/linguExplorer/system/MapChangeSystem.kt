@@ -54,10 +54,6 @@ class MapChangeSystem (
             println("Collision to $toGame")
 
 
-            if (key) {
-               println("ja")
-                game.addScreen(LoadingScreen(game, gameStage))
-               game.setScreen<LoadingScreen>()
 
 
                 if (game!!.containsScreen<LoadingScreen>()) {
@@ -67,7 +63,7 @@ class MapChangeSystem (
                 game.setScreen<LoadingScreen>()
 
 
-           }
+
 
 
 
