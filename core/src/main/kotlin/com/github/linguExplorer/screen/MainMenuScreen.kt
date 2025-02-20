@@ -30,7 +30,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private var settingsIconTexture: Texture = Texture("xx_Images/SettingsIcon.png")
     private var wordmarkTexture: Texture = Texture("xx_Images/wordmark/wordmark_scaled.png")
 
-//Spieler Textur
+    // Spieler Textur
     private val textureAtlas = TextureAtlas("graphics/idle_animation.atlas")
     private val playerTexture: Texture = Texture("graphics/idle_animation.png")
     private lateinit var gifAnimation: Animation<TextureRegion>
@@ -50,22 +50,20 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private var speedX = 100f
     private var speedY = 50f
 
-
-
+    // Hover-Effekt
+    private val hoverColor = Color(1f, 1f, 1f, 0.6f)
+    private val normalColor = Color(1f, 1f, 1f, 1f)
 
     override fun show() {
         // Bildschirmgröße abrufen
         val screenWidth = Gdx.graphics.width.toFloat()
         val screenHeight = Gdx.graphics.height.toFloat()
 
-
         gifAnimation = Animation(0.1f, textureAtlas.regions, Animation.PlayMode.LOOP)
         // Position und Größe der Buttons definieren
         startNewGameButton.set(100f, screenHeight / 2 - 200f, 200f, 50f)
         loadGameButton.set(100f, screenHeight / 2 - 100f, 200f, 50f)
         settingsButton.set(screenWidth - 70f, screenHeight - 70f, 60f, 60f)
-
-
     }
 
     override fun render(delta: Float) {
@@ -103,7 +101,6 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             speedY = -speedY
         }
 
-
         batch.begin()
         batch.draw(backgroundTexture, backgroundOffsetX, backgroundOffsetY, scaledWidth, scaledHeight)
         batch.end()
@@ -132,42 +129,54 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         val startNewGameButtonY = screenHeight / 2 - 90f
         val loadGameButtonY = screenHeight / 2 - 205f
 
-        // Buttons zeichnen
+        // Hover-Effekt für Buttons
+        val mouseX = Gdx.input.x.toFloat()
+        val mouseY = screenHeight - Gdx.input.y.toFloat()
+
         batch.draw(startNewGameTexture, buttonX, startNewGameButtonY)
         batch.draw(loadGameTexture, buttonX, loadGameButtonY)
 
+
+        if (mouseX >= buttonX && mouseX <= buttonX + startNewGameTexture.width &&
+            mouseY >= startNewGameButtonY && mouseY <= startNewGameButtonY + startNewGameTexture.height) {
+            batch.color = hoverColor
+            batch.draw(startNewGameTexture, buttonX, startNewGameButtonY)
+        }
+
+        if (mouseX >= buttonX && mouseX <= buttonX + loadGameTexture.width &&
+            mouseY >= loadGameButtonY && mouseY <= loadGameButtonY + loadGameTexture.height) {
+            batch.color = hoverColor
+            batch.draw(loadGameTexture, buttonX, loadGameButtonY)
+        }
+
+        batch.color = normalColor
         // Settings Button
         val settingsX = screenWidth - settingsIconSize - 10f
         val settingsY = screenHeight - settingsIconSize - 10f
         batch.draw(settingsIconTexture, settingsX, settingsY, settingsIconSize, settingsIconSize)
 
-
-        //Animierten Spieler zeichnen
+        // Animierten Spieler zeichnen
         animationTime += delta
         val currentFrame = gifAnimation.getKeyFrame(animationTime)
-        batch.draw(currentFrame, screenWidth / 2 + 180f, screenHeight / 2 - 200f, 300f,300f)
+        batch.draw(currentFrame, screenWidth / 2 + 180f, screenHeight / 2 - 200f, 300f, 300f)
         batch.end()
 
         // Prüfen, ob auf den Start-Button geklickt wurde
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             val screenX = Gdx.input.x.toFloat()
-            val screenY = Gdx.input.y.toFloat()
+            val screenY = screenHeight - Gdx.input.y.toFloat()
 
-            println(screenY)
-            println(startNewGameButtonY)
-            println(screenX)
-            println(buttonX + startNewGameTexture.width)
-            println(startNewGameButtonY + startNewGameTexture.height)
-
-            //TODO: Wieso ist das Feld in dem es richtig ist eine Etage über dem Button lmaooo
             if (screenX >= buttonX && screenX <= buttonX + startNewGameTexture.width &&
-                screenY >= startNewGameButtonY + startNewGameTexture.height && screenY <= startNewGameButtonY + 2* startNewGameTexture.height) {
-                println("klappt")
-
-                game.addScreen(MapScreen(game, 31.104187f,15.677063f))
+                screenY >= startNewGameButtonY && screenY <= startNewGameButtonY + startNewGameTexture.height) {
+                game.addScreen(MapScreen(game, 31.104187f, 15.677063f))
                 game.setScreen<MapScreen>()
             }
 
+            if (screenX >= buttonX && screenX <= buttonX + loadGameTexture.width &&
+                screenY >= loadGameButtonY && screenY <= loadGameButtonY + loadGameTexture.height) {
+                game.addScreen(MapScreen(game, 31.104187f, 5f)) // Y-Koordinate um -20 ändern
+                game.setScreen<MapScreen>()
+            }
         }
     }
 
