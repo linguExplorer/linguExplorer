@@ -1,36 +1,44 @@
 plugins {
   id 'java'
-  id 'org.gretty' version '3.1.0'
+  id 'org.gretty' version '4.1.0'
 }
 
 gretty {
   contextPath = '/'
   extraResourceBase 'build/dist/webapp'
+  httpPort = 8080
 }
 
-sourceSets.main.resources.srcDirs += [ rootProject.file('assets').path ]
-project.ext.mainClassName = 'com.github.linguExplorer.teavm.TeaVMBuilder'
-eclipse.project.name = appName + '-teavm'
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(17)
+  }
+  sourceSets.main.resources.srcDirs += [rootProject.file('assets').path]
+}
+project.ext.mainClassName =  'com.github.linguExplorer.teavm.TeaVMBuilder'
 
-// This must be at least 11, and no higher than the JDK version this project is built with.
-java.targetCompatibility = "17"
-// This should probably be equal to targetCompatibility, above. This only affects the TeaVM module.
-java.sourceCompatibility = "17"
 
+
+eclipse.project.name = "${appName}-teavm"
 
 dependencies {
   implementation "com.badlogicgames.gdx:gdx-box2d-gwt:$gdxVersion"
   implementation "com.github.xpenatan.gdx-teavm:backend-teavm:$gdxTeaVMVersion"
+  implementation "com.github.xpenatan.gdx-teavm:gdx-freetype-teavm:$gdxTeaVMVersion"
   implementation "org.teavm:teavm-classlib:$teaVMVersion"
   implementation "org.teavm:teavm-core:$teaVMVersion"
   implementation "org.teavm:teavm-jso-apis:$teaVMVersion"
   implementation "org.teavm:teavm-jso-impl:$teaVMVersion"
   implementation "org.teavm:teavm-jso:$teaVMVersion"
   implementation "org.teavm:teavm-tooling:$teaVMVersion"
-  implementation 'org.jetbrains.exposed:exposed-dao:0.37.3'
-  implementation 'org.jetbrains.exposed:exposed-jdbc:0.37.3'
+  implementation "org.teavm:teavm-core:0.8.2"
+  implementation "org.teavm:teavm-jso:0.8.2"
+  implementation "org.teavm:teavm-classlib:0.8.2"
+  implementation "org.teavm:teavm-tooling:0.8.2"
+
 
   implementation project(':core')
+
 }
 
 tasks.register('buildJavaScript', JavaExec) {
@@ -41,7 +49,8 @@ tasks.register('buildJavaScript', JavaExec) {
 }
 build.dependsOn buildJavaScript
 
-tasks.register("run") {
-  description = "Run the JavaScript application hosted via a local Jetty server at http://localhost:8080/"
-  dependsOn(buildJavaScript, tasks.named("jettyRun"))
+tasks.register('run') {
+  description = "Run the JavaScript application"
+  dependsOn buildJavaScript, tasks.named('appRun')
 }
+

@@ -22,6 +22,8 @@ object TeaVMBuilder {
         // Register any classes or packages that require reflection here:
         // TeaReflectionSupplier.addReflectionClass("com.github.linguExplorer.reflect")
 
+
+
         val tool = TeaBuilder.config(teaBuildConfiguration)
         tool.mainClass = "com.github.linguExplorer.teavm.TeaVMLauncher"
         tool.optimizationLevel = TeaVMOptimizationLevel.FULL
