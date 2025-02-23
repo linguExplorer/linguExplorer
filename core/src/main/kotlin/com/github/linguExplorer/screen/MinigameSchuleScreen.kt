@@ -14,6 +14,10 @@ import ktx.app.KtxScreen
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.Align
+import java.io.File
+import java.util.*
+import java.util.Collections.emptyList
+import kotlin.math.min
 
 class MinigameSchuleScreen : KtxScreen {
 
@@ -22,14 +26,14 @@ class MinigameSchuleScreen : KtxScreen {
     private val viewport: Viewport = ExtendViewport(800f, 600f)
     private val shapeRenderer = ShapeRenderer()
 
-    // Texturen (Uhr und Play/Pause, Continue, Stundenplan)
+    // Texturen
     private val timeTexture = Texture(Gdx.files.internal("Minigames/time.png"))
     private var pauseTexture = Texture(Gdx.files.internal("Minigames/pausebutton.png"))
     private var playTexture = Texture(Gdx.files.internal("Minigames/playbutton.png"))
     private val continueTexture = Texture(Gdx.files.internal("Minigames/btn_continue.png"))
     private val stundenplanTexture = Texture(Gdx.files.internal("Minigames/school/timetable/stundenplan_final.png")) // Stundenplan Textur laden
 
-    // Positionen und Größen (Uhr, Play/Pause, Continue, Stundenplan)
+    // Positionen und Größen
     private val timeBasePosition = Vector2(20f, 530f)
     private val timeSize = Vector2(150f, 50f)
     private val pauseBasePosition = Vector2(180f, 530f)
@@ -50,14 +54,14 @@ class MinigameSchuleScreen : KtxScreen {
     private val scaleSpeed = 5f
 
     // Zeit
-    private var timeLeft = 10 // Startzeit in Sekunden
+    private var timeLeft = 30 // Startzeit in Sekunden
     private var elapsedTime = 0f
 
     private var isPaused = false
     private var gameStarted = false
     private var gameOver = false // Flag für Game Over
 
-    // Getter für die dynamischen Positionen (Uhr, Play/Pause, Continue)
+    // Getter für die dynamischen Positionen
     private val timePosition: Vector2
         get() = Vector2(
             timeBasePosition.x,
@@ -83,9 +87,67 @@ class MinigameSchuleScreen : KtxScreen {
             stundenplanPositionY * (viewport.worldHeight / 600f)
         )
 
+    // Kärtchen-spezifische Variablen
+    private val cardFolder = "C:\\Users\\Britta\\Documents\\GitHub\\linguExplorer\\assets\\Minigames\\school\\timetable\\subjects_E"
+    private var cards: MutableList<Card> = mutableListOf() // MutableList, da wir die Positionen ändern werden
+    private val cardWidth = 108f
+    private val cardHeight = 47f
+    private val cardSpacingY = 3f // Abstand zwischen den Karten (vertikal) //zwischen zeilen
+    private val cardStartPosYFromTop = 463f // Startposition der Karten von oben
+    private val cardStartPosXLeft = 15f // Startposition der linken Spalte 362f
+    private val cardStartPosXRight = 96f // Startposition der rechten Spalte // 443f (+81f)
+    private val cardsLeftColumn = 7
+    private val cardsRightColumn = 6
+
+    // Datenklasse für Kärtchen
+    data class Card(
+        val texture: Texture,
+        var originalX: Float, // Ursprüngliche X-Position
+        var originalY: Float, // Ursprüngliche Y-Position
+        var x: Float,          // Aktuelle X-Position
+        var y: Float,          // Aktuelle Y-Position
+        val width: Float,
+        val height: Float,
+        var isDragging: Boolean = false // ob das Kärtchen gerade gezogen wird
+    )
+
     override fun show() {
         // NICHT auf null setzen! Sonst empfängst du keine Inputs.
         // Gdx.input.inputProcessor = null
+
+        // Lade die Kärtchen-Texturen beim Anzeigen des Screens
+        loadCardTextures()
+    }
+
+    private fun loadCardTextures() {
+        val directory = File(cardFolder)
+        if (directory.exists() && directory.isDirectory) {
+            val textures = directory.listFiles { file -> file.name.endsWith(".png") }
+                ?.map { file -> Texture(file.absolutePath) }
+                ?.shuffled() ?: emptyList() // Mischen der Reihenfolge
+
+            cards.clear() // das die Liste leer ist bevor neue Karten hinzugefügt werden
+
+            // Startpositionen für die Karten
+            val startYLeft = cardStartPosYFromTop * (viewport.worldHeight / 600f)
+            val startYRight = cardStartPosYFromTop * (viewport.worldHeight / 600f)
+
+            // Linke Spalte
+            for (i in 0 until min(cardsLeftColumn, textures.size)) {
+                val x = cardStartPosXLeft * (viewport.worldWidth / 800f)
+                val y = startYLeft - i * (cardHeight + cardSpacingY) * (viewport.worldHeight / 600f)
+                cards.add(Card(textures[i], x, y, x, y, cardWidth, cardHeight))
+            }
+
+            // Rechte Spalte
+            for (i in 0 until min(cardsRightColumn, textures.size - cardsLeftColumn)) {
+                val x = cardStartPosXRight * (viewport.worldWidth / 800f)
+                val y = startYRight - i * (cardHeight + cardSpacingY) * (viewport.worldHeight / 600f)
+                cards.add(Card(textures[i + cardsLeftColumn], x, y, x, y, cardWidth, cardHeight))
+            }
+        } else {
+            Gdx.app.error("MinigameSchuleScreen", "Kartenordner nicht gefunden: $cardFolder")
+        }
     }
 
     override fun render(delta: Float) {
@@ -124,10 +186,13 @@ class MinigameSchuleScreen : KtxScreen {
             pauseSize.y * pauseButtonScale
         )
 
-        // Stundenplan anzeigen (nur wenn das Spiel läuft und nicht vorbei ist)
+        // Stundenplan anzeigen (nur wenn das Spiel läuft)
         if (gameStarted && !gameOver) {
             batch.draw(stundenplanTexture, stundenplanPosition.x, stundenplanPosition.y, stundenplanWidth * (viewport.worldWidth/800f), stundenplanHeight * (viewport.worldHeight/600f))
         }
+
+        // Zeichne die Kärtchen
+        drawCards()
 
         // Game Over Anzeige
         if (gameOver) {
@@ -218,12 +283,18 @@ class MinigameSchuleScreen : KtxScreen {
 
         }
         else {
-            // Spielcode
-            // Hier kommt dein eigentlicher Spielcode hin, der während des Spiels ausgeführt wird.
         }
 
         batch.end()
     }
+
+
+    private fun drawCards() {
+        cards.forEach { card ->
+            batch.draw(card.texture, card.x, card.y, card.width, card.height)
+        }
+    }
+
 
     private fun handleInput(delta: Float) {
         val mouseX = Gdx.input.x.toFloat() * viewport.worldWidth / Gdx.graphics.width
@@ -257,10 +328,34 @@ class MinigameSchuleScreen : KtxScreen {
             else if (gameStarted && mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) &&
                 mouseY in pausePosition.y..(pausePosition.y + pauseSize.y)) {
                 isPaused = true
+            } else {
+                //ob auf eine Karte geklickt wurde
+                for (card in cards) {
+                    if (mouseX >= card.x && mouseX <= card.x + card.width &&
+                        mouseY >= card.y && mouseY <= card.y + card.height) {
+                        card.isDragging = true
+                        break // Nur eine Karte gleichzeitig ziehen
+                    }
+                }
             }
 
-        } else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE) && gameStarted) {
-            isPaused = true
+        } else {
+            //Maustaste losgelassen -> Position zurücksetzen
+            for (card in cards) {
+                if (card.isDragging) {
+                    card.x = card.originalX
+                    card.y = card.originalY
+                }
+                card.isDragging = false
+            }
+        }
+
+        // Bewege die gezogene Karte
+        for (card in cards) {
+            if (card.isDragging) {
+                card.x = mouseX - card.width / 2 // Zentriere die Karte unter dem Mauszeiger
+                card.y = mouseY - card.height / 2 // Zentriere die Karte unter dem Mauszeiger
+            }
         }
     }
 
@@ -297,5 +392,7 @@ class MinigameSchuleScreen : KtxScreen {
         playTexture.dispose()
         continueTexture.dispose()
         stundenplanTexture.dispose()
+        // Dispose aller Kärtchen-Texturen
+        cards.forEach { it.texture.dispose() }
     }
 }
