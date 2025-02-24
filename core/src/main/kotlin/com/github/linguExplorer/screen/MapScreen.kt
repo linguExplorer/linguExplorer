@@ -24,8 +24,8 @@ import ktx.math.vec2
 class MapScreen(private val game: linguExplorer, private val tempX: Float, private val tempY : Float) : KtxScreen {
 
     private val stage :Stage = Stage(ExtendViewport(16f,9f))
-    private val textureAtlas = TextureAtlas("assets/graphics/entities.atlas")
-    private val playerTexture: Texture = Texture("assets/graphics/entities.png")
+    private val textureAtlas = TextureAtlas("graphics/entities.atlas")
+    private val playerTexture: Texture = Texture("graphics/entities.png")
     private var currentMap: TiledMap? = null;
     private val phWorld = createWorld(gravity = vec2()).apply {
         autoClearForces = false
@@ -76,7 +76,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
             }
         }
 
-        currentMap = TmxMapLoader().load("assets/graphics/map/main-map.tmx")
+        currentMap = TmxMapLoader().load("graphics/map/main-map.tmx")
         stage.fire(MapChangeEvent(currentMap!!))
 
 
