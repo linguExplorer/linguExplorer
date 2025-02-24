@@ -32,14 +32,18 @@ class MinigameSchuleScreen : KtxScreen {
     private var playTexture = Texture(Gdx.files.internal("Minigames/playbutton.png"))
     private val continueTexture = Texture(Gdx.files.internal("Minigames/btn_continue.png"))
     private val stundenplanTexture = Texture(Gdx.files.internal("Minigames/school/timetable/stundenplan_final.png")) // Stundenplan Textur laden
+    private val tryAgainButtonTexture = Texture(Gdx.files.internal("Minigames/btn_tryAgain.png"))
+    private val quitButtonTexture = Texture(Gdx.files.internal("Minigames/btn_quitMinigame.png"))
 
     // Positionen und Größen
     private val timeBasePosition = Vector2(20f, 530f)
     private val timeSize = Vector2(150f, 50f)
     private val pauseBasePosition = Vector2(180f, 530f)
     private val pauseSize = Vector2(50f, 50f)
-    private val continueButtonBasePosition = Vector2(300f, 200f) // Beispielposition
-    private val buttonSize = Vector2(200f, 70f) //Beispielgröße
+    private val continueButtonBasePosition = Vector2(300f, 200f)
+    private val buttonSize = Vector2(200f, 70f)
+    private val tryAgainButtonBasePosition = Vector2(300f, 200f) // Beispielposition
+    private val quitButtonBasePosition = Vector2(300f, 130f) // Beispielposition
 
     // Stundenplan Position und Größe
     private val stundenplanWidth = 500f
@@ -51,6 +55,10 @@ class MinigameSchuleScreen : KtxScreen {
     private var pauseButtonTargetScale = 1f
     private var continueButtonScale = 1f
     private var continueButtonTargetScale = 1f
+    private var tryAgainButtonScale = 1f
+    private var tryAgainButtonTargetScale = 1f
+    private var quitButtonScale = 1f
+    private var quitButtonTargetScale = 1f
     private val scaleSpeed = 5f
 
     // Zeit
@@ -60,6 +68,7 @@ class MinigameSchuleScreen : KtxScreen {
     private var isPaused = false
     private var gameStarted = false
     private var gameOver = false // Flag für Game Over
+    private var gameWon = false
 
     // Getter für die dynamischen Positionen
     private val timePosition: Vector2
@@ -80,6 +89,18 @@ class MinigameSchuleScreen : KtxScreen {
             continueButtonBasePosition.y * (viewport.worldHeight / 600f)
         )
 
+    private val tryAgainButtonPosition: Vector2
+        get() = Vector2(
+            tryAgainButtonBasePosition.x * (viewport.worldWidth / 800f),
+            tryAgainButtonBasePosition.y * (viewport.worldHeight / 600f)
+        )
+
+    private val quitButtonPosition: Vector2
+        get() = Vector2(
+            quitButtonBasePosition.x * (viewport.worldWidth / 800f),
+            quitButtonBasePosition.y * (viewport.worldHeight / 600f)
+        )
+
     //Getter für den Stundenplan
     private val stundenplanPosition: Vector2
         get() = Vector2(
@@ -89,6 +110,7 @@ class MinigameSchuleScreen : KtxScreen {
 
     // Kärtchen-spezifische Variablen
     private val cardFolder = "Minigames/school/timetable/subjects_E"
+    //private val cardFolder = "C:\\Users\\Britta\\Documents\\GitHub\\linguExplorer\\assets\\Minigames\\school\\timetable\\subjects_E"
     private var cards: MutableList<Card> = mutableListOf() // MutableList, da wir die Positionen ändern werden
     private val cardWidth = 108f
     private val cardHeight = 47f
@@ -168,6 +190,8 @@ class MinigameSchuleScreen : KtxScreen {
 
         pauseButtonScale += (pauseButtonTargetScale - pauseButtonScale) * scaleSpeed * delta
         continueButtonScale += (continueButtonTargetScale - continueButtonScale) * scaleSpeed * delta
+        tryAgainButtonScale += (tryAgainButtonTargetScale - tryAgainButtonScale) * scaleSpeed * delta
+        quitButtonScale += (quitButtonTargetScale - quitButtonScale) * scaleSpeed * delta
 
         batch.begin()
 
@@ -187,7 +211,7 @@ class MinigameSchuleScreen : KtxScreen {
         )
 
         // Stundenplan anzeigen (nur wenn das Spiel läuft)
-        if (gameStarted && !gameOver) {
+        if (gameStarted && !gameOver && !gameWon) {
             batch.draw(stundenplanTexture, stundenplanPosition.x, stundenplanPosition.y, stundenplanWidth * (viewport.worldWidth/800f), stundenplanHeight * (viewport.worldHeight/600f))
         }
 
@@ -195,7 +219,7 @@ class MinigameSchuleScreen : KtxScreen {
         drawCards()
 
         // Game Over Anzeige
-        if (gameOver) {
+        if (gameOver || gameWon) {
             batch.end()
             Gdx.gl.glEnable(GL20.GL_BLEND)
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
@@ -210,13 +234,44 @@ class MinigameSchuleScreen : KtxScreen {
             font = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
             font.data.setScale(0.7f, 0.7f)
 
-            glyphLayout.setText(font, "GAME OVER")
-            val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
-            val gameOverY = (viewport.worldHeight) / 2 + glyphLayout.height + 10f
-            font.draw(batch, "GAME OVER", gameOverX, gameOverY)
+            if(gameWon) {
+                glyphLayout.setText(font, "CONGRATULATIONS")
+                val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
+                val gameOverY = (viewport.worldHeight / 2) + glyphLayout.height + 10f
+                font.draw(batch, "CONGRATULATIONS", gameOverX, gameOverY)
+
+                batch.draw(
+                    continueTexture,
+                    continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
+                    continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
+                    buttonSize.x * continueButtonScale,
+                    buttonSize.y * continueButtonScale
+                )
+            } else {
+                glyphLayout.setText(font, "GAME OVER")
+                val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
+                val gameOverY = (viewport.worldHeight) / 2 + glyphLayout.height + 10f
+                font.draw(batch, "GAME OVER", gameOverX, gameOverY)
+
+                batch.draw(
+                    tryAgainButtonTexture,
+                    tryAgainButtonPosition.x - (buttonSize.x * (tryAgainButtonScale - 1f) / 2),
+                    tryAgainButtonPosition.y - (buttonSize.y * (tryAgainButtonScale - 1f) / 2),
+                    buttonSize.x * tryAgainButtonScale,
+                    buttonSize.y * tryAgainButtonScale
+                )
+
+                batch.draw(
+                    quitButtonTexture,
+                    quitButtonPosition.x - (buttonSize.x * (quitButtonScale - 1f) / 2),
+                    quitButtonPosition.y - (buttonSize.y * (quitButtonScale - 1f) / 2),
+                    buttonSize.x * quitButtonScale,
+                    buttonSize.y * quitButtonScale
+                )
+            }
         }
         // Startbildschirm
-        else if (!gameStarted && !gameOver) { // Hinzugefügte Bedingung: !gameOver
+        else if (!gameStarted && !gameOver) {
             batch.end()
             Gdx.gl.glEnable(GL20.GL_BLEND)
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
@@ -229,15 +284,11 @@ class MinigameSchuleScreen : KtxScreen {
             font.color = Color.WHITE
             val glyphLayout = GlyphLayout()
             font.data.setScale(0.4f, 0.4f)
-
-            // Breiteres Rechteck für die Zentrierung
-            val textWidth = viewport.worldWidth * 0.75f // 75% der Bildschirmbreite
-            glyphLayout.setText(font, "Erklärung", Color.WHITE, textWidth, Align.center, true)
-
-            val textX = (viewport.worldWidth - glyphLayout.width) / 2 // Horizontale Mitte
-            val textY = (viewport.worldHeight / 2) + glyphLayout.height // Vertikale Mitte + Höhe für bessere Positionierung
-
-            font.draw(batch, "Erklärung", textX, textY)
+            val text = "Ordne die Fächer dem Stundenplan zu"
+            glyphLayout.setText(font, text, Color.WHITE, viewport.worldWidth * 0.75f, Align.center, true)
+            val gamePausedX = (viewport.worldWidth - glyphLayout.width) / 2
+            val gamePausedY = (viewport.worldHeight / 2) + glyphLayout.height // Etwas oberhalb der Mitte
+            font.draw(batch, text, gamePausedX, gamePausedY, viewport.worldWidth * 0.75f, Align.center, true)
 
             // Continue-Button anzeigen
             batch.draw(
@@ -253,34 +304,29 @@ class MinigameSchuleScreen : KtxScreen {
             batch.end()
             Gdx.gl.glEnable(GL20.GL_BLEND)
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
-            shapeRenderer.color = Color(0f, 0f, 0f, 0.65f) // Abdunkelnder Hintergrund
+            shapeRenderer.color = Color(0f, 0f, 0f, 0.65f)
             shapeRenderer.rect(0f, 0f, viewport.screenWidth.toFloat(), viewport.screenHeight.toFloat())
             shapeRenderer.end()
             Gdx.gl.glDisable(GL20.GL_BLEND)
             batch.begin()
 
+            font = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
             font.color = Color.WHITE
             val glyphLayout = GlyphLayout()
             font.data.setScale(0.7f, 0.7f)
             glyphLayout.setText(font, "GAME PAUSED")
-
-            // Zentriere den Text "GAME PAUSED"
             val gamePausedX = (viewport.worldWidth - glyphLayout.width) / 2
             val gamePausedY = (viewport.worldHeight / 2) + glyphLayout.height + 10f
             font.draw(batch, "GAME PAUSED", gamePausedX, gamePausedY)
 
-            // Continue-Button zentrieren
-            val continueButtonX = (viewport.worldWidth - buttonSize.x) / 2 // Horizontale Mitte
-            val continueButtonY = continueButtonBasePosition.y * (viewport.worldHeight / 600f) // Beibehaltung der vertikalen Position
-
+            // Continue-Button anzeigen
             batch.draw(
                 continueTexture,
-                continueButtonX - (buttonSize.x * (continueButtonScale - 1f) / 2), // Berücksichtige Skalierung
-                continueButtonY - (buttonSize.y * (continueButtonScale - 1f) / 2),  // Berücksichtige Skalierung
+                continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
+                continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
                 buttonSize.x * continueButtonScale,
                 buttonSize.y * continueButtonScale
             )
-
         }
         else {
         }
@@ -314,6 +360,20 @@ class MinigameSchuleScreen : KtxScreen {
             1f
         }
 
+        tryAgainButtonTargetScale = if (mouseX in tryAgainButtonPosition.x..(tryAgainButtonPosition.x + buttonSize.x) &&
+            mouseY in tryAgainButtonPosition.y..(tryAgainButtonPosition.y + buttonSize.y)) {
+            1.1f
+        } else {
+            1f
+        }
+
+        quitButtonTargetScale = if (mouseX in quitButtonPosition.x..(quitButtonPosition.x + buttonSize.x) &&
+            mouseY in quitButtonPosition.y..(quitButtonPosition.y + buttonSize.y)) {
+            1.1f
+        } else {
+            1f
+        }
+
 
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             if (!gameStarted) { // Wenn das Spiel noch nicht gestartet wurde
@@ -328,7 +388,14 @@ class MinigameSchuleScreen : KtxScreen {
             else if (gameStarted && mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) &&
                 mouseY in pausePosition.y..(pausePosition.y + pauseSize.y)) {
                 isPaused = true
-            } else {
+            } else if((gameOver || gameWon) && mouseX in tryAgainButtonPosition.x..(tryAgainButtonPosition.x + buttonSize.x) &&
+                mouseY in tryAgainButtonPosition.y..(tryAgainButtonPosition.y + buttonSize.y)){
+                resetGame()
+            } else if((gameOver || gameWon) && mouseX in quitButtonPosition.x..(quitButtonPosition.x + buttonSize.x) &&
+                mouseY in quitButtonPosition.y..(quitButtonPosition.y + buttonSize.y)) {
+                //TODO
+            }
+            else {
                 //ob auf eine Karte geklickt wurde
                 for (card in cards) {
                     if (mouseX >= card.x && mouseX <= card.x + card.width &&
@@ -374,6 +441,20 @@ class MinigameSchuleScreen : KtxScreen {
         }
     }
 
+    // Funktion zum Überprüfen, ob alle Karten richtig platziert sind
+    private fun checkWinCondition() {
+        //TODO
+        gameWon = true
+    }
+
+    private fun resetGame(){
+        gameOver = false
+        gameWon = false
+        gameStarted = false
+        timeLeft = 30
+        elapsedTime = 0f
+    }
+
     private fun formatTime(time: Int): String {
         val minutes = time / 60
         val seconds = time % 60
@@ -392,6 +473,8 @@ class MinigameSchuleScreen : KtxScreen {
         playTexture.dispose()
         continueTexture.dispose()
         stundenplanTexture.dispose()
+        tryAgainButtonTexture.dispose()
+        quitButtonTexture.dispose()
         // Dispose aller Kärtchen-Texturen
         cards.forEach { it.texture.dispose() }
     }
