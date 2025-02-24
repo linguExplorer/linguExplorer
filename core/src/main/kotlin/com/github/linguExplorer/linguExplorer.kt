@@ -6,6 +6,7 @@ import com.github.linguExplorer.screen.PhrasenheftScreen
 import com.github.linguExplorer.screen.MinigameEssenScreen
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
+import com.github.linguExplorer.screen.GameMenuScreen
 import com.github.linguExplorer.screen.MainMenuScreen
 import com.github.linguExplorer.screen.MapScreen
 import ktx.app.KtxGame
@@ -20,9 +21,8 @@ class linguExplorer : KtxGame<KtxScreen>() {
         setScreen<MainMenuScreen>()
     }
 
-
     companion object {
-        const val UNIT_SCALE = 1/16f
+        const val UNIT_SCALE = 1 / 16f
     }
 }
 
