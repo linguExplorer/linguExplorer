@@ -338,8 +338,34 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
         var positionOffsetY = 0f
         var index = 0
 
+        val (objectsWithoutHanger, objectsWithHanger) = objects.partition { it.hangerTexture == null }
+
         if (gameStarted) {
-            objects.forEach { obj ->
+            objectsWithHanger.forEach { obj ->
+                if (index > 0 && index % 8 == 0) {
+                    positionOffsetX = 0f
+                    positionOffsetY -= 150f * (viewport.worldHeight / 600f)
+                }
+                if (!obj.isCollected) {
+                    obj.positionX = obj.basePositionX * (viewport.worldWidth / 800f) + positionOffsetX
+                    obj.positionY = obj.basePositionY * (viewport.worldHeight / 600f) + positionOffsetY
+                    obj.positionOffsetX = positionOffsetX
+                    obj.positionOffsetY = positionOffsetY
+                    batch.draw(obj.currentTexture, obj.positionX, obj.positionY, obj.sizeX, obj.sizeY)
+                }
+
+                index++
+                positionOffsetX += 50f * (viewport.worldWidth / 800f)
+
+                renderPhrasesOnScreen(batch, font, minigame.bag1, purpleBagPosition.x + 30f, purpleBagPosition.y + purpleBagSize.y - 90f, 30f)
+                renderPhrasesOnScreen(batch, font, minigame.bag2, blueBagPosition.x + 30f, blueBagPosition.y + purpleBagSize.y - 90f, 30f)
+            }
+
+            index = 0
+            positionOffsetX = 0f
+            positionOffsetY = 0f
+
+            objectsWithoutHanger.forEach { obj ->
                 if (index > 0 && index % 8 == 0) {
                     positionOffsetX = 0f
                     positionOffsetY -= 150f * (viewport.worldHeight / 600f)
