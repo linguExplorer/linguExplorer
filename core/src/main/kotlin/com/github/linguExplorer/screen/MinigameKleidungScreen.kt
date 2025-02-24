@@ -206,6 +206,42 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
         // Bottom-Objekte erstellen
         val bottomTargetWidth = 100f // Größere Breite für Bottom-Objekte
 
+        shelfObjects.forEach { (phrase, assetPath) ->  // Korrekte Signatur für ohne Index
+            val texture = Texture(Gdx.files.internal(assetPath))
+            val pixmap = Pixmap(Gdx.files.internal(assetPath))
+            val originalWidth = pixmap.width.toFloat()
+            val originalHeight = pixmap.height.toFloat()
+            pixmap.dispose()
+            val targetWidth = 50f
+            val aspectRatio = originalHeight / originalWidth
+            val targetHeight = targetWidth * aspectRatio
+
+            val resetPositionX = if (assetPath.contains("Shirt") || assetPath.contains("Dress")) shelfBasePosition1.x + horizontalOffset else shelfBasePosition2.x + horizontalOffset
+            val resetPositionY = if (assetPath.contains("Shirt") || assetPath.contains("Dress")) shelfBasePosition1.y + verticalOffset else shelfBasePosition2.y + verticalOffset
+
+            // Regalobjekte haben keine Hanger-Textur
+            val currentTexture = texture // Initialisiere currentTexture
+
+            objects.add(
+                DraggableObject(
+                    phrase = phrase,
+                    texture = texture,
+                    hangerTexture = null, // KEINE Hanger-Textur für Regalobjekte
+                    currentTexture = currentTexture, //aktuelle Textur
+                    resetPositionX = resetPositionX,
+                    resetPositionY = resetPositionY,
+                    basePositionX = resetPositionX,
+                    basePositionY = resetPositionY,
+                    positionX = 0f,
+                    positionY = 0f,
+                    positionOffsetX = 0f,
+                    positionOffsetY = 0f,
+                    sizeX = targetWidth,
+                    sizeY = targetHeight
+                )
+            )
+        }
+
         bottomObjects.forEachIndexed { index, (phrase, assetPath) ->
             val texture = Texture(Gdx.files.internal(assetPath))
             //Pfad der Hänger-Textur erstellen
@@ -243,42 +279,6 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                     positionOffsetX = 0f,
                     positionOffsetY = 0f,
                     sizeX = bottomTargetWidth,
-                    sizeY = targetHeight
-                )
-            )
-        }
-
-        shelfObjects.forEach { (phrase, assetPath) ->  // Korrekte Signatur für ohne Index
-            val texture = Texture(Gdx.files.internal(assetPath))
-            val pixmap = Pixmap(Gdx.files.internal(assetPath))
-            val originalWidth = pixmap.width.toFloat()
-            val originalHeight = pixmap.height.toFloat()
-            pixmap.dispose()
-            val targetWidth = 50f
-            val aspectRatio = originalHeight / originalWidth
-            val targetHeight = targetWidth * aspectRatio
-
-            val resetPositionX = if (assetPath.contains("Shirt") || assetPath.contains("Dress")) shelfBasePosition1.x + horizontalOffset else shelfBasePosition2.x + horizontalOffset
-            val resetPositionY = if (assetPath.contains("Shirt") || assetPath.contains("Dress")) shelfBasePosition1.y + verticalOffset else shelfBasePosition2.y + verticalOffset
-
-            // Regalobjekte haben keine Hanger-Textur
-            val currentTexture = texture // Initialisiere currentTexture
-
-            objects.add(
-                DraggableObject(
-                    phrase = phrase,
-                    texture = texture,
-                    hangerTexture = null, // KEINE Hanger-Textur für Regalobjekte
-                    currentTexture = currentTexture, //aktuelle Textur
-                    resetPositionX = resetPositionX,
-                    resetPositionY = resetPositionY,
-                    basePositionX = resetPositionX,
-                    basePositionY = resetPositionY,
-                    positionX = 0f,
-                    positionY = 0f,
-                    positionOffsetX = 0f,
-                    positionOffsetY = 0f,
-                    sizeX = targetWidth,
                     sizeY = targetHeight
                 )
             )
@@ -349,12 +349,9 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                     obj.positionY = obj.basePositionY * (viewport.worldHeight / 600f) + positionOffsetY
                     obj.positionOffsetX = positionOffsetX
                     obj.positionOffsetY = positionOffsetY
-                }
-
-                if (!obj.isCollected) {
-                    // Zeichne die aktuelle Textur
                     batch.draw(obj.currentTexture, obj.positionX, obj.positionY, obj.sizeX, obj.sizeY)
                 }
+
                 index++
                 positionOffsetX += 50f * (viewport.worldWidth / 800f)
 
