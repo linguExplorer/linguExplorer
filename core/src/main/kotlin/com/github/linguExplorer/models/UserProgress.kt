@@ -5,7 +5,7 @@ import org.jetbrains.exposed.sql.Table
 /**
  * Dieser Kommentar trifft auf alle weiteren Klassen zu
  */
-object User_Progress : Table() {
+object UserProgress : Table("user_progress") {
     val userId = integer("pk_fk_user_id")
     val topicId = integer("pk_fk_topic_id")
     val isMastered = bool("is_mastered").default(false)

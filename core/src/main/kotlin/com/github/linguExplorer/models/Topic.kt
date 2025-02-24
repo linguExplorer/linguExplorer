@@ -2,7 +2,7 @@ package com.github.linguExplorer.models
 
 import org.jetbrains.exposed.sql.Table
 
-object Topic : Table() {
+object Topic : Table("topic") {
     val id = integer("pk_topic_id").autoIncrement()
     val name = varchar("name", 50)
     val description = varchar("description", 200).nullable()

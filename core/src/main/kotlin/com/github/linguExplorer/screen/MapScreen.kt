@@ -1,11 +1,16 @@
 package com.github.linguExplorer.screen
 
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.scenes.scene2d.EventListener
+import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.Touchable
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.github.linguExplorer.component.*
 import com.github.linguExplorer.event.MapChangeEvent
@@ -21,15 +26,17 @@ import ktx.box2d.createWorld
 import ktx.log.logger
 import ktx.math.vec2
 
-class MapScreen(private val game: linguExplorer) : KtxScreen {
+class MapScreen(private val game: linguExplorer, private val tempX: Float, private val tempY : Float) : KtxScreen {
 
     private val stage :Stage = Stage(ExtendViewport(16f,9f))
-    private val textureAtlas = TextureAtlas("assets/graphics/entities.atlas")
-    private val playerTexture: Texture = Texture("assets/graphics/entities.png")
+    private val textureAtlas = TextureAtlas("graphics/entities.atlas")
+    private val playerTexture: Texture = Texture("graphics/entities.png")
     private var currentMap: TiledMap? = null;
     private val phWorld = createWorld(gravity = vec2()).apply {
         autoClearForces = false
     }
+
+
 
     private val world: World= world {
 
@@ -37,6 +44,9 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
             add(stage)
             add(textureAtlas)
             add(phWorld)
+            add(game)
+            add("tempX", tempX)
+            add("tempY", tempY)
         }
 
         components {
@@ -49,6 +59,7 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
             add<CollisionSpawnSystem>()
             add<CollisionDespawnSystem>()
             add<MapChangeSystem>()
+            add<PathSystem>()
             add<MoveSystem>()
             add<PhysicSystem>()
             add<AnimationSystem>()
@@ -58,6 +69,10 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
         }
     }
 
+
+    private val pathSystem = world.system<PathSystem>()
+
+
     override fun show() {
         log.debug { "Game Screen gets shown" }
         world.systems.forEach { system ->
@@ -65,22 +80,120 @@ class MapScreen(private val game: linguExplorer) : KtxScreen {
                 stage.addListener(system)
             }
         }
-        currentMap = TmxMapLoader().load("assets/graphics/map/main-map.tmx")
+
+        currentMap = TmxMapLoader().load("graphics/map/main-map.tmx")
         stage.fire(MapChangeEvent(currentMap!!))
 
 
+        // fixe Bilder hinzufügen
+        addUIImages()
 
-        PlayerKeyboardInputProcessor(world, world.mapper())
+        PlayerKeyboardInputProcessor(world, stage, world.mapper(), world.mapper(), stage, pathSystem )
+
+        val playerInputProcessor = PlayerKeyboardInputProcessor(world, stage, world.mapper(), world.mapper(), stage, pathSystem)
+        // InputMultiplexer um Spielfigur + UI zu verarbeiten
+        val inputMultiplexer = InputMultiplexer()
+        inputMultiplexer.addProcessor(uiStage)
+        inputMultiplexer.addProcessor(stage)
+        inputMultiplexer.addProcessor(playerInputProcessor)
+        // Spielfigur und Welt-Stage
+        //inputMultiplexer.addProcessor(uiStage) // UI-Stage*/
+
+        Gdx.input.inputProcessor = inputMultiplexer //Multiplexer als Input-Prozessor setzen
+    }
+
+    private val uiStage: Stage = Stage(ExtendViewport(16f, 9f).apply {
+        setWorldSize(16f, 9f)
+    })
+    //fixe Bilder Methode
+    private fun addUIImages() {
+        // Bilder laden
+        val backpackTexture = Texture("graphics/map-objects/Rucksack/v2/Backpack2.png")
+        val mapTexture = Texture("graphics/map-objects/Map/v2/Map2.png")
+        val phrasingBookTexture = Texture("graphics/map-objects/Phrasenheft/v2/Phrasenheft2-1.png.png")
+        //val progressBarTexture = Texture("graphics/map-objects/Prozentleiste/v2/Prozentleiste2-1.png.png")
+        val moneyBagTexture = Texture("graphics/map-objects/Coinbag/v2/MoneyBag2-2.png.png")
+
+        // Images für jedes Bild
+        val backpackImage = com.badlogic.gdx.scenes.scene2d.ui.Image(backpackTexture)
+        backpackImage.touchable = Touchable.enabled
+
+        val mapImage = com.badlogic.gdx.scenes.scene2d.ui.Image(mapTexture)
+        val phrasingBookImage = com.badlogic.gdx.scenes.scene2d.ui.Image(phrasingBookTexture)
+        backpackImage.touchable = Touchable.enabled
+
+        //val progressBarImage = com.badlogic.gdx.scenes.scene2d.ui.Image(progressBarTexture)
+        val moneyBagImage = com.badlogic.gdx.scenes.scene2d.ui.Image(moneyBagTexture)
+
+        // Größe
+        val imageSize = 2f //Definiere die größe für die Bilder
+        backpackImage.setSize(imageSize, imageSize)
+        mapImage.setSize(imageSize, imageSize)
+        phrasingBookImage.setSize(imageSize, imageSize)
+        //progressBarImage.setSize(imageSize, imageSize-1f)
+        moneyBagImage.setSize(imageSize, imageSize)
+
+        // Position
+        backpackImage.setPosition(12.8f, 7.2f)  // rechts oben
+        mapImage.setPosition(0f, 6.5f)     // links oben
+        phrasingBookImage.setPosition(14.5f, 0.5f) // rechts unten
+        //progressBarImage.setPosition(0f, 8f) // Beispiel
+        moneyBagImage.setPosition(14.5f, 7f)   // rechts oben
+
+        // Bilder zur UI-Stage hinzufügen
+        uiStage.addActor(backpackImage)
+        uiStage.addActor(mapImage)
+        uiStage.addActor(phrasingBookImage)
+        //uiStage.addActor(progressBarImage)
+        uiStage.addActor(moneyBagImage)
+
+
+
+        backpackImage.addListener(object : ClickListener() {
+            override fun clicked(event: InputEvent?, x: Float, y: Float) {
+                println("Backpack clicked")
+
+            }
+        })
+
+        phrasingBookImage.addListener(object : ClickListener() {
+            override fun clicked(event: InputEvent?, x: Float, y: Float) {
+                println("Phrasebook clicked")
+
+                if (!game.containsScreen<PhrasenheftScreen>()) {
+                    game.addScreen(PhrasenheftScreen(game))
+                }
+                game.setScreen<PhrasenheftScreen>()
+
+
+            }
+        })
+
 
     }
 
+
+
+
+
+
+
+
     override fun resize(width: Int, height: Int) {
         stage.viewport.update(width, height, true)
+        uiStage.viewport.update(width, height, true)
+
     }
 
     override fun render(delta: Float) {
 
-       world.update(delta.coerceAtMost(0.25f))
+        world.update(delta.coerceAtMost(0.25f))
+
+
+        // Zeichne die UI-Stage
+        uiStage.act(Math.min(delta, 1 / 30f)) // Update für die UI-Stage
+        uiStage.draw() // UI immer über der Welt
+
     }
 
     override fun dispose() {

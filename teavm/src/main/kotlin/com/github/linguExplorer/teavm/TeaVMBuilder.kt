@@ -28,7 +28,6 @@ object TeaVMBuilder {
             htmlWidth = 640
             htmlHeight = 360
         }
-
         // Register any classes or packages that require reflection here:
 
         TeaReflectionSupplier.addReflectionClass(java.util.List::class.java)
@@ -45,8 +44,6 @@ object TeaVMBuilder {
 
         val tool = TeaBuilder.config(teaBuildConfiguration)
         tool.mainClass = "com.github.linguExplorer.teavm.TeaVMLauncher"
-        tool.optimizationLevel = TeaVMOptimizationLevel.FULL
-        tool.setObfuscated(true)
         TeaBuilder.build(tool)
     }
 }

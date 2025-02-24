@@ -1,6 +1,10 @@
 package com.github.linguExplorer.system
 
+import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.linguExplorer.component.*
+import com.github.linguExplorer.event.ActivateKeyEvent
+import com.github.linguExplorer.event.fire
+import com.github.linguExplorer.linguExplorer
 import com.github.quillraven.fleks.AllOf
 import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.Entity
@@ -8,6 +12,7 @@ import com.github.quillraven.fleks.IteratingSystem
 import ktx.math.component1
 import ktx.math.component2
 import java.util.*
+import kotlinx.coroutines.*
 
 @AllOf([MoveComponent::class, PhysicComponent::class])
 class MoveSystem(
@@ -15,12 +20,14 @@ class MoveSystem(
     private val physicCmps: ComponentMapper<PhysicComponent>,
     private val animationCmps: ComponentMapper<AnimationComponent>,
     private val SpawnCmps:ComponentMapper<SpawnComponent>,
+    private val gameStage: Stage,
+    private val game: linguExplorer
 
 
 
 
 
-) : IteratingSystem(){
+    ) : IteratingSystem(){
 
 
     private val cachedCfgs = mutableMapOf<String, SpawnCfg>()
@@ -62,6 +69,7 @@ class MoveSystem(
                 moveCmp.sin < 0f -> AnimationType.IDLE
                 else -> AnimationType.IDLE
             }
+
 
 
         animationCmps.getOrNull(entity)?.let { aniCmp ->
