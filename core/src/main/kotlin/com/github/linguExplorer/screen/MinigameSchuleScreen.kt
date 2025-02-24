@@ -88,7 +88,7 @@ class MinigameSchuleScreen : KtxScreen {
         )
 
     // Kärtchen-spezifische Variablen
-    private val cardFolder = "C:\\Users\\Britta\\Documents\\GitHub\\linguExplorer\\assets\\Minigames\\school\\timetable\\subjects_E"
+    private val cardFolder = "Minigames/school/timetable/subjects_E"
     private var cards: MutableList<Card> = mutableListOf() // MutableList, da wir die Positionen ändern werden
     private val cardWidth = 108f
     private val cardHeight = 47f
