@@ -51,6 +51,14 @@ class MinigameSchuleScreen : KtxScreen {
     private val stundenplanPositionX = 270f // Rechts
     private val stundenplanPositionY = 160f // Oben
 
+    // **Raster-Einstellungen**
+    private val rasterSpalten = 5 // Anzahl der Spalten im Raster
+    private val rasterZeilen = 7 // Anzahl der Zeilen im Raster
+    private val rasterFeldBreite = 79f // Breite jedes Feldes im Raster
+    private val rasterFeldHoehe = 47f // Höhe jedes Feldes im Raster
+    private val rasterAbstandX = 2.5f // Abstand zwischen den Spalten
+    private val rasterAbstandY = 3f // Abstand zwischen den Zeilen
+
     private var pauseButtonScale = 1f
     private var pauseButtonTargetScale = 1f
     private var continueButtonScale = 1f
@@ -109,8 +117,8 @@ class MinigameSchuleScreen : KtxScreen {
         )
 
     // Kärtchen-spezifische Variablen
-    private val cardFolder = "Minigames/school/timetable/subjects_E"
-    //private val cardFolder = "C:\\Users\\Britta\\Documents\\GitHub\\linguExplorer\\assets\\Minigames\\school\\timetable\\subjects_E"
+    //private val cardFolder = "Minigames/school/timetable/subjects_E"
+    private val cardFolder = "C:\\Users\\Britta\\Documents\\GitHub\\linguExplorer\\assets\\Minigames\\school\\timetable\\subjects_E"
     private var cards: MutableList<Card> = mutableListOf() // MutableList, da wir die Positionen ändern werden
     private val cardWidth = 108f
     private val cardHeight = 47f
@@ -213,6 +221,11 @@ class MinigameSchuleScreen : KtxScreen {
         // Stundenplan anzeigen (nur wenn das Spiel läuft)
         if (gameStarted && !gameOver && !gameWon) {
             batch.draw(stundenplanTexture, stundenplanPosition.x, stundenplanPosition.y, stundenplanWidth * (viewport.worldWidth/800f), stundenplanHeight * (viewport.worldHeight/600f))
+
+            // **Raster zeichnen**
+            batch.end() // Beende den SpriteBatch, um den ShapeRenderer zu verwenden
+            drawGrid()
+            batch.begin() // Starte den SpriteBatch wieder
         }
 
         // Zeichne die Kärtchen
@@ -332,6 +345,33 @@ class MinigameSchuleScreen : KtxScreen {
         }
 
         batch.end()
+    }
+
+    // **Funktion zum Zeichnen des Rasters**
+    private fun drawGrid() {
+        shapeRenderer.projectionMatrix = viewport.camera.combined
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line)
+        shapeRenderer.color = Color.RED // Farbe des Rasters
+
+        // Startposition des Rasters (Punkt links oben)
+        val startX = 494f//stundenplanPosition.x
+        val startY = 162f //stundenplanPosition.y
+
+        for (row in 0 until rasterZeilen) {
+            for (col in 0 until rasterSpalten) {
+                val x = startX + col * (rasterFeldBreite + rasterAbstandX) * (viewport.worldWidth/800f)
+                val y = startY + row * (rasterFeldHoehe + rasterAbstandY) * (viewport.worldHeight/600f)
+
+                shapeRenderer.rect(
+                    x,
+                    y,
+                    rasterFeldBreite * (viewport.worldWidth/800f),
+                    rasterFeldHoehe * (viewport.worldHeight/600f)
+                )
+            }
+        }
+
+        shapeRenderer.end()
     }
 
 
