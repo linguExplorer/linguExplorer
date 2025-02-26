@@ -138,11 +138,11 @@ class MinigameSchuleScreen : KtxScreen {
     data class RasterSlot(
         val x: Float,
         val y: Float,
-        var isOccupied: Boolean = false,
-        var card: Card? = null
+        var isOccupied: Boolean = false, // ob  Feld bereits von einer Karte belegt ist
+        var card: Card? = null //Referenz auf die Card (null wenn leer)
     )
 
-    private var rasterSlots: MutableList<RasterSlot> = mutableListOf()
+    private var rasterSlots: MutableList<RasterSlot> = mutableListOf() //MutableList die alle RasterSlot-Objekte speichert
 
     // Datenklasse für Kärtchen
     data class Card(
@@ -166,10 +166,13 @@ class MinigameSchuleScreen : KtxScreen {
         initializeRasterSlots()
     }
 
+    //Funktion um das Raster zu erstellen
     private fun initializeRasterSlots() {
         rasterSlots.clear() //Vorherige Slots entfernen
+        //über jede Zeile und Spalte des Rasters
         for (row in 0 until rasterZeilen) {
             for (col in 0 until rasterSpalten) {
+                //definiert wo jedes Feld im Raster platziert wird
                 val x = rasterStartX + col * (rasterFeldBreite + rasterAbstandX) * (viewport.worldWidth/800f)
                 val y = rasterStartY + row * (rasterFeldHoehe + rasterAbstandY) * (viewport.worldHeight/600f)
                 rasterSlots.add(RasterSlot(x, y))
