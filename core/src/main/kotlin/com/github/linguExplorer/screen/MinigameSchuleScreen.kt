@@ -59,6 +59,11 @@ class MinigameSchuleScreen : KtxScreen {
     private val rasterAbstandX = 2.5f // Abstand zwischen den Spalten
     private val rasterAbstandY = 3f // Abstand zwischen den Zeilen
 
+    //Konstanten für das Raster
+    private val rasterStartX = 494f
+    private val rasterStartY = 162f
+    private val numberOfCards = 13//cardsLeftColumn + cardsRightColumn
+
     private var pauseButtonScale = 1f
     private var pauseButtonTargetScale = 1f
     private var continueButtonScale = 1f
@@ -129,6 +134,16 @@ class MinigameSchuleScreen : KtxScreen {
     private val cardsLeftColumn = 7
     private val cardsRightColumn = 6
 
+    // Datenklasse für Raster Positionen
+    data class RasterSlot(
+        val x: Float,
+        val y: Float,
+        var isOccupied: Boolean = false,
+        var card: Card? = null
+    )
+
+    private var rasterSlots: MutableList<RasterSlot> = mutableListOf()
+
     // Datenklasse für Kärtchen
     data class Card(
         val texture: Texture,
@@ -138,7 +153,8 @@ class MinigameSchuleScreen : KtxScreen {
         var y: Float,          // Aktuelle Y-Position
         val width: Float,
         val height: Float,
-        var isDragging: Boolean = false // ob das Kärtchen gerade gezogen wird
+        var isDragging: Boolean = false, // ob das Kärtchen gerade gezogen wird
+        var originalSlot : Int? = null
     )
 
     override fun show() {
@@ -147,6 +163,18 @@ class MinigameSchuleScreen : KtxScreen {
 
         // Lade die Kärtchen-Texturen beim Anzeigen des Screens
         loadCardTextures()
+        initializeRasterSlots()
+    }
+
+    private fun initializeRasterSlots() {
+        rasterSlots.clear() //Vorherige Slots entfernen
+        for (row in 0 until rasterZeilen) {
+            for (col in 0 until rasterSpalten) {
+                val x = rasterStartX + col * (rasterFeldBreite + rasterAbstandX) * (viewport.worldWidth/800f)
+                val y = rasterStartY + row * (rasterFeldHoehe + rasterAbstandY) * (viewport.worldHeight/600f)
+                rasterSlots.add(RasterSlot(x, y))
+            }
+        }
     }
 
     private fun loadCardTextures() {
@@ -166,14 +194,14 @@ class MinigameSchuleScreen : KtxScreen {
             for (i in 0 until min(cardsLeftColumn, textures.size)) {
                 val x = cardStartPosXLeft * (viewport.worldWidth / 800f)
                 val y = startYLeft - i * (cardHeight + cardSpacingY) * (viewport.worldHeight / 600f)
-                cards.add(Card(textures[i], x, y, x, y, cardWidth, cardHeight))
+                cards.add(Card(textures[i], x, y, x, y, cardWidth, cardHeight, false, i))
             }
 
             // Rechte Spalte
             for (i in 0 until min(cardsRightColumn, textures.size - cardsLeftColumn)) {
                 val x = cardStartPosXRight * (viewport.worldWidth / 800f)
                 val y = startYRight - i * (cardHeight + cardSpacingY) * (viewport.worldHeight / 600f)
-                cards.add(Card(textures[i + cardsLeftColumn], x, y, x, y, cardWidth, cardHeight))
+                cards.add(Card(textures[i + cardsLeftColumn], x, y, x, y, cardWidth, cardHeight, false, (i + cardsLeftColumn)))
             }
         } else {
             Gdx.app.error("MinigameSchuleScreen", "Kartenordner nicht gefunden: $cardFolder")
@@ -374,13 +402,18 @@ class MinigameSchuleScreen : KtxScreen {
         shapeRenderer.end()
     }
 
-
     private fun drawCards() {
         cards.forEach { card ->
-            batch.draw(card.texture, card.x, card.y, card.width, card.height)
+            if(card.originalSlot != null && card.originalSlot != -1) {
+                batch.draw(card.texture, card.x, card.y, card.width, card.height)
+            }
+        }
+        for (slot in rasterSlots) {
+            if(slot.isOccupied) {
+                batch.draw(slot.card!!.texture, slot.card!!.x, slot.card!!.y, slot.card!!.width, slot.card!!.height)
+            }
         }
     }
-
 
     private fun handleInput(delta: Float) {
         val mouseX = Gdx.input.x.toFloat() * viewport.worldWidth / Gdx.graphics.width
@@ -438,7 +471,7 @@ class MinigameSchuleScreen : KtxScreen {
             else {
                 //ob auf eine Karte geklickt wurde
                 for (card in cards) {
-                    if (mouseX >= card.x && mouseX <= card.x + card.width &&
+                    if (card.originalSlot != null && card.originalSlot != -1 && mouseX >= card.x && mouseX <= card.x + card.width &&
                         mouseY >= card.y && mouseY <= card.y + card.height) {
                         card.isDragging = true
                         break // Nur eine Karte gleichzeitig ziehen
@@ -450,8 +483,44 @@ class MinigameSchuleScreen : KtxScreen {
             //Maustaste losgelassen -> Position zurücksetzen
             for (card in cards) {
                 if (card.isDragging) {
-                    card.x = card.originalX
-                    card.y = card.originalY
+                    var slotFound = false
+                    for (slot in rasterSlots) {
+                        if (!slot.isOccupied &&
+                            card.x + card.width / 2f >= slot.x && card.x + card.width / 2f <= slot.x + rasterFeldBreite * (viewport.worldWidth/800f) &&
+                            card.y + card.height / 2f >= slot.y && card.y + card.height / 2f <= slot.y + rasterFeldHoehe * (viewport.worldHeight/600f)
+                        ) {
+                            // Karte in den Slot setzen
+                            card.x = slot.x
+                            card.y = slot.y
+                            card.isDragging = false
+                            slot.isOccupied = true
+                            slot.card = card
+
+                            slotFound = true
+                            break //Slot gefunden, nicht weitersuchen
+                        }
+                    }
+                    if(!slotFound){
+                        if(card.originalSlot != -1) {
+                            card.x = when (card.originalSlot!! < cardsLeftColumn) {
+                                true -> cardStartPosXLeft * (viewport.worldWidth / 800f)
+                                false -> cardStartPosXRight * (viewport.worldWidth / 800f)
+                            }
+                            card.y = when (card.originalSlot!! < cardsLeftColumn) {
+                                true -> (cardStartPosYFromTop - card.originalSlot!! * (cardHeight + cardSpacingY)) * (viewport.worldHeight / 600f)
+                                false -> (cardStartPosYFromTop - (card.originalSlot!! - cardsLeftColumn) * (cardHeight + cardSpacingY)) * (viewport.worldHeight / 600f)
+                            }
+                        }else{
+                            for (slot in rasterSlots) {
+                                if(slot.card == card){
+                                    card.x = slot.x
+                                    card.y = slot.y
+                                    slot.card = null
+                                    slot.isOccupied = false
+                                }
+                            }
+                        }
+                    }
                 }
                 card.isDragging = false
             }
@@ -493,6 +562,27 @@ class MinigameSchuleScreen : KtxScreen {
         gameStarted = false
         timeLeft = 30
         elapsedTime = 0f
+
+        //Leere RasterSlots
+        for (slot in rasterSlots) {
+            slot.isOccupied = false
+            slot.card = null
+        }
+
+        //Reset Karten
+        for (card in cards) {
+            card.isDragging = false
+            if(card.originalSlot != null) {
+                card.x = when (card.originalSlot!! < cardsLeftColumn) {
+                    true -> cardStartPosXLeft * (viewport.worldWidth / 800f)
+                    false -> cardStartPosXRight * (viewport.worldWidth / 800f)
+                }
+                card.y = when (card.originalSlot!! < cardsLeftColumn) {
+                    true -> (cardStartPosYFromTop - card.originalSlot!! * (cardHeight + cardSpacingY)) * (viewport.worldHeight / 600f)
+                    false -> (cardStartPosYFromTop - (card.originalSlot!! - cardsLeftColumn) * (cardHeight + cardSpacingY)) * (viewport.worldHeight / 600f)
+                }
+            }
+        }
     }
 
     private fun formatTime(time: Int): String {
