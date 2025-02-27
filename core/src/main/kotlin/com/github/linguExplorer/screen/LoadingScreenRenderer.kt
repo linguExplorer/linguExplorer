@@ -1,20 +1,35 @@
-package com.github.linguExplorer.screen;
+package com.github.linguExplorer.screen
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.viewport.Viewport
 
 class LoadingScreenRenderer {
 
-    fun renderAnimatedText(batch: SpriteBatch, font: BitmapFont, viewport: Viewport, text: String, x: Float, y: Float, delta: Float, alpha: Float, fadingIn: Boolean
+    // Liste von Sätzen, die nacheinander angezeigt werden
+    private val loadingMessages = listOf(
+        "Lade Ressourcen...",
+        "Wusstest du schon: Dein Spiel wird von uns automatisch gespeichert!",
+        "Noch ein bisschen Geduld...",
+        "Tipp: Achte immer auf die Zeit, wenn du ein Minispiel spielst!",
+        "Fast fertig..."
+    )
+
+    // Variable für die vergangene Zeit
+    private var loadingTime = 0f
+    private var loadingMessage = ""
+
+    fun renderAnimatedText(batch: SpriteBatch, font: BitmapFont, glyphLayout: GlyphLayout, viewport: Viewport, text: String, delta: Float, alpha: Float, fadingIn: Boolean
     ) {
         var newAlpha = alpha
         var newFadingIn = fadingIn
 
+        // Alpha-Animation
         if (newFadingIn) {
             newAlpha += delta * 0.1f
             if (newAlpha >= 1) {
@@ -31,14 +46,44 @@ class LoadingScreenRenderer {
         Gdx.gl.glEnable(GL20.GL_BLEND)
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
         shapeRenderer.color = Color.BLACK
-        shapeRenderer.rect(0f,0f, viewport.screenWidth.toFloat(), viewport.screenHeight.toFloat())
+        shapeRenderer.rect(0f, 0f, viewport.screenWidth.toFloat(), viewport.screenHeight.toFloat())
         shapeRenderer.end()
         Gdx.gl.glDisable(GL20.GL_BLEND)
+
         font.color.set(1f, 1f, 1f, newAlpha)
         viewport.apply()
         batch.projectionMatrix = viewport.camera.combined
+
         batch.begin()
+        font.data.setScale(0.4f)
+        glyphLayout.setText(font, text)
+        var x = (viewport.worldWidth - glyphLayout.width) / 2
+        var y = (viewport.worldHeight + glyphLayout.height) / 2 + 30f
         font.draw(batch, text, x, y)
+
+        loadingTime += delta
+
+        val messageIndex = (loadingTime / 5).toInt()
+        if (loadingTime >= 2f) {
+            loadingMessage = if (messageIndex < loadingMessages.size) {
+                loadingMessages[messageIndex]
+            } else {
+                loadingMessages.last()
+            }
+        }
+
+        val originalScaleX = font.data.scaleX
+        val originalScaleY = font.data.scaleY
+        font.data.setScale(0.2f)
+
+        glyphLayout.setText(font, loadingMessage)
+        x = (viewport.worldWidth - glyphLayout.width) / 2
+        y -= glyphLayout.height + 50f
+        font.draw(batch, loadingMessage, x, y)
+
+        // Schriftgröße zurücksetzen
+        font.data.setScale(originalScaleX, originalScaleY)
+
         batch.end()
     }
 }

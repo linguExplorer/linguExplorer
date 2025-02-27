@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.*
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
@@ -52,6 +51,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private var newGame = false
     private var loadGame = false
     private var threadExecuted = false
+    private var loadingTime = 0f
     private var userFound = false
     private lateinit var user: UserEntity
     private lateinit var currentTopic: String
@@ -70,6 +70,9 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private val playerTexture: Texture = Texture("graphics/idle_animation.png")
     private lateinit var gifAnimation: Animation<TextureRegion>
     private var animationTime = 0f
+
+    private var dotAnimationTime = 0f
+    private var dotCount = 0
 
     private val overlayWidth = 1200f
     private val overlayHeight = 700f
@@ -99,6 +102,11 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         val screenWidth = viewport.worldWidth
         val screenHeight = viewport.worldHeight
 
+        // Mauskoordinaten in Weltkoordinaten umrechnen
+        val mousePos = Vector2(Gdx.input.x.toFloat(), Gdx.input.y.toFloat()).also {
+            viewport.unproject(it)
+        }
+
         val backgroundWidth = backgroundTexture.width.toFloat()
         val backgroundHeight = backgroundTexture.height.toFloat()
         val scale = 1.5f
@@ -109,8 +117,6 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         val scaledWidth = backgroundWidth * scaleFactor
         val scaledHeight = backgroundHeight * scaleFactor
 
-        val screenX = Gdx.input.x.toFloat()
-        val screenY = screenHeight - Gdx.input.y.toFloat()
         transitionCenter.set(viewport.screenWidth / 2f, viewport.screenHeight / 2f)
 
         backgroundOffsetX += speedX * delta
@@ -213,8 +219,8 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                     } else {
                         batch.draw(
                             currentFrame,
-                            popUpPosition.x + popUpSize.x - 300f,
-                            viewport.worldHeight / 2 - 200f,
+                            popUpPosition.x + popUpSize.x - 250f,
+                            viewport.worldHeight / 2 - 250f,
                             200f,
                             200f
                         )
@@ -242,7 +248,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                         val rectWidth = popUpSize.x - 160f
                         val rectHeight = -(gamePausedY - gamePausedX + 40f)
 
-                        val isMouseOver = isMouseInArea(screenX, screenY, rectX, rectY + rectHeight, rectWidth, -rectHeight)
+                        val isMouseOver = isMouseInArea(mousePos.x, mousePos.y, rectX, rectY + rectHeight, rectWidth, -rectHeight)
 
                         var isClicked = false
                         if (isMouseOver && Gdx.input.isTouched) {
@@ -270,11 +276,27 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                     }
                 }
             } else {
+                loadingTime += delta // Zeit aktualisieren
+
                 font.data.setScale(0.4f, 0.4f)
-                glyphLayout.setText(font, "Loading...")
+                dotAnimationTime += delta
+                if (dotAnimationTime >= 0.5f) { // Alle 0,5 Sekunden ändern
+                    dotAnimationTime = 0f
+                    dotCount = (dotCount + 1) % 4 // 0, 1, 2, 3 Punkte
+                }
+
+                val animatedDots = ".".repeat(dotCount)
+                val loadingText = when {
+                    loadingTime >= 30f -> ":("
+                    loadingTime >= 20f -> "Only a few more seconds$animatedDots"
+                    loadingTime >= 10f -> "Lean back and wait$animatedDots"
+                    else -> "Loading$animatedDots"
+                }
+
+                glyphLayout.setText(font, loadingText)
                 gamePausedX = (viewport.worldWidth - glyphLayout.width) / 2
                 gamePausedY = (viewport.worldHeight + glyphLayout.height) / 2
-                font.draw(batch, "Loading...", gamePausedX, gamePausedY)
+                font.draw(batch, loadingText, gamePausedX, gamePausedY)
             }
 
             batch.end()
@@ -294,11 +316,8 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                     loadGame = false
                 }
 
-                if (!threadExecuted) {
-                    glyphLayout.setText(font, "Loading...")
-                    val gamePausedX = (viewport.worldWidth - glyphLayout.width) / 2
-                    val gamePausedY = (viewport.worldHeight + glyphLayout.height) / 2
-                    loadingScreenRenderer.renderAnimatedText(batch, font, viewport, "Loading...", gamePausedX, gamePausedY, delta, 1f, true)
+                if (!threadExecuted || threadExecuted) {
+                    loadingScreenRenderer.renderAnimatedText(batch, font, glyphLayout, viewport,"Loading...", delta, 1f, true)
                 } else {
                     game.addScreen(MapScreen(game, currentCheckpoint.positionX, currentCheckpoint.positionY))
                     game.setScreen<MapScreen>()
@@ -321,18 +340,19 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         }
 
         if (Gdx.input.justTouched()) {
-            if (isMouseInArea(screenX, screenY, buttonX, startNewGameButtonY, startNewGameTexture.width.toFloat(), startNewGameTexture.height.toFloat())) {
+            if (isMouseInArea(mousePos.x, mousePos.y, buttonX, startNewGameButtonY, startNewGameTexture.width.toFloat(), startNewGameTexture.height.toFloat())) {
                 showPopup = true
                 newGame = true
+                checkUser()
             }
 
-            if (isMouseInArea(screenX, screenY, buttonX, loadGameButtonY, loadGameTexture.width.toFloat(), loadGameTexture.height.toFloat())) {
+            if (isMouseInArea(mousePos.x, mousePos.y, buttonX, loadGameButtonY, loadGameTexture.width.toFloat(), loadGameTexture.height.toFloat())) {
                 showPopup = true
                 loadGame = true
                 checkUser()
             }
 
-            if (isMouseInArea(screenX, screenY, settingsX, settingsY, settingsIconSize, settingsIconSize)) {
+            if (isMouseInArea(mousePos.x, mousePos.y, settingsX, settingsY, settingsIconSize, settingsIconSize)) {
                 openWebpage("https://www.example.com")
             }
         }
@@ -341,15 +361,17 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private fun checkUser() {
         threadExecuted = false
         executor.submit {
-            userFound = UserRepository().getUser(userId) != null
-            if (userFound) {
-                user = UserRepository().getUser(userId)!!
-                currentCheckpoint = CheckpointRepository().getCheckpoint(user.id)!!
+            if (!userFound) {
+                    userFound = UserRepository().getUser(userId) != null
+                if (userFound) {
+                    user = UserRepository().getUser(userId)!!
+                    currentCheckpoint = CheckpointRepository().getCheckpoint(user.id)!!
+                }
+                val latestProgress = UserProgressRepository().getLatestUserProgress(userId)
+                currentTopic = latestProgress?.let {
+                    TopicRepository().getTopicById(it.topicId)!!.name
+                } ?: "-"
             }
-            val latestProgress = UserProgressRepository().getLatestUserProgress(userId)
-            currentTopic = latestProgress?.let {
-                TopicRepository().getTopicById(it.topicId)!!.name
-            } ?: "-"
             threadExecuted = true
         }
     }
