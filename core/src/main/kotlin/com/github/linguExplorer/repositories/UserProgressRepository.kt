@@ -60,6 +60,14 @@ class UserProgressRepository {
             return phraseList.size == masteredProgressList.size
         }
 
+    fun getLatestUserProgress(userId: Int): UserProgressEntity? =
+        transaction {
+            UserProgress
+                .select { UserProgress.userId eq userId }
+                .map { it.toUserProgress() }
+                .lastOrNull()
+        }
+
 
 
     companion object {
