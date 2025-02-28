@@ -23,6 +23,8 @@ class LoadingScreenRenderer {
     // Variable für die vergangene Zeit
     private var loadingTime = 0f
     private var loadingMessage = ""
+    private var dotAnimationTime = 0f
+    private var dotCount = 0
 
     fun renderAnimatedText(batch: SpriteBatch, font: BitmapFont, glyphLayout: GlyphLayout, viewport: Viewport, text: String, delta: Float, alpha: Float, fadingIn: Boolean
     ) {
@@ -54,12 +56,20 @@ class LoadingScreenRenderer {
         viewport.apply()
         batch.projectionMatrix = viewport.camera.combined
 
+        dotAnimationTime += delta
+        if (dotAnimationTime >= 0.5f) {
+            dotAnimationTime = 0f
+            dotCount = (dotCount + 1) % 4
+        }
+
+        val animatedDots = ".".repeat(dotCount)
+
         batch.begin()
         font.data.setScale(0.4f)
-        glyphLayout.setText(font, text)
+        glyphLayout.setText(font, text + animatedDots)
         var x = (viewport.worldWidth - glyphLayout.width) / 2
         var y = (viewport.worldHeight + glyphLayout.height) / 2 + 30f
-        font.draw(batch, text, x, y)
+        font.draw(batch, text + animatedDots, x, y)
 
         loadingTime += delta
 
@@ -84,6 +94,13 @@ class LoadingScreenRenderer {
         // Schriftgröße zurücksetzen
         font.data.setScale(originalScaleX, originalScaleY)
 
+       /* batch.draw(
+            currentFrame,
+            popUpPosition.x + popUpSize.x - 250f,
+            viewport.worldHeight / 2 - 250f,
+            200f,
+            200f
+        )*/
         batch.end()
     }
 }

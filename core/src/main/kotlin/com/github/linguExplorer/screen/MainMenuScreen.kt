@@ -193,6 +193,14 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             var gamePausedX: Float
             var gamePausedY: Float
 
+            if (Gdx.input.justTouched()) {
+                if (isMouseInArea(mousePos.x, mousePos.y, popUpPosition.x + popUpSize.x - 120f, popUpPosition.y + popUpSize.y - 100f, exitSize, exitSize)) {
+                    showPopup = false
+                    loadGame = false
+                    newGame = false
+                }
+            }
+
             if (threadExecuted) {
                 if (newGame) {
                     if (!userFound) {
@@ -263,6 +271,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                             isClicked -> {
                                 shapeRenderer.color = Color.GREEN
                                 isTransitioning = true
+                                loadingTime = 0f
                             }
                             isMouseOver -> shapeRenderer.color = Color.YELLOW
                             else -> shapeRenderer.color = Color(0f, 0f, 0f, 0.5f)
@@ -276,13 +285,13 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                     }
                 }
             } else {
-                loadingTime += delta // Zeit aktualisieren
+                loadingTime += delta
 
                 font.data.setScale(0.4f, 0.4f)
                 dotAnimationTime += delta
-                if (dotAnimationTime >= 0.5f) { // Alle 0,5 Sekunden ändern
+                if (dotAnimationTime >= 0.5f) {
                     dotAnimationTime = 0f
-                    dotCount = (dotCount + 1) % 4 // 0, 1, 2, 3 Punkte
+                    dotCount = (dotCount + 1) % 4
                 }
 
                 val animatedDots = ".".repeat(dotCount)
@@ -311,18 +320,20 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         if (isTransitioning) {
             transitionRadius += 1500 * delta
             if (transitionRadius >= maxRadius) {
+                loadingTime += delta
                 if (loadGame) {
                     loadCheckpoint()
                     loadGame = false
                 }
 
-                if (!threadExecuted || threadExecuted) {
-                    loadingScreenRenderer.renderAnimatedText(batch, font, glyphLayout, viewport,"Loading...", delta, 1f, true)
-                } else {
-                    game.addScreen(MapScreen(game, currentCheckpoint.positionX, currentCheckpoint.positionY))
-                    game.setScreen<MapScreen>()
-                    isTransitioning = false
-                    transitionRadius = 0f
+                loadingScreenRenderer.renderAnimatedText(batch, font, glyphLayout, viewport,"Loading", delta, 1f, true)
+                if (threadExecuted && loadingTime > 3f) {
+                    Gdx.app.postRunnable {
+                        isTransitioning = false
+                        transitionRadius = 0f
+                        loadingTime = 0f
+                        game.setScreen<MapScreen>()
+                    }
                 }
                 return
             }
@@ -380,6 +391,9 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         threadExecuted = false
         executor.submit {
             CheckpointRepository().upsertCheckpoint(user.id, null, null, null, Timestamp(System.currentTimeMillis()))
+            Gdx.app.postRunnable {
+                game.addScreen(MapScreen(game, currentCheckpoint.positionX, currentCheckpoint.positionY))
+            }
             threadExecuted = true
         }
     }
