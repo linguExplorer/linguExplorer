@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class MinigameEssenScreen(private val game: linguExplorer,
-private val stage: Stage
+                          private val stage: Stage
 
 ) : KtxScreen {
 
@@ -488,6 +488,21 @@ private val stage: Stage
                                 if (isCorrect) {
                                     //Objekt als eingesammelt markieren
                                     obj.isCollected = true
+                                    val initialXOffset = 50f //weiter rechts zeichnen
+                                    // Position des Objekts im Korb berechnen
+                                    // Startposition Korb + Abstand Rand + Position in Reihe % 5 * Abstand zwischen Objekten
+                                    val basketX = basketPosition.x + initialXOffset + (collectedObjectPositions.size % 5) * collectedObjectSpacing
+                                    // Startposition Korbs + Abstand + Reihennummer * Abstand zwischen Objekten
+                                    val basketY = basketPosition.y + 10f + (currentBasketRow * collectedObjectSpacing)
+
+                                    obj.positionX = basketX
+                                    obj.positionY = basketY
+
+                                    // Position speichern
+                                    collectedObjectPositions.add(Vector2(basketX, basketY))
+                                    // neue Reihe? weil mehr als 5
+                                    if(collectedObjectPositions.size % 5 == 0)
+                                        currentBasketRow++
                                 } else {
                                     // Text mit "Fehler!" anzeigen
                                     showErrorText = true

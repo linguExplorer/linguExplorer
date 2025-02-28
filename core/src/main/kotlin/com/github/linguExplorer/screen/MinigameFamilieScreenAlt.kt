@@ -482,7 +482,7 @@ class MinigameFamilieScreenAlt(private val game: linguExplorer) : KtxScreen {
         if (game.containsScreen<MapScreen>()) {
             game.removeScreen<MapScreen>()
         }
-        game.addScreen(MapScreen(game))
+        game.addScreen(MapScreen(game, 10f, 10f))
         game.setScreen<MapScreen>()
     }
 
