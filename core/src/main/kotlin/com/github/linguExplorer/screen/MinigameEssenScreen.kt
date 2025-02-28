@@ -167,6 +167,7 @@ private val stage: Stage
     init {
         // Initialisierung
         minigame.loadMinigamePhrases()
+        minigame.phraseList.forEach { println(it.phrase) }
         minigame.loadAllPhrases()
 
         objects = minigame.loadPhrasesWithAssets().map { (phrase, assetPath) ->
@@ -235,6 +236,7 @@ private val stage: Stage
             glyphLayout.setText(font, "False!")
             //font.draw(batch, "False!", errorTextPositionX, errorTextPositionY)
         }
+
 
 
         var positionOffsetX = 0f
@@ -486,21 +488,6 @@ private val stage: Stage
                                 if (isCorrect) {
                                     //Objekt als eingesammelt markieren
                                     obj.isCollected = true
-                                    val initialXOffset = 50f //weiter rechts zeichnen
-                                    // Position des Objekts im Korb berechnen
-                                    // Startposition Korb + Abstand Rand + Position in Reihe % 5 * Abstand zwischen Objekten
-                                    val basketX = basketPosition.x + initialXOffset + (collectedObjectPositions.size % 5) * collectedObjectSpacing
-                                    // Startposition Korbs + Abstand + Reihennummer * Abstand zwischen Objekten
-                                    val basketY = basketPosition.y + 10f + (currentBasketRow * collectedObjectSpacing)
-
-                                    obj.positionX = basketX
-                                    obj.positionY = basketY
-
-                                    // Position speichern
-                                    collectedObjectPositions.add(Vector2(basketX, basketY))
-                                    // neue Reihe? weil mehr als 5
-                                    if(collectedObjectPositions.size % 5 == 0)
-                                        currentBasketRow++
                                 } else {
                                     // Text mit "Fehler!" anzeigen
                                     showErrorText = true

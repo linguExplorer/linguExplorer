@@ -22,3 +22,5 @@ class ActivateKeyEvent() : Event()
 class GameEndEvent(val game: String) : Event()
 
 class ClickDownEvent(val mouseX : Float, val mouseY: Float) : Event()
+
+class GamePause(val game: linguExplorer) : Event()
