@@ -17,6 +17,7 @@ import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
 
 class PhrasenheftScreen (
+    private val game: linguExplorer
 ): KtxScreen {
     private var font = BitmapFont()
     private val batch = SpriteBatch()
@@ -278,7 +279,7 @@ class PhrasenheftScreen (
 
             if (mouseX in closePosition.x..(closePosition.x + closeSize.x) && mouseY in closePosition.y..(closePosition.y + closeSize.y)
             ) {
-                println("NEIN!!")
+                game.setScreen<MapScreen>()
 
             }
 
