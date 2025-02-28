@@ -1,45 +1,40 @@
 package com.github.linguExplorer.screen
 
-import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.Align
-import com.github.linguExplorer.event.GameEndEvent
-import com.github.linguExplorer.event.fire
 import com.github.linguExplorer.linguExplorer
-import com.github.linguExplorer.minigames.EssenMinigame
+import com.github.linguExplorer.minigames.KleidungMinigame
 import com.github.linguExplorer.models.PhraseEntity
 import ktx.app.KtxScreen
+import java.sql.DriverManager.println
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class MinigameEssenScreen(private val game: linguExplorer,
-private val stage: Stage
-
-) : KtxScreen {
+class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
 
     private val batch = SpriteBatch()
     private lateinit var font: BitmapFont
     private val viewport: Viewport = ExtendViewport(800f, 600f)
     private val shapeRenderer = ShapeRenderer()
     private val executor: ExecutorService = Executors.newFixedThreadPool(1)
-
     var textgap = 2f
 
     // Texturen
-    private val basketTexture = Texture(Gdx.files.internal("Minigames/basket.png"))
-    private val listTexture = Texture(Gdx.files.internal("Minigames/list.png"))
+    private val BagBlueTexture = Texture(Gdx.files.internal("Minigames/Kleidung/bagblue.png"))
+    private val PurpleBagTexture = Texture(Gdx.files.internal("Minigames/Kleidung/bagpurple.png"))
     private val timeTexture = Texture(Gdx.files.internal("Minigames/time.png"))
     private var pauseTexture = Texture(Gdx.files.internal("Minigames/pausebutton.png"))
     private var playTexture = Texture(Gdx.files.internal("Minigames/playbutton.png"))
@@ -49,17 +44,17 @@ private val stage: Stage
     private val quitButtonTexture = Texture(Gdx.files.internal("Minigames/btn_quitMinigame.png"))
 
     // Positionen und Größen
-    private val basketBasePosition = Vector2(60f, 0f)
-    private val basketSize = Vector2(350f, 260f)
+    private val blueBagBasePosition = Vector2(600f, 0f)
+    private val blueBagSize = Vector2(220f, 260f)
 
-    private val listBasePosition = Vector2(550f, 0f)
-    private val listSize = Vector2(240f, 250f)
+    private val purpleBagBasePosition = Vector2(600f, 340f)
+    private val purpleBagSize = Vector2(220f, 260f)
 
     private val pauseBasePosition = Vector2(180f, 530f)
     private val pauseSize = Vector2(50f, 50f)
 
-    private val shelfBasePosition1 = Vector2(350f, 450f)
-    private val shelfBasePosition2 = Vector2(350f, 300f)
+    private val shelfBasePosition1 = Vector2(0f, 370f)
+    private val shelfBasePosition2 = Vector2(-80f, 250f)
     private val shelfSize = Vector2(650f, 25f)
 
     private val tryAgainButtonBasePosition = Vector2(430f, 200f)
@@ -86,16 +81,16 @@ private val stage: Stage
     private var currentBasketRow = 0
 
     // Getter für die dynamischen Positionen
-    private val basketPosition: Vector2
+    private val blueBagPosition: Vector2
         get() = Vector2(
-            basketBasePosition.x * (viewport.worldWidth / 800f),
-            basketBasePosition.y * (viewport.worldHeight / 600f)
+            blueBagBasePosition.x * (viewport.worldWidth / 800f),
+            blueBagBasePosition.y * (viewport.worldHeight / 600f)
         )
 
-    private val listPosition: Vector2
+    private val purpleBagPosition: Vector2
         get() = Vector2(
-            listBasePosition.x * (viewport.worldWidth / 800f),
-            listBasePosition.y * (viewport.worldHeight / 600f)
+            purpleBagBasePosition.x * (viewport.worldWidth / 800f),
+            purpleBagBasePosition.y * (viewport.worldHeight / 600f)
         )
 
     private val pausePosition: Vector2
@@ -140,14 +135,12 @@ private val stage: Stage
             continueButtonBasePosition.y * (viewport.worldHeight / 600f)
         )
 
-
     private var continueButtonScale = 1f
     private var pauseButtonScale = 1f
     private var continueButtonTargetScale = 1f
     private var pauseButtonTargetScale = 1f
 
     private val scaleSpeed = 5f
-
 
     // Zeit
     private var timeLeft = 30
@@ -161,29 +154,133 @@ private val stage: Stage
     private var gameEnded = false
     private var isCompleted = false
 
-    private val minigame = EssenMinigame()
+    private val minigame = KleidungMinigame()
     private val objects: List<DraggableObject>
+
+    // Liste der Dateinamen, die nach unten verschoben werden sollen
+    private val objectsToMoveDown = listOf("blouse.png", "coat.png", "dress.png", "jacket.png", "jeans.png", "skirt.png", "trousers.png")
+
+    // Positionen unter dem Regal
+    private val bottomPositions = mutableListOf<Vector2>()
 
     init {
         // Initialisierung
         minigame.loadMinigamePhrases()
-        minigame.phraseList.forEach { println(it.phrase) }
         minigame.loadAllPhrases()
 
-        objects = minigame.loadPhrasesWithAssets().map { (phrase, assetPath) ->
-            DraggableObject(
-                phrase = phrase,
-                texture = Texture(Gdx.files.internal(assetPath)),
-                resetPositionX = 370f,
-                resetPositionY = 480f,
-                basePositionX = 370f,
-                basePositionY = 480f,
-                positionX = 0f,
-                positionY = 0f,
-                positionOffsetX = 0f,
-                positionOffsetY = 0f,
-                sizeX = 50f,
-                sizeY = 50f
+        // Positionen UNTER dem Regal (Y-Wert angepasst)
+        bottomPositions.add(Vector2(50f, 50f))   // Position 1
+        bottomPositions.add(Vector2(100f, 50f))  // Position 2
+        bottomPositions.add(Vector2(150f, 50f))  // Position 3
+        bottomPositions.add(Vector2(200f, 50f))  // Position 4
+        bottomPositions.add(Vector2(250f, 50f))  // Position 5
+        bottomPositions.add(Vector2(260f, 200f))   // Position 6
+        bottomPositions.add(Vector2(260f, 200f))  // Position 7
+        bottomPositions.add(Vector2(260f, 200f))  // Position 8
+        bottomPositions.add(Vector2(260f, 200f))  // Position 9
+        bottomPositions.add(Vector2(260f, 200f))  // Position 10
+
+        val horizontalOffset = 100f
+        val verticalOffset = 150f
+
+        val phrasesWithAssets = minigame.loadPhrasesWithAssets()
+
+        // Separate Listen für Regal- und Bottom-Objekte
+        val bottomObjects = mutableListOf<Pair<PhraseEntity, String>>()
+        val shelfObjects = mutableListOf<Pair<PhraseEntity, String>>()
+
+        phrasesWithAssets.forEach { (phrase, assetPath) ->
+            if (objectsToMoveDown.any { assetPath.contains(it) }) {
+                bottomObjects.add(phrase to assetPath)
+            } else {
+                shelfObjects.add(phrase to assetPath)
+            }
+        }
+
+        // Mische die Bottom-Objekte zufällig
+        bottomObjects.shuffle()
+
+        // Erstelle die DraggableObjects
+        objects = mutableListOf<DraggableObject>()
+
+        // Bottom-Objekte erstellen
+        val bottomTargetWidth = 100f // Größere Breite für Bottom-Objekte
+
+        shelfObjects.forEach { (phrase, assetPath) ->  // Korrekte Signatur für ohne Index
+            val texture = Texture(Gdx.files.internal(assetPath))
+            val pixmap = Pixmap(Gdx.files.internal(assetPath))
+            val originalWidth = pixmap.width.toFloat()
+            val originalHeight = pixmap.height.toFloat()
+            pixmap.dispose()
+            val targetWidth = 50f
+            val aspectRatio = originalHeight / originalWidth
+            val targetHeight = targetWidth * aspectRatio
+
+            val resetPositionX = if (assetPath.contains("Shirt") || assetPath.contains("Dress")) shelfBasePosition1.x + horizontalOffset else shelfBasePosition2.x + horizontalOffset
+            val resetPositionY = if (assetPath.contains("Shirt") || assetPath.contains("Dress")) shelfBasePosition1.y + verticalOffset else shelfBasePosition2.y + verticalOffset
+
+            // Regalobjekte haben keine Hanger-Textur
+            val currentTexture = texture // Initialisiere currentTexture
+
+            objects.add(
+                DraggableObject(
+                    phrase = phrase,
+                    texture = texture,
+                    hangerTexture = null, // KEINE Hanger-Textur für Regalobjekte
+                    currentTexture = currentTexture, //aktuelle Textur
+                    resetPositionX = resetPositionX,
+                    resetPositionY = resetPositionY,
+                    basePositionX = resetPositionX,
+                    basePositionY = resetPositionY,
+                    positionX = 0f,
+                    positionY = 0f,
+                    positionOffsetX = 0f,
+                    positionOffsetY = 0f,
+                    sizeX = targetWidth,
+                    sizeY = targetHeight
+                )
+            )
+        }
+
+        bottomObjects.forEachIndexed { index, (phrase, assetPath) ->
+            val texture = Texture(Gdx.files.internal(assetPath))
+            //Pfad der Hänger-Textur erstellen
+            val hangerAssetPath = assetPath.replace(".png", "").replace("phraseImages/", "phraseImages/H_") + ".png"
+            Gdx.app.log("DEBUG","Asset Path: $assetPath") // ursprünglichen Asset-Pfad
+            Gdx.app.log("DEBUG","Hanger Asset Path: $hangerAssetPath") // generierten Hanger-Pfad
+            //Sicherstellen dass die Datei existiert
+            val hangerTexture = if (Gdx.files.internal(hangerAssetPath).exists()) Texture(Gdx.files.internal(hangerAssetPath)) else null
+            val pixmap = Pixmap(Gdx.files.internal(assetPath))
+            val originalWidth = pixmap.width.toFloat()
+            val originalHeight = pixmap.height.toFloat()
+            pixmap.dispose()
+            val aspectRatio = originalHeight / originalWidth
+            val targetHeight = bottomTargetWidth * aspectRatio
+
+            // Position aus der Liste bottomPositions nehmen
+            val position = bottomPositions[index % bottomPositions.size] //Modulo Operator
+            val resetPositionX = position.x
+            val resetPositionY = position.y
+
+            val currentTexture = hangerTexture ?: texture // Initialisieren von currentTexture mit der HangerTextur, falls vorhanden
+
+            objects.add(
+                DraggableObject(
+                    phrase = phrase,
+                    texture = texture,
+                    hangerTexture = hangerTexture,
+                    currentTexture = currentTexture, // aktuelle Textur
+                    resetPositionX = resetPositionX,
+                    resetPositionY = resetPositionY,
+                    basePositionX = resetPositionX,
+                    basePositionY = resetPositionY,
+                    positionX = 0f,
+                    positionY = 0f,
+                    positionOffsetX = 0f,
+                    positionOffsetY = 0f,
+                    sizeX = bottomTargetWidth,
+                    sizeY = targetHeight
+                )
             )
         }
     }
@@ -200,15 +297,16 @@ private val stage: Stage
             updateTime(delta)
         }
 
-        if(showErrorText){
+        if (showErrorText) {
             errorTextTimer += delta
-            if(errorTextTimer >= errorTextDuration){
+            if (errorTextTimer >= errorTextDuration) {
                 showErrorText = false
                 errorLine = false
             }
         }
 
-        Gdx.gl.glClearColor(0.611f, 0.761f, 0.827f, 1f)
+        //Hintergrundfarbe auf #e7d7c7
+        Gdx.gl.glClearColor(0.905f, 0.843f, 0.780f, 1f) // RGB-Werte für #e7d7c7
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         font = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
 
@@ -219,14 +317,11 @@ private val stage: Stage
         continueButtonScale += (continueButtonTargetScale - continueButtonScale) * scaleSpeed * delta
         pauseButtonScale += (pauseButtonTargetScale - pauseButtonScale) * scaleSpeed * delta
 
-
         batch.begin()
 
         // Zeichne Regale und andere Spielfunktionen
         batch.draw(shelfTexture, shelfPosition1.x, shelfPosition1.y, shelfSize.x, shelfSize.y)
         batch.draw(shelfTexture, shelfPosition2.x, shelfPosition2.y, shelfSize.x, shelfSize.y)
-        batch.draw(listTexture, listPosition.x, listPosition.y, listSize.x, listSize.y)
-
 
         // Fehlertext wird hier gezeichnet
         if (showErrorText) {
@@ -234,17 +329,19 @@ private val stage: Stage
             font.data.setScale(0.3f, 0.3f)
             val glyphLayout = GlyphLayout()
             glyphLayout.setText(font, "False!")
-            //font.draw(batch, "False!", errorTextPositionX, errorTextPositionY)
         }
 
-
+        batch.draw(PurpleBagTexture, purpleBagPosition.x, purpleBagPosition.y, purpleBagSize.x, purpleBagSize.y)
+        batch.draw(BagBlueTexture, blueBagPosition.x, blueBagPosition.y, blueBagSize.x, blueBagSize.y)
 
         var positionOffsetX = 0f
         var positionOffsetY = 0f
         var index = 0
 
+        val (objectsWithoutHanger, objectsWithHanger) = objects.partition { it.hangerTexture == null }
+
         if (gameStarted) {
-            objects.forEach { obj ->
+            objectsWithHanger.forEach { obj ->
                 if (index > 0 && index % 8 == 0) {
                     positionOffsetX = 0f
                     positionOffsetY -= 150f * (viewport.worldHeight / 600f)
@@ -254,20 +351,42 @@ private val stage: Stage
                     obj.positionY = obj.basePositionY * (viewport.worldHeight / 600f) + positionOffsetY
                     obj.positionOffsetX = positionOffsetX
                     obj.positionOffsetY = positionOffsetY
+                    batch.draw(obj.currentTexture, obj.positionX, obj.positionY, obj.sizeX, obj.sizeY)
                 }
 
-                batch.draw(obj.texture, obj.positionX, obj.positionY, obj.sizeX, obj.sizeY)
                 index++
                 positionOffsetX += 50f * (viewport.worldWidth / 800f)
+
+                renderPhrasesOnScreen(batch, font, minigame.bag1, purpleBagPosition.x + 30f, purpleBagPosition.y + purpleBagSize.y - 90f, 30f)
+                renderPhrasesOnScreen(batch, font, minigame.bag2, blueBagPosition.x + 30f, blueBagPosition.y + purpleBagSize.y - 90f, 30f)
             }
 
+            index = 0
+            positionOffsetX = 0f
+            positionOffsetY = 0f
 
-            renderPhrasesOnScreen(batch, font, listPosition.x + 30f, listSize.y - 40f, 30f)
+            objectsWithoutHanger.forEach { obj ->
+                if (index > 0 && index % 8 == 0) {
+                    positionOffsetX = 0f
+                    positionOffsetY -= 150f * (viewport.worldHeight / 600f)
+                }
+                if (!obj.isCollected) {
+                    obj.positionX = obj.basePositionX * (viewport.worldWidth / 800f) + positionOffsetX
+                    obj.positionY = obj.basePositionY * (viewport.worldHeight / 600f) + positionOffsetY
+                    obj.positionOffsetX = positionOffsetX
+                    obj.positionOffsetY = positionOffsetY
+                    batch.draw(obj.currentTexture, obj.positionX, obj.positionY, obj.sizeX, obj.sizeY)
+                }
+
+                index++
+                positionOffsetX += 50f * (viewport.worldWidth / 800f)
+
+                renderPhrasesOnScreen(batch, font, minigame.bag1, purpleBagPosition.x + 30f, purpleBagPosition.y + purpleBagSize.y - 90f, 30f)
+                renderPhrasesOnScreen(batch, font, minigame.bag2, blueBagPosition.x + 30f, blueBagPosition.y + purpleBagSize.y - 90f, 30f)
+            }
         }
 
-        batch.draw(basketTexture, basketPosition.x, basketPosition.y, basketSize.x, basketSize.y)
-
-        if(minigame.isGameComplete()) {
+        if (minigame.isGameComplete()) {
             gameEnded = true
             isCompleted = true
         }
@@ -328,14 +447,13 @@ private val stage: Stage
             Gdx.gl.glDisable(GL20.GL_BLEND)
             batch.begin()
 
-            //TODO der text ist soooo knapp nicht in der mitte :((
             font.color = Color.WHITE
             val glyphLayout = GlyphLayout()
             font.data.setScale(0.4f, 0.4f)
-            glyphLayout.setText(font, "Put the items on the list in the basket", Color.WHITE, viewport.worldWidth * 0.75f, Align.center, true)
+            glyphLayout.setText(font, "Put the items in the correct bags", Color.WHITE, viewport.worldWidth * 0.5f, Align.center, true)
             val gamePausedX = (viewport.worldWidth - glyphLayout.width) / 2
             val gamePausedY = (viewport.worldHeight / 2) + glyphLayout.height
-            font.draw(batch, "Put the items on the list in the basket", gamePausedX, gamePausedY, viewport.worldWidth * 0.75f, Align.center, true)
+            font.draw(batch, "Put the items in the correct bags", gamePausedX, gamePausedY, viewport.worldWidth * 0.5f, Align.center, true)
 
             // Continue-Button anzeigen
             batch.draw(
@@ -345,8 +463,6 @@ private val stage: Stage
                 buttonSize.x * continueButtonScale,
                 buttonSize.y * continueButtonScale
             )
-
-            //batch.draw(continueTexture, continueButtonPosition.x, continueButtonPosition.y, buttonSize.x, buttonSize.y)
         }
 
         if (gameEnded) {
@@ -388,14 +504,6 @@ private val stage: Stage
                     buttonSize.x * continueButtonScale,
                     buttonSize.y * continueButtonScale
                 )
-
-                /*val extraSpacing = 120f // Zusätzlicher Abstand zwischen "GAME OVER" und "Try Again"
-                val buttonYSpacing = -70f // Abstand zwischen "Try Again" und "Quit"
-                val tryAgainButtonY = gameOverY - glyphLayout.height - extraSpacing
-                val quitButtonY = tryAgainButtonY - buttonSize.y - buttonYSpacing
-                val buttonX = (viewport.worldWidth - buttonSize.x) / 2
-                batch.draw(tryAgainButtonTexture, buttonX, tryAgainButtonY, buttonSize.x, buttonSize.y)
-                batch.draw(quitButtonTexture, buttonX, quitButtonY, buttonSize.x, buttonSize.y)*/
             }
         }
 
@@ -403,11 +511,9 @@ private val stage: Stage
     }
 
     private fun restartGame() {
-        // Zurücksetzen der Zeit
         timeLeft = 4
         elapsedTime = 0f
 
-        // Zurücksetzen des Spielfortschritts
         objects.forEach { obj ->
             obj.isCollected = false
             obj.isBeingDragged = false
@@ -415,7 +521,6 @@ private val stage: Stage
             obj.basePositionY = obj.resetPositionY
         }
 
-        // Zurücksetzen des Spielstatus
         gameEnded = false
         isPaused = false
         collectedObjectPositions.clear()
@@ -433,7 +538,6 @@ private val stage: Stage
             1f
         }
 
-
         if (!gameEnded && gameStarted) {
             pauseButtonTargetScale = if (mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) &&
                 mouseY in pausePosition.y..(pausePosition.y + pauseSize.y)) {
@@ -447,26 +551,24 @@ private val stage: Stage
                     if (mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) && mouseY in pausePosition.y..(pausePosition.y + pauseSize.y)
                         && objects.find { it.isBeingDragged } == null
                     ) {
-                        // Pause/Play umschalten
                         isPaused = !isPaused
                         return
                     }
 
                     if (!showErrorText) {
-
                         objects.forEach { obj ->
                             if (!isDragging && !obj.isCollected && isMouseInsideImage(mouseX, mouseY, obj)) {
                                 isDragging = true
                                 obj.isBeingDragged = true
+                                //Setze Textur auf normal wenn aufgehoben
+                                obj.currentTexture = obj.texture
                                 offsetX = mouseX - obj.positionX
                                 offsetY = mouseY - obj.positionY
                             }
 
                             if (obj.isBeingDragged) {
-                                obj.basePositionX =
-                                    (mouseX - offsetX - obj.positionOffsetX) / (viewport.worldWidth / 800f)
-                                obj.basePositionY =
-                                    (mouseY - offsetY - obj.positionOffsetY) / (viewport.worldHeight / 600f)
+                                obj.basePositionX = (mouseX - offsetX - obj.positionOffsetX) / (viewport.worldWidth / 800f)
+                                obj.basePositionY = (mouseY - offsetY - obj.positionOffsetY) / (viewport.worldHeight / 600f)
                             }
                         }
                     }
@@ -482,33 +584,40 @@ private val stage: Stage
                     objects.forEach { obj ->
                         if (obj.isBeingDragged) {
                             obj.isBeingDragged = false
-                            if (isImageInsideBasket(obj)) {
-                                //ob das Objekt in der Liste
-                                val isCorrect = minigame.phraseList.any { it.id == obj.phrase.id }
+
+                            // Überprüfen, ob das Objekt im Bereich des purpleBag oder blueBag liegt
+                            val isInPurpleBag = mouseX in purpleBagPosition.x..(purpleBagPosition.x + purpleBagSize.x) &&
+                                mouseY in purpleBagPosition.y..(purpleBagPosition.y + purpleBagSize.y)
+
+                            val isInBlueBag = mouseX in blueBagPosition.x..(blueBagPosition.x + blueBagSize.x) &&
+                                mouseY in blueBagPosition.y..(blueBagPosition.y + blueBagSize.y)
+
+                            if (isInPurpleBag || isInBlueBag) {
+                                // Überprüfen, ob die Phrase in der richtigen Liste ist
+                                val isCorrect = if (isInPurpleBag) {
+                                    minigame.bag1.any { it.id == obj.phrase.id }
+                                } else {
+                                    minigame.bag2.any { it.id == obj.phrase.id }
+                                }
+
                                 if (isCorrect) {
-                                    //Objekt als eingesammelt markieren
+                                    // Objekt als eingesammelt markieren und nicht mehr anzeigen
                                     obj.isCollected = true
                                 } else {
-                                    // Text mit "Fehler!" anzeigen
+                                    // Fehlermeldung anzeigen
                                     showErrorText = true
                                     errorTextTimer = 0f
-
-                                    //Fehlerzustand für Linie
                                     errorLine = true
-
-                                    val glyphLayout = GlyphLayout()
-                                    font.data.setScale(0.3f, 0.3f)
-                                    glyphLayout.setText(font, "Fehler!")
-
-                                    errorTextPositionX = (viewport.worldWidth - glyphLayout.width) / 2
-                                    errorTextPositionY = viewport.worldHeight / 2
                                 }
-                                minigame.phraseCheck(obj.phrase, isCorrect)
                             }
 
                             if (!obj.isCollected) {
+                                // Objekt zurück an die Startposition setzen
                                 obj.basePositionX = obj.resetPositionX
                                 obj.basePositionY = obj.resetPositionY
+
+                                //Setze Textur auf HangerTextur wenn vorhanden, andernfalls normale Textur
+                                obj.currentTexture = obj.hangerTexture ?: obj.texture
                             }
                         }
                     }
@@ -526,19 +635,15 @@ private val stage: Stage
                 if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) && mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
                     storePhraseDataAsync()
 
-                    stage.fire(GameEndEvent("SM"))
-
-
                     if (game!!.containsScreen<MapScreen>()) {
                         game.removeScreen<MapScreen>()
                     }
-                    game.addScreen(MapScreen(game, 31.104187f,15.677063f))
+                    game.addScreen(MapScreen(game))
                     game.setScreen<MapScreen>()
                 }
             }
         }
     }
-
 
     private fun updateTime(delta: Float) {
         elapsedTime += delta
@@ -556,40 +661,36 @@ private val stage: Stage
         return String.format("%02d:%02d", minutes, seconds)
     }
 
-    //TODO
-    fun renderPhrasesOnScreen(batch: SpriteBatch, font: BitmapFont, startX: Float, startY: Float, lineHeight: Float) {
+    fun renderPhrasesOnScreen(batch: SpriteBatch, font: BitmapFont, list: List<PhraseEntity>, startX: Float, startY: Float, lineHeight: Float) {
         var currentY = startY
         val glyphLayout = GlyphLayout()
 
-        // geht durch Liste der Phrasen
-        minigame.phraseList.forEach { phrase ->
-            //Object das zur aktuellen Phrase gehört
+        list.forEach { phrase ->
             val phraseObject = objects.find { it.phrase == phrase }
-            //Breite des Textes der Phrase berechnen
             font.data.setScale(0.2f, 0.2f)
             glyphLayout.setText(font, phrase.phrase)
             val textWidth = glyphLayout.width
             val textHeight = glyphLayout.height
 
             font.data.setScale(0.2f, 0.2f)
-            // HIER wird der Text gezeichnet
             font.draw(batch, phrase.phrase, startX, currentY)
 
             val currentLineHeight = textHeight * 1.5f
-            //ob Object schon eingesammelt wurde
             if (phraseObject!!.isCollected) {
                 batch.end()
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
-                if(errorLine){
+                if (errorLine) {
                     shapeRenderer.color = Color.RED
                 } else {
                     shapeRenderer.color = Color.BLACK
                 }
 
-                shapeRenderer.rect(listBasePosition.x * (viewport.screenWidth / 800f) + 30f,
-                    (currentY - textHeight/2 - 1.75f) * (viewport.screenHeight / 600f),
+                shapeRenderer.rect(
+                    startX * (viewport.worldWidth/800f) + 320f,
+                    (currentY - textHeight / 2 - 1.75f) * (viewport.screenHeight / 600f),
                     textWidth * (viewport.screenWidth / 800f),
-                    3.5f * (viewport.screenHeight / 600f))
+                    3.5f * (viewport.screenHeight / 600f)
+                )
                 shapeRenderer.end()
                 batch.begin()
             }
@@ -602,10 +703,10 @@ private val stage: Stage
     }
 
     private fun isImageInsideBasket(obj: DraggableObject): Boolean {
-        return obj.positionX + obj.texture.width > basketPosition.x &&
-            obj.positionX < basketPosition.x + basketSize.x &&
-            obj.positionY + obj.texture.height > basketPosition.y &&
-            obj.positionY < basketPosition.y + basketSize.y
+        return obj.positionX + obj.texture.width > blueBagPosition.x &&
+            obj.positionX < blueBagPosition.x + blueBagSize.x &&
+            obj.positionY + obj.texture.height > blueBagPosition.y &&
+            obj.positionY < blueBagSize.y
     }
 
     private fun storePhraseDataAsync() {
@@ -625,8 +726,8 @@ private val stage: Stage
     override fun dispose() {
         batch.dispose()
         font.dispose()
-        basketTexture.dispose()
-        listTexture.dispose()
+        BagBlueTexture.dispose()
+        PurpleBagTexture.dispose()
         timeTexture.dispose()
         pauseTexture.dispose()
         shelfTexture.dispose()
@@ -638,6 +739,8 @@ private val stage: Stage
     private data class DraggableObject(
         val phrase: PhraseEntity,
         val texture: Texture,
+        val hangerTexture: Texture?,
+        var currentTexture: Texture,
         var resetPositionX: Float,
         var resetPositionY: Float,
         var basePositionX: Float,
