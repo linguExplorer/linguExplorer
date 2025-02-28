@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.random.Random
 
-class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
+class MinigameFamilieScreenAlt(private val game: linguExplorer) : KtxScreen {
 
     private val batch = SpriteBatch()
     private lateinit var font: BitmapFont
@@ -298,12 +298,13 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
         minigame.phraseList = minigame.phraseList.drop(4)
 
         shownPhrases!!.forEach { (phrase, assetPath) ->
-            val texture = null//Texture(Gdx.files.internal(assetPath))
+            val texture = Texture(Gdx.files.internal(assetPath))
             val sizeX = 40f
             val sizeY = 40f
 
             val objectEnglish = TagObject(
                 phrase = phrase,
+                texture = texture,
                 positionX = 0f,
                 positionY = 0f,
                 sizeX = sizeX,
@@ -313,6 +314,7 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
 
             val objectGerman = TagObject(
                 phrase = phrase,
+                texture = texture,
                 positionX = 0f,
                 positionY = 0f,
                 sizeX = sizeX,
@@ -351,6 +353,9 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
         }
 
         batch.draw(texture, obj.positionX, obj.positionY, tagSize.x, tagSize.y)
+        if (!isTranslation) {
+            batch.draw(obj.texture, obj.positionX + 10f, obj.positionY + obj.sizeX / 2 + 5f, obj.sizeX, obj.sizeY)
+        }
 
 
         font.data.setScale(0.15f, 0.15f)
@@ -489,7 +494,7 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
 
     private fun isMouseOverObject(mouseX: Float, mouseY: Float, obj: TagObject): Boolean {
         return mouseX >= obj.positionX && mouseX <= obj.positionX + tagSize.x &&
-                mouseY >= obj.positionY && mouseY <= obj.positionY + tagSize.y
+            mouseY >= obj.positionY && mouseY <= obj.positionY + tagSize.y
     }
 
     private fun updateTime(delta: Float) {
@@ -525,6 +530,10 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
     override fun dispose() {
         batch.dispose()
         font.dispose()
+        objects.forEach { (obj1, obj2) ->
+            obj1.texture.dispose()
+            obj2.texture.dispose()
+        }
     }
 
     private fun isOverlappingWithMargin(obj1: TagObject, obj2: TagObject, margin: Float): Boolean {
@@ -536,6 +545,7 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
 
     private data class TagObject(
         val phrase: PhraseEntity,
+        val texture: Texture,
         var positionX: Float,
         var positionY: Float,
         var sizeX: Float,

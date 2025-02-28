@@ -8,7 +8,7 @@ import com.github.linguExplorer.userId
 import kotlin.random.Random
 
 class FamilieMinigame : MinigameSystem() {
-    override val topicName: String = "Essen"
+    override val topicName: String = "Familie"
     override var topicId: Int = TopicRepository().getTopicIdByName(topicName)!!
 
     override fun loadMinigamePhrases() {
