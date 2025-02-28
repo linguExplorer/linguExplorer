@@ -154,7 +154,6 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         }
 
 
-
         currentMap = TmxMapLoader().load("graphics/map/main-map.tmx")
         stage.fire(MapChangeEvent(currentMap!!))
 
