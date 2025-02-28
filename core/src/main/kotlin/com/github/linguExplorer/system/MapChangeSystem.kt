@@ -1,5 +1,6 @@
 package com.github.linguExplorer.system
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.physics.box2d.World
@@ -56,11 +57,14 @@ class MapChangeSystem (
 
 
 
-                if (game!!.containsScreen<LoadingScreen>()) {
-                    game.removeScreen<LoadingScreen>()
+                if (game.containsScreen<MinigameEssenScreen>()) {
+                    game.removeScreen<MinigameEssenScreen>()
                 }
-                game.addScreen(LoadingScreen(game, gameStage))
-                game.setScreen<LoadingScreen>()
+
+                game.addScreen(MinigameEssenScreen(game, gameStage))
+                game.setScreen<MinigameEssenScreen>()
+
+
 
 
 

@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.github.linguExplorer.linguExplorer
 import com.github.linguExplorer.repositories.PhraseProgressRepository
+import com.github.linguExplorer.userId
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
 
@@ -29,7 +30,7 @@ class PhrasenheftScreen (
     private var currentSortState = SortState.ASCENDING_PHRASE
     private var sortText = "Phrase aufsteigend"
 
-    private val phrasesOfProgress = PhraseProgressRepository().getAllPhrasesOfUserProgress(123)
+    private val phrasesOfProgress = PhraseProgressRepository().getAllPhrasesOfUserProgress(userId)
     private var phrases = phrasesOfProgress.map {
         it.phrase to it.translation
 
