@@ -16,6 +16,15 @@ import com.github.linguExplorer.repositories.PhraseProgressRepository
 import com.github.linguExplorer.userId
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
+import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfWriter
+import com.itextpdf.layout.Document
+import com.itextpdf.layout.element.*
+import com.itextpdf.layout.properties.UnitValue
+import java.io.File
+import com.badlogic.gdx.Application
+import java.util.concurrent.Executors
+import javax.swing.SwingUtilities
 
 class PhrasenheftScreen (
     private val game: linguExplorer
@@ -33,16 +42,12 @@ class PhrasenheftScreen (
     private val phrasesOfProgress = PhraseProgressRepository().getAllPhrasesOfUserProgress(userId)
     private var phrases = phrasesOfProgress.map {
         it.phrase to it.translation
-
     }
 
     private val lineHeight = 56f
     private val spacing = 260f
     private val padding = 20f
     private var currentY = 778f
-
-
-
 
     // Texturen
     private val heftTexture = Texture(Gdx.files.internal("Phrasenheft/heft_design.png"))
@@ -51,19 +56,23 @@ class PhrasenheftScreen (
     private val backTexture = Texture(Gdx.files.internal("Phrasenheft/zurueck.png"))
     private val closeTexture = Texture(Gdx.files.internal("Phrasenheft/red_X.png"))
 
-
     private val heftSize = Vector2(heftTexture.width.toFloat()*8, heftTexture.height.toFloat()*8)
     private val nextSize = Vector2(backTexture.width.toFloat()*8, backTexture.height.toFloat()*8)
     private val backSize = Vector2(backTexture.width.toFloat()*8, backTexture.height.toFloat()*8)
     private val sortSize = Vector2(sortTexture.width.toFloat()*6, sortTexture.height.toFloat()*6)
     private val closeSize = Vector2(closeTexture.width.toFloat()*1.25f, closeTexture.height.toFloat()*1.25f)
 
-
     private val viewport: Viewport = ExtendViewport(800f, 600f)
-
 
     private var maxPages= (phrases.size/10f)//wie viele Phrasen max
     private var currentPage = 1
+
+    // Flag für den PDF-Export-Zustand
+    private var isExportingPDF = false
+    // Flag, um zu überwachen, ob der Export abgeschlossen ist
+    private var exportCompleted = false
+    // Der Ausführungsdienst für Thread-Management
+    private val executor = Executors.newSingleThreadExecutor()
 
     private val nextPosition: Vector2
         get() = Vector2(
@@ -71,13 +80,11 @@ class PhrasenheftScreen (
             (viewport.screenHeight - heftSize.y) - 200f
         )
 
-
     private val backPosition: Vector2
         get() = Vector2(
             viewport.screenWidth/2 - 690f,
             (viewport.screenHeight  - heftSize.y) - 200f
         )
-
 
     private val sortPosition: Vector2
         get() = Vector2(
@@ -91,11 +98,10 @@ class PhrasenheftScreen (
             (viewport.screenHeight - 50f) - sortSize.y
         )
 
-
     private val textX = sortPosition.x
     private val textY = sortPosition.y
-    override fun show() {
 
+    override fun show() {
         Gdx.input.inputProcessor = null
 
         viewport.update(Gdx.graphics.width, Gdx.graphics.height, true)
@@ -104,6 +110,12 @@ class PhrasenheftScreen (
     }
 
     override fun render(delta: Float) {
+        // Prüfen, ob der Export abgeschlossen ist
+        if (exportCompleted) {
+            game.setScreen<MapScreen>()
+            return
+        }
+
         handleInput()
 
         viewport.apply()
@@ -140,7 +152,6 @@ class PhrasenheftScreen (
         batch.draw(sortTexture, sortPosition.x, sortPosition.y, sortSize.x, sortSize.y)
         batch.draw(closeTexture, closePosition.x, closePosition.y, closeSize.x, closeSize.y)
 
-
         val startX = screenWidth / 4f + 70f
         var adjustedY = currentY
 
@@ -159,8 +170,6 @@ class PhrasenheftScreen (
 
         val phrasesPerPage = 20
         val phrasesPerColumn = 10
-
-
 
         font = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
         font.data.setScale(0.2f, 0.2f)
@@ -207,54 +216,38 @@ class PhrasenheftScreen (
 
         val sideText = "Sortiert nach: $sortText"
 
-
-        //val fontRotationMatrix = batch.transformMatrix.cpy()
-        //fontRotationMatrix.setToRotation(0f, 0f, 1f, 90f)
-        //batch.transformMatrix = fontRotationMatrix
-
         font.data.setScale(0.15f, 0.15f)
         layout.setText(font, sideText)
         font.draw(batch, sideText, sortPosition.x, sortPosition.y + sortSize.y + 30f )
 
-       // batch.transformMatrix.idt()
-
         batch.end()
     }
 
-
-
-
     private fun handleInput() {
+        if (isExportingPDF) {
+            // Wenn der Export läuft, keine weitere Eingabe verarbeiten
+            return
+        }
+
         val mouseX = Gdx.input.x.toFloat() * viewport.screenWidth/ Gdx.graphics.width
         val mouseY = (Gdx.graphics.height - Gdx.input.y.toFloat()) * viewport.screenHeight / Gdx.graphics.height
 
-
         if (Gdx.input.justTouched()) {
-
-
-                if (mouseX in nextPosition.x..(nextPosition.x + backSize.x) && mouseY in nextPosition.y..(nextPosition.y + backSize.y)
-                ) {
-
-                    if((currentPage-1) + 1 <  maxPages-1f) {
-                        currentPage++
-
-                    }
-                    println("Button Next, $currentPage")
-
+            if (mouseX in nextPosition.x..(nextPosition.x + backSize.x) && mouseY in nextPosition.y..(nextPosition.y + backSize.y)) {
+                if((currentPage-1) + 1 <  maxPages-1f) {
+                    currentPage++
                 }
+                println("Button Next, $currentPage")
+            }
 
-            if (mouseX in backPosition.x..(backPosition.x + backSize.x) && mouseY in backPosition.y..(backPosition.y + backSize.y)
-            ) {
-
+            if (mouseX in backPosition.x..(backPosition.x + backSize.x) && mouseY in backPosition.y..(backPosition.y + backSize.y)) {
                 if((currentPage-1) - 1 >=  0) {
                     currentPage--
-
                 }
                 println("Button Back, $currentPage")
             }
 
-            if (mouseX in sortPosition.x..(sortPosition.x + sortSize.x) && mouseY in sortPosition.y..(sortPosition.y + sortSize.y)
-            ) {
+            if (mouseX in sortPosition.x..(sortPosition.x + sortSize.x) && mouseY in sortPosition.y..(sortPosition.y + sortSize.y)) {
                 currentSortState = when (currentSortState) {
                     SortState.ASCENDING_PHRASE -> SortState.DESCENDING_PHRASE
                     SortState.DESCENDING_PHRASE -> SortState.ASCENDING_TRANSLATION
@@ -277,27 +270,136 @@ class PhrasenheftScreen (
                 }
             }
 
-
-            if (mouseX in closePosition.x..(closePosition.x + closeSize.x) && mouseY in closePosition.y..(closePosition.y + closeSize.y)
-            ) {
-                game.setScreen<MapScreen>()
-
+            if (mouseX in closePosition.x..(closePosition.x + closeSize.x) && mouseY in closePosition.y..(closePosition.y + closeSize.y)) {
+                // Starten Sie den PDF-Export in einem separaten Thread
+                if (!isExportingPDF) {
+                    isExportingPDF = true
+                    startExportPDF()
+                }
             }
-
-
-
-            }
-
+        }
     }
 
+    private fun startExportPDF() {
+        // Führe den Export in einem separaten Thread aus, um Blockieren des UI-Threads zu vermeiden
+        executor.submit {
+            try {
+                if (Gdx.app.type == Application.ApplicationType.Desktop) {
+                    // Verwende SwingUtilities.invokeAndWait um sicherzustellen, dass der Dialog im richtigen Thread ausgeführt wird
+                    val filePathRef = arrayOfNulls<String>(1)
+                    val wasCancelledRef = booleanArrayOf(false)
 
-        override fun resize(width: Int, height: Int) {
+                    // Ausführen des JFileChooser im Swing-Thread
+                    SwingUtilities.invokeAndWait {
+                        try {
+                            val chooser = javax.swing.JFileChooser()
+                            chooser.dialogTitle = "PDF speichern unter"
+
+                            // Standarddateiname vorschlagen
+                            val defaultFile = File("Phrasenheft.pdf")
+                            chooser.selectedFile = defaultFile
+
+                            // Nur PDF-Dateien anzeigen/akzeptieren
+                            val fileFilter = javax.swing.filechooser.FileNameExtensionFilter("PDF Dateien (*.pdf)", "pdf")
+                            chooser.fileFilter = fileFilter
+
+                            // Das Dialogfenster anzeigen
+                            val returnVal = chooser.showSaveDialog(null)
+
+                            if (returnVal == javax.swing.JFileChooser.APPROVE_OPTION) {
+                                // Benutzer hat einen Speicherort ausgewählt
+                                val selectedFile = chooser.selectedFile
+                                var filePath = selectedFile.absolutePath
+
+                                // Sicherstellen, dass die Datei die .pdf-Erweiterung hat
+                                if (!filePath.toLowerCase().endsWith(".pdf")) {
+                                    filePath += ".pdf"
+                                }
+
+                                filePathRef[0] = filePath
+                            } else {
+                                // Benutzer hat abgebrochen
+                                wasCancelledRef[0] = true
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            wasCancelledRef[0] = true
+                        }
+                    }
+
+                    // Verarbeiten des Ergebnisses
+                    if (!wasCancelledRef[0] && filePathRef[0] != null) {
+                        val filePath = filePathRef[0]!!
+                        exportPhrasesToPDF(phrases, filePath)
+
+                        // Erfolgsmeldung im Konsolenlog
+                        println("PDF erfolgreich gespeichert unter: $filePath")
+
+                        // Zurück zum LibGDX-Thread und zum MapScreen wechseln
+                        Gdx.app.postRunnable {
+                            exportCompleted = true
+                        }
+                    } else {
+                        // Wenn abgebrochen, zurück zum normalen Zustand
+                        Gdx.app.postRunnable {
+                            isExportingPDF = false
+                        }
+                    }
+                } else {
+                    // Für Android und andere Plattformen
+                    // Einfach direkt im externen Speicher speichern
+                    val filePath = Gdx.files.external("Phrasenheft.pdf").file().absolutePath
+                    exportPhrasesToPDF(phrases, filePath)
+
+                    println("PDF gespeichert unter: $filePath")
+
+                    // Zurück zum LibGDX-Thread und zum MapScreen wechseln
+                    Gdx.app.postRunnable {
+                        exportCompleted = true
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                // Bei Fehler zurück zum normalen Zustand
+                Gdx.app.postRunnable {
+                    isExportingPDF = false
+                }
+            }
+        }
+    }
+
+    fun exportPhrasesToPDF(phrases: List<Pair<String, String>>, filePath: String) {
+        val file = File(filePath)
+        val pdfWriter = PdfWriter(file)
+        val pdfDocument = PdfDocument(pdfWriter)
+        val document = Document(pdfDocument)
+
+        // Titel
+        document.add(Paragraph("linguExplorer Phrasenheft").setBold().setFontSize(18f))
+
+        // Tabelle mit zwei Spalten (Phrase & Übersetzung)
+        val table = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f))).useAllAvailableWidth()
+
+        // Tabellenkopf
+        table.addHeaderCell(Cell().add(Paragraph("Phrase")).setBold())
+        table.addHeaderCell(Cell().add(Paragraph("Übersetzung")).setBold())
+
+        // Phrasen & Übersetzungen einfügen
+        for ((phrase, translation) in phrases) {
+            table.addCell(Cell().add(Paragraph(phrase)))
+            table.addCell(Cell().add(Paragraph(translation)))
+        }
+
+        document.add(table)
+        document.close()
+
+        println("PDF erfolgreich gespeichert: $filePath")
+    }
+
+    override fun resize(width: Int, height: Int) {
         // Update the viewport on resize
-
         viewport.update(width, height, true)
     }
-
-
 
     override fun hide() {}
 
@@ -313,5 +415,7 @@ class PhrasenheftScreen (
         backTexture.disposeSafely()
         sortTexture.disposeSafely()
         shapeRenderer.dispose()
+        // Beenden des Executors
+        executor.shutdown()
     }
 }

@@ -61,8 +61,8 @@ class MapChangeSystem (
                     game.removeScreen<MinigameEssenScreen>()
                 }
 
-                game.addScreen(MinigameEssenScreen(game, gameStage))
-                game.setScreen<MinigameEssenScreen>()
+                game.addScreen(MinigameFamilieScreen(game))//gameStage))
+                game.setScreen<MinigameFamilieScreen>()
 
 
 

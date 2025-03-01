@@ -38,6 +38,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private lateinit var font: BitmapFont
     private val viewport: Viewport = ExtendViewport(1920f, 1080f)
     private val glyphLayout = GlyphLayout()
+    private lateinit var music: Music
 
     private var backgroundTexture: Texture = Texture("xx_map_assets/Map/ref.png")
     private var startNewGameTexture: Texture = Texture("xx_Images/Buttons/neuesSpiel_green.png")
@@ -89,7 +90,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         get() = max(viewport.worldWidth, viewport.worldHeight) * 1.5f
 
     override fun show() {
-        val music: Music = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Hintergrundmusik/Hintergrundmusik_linguExplorer.mp3"))
+        music = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Hintergrundmusik/Hintergrundmusik_linguExplorer.mp3"))
         music.isLooping = true
         music.volume = 0.5f
         music.play()
@@ -336,6 +337,12 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                     }
                 }
                 return
+            }
+
+            if(music.volume > 0.005f) {
+                music.volume -= 0.002f
+            } else if (music.volume <= 0.005f) {
+                music.volume = 0f
             }
 
             Gdx.gl.glEnable(GL20.GL_BLEND)
