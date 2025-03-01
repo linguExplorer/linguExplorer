@@ -15,18 +15,14 @@ class UserProgressRepository {
         }
 
 
-    fun addProgess(userId: Int, topic: TopicEntity?): UserProgressEntity? =
+    fun addProgess(userId: Int, topicId: Int): UserProgressEntity? =
         transaction {
-            if (topic != null) {
-                val insertStatement = UserProgress.insert {
-                    it[UserProgress.userId] = userId
-                    it[UserProgress.topicId] = topic.id
-                    it[UserProgress.isMastered] = false
-                }
-                insertStatement.resultedValues?.first()?.toUserProgress()
-            } else {
-                return@transaction null
+            val insertStatement = UserProgress.insert {
+                it[UserProgress.userId] = userId
+                it[UserProgress.topicId] = topicId
+                it[UserProgress.isMastered] = false
             }
+            insertStatement.resultedValues?.first()?.toUserProgress()
         }
 
     fun removeUserProgresses(userId: Int): Boolean =

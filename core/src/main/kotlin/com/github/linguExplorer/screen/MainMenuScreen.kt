@@ -118,7 +118,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         val scaledWidth = backgroundWidth * scaleFactor
         val scaledHeight = backgroundHeight * scaleFactor
 
-        transitionCenter.set(viewport.screenWidth / 2f, viewport.screenHeight / 2f)
+        transitionCenter.set(viewport.worldWidth / 2f, viewport.worldHeight / 2f)
 
         backgroundOffsetX += speedX * delta
         backgroundOffsetY += speedY * delta
@@ -252,10 +252,11 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
 
                         batch.end()
 
+                        val textHeight = firstGamePausedY - gamePausedY
                         val rectX = gamePausedX - 20f
                         val rectY = firstGamePausedY + 20f
                         val rectWidth = popUpSize.x - 160f
-                        val rectHeight = -(gamePausedY - gamePausedX + 40f)
+                        val rectHeight = -(textHeight + 60f)
 
                         val isMouseOver = isMouseInArea(mousePos.x, mousePos.y, rectX, rectY + rectHeight, rectWidth, -rectHeight)
 

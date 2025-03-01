@@ -77,6 +77,10 @@ abstract class MinigameSystem {
         if (phraseStateUpdates.isNotEmpty()) {
             progressRepo.changeMultipleMasteredStates(userId, phraseStateUpdates)
         }
+
+        if (UserProgressRepository().getUserProgress(userId, topicId) == null) {
+            UserProgressRepository().addProgess(userId, topicId)
+        }
     }
 
 
