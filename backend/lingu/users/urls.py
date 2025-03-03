@@ -9,7 +9,5 @@ urlpatterns = [
     path('update-username', UpdateUsernameView.as_view()),
     path('resend', ResendEmail.as_view()),
     path('download', views.download_lingu_explorer),
-
-
     path('activate/<uidb64>/<token>', views.activate, name='activate')
 ]
