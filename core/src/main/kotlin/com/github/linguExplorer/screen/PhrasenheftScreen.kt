@@ -23,6 +23,7 @@ import com.itextpdf.layout.element.*
 import com.itextpdf.layout.properties.UnitValue
 import java.io.File
 import com.badlogic.gdx.Application
+import com.github.linguExplorer.saveNumber
 import java.util.concurrent.Executors
 import javax.swing.SwingUtilities
 
@@ -39,14 +40,13 @@ class PhrasenheftScreen (
     private var currentSortState = SortState.ASCENDING_PHRASE
     private var sortText = "Phrase aufsteigend"
 
-    private val phrasesOfProgress = PhraseProgressRepository().getAllPhrasesOfUserProgress(userId)
+    private val phrasesOfProgress = PhraseProgressRepository().getAllPhrasesOfUserProgress(userId, saveNumber)
     private var phrases = phrasesOfProgress.map {
         it.phrase to it.translation
     }
 
     private val lineHeight = 56f
     private val spacing = 260f
-    private val padding = 20f
     private var currentY = 778f
 
     // Texturen
@@ -62,7 +62,7 @@ class PhrasenheftScreen (
     private val sortSize = Vector2(sortTexture.width.toFloat()*6, sortTexture.height.toFloat()*6)
     private val closeSize = Vector2(closeTexture.width.toFloat()*1.25f, closeTexture.height.toFloat()*1.25f)
 
-    private val viewport: Viewport = ExtendViewport(800f, 600f)
+    private val viewport: Viewport = ExtendViewport(1920f, 1080f)
 
     private var maxPages= (phrases.size/10f)//wie viele Phrasen max
     private var currentPage = 1
@@ -132,7 +132,7 @@ class PhrasenheftScreen (
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
         shapeRenderer.color = Color(156 / 255f, 194 / 255f, 211 / 255f, 1f)
-        shapeRenderer.rect(padding, padding, screenWidth - padding * 2, screenHeight - padding * 2)
+        shapeRenderer.rect(0f, 0f, screenWidth.toFloat(), screenHeight.toFloat())
         shapeRenderer.end()
 
         batch.end()

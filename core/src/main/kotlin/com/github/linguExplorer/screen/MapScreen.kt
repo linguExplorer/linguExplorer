@@ -87,29 +87,29 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
     //Game Menü
     private var update = 0.25f
     private var menuSet = false
-    private lateinit var batch: SpriteBatch
-    private lateinit var boxTexture: Texture
+    private val batch: SpriteBatch = SpriteBatch()
+    private val boxTexture: Texture = Texture(Gdx.files.internal("xx_Images/GameMenü/box.png"))
     private var boxX: Float = 0f
     private var boxY: Float = 0f
-    private lateinit var font: BitmapFont
-    private lateinit var resumeTexture: Texture
-    private lateinit var soundSettingsTexture: Texture
-    private lateinit var quitGameTexture: Texture
+    private var font: BitmapFont = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
+    private val resumeTexture: Texture = Texture(Gdx.files.internal("xx_Images/GameMenü/resume.png"))
+    private val soundSettingsTexture: Texture = Texture(Gdx.files.internal("xx_Images/GameMenü/soundsettings.png"))
+    private val quitGameTexture: Texture = Texture(Gdx.files.internal("xx_Images/GameMenü/quitgame.png"))
     private val buttonSize = Vector2(300f, 90f)
     private val buttonSpacing = 40f
-    private lateinit var wordmarkTexture: Texture
+    private val wordmarkTexture: Texture = Texture(Gdx.files.internal("xx_Images/wordmark/wordmark_scaled.png"))
     private val wordmarkScale = 0.2f
-    private lateinit var applyTexture: Texture
+    private val applyTexture: Texture = Texture(Gdx.files.internal("xx_Images/GameMenü/apply.png"))
     private val applyButtonWidth = 230f  // Breite für den Apply-Button
     private var showSoundSettings = false
-    private lateinit var redXTexture: Texture
-    private val redXSize = Vector2(60f, 60f) //rotes X-Symbols
-    private lateinit var barnoneTexture: Texture
-    private lateinit var barfullTexture: Texture // Neue Textur für den farbigen Balken
+    private val redXTexture: Texture = Texture(Gdx.files.internal("xx_Images/Buttons/red_X.png"))
+    private val redXSize = Vector2(60f, 60f)
+    private val barnoneTexture: Texture = Texture(Gdx.files.internal("xx_Images/GameMenü/barnone.png"))
+    private val barfullTexture: Texture = Texture(Gdx.files.internal("xx_Images/GameMenü/barfull.png"))
     private val barnoneWidth = 480f  // Breite des Balkens
     private val barnoneHeight = 25f // Höhe des Balkens
     private val headingLeftPadding = 50f // Abstand der Überschriften vom linken Rand
-    private lateinit var circleTexture: Texture
+    private val circleTexture: Texture = Texture(Gdx.files.internal("xx_Images/GameMenü/circle.png"))
     private val circleSize = Vector2(50f, 50f) // Größe des Kreises
     private var masterCircleX: Float = 0f
     private var soundeffectsCircleX: Float = 0f
@@ -131,20 +131,6 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
 
 
     override fun show() {
-
-        batch = SpriteBatch()
-        boxTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/box.png"))
-        font = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
-        resumeTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/resume.png"))
-        soundSettingsTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/soundsettings.png"))
-        quitGameTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/quitgame.png"))
-        wordmarkTexture = Texture(Gdx.files.internal("xx_Images/wordmark/wordmark_scaled.png"))
-        applyTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/apply.png"))
-        redXTexture = Texture(Gdx.files.internal("xx_Images/Buttons/red_X.png")) // Lade die Textur für das rote X
-        barnoneTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/barnone.png")) // Lade die Textur für den Balken
-        barfullTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/barfull.png")) // Lade die Textur für den farbigen Balken
-        circleTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/circle.png")) // Lade die Textur für den Kreis
-
 
         log.debug { "Game Screen gets shown" }
         world.systems.forEach { system ->
@@ -265,7 +251,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
 
     override fun render(delta: Float) {
 
-  
+
             if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
 
                 if(menuSet) {

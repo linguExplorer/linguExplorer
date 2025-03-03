@@ -4,26 +4,25 @@ import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.timestamp
 import java.time.Instant
 
-
 object Checkpoint : Table("checkpoint") {
-    val id = integer("pk_fk_user_id")
+    val userId = integer("pk_fk_user_id")
+    val saveNumber = integer("pk_fk_save_number")
     val balance = integer("current_balance")
     val positionX = float("current_position_x")
     val positionY = float("current_position_y")
-    val currentTime = timestamp("currenttime")
+    val currentTime = timestamp("currenttime").default(Instant.now())
 
-
-    override val primaryKey = PrimaryKey(id)
+    override val primaryKey = PrimaryKey(userId, saveNumber)
 }
 
 /**
- * Datenklasse
+ * Datenklasse für Checkpoint
  */
 data class CheckpointEntity(
-    val id: Int,
+    val userId: Int,
+    val saveNumber: Int,
     val balance: Int,
     val positionX: Float,
     val positionY: Float,
     val currentTime: Instant
 )
-

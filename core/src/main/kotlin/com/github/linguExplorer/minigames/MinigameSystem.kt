@@ -5,6 +5,7 @@ import com.github.linguExplorer.database.allPhrasesList
 import com.github.linguExplorer.database.phraseIndex
 import com.github.linguExplorer.models.PhraseEntity
 import com.github.linguExplorer.repositories.*
+import com.github.linguExplorer.saveNumber
 import com.github.linguExplorer.userId
 import kotlin.random.Random
 
@@ -40,17 +41,14 @@ abstract class MinigameSystem {
     }
 
 
-    /**
-     * Speichert die erfassten Daten in die Datenbank
-     */
     fun storePhraseData() {
         val progressRepo = PhraseProgressRepository()
         val historyRepo = PhraseProgressHistoryRepository()
 
-        val userProgress = progressRepo.getAllPhraseProgressForUser(userId)
-        val userHistory = historyRepo.getAllEntriesForUser(userId)
+        val userProgress = progressRepo.getAllPhraseProgressForUser(userId, saveNumber)
+        val userHistory = historyRepo.getAllEntriesForUser(userId, saveNumber)
         val phrasesGameHistory = mutableListOf<Pair<Int, Boolean>>()
-        val phrasesProgress = mutableListOf<Triple<Int, Int, Boolean>>()
+        val phrasesProgress = mutableListOf<PhraseProgressData>() // Statt Triple nutzen wir jetzt ein Quadruple
         val phraseStateUpdates = mutableListOf<Int>()
 
         capturedPhrases.forEach { (phrase, correctSet) ->
@@ -58,7 +56,7 @@ abstract class MinigameSystem {
             val correctIndex = historyRepo.calculateCorrectIndex(phrase.id, userHistory)
 
             if (relevantProgress == null) {
-                phrasesProgress.add(Triple(phrase.id, userId, false))
+                phrasesProgress.add(PhraseProgressData(phrase.id, userId, saveNumber, false)) // saveNumber wird jetzt hinzugefügt
             }
 
             // Beide möglichen Werte aus dem Set verarbeiten (max. 1x true und 1x false pro Phrase)
@@ -73,15 +71,16 @@ abstract class MinigameSystem {
         }
 
         progressRepo.addMultiplePhraseProgress(phrasesProgress)
-        historyRepo.addPhraseProgressHistories(userId, phrasesGameHistory)
+        historyRepo.addPhraseProgressHistories(userId, saveNumber, phrasesGameHistory) // saveNumber wird hier ebenfalls übergeben
         if (phraseStateUpdates.isNotEmpty()) {
-            progressRepo.changeMultipleMasteredStates(userId, phraseStateUpdates)
+            progressRepo.changeMultipleMasteredStates(userId, saveNumber, phraseStateUpdates)
         }
 
-        if (UserProgressRepository().getUserProgress(userId, topicId) == null) {
-            UserProgressRepository().addProgess(userId, topicId)
+        if (UserProgressRepository().getUserProgress(userId, saveNumber, topicId) == null) {
+            UserProgressRepository().addProgress(userId, saveNumber, topicId)
         }
     }
+
 
 
     /**
