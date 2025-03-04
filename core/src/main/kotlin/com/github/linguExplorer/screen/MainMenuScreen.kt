@@ -11,15 +11,13 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
-import com.github.linguExplorer.linguExplorer
+import com.github.linguExplorer.*
 import com.github.linguExplorer.models.CheckpointEntity
 import com.github.linguExplorer.models.UserEntity
 import com.github.linguExplorer.repositories.CheckpointRepository
 import com.github.linguExplorer.repositories.TopicRepository
 import com.github.linguExplorer.repositories.UserProgressRepository
 import com.github.linguExplorer.repositories.UserRepository
-import com.github.linguExplorer.saveNumber
-import com.github.linguExplorer.userId
 import java.awt.Desktop
 import java.net.URI
 import ktx.app.KtxScreen
@@ -100,7 +98,6 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     override fun show() {
         music = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Hintergrundmusik/Hintergrundmusik_linguExplorer.mp3"))
         music.isLooping = true
-        music.volume = 0.5f
         music.play()
         font = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
         gifAnimation = Animation(0.1f, textureAtlas.regions, Animation.PlayMode.LOOP)
@@ -108,6 +105,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
 
     override fun render(delta: Float) {
         viewport.apply()
+        if (!isTransitioning) music.volume = 0.5f * musicVolume * masterVolume
         val screenWidth = viewport.worldWidth
         val screenHeight = viewport.worldHeight
 
@@ -358,6 +356,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             showPopup = false
             loadGamePopUp = false
             newGamePopUp = false
+            showMenu = false
             loadingTime = 0f
         }
 
@@ -385,7 +384,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             }
 
             if(music.volume > 0.005f) {
-                music.volume -= 0.002f
+                music.volume -= (0.002f * masterVolume * musicVolume)
             } else if (music.volume <= 0.005f) {
                 music.volume = 0f
             }
@@ -402,8 +401,12 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             return
         }
 
+        gameMenuRenderer.setOnResumeClicked {
+            showMenu = false
+        }
+
         if (showMenu) {
-            gameMenuRenderer.renderGameMenu(batch, font, glyphLayout, viewport)
+            gameMenuRenderer.renderGameMenu(batch, font, glyphLayout, viewport, shapeRenderer)
             return
         }
 
@@ -436,7 +439,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
 
                 saveSlots.clear() // Clear existing slots
 
-                for (i in 0 until 3) { // Maximal 3 Speicherstände
+                for (i in 0 until 3) {
                     if (i < allUsers.size) {
                         val user = allUsers[i]
                         val checkpoint = allCheckpoints.getOrNull(i)

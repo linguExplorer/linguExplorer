@@ -1,6 +1,6 @@
 package com.github.linguExplorer.minigames
 
-import com.github.linguExplorer.database.allPhraseAssets
+import com.github.linguExplorer.allPhraseAssets
 import com.github.linguExplorer.models.PhraseEntity
 import com.github.linguExplorer.repositories.*
 import com.github.linguExplorer.saveNumber

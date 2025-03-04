@@ -1,4 +1,4 @@
-package com.github.linguExplorer.database
+package com.github.linguExplorer
 
 import com.github.linguExplorer.repositories.PhraseAssetRepository
 import com.github.linguExplorer.repositories.PhraseRepository

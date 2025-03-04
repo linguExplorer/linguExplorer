@@ -1,13 +1,11 @@
 package com.github.linguExplorer.minigames
 
-import com.github.linguExplorer.database.allPhraseAssets
-import com.github.linguExplorer.database.allPhrasesList
-import com.github.linguExplorer.database.phraseIndex
+import com.github.linguExplorer.allPhrasesList
+import com.github.linguExplorer.phraseIndex
 import com.github.linguExplorer.models.PhraseEntity
 import com.github.linguExplorer.repositories.*
 import com.github.linguExplorer.saveNumber
 import com.github.linguExplorer.userId
-import kotlin.random.Random
 
 // Elternklasse Minigame
 abstract class MinigameSystem {
