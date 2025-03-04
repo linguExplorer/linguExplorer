@@ -23,6 +23,8 @@ import com.itextpdf.layout.element.*
 import com.itextpdf.layout.properties.UnitValue
 import java.io.File
 import com.badlogic.gdx.Application
+import com.github.linguExplorer.saveNumber
+import java.util.*
 import java.util.concurrent.Executors
 import javax.swing.SwingUtilities
 
@@ -32,6 +34,7 @@ class PhrasenheftScreen (
     private var font = BitmapFont()
     private val batch = SpriteBatch()
     private val shapeRenderer = ShapeRenderer()
+    private val viewport: Viewport = ExtendViewport(1920f, 1080f)
 
     private enum class SortState {
         ASCENDING_PHRASE, DESCENDING_PHRASE, ASCENDING_TRANSLATION, DESCENDING_TRANSLATION
@@ -39,15 +42,14 @@ class PhrasenheftScreen (
     private var currentSortState = SortState.ASCENDING_PHRASE
     private var sortText = "Phrase aufsteigend"
 
-    private val phrasesOfProgress = PhraseProgressRepository().getAllPhrasesOfUserProgress(userId)
+    private val phrasesOfProgress = PhraseProgressRepository().getAllPhrasesOfUserProgress(userId, saveNumber)
     private var phrases = phrasesOfProgress.map {
         it.phrase to it.translation
     }
 
     private val lineHeight = 56f
     private val spacing = 260f
-    private val padding = 20f
-    private var currentY = 778f
+    private var currentY: Float = 0f
 
     // Texturen
     private val heftTexture = Texture(Gdx.files.internal("Phrasenheft/heft_design.png"))
@@ -56,13 +58,11 @@ class PhrasenheftScreen (
     private val backTexture = Texture(Gdx.files.internal("Phrasenheft/zurueck.png"))
     private val closeTexture = Texture(Gdx.files.internal("Phrasenheft/red_X.png"))
 
-    private val heftSize = Vector2(heftTexture.width.toFloat()*8, heftTexture.height.toFloat()*8)
+    private val heftSize = Vector2(1080f, 784f)
     private val nextSize = Vector2(backTexture.width.toFloat()*8, backTexture.height.toFloat()*8)
     private val backSize = Vector2(backTexture.width.toFloat()*8, backTexture.height.toFloat()*8)
     private val sortSize = Vector2(sortTexture.width.toFloat()*6, sortTexture.height.toFloat()*6)
     private val closeSize = Vector2(closeTexture.width.toFloat()*1.25f, closeTexture.height.toFloat()*1.25f)
-
-    private val viewport: Viewport = ExtendViewport(800f, 600f)
 
     private var maxPages= (phrases.size/10f)//wie viele Phrasen max
     private var currentPage = 1
@@ -76,26 +76,26 @@ class PhrasenheftScreen (
 
     private val nextPosition: Vector2
         get() = Vector2(
-            viewport.screenWidth/2 + 600f,
-            (viewport.screenHeight - heftSize.y) - 200f
+            viewport.worldWidth/2 + 600f,
+            (viewport.worldHeight - heftSize.y) - 200f
         )
 
     private val backPosition: Vector2
         get() = Vector2(
-            viewport.screenWidth/2 - 690f,
-            (viewport.screenHeight  - heftSize.y) - 200f
+            viewport.worldWidth/2 - 690f,
+            (viewport.worldHeight  - heftSize.y) - 200f
         )
 
     private val sortPosition: Vector2
         get() = Vector2(
-            viewport.screenWidth/2 - 690f,
-            (viewport.screenHeight/2f + heftSize.y/2f) - sortSize.y
+            viewport.worldWidth/2 - 690f,
+            (viewport.worldHeight/2f + heftSize.y/2f) - sortSize.y
         )
 
     private val closePosition: Vector2
         get() = Vector2(
-            viewport.screenWidth.toFloat() - 150f,
-            (viewport.screenHeight - 50f) - sortSize.y
+            viewport.worldWidth - 150f,
+            (viewport.worldHeight - 50f) - sortSize.y
         )
 
     private val textX = sortPosition.x
@@ -103,10 +103,6 @@ class PhrasenheftScreen (
 
     override fun show() {
         Gdx.input.inputProcessor = null
-
-        viewport.update(Gdx.graphics.width, Gdx.graphics.height, true)
-        viewport.camera.position.set(viewport.worldWidth / 2, viewport.worldHeight / 2, 0f)
-        viewport.camera.update()
     }
 
     override fun render(delta: Float) {
@@ -117,8 +113,8 @@ class PhrasenheftScreen (
         }
 
         handleInput()
-
         viewport.apply()
+        batch.projectionMatrix = viewport.camera.combined
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
         batch.begin()
@@ -127,20 +123,20 @@ class PhrasenheftScreen (
         font.color = Color.BLACK
         font.data.setScale(0.3f, 0.3f)
 
-        val screenHeight = viewport.screenHeight
-        val screenWidth = viewport.screenWidth
+        val screenHeight = viewport.worldHeight
+        val screenWidth = viewport.worldWidth
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
         shapeRenderer.color = Color(156 / 255f, 194 / 255f, 211 / 255f, 1f)
-        shapeRenderer.rect(padding, padding, screenWidth - padding * 2, screenHeight - padding * 2)
+        shapeRenderer.rect(0f, 0f, screenWidth, screenHeight)
         shapeRenderer.end()
 
         batch.end()
 
         batch.begin()
 
-        val heftX = screenWidth / 2f - heftSize.x / 2f
-        val heftY = screenHeight / 2f - heftSize.y / 2f
+        val heftX = (screenWidth - heftSize.x) / 2f
+        val heftY = (screenHeight - heftSize.y) / 2f
         batch.draw(heftTexture, heftX, heftY, heftSize.x, heftSize.y)
 
         if ((currentPage - 1) > 0) {
@@ -152,20 +148,21 @@ class PhrasenheftScreen (
         batch.draw(sortTexture, sortPosition.x, sortPosition.y, sortSize.x, sortSize.y)
         batch.draw(closeTexture, closePosition.x, closePosition.y, closeSize.x, closeSize.y)
 
-        val startX = screenWidth / 4f + 70f
+        currentY = heftY + heftSize.y - 140f
+        val startX = heftX + 130f
         var adjustedY = currentY
 
         layout.setText(font, "English")
         var titleTextWidth = layout.width
         var titleX = startX - (titleTextWidth / 2)
         font.draw(batch, "English", titleX, adjustedY + 75f)
-        titleX += 550f
+        titleX += 558f
         font.draw(batch, "English", titleX, adjustedY + 75f)
         layout.setText(font, "Deutsch")
         titleTextWidth = layout.width
         titleX = startX + spacing - (titleTextWidth / 2)
         font.draw(batch, "Deutsch", titleX, adjustedY + 75f)
-        titleX += 550f
+        titleX += 558f
         font.draw(batch, "Deutsch", titleX, adjustedY + 75f)
 
         val phrasesPerPage = 20
@@ -191,7 +188,7 @@ class PhrasenheftScreen (
                 val columnOffset = if ((index - pageStartIndex) <= phrasesPerColumn) {
                     0f
                 } else {
-                    550f
+                    558f
                 }
 
                 layout.setText(font, phraseText)
@@ -225,29 +222,36 @@ class PhrasenheftScreen (
 
     private fun handleInput() {
         if (isExportingPDF) {
-            // Wenn der Export läuft, keine weitere Eingabe verarbeiten
+            // When exporting, do not process input
             return
         }
 
-        val mouseX = Gdx.input.x.toFloat() * viewport.screenWidth/ Gdx.graphics.width
-        val mouseY = (Gdx.graphics.height - Gdx.input.y.toFloat()) * viewport.screenHeight / Gdx.graphics.height
+        // Use viewport's unproject method to get correct world coordinates
+        val mouseX = viewport.unproject(Vector2(Gdx.input.x.toFloat(), Gdx.input.y.toFloat())).x
+        val mouseY = viewport.unproject(Vector2(Gdx.input.x.toFloat(), Gdx.input.y.toFloat())).y
 
         if (Gdx.input.justTouched()) {
-            if (mouseX in nextPosition.x..(nextPosition.x + backSize.x) && mouseY in nextPosition.y..(nextPosition.y + backSize.y)) {
+            // Next button
+            if (mouseX in nextPosition.x..(nextPosition.x + backSize.x) &&
+                mouseY in nextPosition.y..(nextPosition.y + backSize.y)) {
                 if((currentPage-1) + 1 <  maxPages-1f) {
                     currentPage++
                 }
                 println("Button Next, $currentPage")
             }
 
-            if (mouseX in backPosition.x..(backPosition.x + backSize.x) && mouseY in backPosition.y..(backPosition.y + backSize.y)) {
+            // Back button
+            if (mouseX in backPosition.x..(backPosition.x + backSize.x) &&
+                mouseY in backPosition.y..(backPosition.y + backSize.y)) {
                 if((currentPage-1) - 1 >=  0) {
                     currentPage--
                 }
                 println("Button Back, $currentPage")
             }
 
-            if (mouseX in sortPosition.x..(sortPosition.x + sortSize.x) && mouseY in sortPosition.y..(sortPosition.y + sortSize.y)) {
+            // Sort button
+            if (mouseX in sortPosition.x..(sortPosition.x + sortSize.x) &&
+                mouseY in sortPosition.y..(sortPosition.y + sortSize.y)) {
                 currentSortState = when (currentSortState) {
                     SortState.ASCENDING_PHRASE -> SortState.DESCENDING_PHRASE
                     SortState.DESCENDING_PHRASE -> SortState.ASCENDING_TRANSLATION
@@ -270,8 +274,9 @@ class PhrasenheftScreen (
                 }
             }
 
-            if (mouseX in closePosition.x..(closePosition.x + closeSize.x) && mouseY in closePosition.y..(closePosition.y + closeSize.y)) {
-                // Starten Sie den PDF-Export in einem separaten Thread
+            // Close button
+            if (mouseX in closePosition.x..(closePosition.x + closeSize.x) &&
+                mouseY in closePosition.y..(closePosition.y + closeSize.y)) {
                 if (!isExportingPDF) {
                     isExportingPDF = true
                     startExportPDF()
@@ -312,7 +317,7 @@ class PhrasenheftScreen (
                                 var filePath = selectedFile.absolutePath
 
                                 // Sicherstellen, dass die Datei die .pdf-Erweiterung hat
-                                if (!filePath.toLowerCase().endsWith(".pdf")) {
+                                if (!filePath.lowercase(Locale.getDefault()).endsWith(".pdf")) {
                                     filePath += ".pdf"
                                 }
 

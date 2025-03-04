@@ -2,21 +2,16 @@ package com.github.linguExplorer.models
 
 import org.jetbrains.exposed.sql.Table
 
-/**
- * Dieser Kommentar trifft auf alle weiteren Klassen zu
- */
 object User : Table("user") {
     val id = integer("pk_user_id")
-    val name = varchar("name", 20).default("Blobi")
+    val saveNumber = integer("pk_save_number")
+    val name = varchar("name", 20).default("Blob")
 
-    override val primaryKey = PrimaryKey(id)
+    override val primaryKey = PrimaryKey(id, saveNumber)
 }
 
-/**
- * Datenklasse
- */
-data class UserEntity (
+data class UserEntity(
     val id: Int,
-    val name: String = "Blobi"
+    val saveNumber: Int,
+    val name: String = "Blob"
 )
-

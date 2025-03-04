@@ -53,13 +53,13 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
     private val pausePosition: Vector2
         get() = Vector2(
             pauseBasePosition.x,
-            pauseBasePosition.y
+            viewport.worldHeight - pauseSize.y - 30f
         )
 
     private val timePosition: Vector2
         get() = Vector2(
             timeBasePosition.x,
-            timeBasePosition.y
+            viewport.worldHeight - timeSize.y - 30f
         )
 
     private val quitButtonPosition: Vector2
@@ -71,7 +71,7 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
     private val continueButtonPosition: Vector2
         get() = Vector2(
             (viewport.worldWidth / 2) - (buttonSize.x / 2),
-            continueButtonBasePosition.y
+            continueButtonBasePosition.y * (viewport.worldHeight / 1080f)
         )
 
     private var continueButtonScale = 1f
@@ -352,17 +352,20 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
         batch.draw(texture, obj.positionX, obj.positionY, tagSize.x, tagSize.y)
 
 
-        font.data.setScale(0.25f, 0.25f)
+        font.data.setScale(0.28f, 0.28f)
         val glyphLayout = GlyphLayout()
         if (!isTranslation) {
             if (obj.phrase.phrase.length >= 10) {
-                font.data.setScale(0.25f, 0.25f)
+                font.data.setScale(0.24f, 0.24f)
             }
             glyphLayout.setText(font, obj.phrase.phrase)
-            font.draw(batch, obj.phrase.phrase, obj.positionX + (tagSize.x / 3), obj.positionY + obj.sizeY + glyphLayout.height / 2 + 5f)
+            font.draw(batch, obj.phrase.phrase, obj.positionX + (tagSize.x / 2) - (glyphLayout.width / 2), obj.positionY + obj.sizeY + glyphLayout.height / 2 + 5f)
         } else {
+            if (obj.phrase.translation.length >= 10) {
+                font.data.setScale(0.24f, 0.24f)
+            }
             glyphLayout.setText(font, obj.phrase.translation)
-            font.draw(batch, obj.phrase.translation, obj.positionX + (tagSize.x / 3), obj.positionY + obj.sizeY + glyphLayout.height / 2 + 5f)
+            font.draw(batch, obj.phrase.translation, obj.positionX + (tagSize.x / 2) - (glyphLayout.width / 2), obj.positionY + obj.sizeY + glyphLayout.height / 2 + 5f)
         }
     }
 

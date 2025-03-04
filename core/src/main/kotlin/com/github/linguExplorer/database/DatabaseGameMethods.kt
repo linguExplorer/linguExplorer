@@ -4,7 +4,7 @@ import com.github.linguExplorer.models.*
 import com.github.linguExplorer.repositories.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
-fun checkIfTopicAvailable(userId: Int, topicId: Int): Boolean {
+/*fun checkIfTopicAvailable(userId: Int, topicId: Int): Boolean {
     return transaction {
         TopicRepository().getTopicById(topicId) ?: return@transaction false
 
@@ -17,4 +17,4 @@ fun checkIfTopicAvailable(userId: Int, topicId: Int): Boolean {
 
         return@transaction false
     }
-}
+}*/

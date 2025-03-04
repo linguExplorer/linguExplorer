@@ -1,8 +1,9 @@
 package com.github.linguExplorer.minigames
 
-import com.github.linguExplorer.database.allPhraseAssets
+import com.github.linguExplorer.allPhraseAssets
 import com.github.linguExplorer.models.PhraseEntity
 import com.github.linguExplorer.repositories.*
+import com.github.linguExplorer.saveNumber
 import com.github.linguExplorer.userId
 import kotlin.random.Random
 
@@ -14,7 +15,7 @@ class EssenMinigame : MinigameSystem() {
      * Lädt eine zufällige Anzahl von Phrasen für das Minigame
      */
     override fun loadMinigamePhrases() {
-        phraseList = PhraseRepository().getLimitedPhrasesByTopicNameForUser(topicId, userId, Random.nextInt(4, 8)).shuffled()
+        phraseList = PhraseRepository().getLimitedPhrasesByTopicNameForUser(topicId, userId, saveNumber, Random.nextInt(4, 8)).shuffled()
     }
 
     override fun loadPhrasesWithAssets(): List<Pair<PhraseEntity, String>> {

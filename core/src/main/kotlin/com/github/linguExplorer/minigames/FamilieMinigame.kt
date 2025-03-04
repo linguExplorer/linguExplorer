@@ -1,9 +1,10 @@
 package com.github.linguExplorer.minigames
 
-import com.github.linguExplorer.database.allPhraseAssets
+import com.github.linguExplorer.allPhraseAssets
 import com.github.linguExplorer.models.PhraseEntity
 import com.github.linguExplorer.repositories.PhraseRepository
 import com.github.linguExplorer.repositories.TopicRepository
+import com.github.linguExplorer.saveNumber
 import com.github.linguExplorer.userId
 import kotlin.random.Random
 
@@ -13,7 +14,7 @@ class FamilieMinigame : MinigameSystem() {
 
     override fun loadMinigamePhrases() {
         phraseList = PhraseRepository()
-            .getLimitedPhrasesByTopicNameForUser(topicId, userId, Random.nextInt(11, 16))
+            .getLimitedPhrasesByTopicNameForUser(topicId, userId, saveNumber, Random.nextInt(11, 16))
 
     }
 
