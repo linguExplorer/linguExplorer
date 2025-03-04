@@ -14,12 +14,9 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from datetime import timedelta
 from django.utils import timezone
-
-
 import jwt, datetime
 from .models import User
 from .tokens import account_activation_token
-
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 import os
