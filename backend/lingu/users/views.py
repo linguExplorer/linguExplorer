@@ -22,48 +22,41 @@ from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 import os
 import tempfile
+import pefile
 
 
 
 class DownloadView(APIView):
     def get(self, request):
-        # Extrahiere die Benutzer-ID aus der URL
         user_id = request.GET.get('userid')
         if not user_id:
             return Response("Benutzer-ID fehlt", status=400)
 
-        # Pfade zu den Dateien
         original_exe_path = os.path.join(settings.BASE_DIR, "wrapper", "linguExplorer_original.exe")
         personalized_exe_path = os.path.join(settings.BASE_DIR, "wrapper", "linguExplorer_personalized.exe")
 
-        # Erstelle eine temporäre Konfigurationsdatei mit der Benutzer-ID
+        # Erstelle temporäre Konfigurationsdatei
         with tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix='.txt') as config_file:
             config_file.write(f"userid={user_id}\n")
             config_file_path = config_file.name
 
-        # Generiere den personalisierten Wrapper
-        self.create_personalized_wrapper(original_exe_path, config_file_path, personalized_exe_path)
+        # Einbetten der Konfiguration in die .exe-Datei
+        self.embed_config(original_exe_path, config_file_path, personalized_exe_path)
 
-        # Sende die personalisierte .exe-Datei als Download
         response = FileResponse(open(personalized_exe_path, 'rb'), content_type='application/octet-stream')
         response['Content-Disposition'] = f'attachment; filename="linguExplorer.exe"'
         return response
 
-    def create_personalized_wrapper(self, original_exe, config_file, output_exe):
-        # Lies die originalen Daten
-        with open(original_exe, "rb") as f:
-            exe_data = f.read()
-
-        # Lies die Konfigurationsdaten
+    def embed_config(self, original_exe, config_file, output_exe):
+        # Lese Konfigurationsdaten
         with open(config_file, "rb") as f:
             config_data = f.read()
 
-        # Erstelle die personalisierte .exe-Datei
-        with open(output_exe, "wb") as f:
-            # Schreibe die originalen Daten
-            f.write(exe_data)
-            # Füge die Konfigurationsdaten am Ende der Datei hinzu
-            f.write(config_data)
+        # Öffne die .exe-Datei und füge die Konfiguration als Ressource hinzu
+        pe = pefile.PE(original_exe)
+        pe.add_resource(config_data, pefile.RESOURCE_TYPE["RT_RCDATA"], "CONFIG")
+        pe.write(output_exe)
+        pe.close()
 
 
 
