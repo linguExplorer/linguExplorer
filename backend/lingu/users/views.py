@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.conf import settings
 from rest_framework.views import APIView
 from .serializers import UserSerializer
 from .serializers import UsernameSerializer
