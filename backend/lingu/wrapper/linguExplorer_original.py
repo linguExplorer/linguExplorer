@@ -9,11 +9,10 @@ def load_config():
     else:
         app_dir = os.path.dirname(os.path.abspath(__file__))
     
-    config_path = os.path.join(app_dir, "config_temp.txt")
+    config_path = os.path.join(app_dir, "config_temp.properties")
     with open(config_path, "r") as f:
         return f.read().strip()
 
 if __name__ == "__main__":
     config = load_config()
     print(f"Konfiguration: {config}")
-    input("Drücke Enter, um zu schließen...")

@@ -32,7 +32,7 @@ class DownloadView(APIView):
 
         # Pfade
         original_script = os.path.join(settings.BASE_DIR, "wrapper", "linguExplorer_original.py")
-        config_path = os.path.join(settings.BASE_DIR, "wrapper", "config_temp.txt")
+        config_path = os.path.join(settings.BASE_DIR, "wrapper", "config_temp.properties")
         output_exe = os.path.join(settings.BASE_DIR, "wrapper", "linguExplorer_personalized.exe")
 
         # Erstelle temporäre Konfigurationsdatei
@@ -48,15 +48,19 @@ class DownloadView(APIView):
         return response
 
     def build_exe(self, script_path, config_path, output_exe):
-        # PyInstler-Befehl: Erstellt eine .exe mit eingebetteter Konfiguration
+        # PyInstaller-Befehl: Erstellt eine .exe mit eingebetteter Konfiguration
         command = [
             "pyinstaller",
-            "--onefile",
+            "--onefile",  # Erstellt eine einzelne .exe-Datei
             "--add-data", f"{config_path}:.",  # Füge die Konfigurationsdatei hinzu
-            "--name", os.path.basename(output_exe),
+            "--name", os.path.basename(output_exe).replace(".exe", ""),  # Name der .exe-Datei
             script_path
         ]
         subprocess.run(command, check=True)
+
+        # Verschiebe die generierte .exe-Datei in das gewünschte Verzeichnis
+        dist_exe = os.path.join(settings.BASE_DIR, "dist", os.path.basename(output_exe))
+        os.replace(dist_exe, output_exe)
 
 
 
