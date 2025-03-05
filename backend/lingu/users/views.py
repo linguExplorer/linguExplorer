@@ -22,7 +22,7 @@ from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 import os
 import tempfile
-from resources import Resources 
+import subprocess
 
 class DownloadView(APIView):
     def get(self, request):
@@ -30,35 +30,33 @@ class DownloadView(APIView):
         if not user_id:
             return Response("Benutzer-ID fehlt", status=400)
 
-        original_exe_path = os.path.join(settings.BASE_DIR, "wrapper", "linguExplorer_original.exe")
-        personalized_exe_path = os.path.join(settings.BASE_DIR, "wrapper", "linguExplorer_personalized.exe")
+        # Pfade
+        original_script = os.path.join(settings.BASE_DIR, "wrapper", "linguExplorer_original.py")
+        config_path = os.path.join(settings.BASE_DIR, "wrapper", "config_temp.txt")
+        output_exe = os.path.join(settings.BASE_DIR, "wrapper", "linguExplorer_personalized.exe")
 
         # Erstelle temporäre Konfigurationsdatei
-        with tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix='.txt') as config_file:
-            config_file.write(f"userid={user_id}\n")
-            config_file_path = config_file.name
+        with open(config_path, "w") as f:
+            f.write(f"userid={user_id}\n")
 
-        # Einbetten der Konfiguration in die .exe-Datei
-        self.embed_config(original_exe_path, config_file_path, personalized_exe_path)
+        # Erstelle die .exe-Datei mit PyInstaller (embedded config)
+        self.build_exe(original_script, config_path, output_exe)
 
-        # Sende die personalisierte .exe-Datei als Download
-        response = FileResponse(open(personalized_exe_path, 'rb'), content_type='application/octet-stream')
-        response['Content-Disposition'] = f'attachment; filename="linguExplorer.exe"'
+        # Sende die Datei
+        response = FileResponse(open(output_exe, "rb"), content_type="application/octet-stream")
+        response["Content-Disposition"] = f'attachment; filename="linguExplorer.exe"'
         return response
 
-    def embed_config(self, original_exe, config_file, output_exe):
-        # Lese Original-EXE und Konfigurationsdaten
-        with open(original_exe, "rb") as f_exe, open(config_file, "rb") as f_config:
-            exe_data = f_exe.read()
-            config_data = f_config.read()
-
-        # Füge die Konfiguration als Ressource hinzu
-        res = Resources(exe_data)
-        res.add("CONFIG", "CONFIG_DATA", config_data)  # Typ, Name, Daten
-
-        # Speichere die modifizierte EXE
-        with open(output_exe, "wb") as f_out:
-            f_out.write(res.export())
+    def build_exe(self, script_path, config_path, output_exe):
+        # PyInstler-Befehl: Erstellt eine .exe mit eingebetteter Konfiguration
+        command = [
+            "pyinstaller",
+            "--onefile",
+            "--add-data", f"{config_path}:.",  # Füge die Konfigurationsdatei hinzu
+            "--name", os.path.basename(output_exe),
+            script_path
+        ]
+        subprocess.run(command, check=True)
 
 
 
