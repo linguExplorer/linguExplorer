@@ -23,7 +23,6 @@ import os
 import tempfile
 
 
-"""
 
 class DownloadView(APIView):
     def get(self, request):
@@ -66,7 +65,7 @@ class DownloadView(APIView):
             f.write(exe_data)
             f.write(config_data)
 
-"""
+
 
 
 
