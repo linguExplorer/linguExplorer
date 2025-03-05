@@ -22,9 +22,7 @@ from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 import os
 import tempfile
-import pefile
-
-
+from resources import Resources 
 
 class DownloadView(APIView):
     def get(self, request):
@@ -43,20 +41,24 @@ class DownloadView(APIView):
         # Einbetten der Konfiguration in die .exe-Datei
         self.embed_config(original_exe_path, config_file_path, personalized_exe_path)
 
+        # Sende die personalisierte .exe-Datei als Download
         response = FileResponse(open(personalized_exe_path, 'rb'), content_type='application/octet-stream')
         response['Content-Disposition'] = f'attachment; filename="linguExplorer.exe"'
         return response
 
     def embed_config(self, original_exe, config_file, output_exe):
-        # Lese Konfigurationsdaten
-        with open(config_file, "rb") as f:
-            config_data = f.read()
+        # Lese Original-EXE und Konfigurationsdaten
+        with open(original_exe, "rb") as f_exe, open(config_file, "rb") as f_config:
+            exe_data = f_exe.read()
+            config_data = f_config.read()
 
-        # Öffne die .exe-Datei und füge die Konfiguration als Ressource hinzu
-        pe = pefile.PE(original_exe)
-        pe.add_resource(config_data, pefile.RESOURCE_TYPE["RT_RCDATA"], "CONFIG")
-        pe.write(output_exe)
-        pe.close()
+        # Füge die Konfiguration als Ressource hinzu
+        res = Resources(exe_data)
+        res.add("CONFIG", "CONFIG_DATA", config_data)  # Typ, Name, Daten
+
+        # Speichere die modifizierte EXE
+        with open(output_exe, "wb") as f_out:
+            f_out.write(res.export())
 
 
 
