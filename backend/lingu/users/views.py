@@ -24,6 +24,13 @@ import os
 import tempfile
 import subprocess
 
+import os
+import subprocess
+from django.conf import settings
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.http import FileResponse
+
 class DownloadView(APIView):
     def get(self, request):
         user_id = request.GET.get('userid')
@@ -32,20 +39,30 @@ class DownloadView(APIView):
 
         # Pfade
         original_script = os.path.join(settings.BASE_DIR, "wrapper", "linguExplorer_original.py")
-        config_path = os.path.join(settings.BASE_DIR, "wrapper", "config_temp.properties")
-        output_exe = os.path.join(settings.BASE_DIR, "wrapper", "linguExplorer_personalized.exe")
+        config_dir = os.path.join(settings.BASE_DIR, "wrapper", "configs")
+        os.makedirs(config_dir, exist_ok=True)  # Erstelle den Konfigurationsordner, falls nicht vorhanden
+        config_path = os.path.join(config_dir, f"config_{uuid.uuid4()}.properties")  # Eindeutiger Dateiname
+        output_exe = os.path.join(settings.BASE_DIR, "wrapper", f"linguExplorer_personalized_{uuid.uuid4()}.exe")
 
         # Erstelle temporäre Konfigurationsdatei
         with open(config_path, "w") as f:
             f.write(f"userid={user_id}\n")
 
         # Erstelle die .exe-Datei mit PyInstaller (embedded config)
-        self.build_exe(original_script, config_path, output_exe)
+        try:
+            self.build_exe(original_script, config_path, output_exe)
+        except subprocess.CalledProcessError as e:
+            return Response(f"Fehler beim Erstellen der .exe-Datei: {e}", status=500)
 
         # Sende die Datei
-        response = FileResponse(open(output_exe, "rb"), content_type="application/octet-stream")
-        response["Content-Disposition"] = f'attachment; filename="linguExplorer.exe"'
-        return response
+        try:
+            response = FileResponse(open(output_exe, "rb"), content_type="application/octet-stream")
+            response["Content-Disposition"] = f'attachment; filename="linguExplorer.exe"'
+            return response
+        finally:
+            # Aufräumen: Lösche temporäre Dateien
+            os.remove(config_path)
+            os.remove(output_exe)
 
     def build_exe(self, script_path, config_path, output_exe):
         # PyInstaller-Befehl: Erstellt eine .exe mit eingebetteter Konfiguration
@@ -61,8 +78,6 @@ class DownloadView(APIView):
         # Verschiebe die generierte .exe-Datei in das gewünschte Verzeichnis
         dist_exe = os.path.join(settings.BASE_DIR, "dist", os.path.basename(output_exe))
         os.replace(dist_exe, output_exe)
-
-
 
 
 
