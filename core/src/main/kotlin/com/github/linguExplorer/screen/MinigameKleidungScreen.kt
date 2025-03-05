@@ -638,7 +638,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                     if (game!!.containsScreen<MapScreen>()) {
                         game.removeScreen<MapScreen>()
                     }
-                    game.addScreen(MapScreen(game, 10f, 10f))
+                    game.addScreen(MapScreen(game,  26.5f, 4.6f))
                     game.setScreen<MapScreen>()
                 }
             }
