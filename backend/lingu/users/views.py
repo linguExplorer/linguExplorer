@@ -34,36 +34,35 @@ class DownloadView(APIView):
 
         # Pfade zu den Dateien
         original_exe_path = os.path.join(settings.BASE_DIR, "wrapper", "linguExplorer_original.exe")
-        wrapper_exe_path = os.path.join(settings.BASE_DIR, "wrapper", "linguExplorer_wrapper.exe")
+        personalized_exe_path = os.path.join(settings.BASE_DIR, "wrapper", "linguExplorer_personalized.exe")
 
         # Erstelle eine temporäre Konfigurationsdatei mit der Benutzer-ID
         with tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix='.txt') as config_file:
-            config_file.write(f"userid={user_id}")
+            config_file.write(f"userid={user_id}\n")
             config_file_path = config_file.name
 
         # Generiere den personalisierten Wrapper
-        personalized_exe_path = os.path.join(settings.BASE_DIR, "wrapper", "linguExplorer_personalized.exe")
-        self.create_personalized_wrapper(original_exe_path, config_file_path, wrapper_exe_path, personalized_exe_path)
+        self.create_personalized_wrapper(original_exe_path, config_file_path, personalized_exe_path)
 
         # Sende die personalisierte .exe-Datei als Download
         response = FileResponse(open(personalized_exe_path, 'rb'), content_type='application/octet-stream')
         response['Content-Disposition'] = f'attachment; filename="linguExplorer.exe"'
         return response
 
-    def create_personalized_wrapper(self, original_exe, config_file, wrapper_exe, output_exe):
+    def create_personalized_wrapper(self, original_exe, config_file, output_exe):
         # Lies die originalen Daten
         with open(original_exe, "rb") as f:
             exe_data = f.read()
+
+        # Lies die Konfigurationsdaten
         with open(config_file, "rb") as f:
             config_data = f.read()
 
         # Erstelle die personalisierte .exe-Datei
         with open(output_exe, "wb") as f:
-            # Füge die Größe der Daten hinzu (4 Bytes für jede Größe)
-            f.write(len(exe_data).to_bytes(4, byteorder="little"))
-            f.write(len(config_data).to_bytes(4, byteorder="little"))
-            # Füge die Daten hinzu
+            # Schreibe die originalen Daten
             f.write(exe_data)
+            # Füge die Konfigurationsdaten am Ende der Datei hinzu
             f.write(config_data)
 
 
