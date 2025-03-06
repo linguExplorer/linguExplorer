@@ -1,434 +1,595 @@
 package com.github.linguExplorer.screen
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
-import com.badlogic.gdx.math.Vector2
+import com.github.linguExplorer.event.GameEndEvent
+import com.github.linguExplorer.event.fire
+import com.github.linguExplorer.linguExplorer
+import com.github.linguExplorer.minigames.SchuleMinigame
+import com.github.linguExplorer.models.PhraseEntity
 import ktx.app.KtxScreen
-import com.badlogic.gdx.Input
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.badlogic.gdx.utils.Align
-import java.io.File
-import java.util.*
-import java.util.Collections.emptyList
-import kotlin.math.min
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
-class MinigameSchuleScreen : KtxScreen {
+class MinigameSchuleScreen() : KtxScreen {
 
     private val batch = SpriteBatch()
     private lateinit var font: BitmapFont
-    private val viewport: Viewport = ExtendViewport(800f, 600f)
+    private val viewport: Viewport = ExtendViewport(1920f, 1080f)
     private val shapeRenderer = ShapeRenderer()
+    private val executor: ExecutorService = Executors.newFixedThreadPool(1)
 
     // Texturen
+    private val timetableTexture = Texture(Gdx.files.internal("Minigames/Schule/phraseImages/stundenplan_final.png"))
     private val timeTexture = Texture(Gdx.files.internal("Minigames/time.png"))
     private var pauseTexture = Texture(Gdx.files.internal("Minigames/pausebutton.png"))
     private var playTexture = Texture(Gdx.files.internal("Minigames/playbutton.png"))
     private val continueTexture = Texture(Gdx.files.internal("Minigames/btn_continue.png"))
-    private val stundenplanTexture = Texture(Gdx.files.internal("Minigames/school/timetable/stundenplan_final.png")) // Stundenplan Textur laden
-    private val tryAgainButtonTexture = Texture(Gdx.files.internal("Minigames/btn_tryAgain.png"))
     private val quitButtonTexture = Texture(Gdx.files.internal("Minigames/btn_quitMinigame.png"))
 
     // Positionen und Größen
-    private val timeBasePosition = Vector2(20f, 530f)
-    private val timeSize = Vector2(150f, 50f)
-    private val pauseBasePosition = Vector2(180f, 530f)
+    private val timetableBasePosition = Vector2(1250f, 700f)
+    private val timetableSize = Vector2(1200f, 730f)
+
+    private val pauseBasePosition = Vector2(180f, 970f)
     private val pauseSize = Vector2(50f, 50f)
-    private val continueButtonBasePosition = Vector2(300f, 200f)
-    private val buttonSize = Vector2(200f, 70f)
-    private val tryAgainButtonBasePosition = Vector2(300f, 200f) // Beispielposition
-    private val quitButtonBasePosition = Vector2(300f, 130f) // Beispielposition
 
-    // Stundenplan Position und Größe
-    private val stundenplanWidth = 500f
-    private val stundenplanHeight = 410f
-    private val stundenplanPositionX = 270f // Rechts
-    private val stundenplanPositionY = 160f // Oben
+    private val buttonSize = Vector2(250f, 70f)
+    private val quitButtonBasePosition = Vector2(430f, 130f)
+    private val continueButtonBasePosition = Vector2(0f, 175f)
 
-    // **Raster-Einstellungen**
-    private val rasterSpalten = 5 // Anzahl der Spalten im Raster
-    private val rasterZeilen = 7 // Anzahl der Zeilen im Raster
-    private val rasterFeldBreite = 79f // Breite jedes Feldes im Raster
-    private val rasterFeldHoehe = 47f // Höhe jedes Feldes im Raster
-    private val rasterAbstandX = 2.5f // Abstand zwischen den Spalten
-    private val rasterAbstandY = 3f // Abstand zwischen den Zeilen
+    private val timeBasePosition = Vector2(20f, 970f)
+    private val timeSize = Vector2(150f, 50f)
 
-    //Konstanten für das Raster
-    private val rasterStartX = 494f
-    private val rasterStartY = 162f
-    private val numberOfCards = 13//cardsLeftColumn + cardsRightColumn
-
-    private var pauseButtonScale = 1f
-    private var pauseButtonTargetScale = 1f
-    private var continueButtonScale = 1f
-    private var continueButtonTargetScale = 1f
-    private var tryAgainButtonScale = 1f
-    private var tryAgainButtonTargetScale = 1f
-    private var quitButtonScale = 1f
-    private var quitButtonTargetScale = 1f
-    private val scaleSpeed = 5f
-
-    // Zeit
-    private var timeLeft = 30 // Startzeit in Sekunden
-    private var elapsedTime = 0f
-
-    private var isPaused = false
-    private var gameStarted = false
-    private var gameOver = false // Flag für Game Over
-    private var gameWon = false
+    // Error Text
+    private var showErrorText = false
+    private var errorTextTimer = 0f
+    private val errorTextDuration = 2f
+    private var errorTextPositionX = 0f
+    private var errorTextPositionY = 0f
 
     // Getter für die dynamischen Positionen
-    private val timePosition: Vector2
+    private val timetablePosition: Vector2
         get() = Vector2(
-            timeBasePosition.x,
-            timeBasePosition.y * (viewport.worldHeight / 600f)
+            timetableBasePosition.x * (viewport.worldWidth / 1920f),
+            timetableBasePosition.y * (viewport.worldHeight / 1080f)
         )
 
     private val pausePosition: Vector2
         get() = Vector2(
             pauseBasePosition.x,
-            pauseBasePosition.y * (viewport.worldHeight / 600f)
-        )
-
-    private val continueButtonPosition: Vector2
-        get() = Vector2(
-            continueButtonBasePosition.x * (viewport.worldWidth / 800f),
-            continueButtonBasePosition.y * (viewport.worldHeight / 600f)
-        )
-
-    private val tryAgainButtonPosition: Vector2
-        get() = Vector2(
-            tryAgainButtonBasePosition.x * (viewport.worldWidth / 800f),
-            tryAgainButtonBasePosition.y * (viewport.worldHeight / 600f)
+            pauseBasePosition.y * (viewport.worldHeight / 1080f)
         )
 
     private val quitButtonPosition: Vector2
         get() = Vector2(
-            quitButtonBasePosition.x * (viewport.worldWidth / 800f),
-            quitButtonBasePosition.y * (viewport.worldHeight / 600f)
+            quitButtonBasePosition.x * (viewport.worldWidth / 1920f),
+            quitButtonBasePosition.y * (viewport.worldHeight / 1080f)
         )
 
-    //Getter für den Stundenplan
-    private val stundenplanPosition: Vector2
+    private val timePosition: Vector2
         get() = Vector2(
-            stundenplanPositionX * (viewport.worldWidth / 800f),
-            stundenplanPositionY * (viewport.worldHeight / 600f)
+            timeBasePosition.x,
+            timeBasePosition.y * (viewport.worldHeight / 1080f)
         )
 
-    // Kärtchen-spezifische Variablen
-    //private val cardFolder = "Minigames/school/timetable/subjects_E"
-    private val cardFolder = "C:\\Users\\Britta\\Documents\\GitHub\\linguExplorer\\assets\\Minigames\\school\\timetable\\subjects_E"
-    private var cards: MutableList<Card> = mutableListOf() // MutableList, da wir die Positionen ändern werden
-    private val cardWidth = 108f
-    private val cardHeight = 47f
-    private val cardSpacingY = 3f // Abstand zwischen den Karten (vertikal) //zwischen zeilen
-    private val cardStartPosYFromTop = 463f // Startposition der Karten von oben
-    private val cardStartPosXLeft = 15f // Startposition der linken Spalte 362f
-    private val cardStartPosXRight = 96f // Startposition der rechten Spalte // 443f (+81f)
-    private val cardsLeftColumn = 7
-    private val cardsRightColumn = 6
+    private val continueButtonPosition: Vector2
+        get() = Vector2(
+            (viewport.worldWidth / 2) - (buttonSize.x / 2),
+            continueButtonBasePosition.y * (viewport.worldHeight / 1080f)
+        )
 
-    // Datenklasse für Raster Positionen
-    data class RasterSlot(
-        val x: Float,
-        val y: Float,
-        var isOccupied: Boolean = false, // ob  Feld bereits von einer Karte belegt ist
-        var card: Card? = null //Referenz auf die Card (null wenn leer)
-    )
+    // Button Scaling
+    private var continueButtonScale = 1f
+    private var pauseButtonScale = 1f
+    private var continueButtonTargetScale = 1f
+    private var pauseButtonTargetScale = 1f
+    private val scaleSpeed = 5f
 
-    private var rasterSlots: MutableList<RasterSlot> = mutableListOf() //MutableList die alle RasterSlot-Objekte speichert
+    // Zeit
+    private var timeLeft = 60
+    private var elapsedTime = 0f
 
-    // Datenklasse für Kärtchen
-    data class Card(
-        val texture: Texture,
-        var originalX: Float, // Ursprüngliche X-Position
-        var originalY: Float, // Ursprüngliche Y-Position
-        var x: Float,          // Aktuelle X-Position
-        var y: Float,          // Aktuelle Y-Position
-        val width: Float,
-        val height: Float,
-        var isDragging: Boolean = false, // ob das Kärtchen gerade gezogen wird
-        var originalSlot : Int? = null
-    )
+    // Spielstatus
+    private var isDragging = false
+    private var offsetX = 0f
+    private var offsetY = 0f
+    private var gameStarted = false
+    private var gameEnded = false
+    private var isCompleted = false
+    private var isPaused = false
+
+    // Minigame und Assets
+    private val minigame = SchuleMinigame()
+    private val timetableGrid = mutableListOf<TimetableCell>()
+    private val englishSubjects = mutableListOf<DraggableSubject>()
+
+    // Map für Phrase-IDs und ihre zugehörigen Zellen
+    private val phraseIdToCells = mutableMapOf<Int, MutableList<TimetableCell>>()
+
+    init {
+        // Initialisierung
+        minigame.loadMinigamePhrases()
+        minigame.loadAllPhrases()
+
+        // Lade Assets
+        val germanAssets = minigame.loadGermanAssets()
+        println("DONE")
+        val englishAssets = minigame.loadEnglishAssets()
+        englishAssets.forEach { println(it.second) }
+
+        // Timetable Grid erstellen (5x7 Grid)
+        setupTimetableGrid(germanAssets)
+
+        // Englische Assets auf der linken Seite
+        setupEnglishSubjects(englishAssets)
+    }
+
+    private fun setupTimetableGrid(germanAssets: List<Pair<PhraseEntity, String>>) {
+        val gridWidth = 5
+        val gridHeight = 7
+        val cellWidth = 230f
+        val cellHeight = 100f
+        val startX = timetableBasePosition.x - ((gridWidth * cellWidth) / 2)
+        val startY = timetableBasePosition.y + 250f
+
+        // Erstelle eine Map mit verfügbaren Assets und deren möglicher Anzahl (1-3)
+        val availableAssets = mutableMapOf<Pair<PhraseEntity, String>, Int>()
+        germanAssets.forEach { asset ->
+            // Zufällig bestimmen, ob ein Asset mehrfach verwendet wird (1-3 mal)
+            val repeatCount = (1..3).random()
+            availableAssets[asset] = repeatCount
+        }
+
+        // Bereite ein Array für das Grid vor (mit null für leere Zellen)
+        val gridCells = Array(gridHeight) { Array<Pair<PhraseEntity, String>?>(gridWidth) { null } }
+
+        // Erstelle Muster für wiederholte Assets
+        createPatterns(gridCells, availableAssets)
+
+        // Fülle das Grid mit den Assets
+        for (row in 0 until gridHeight) {
+            for (col in 0 until gridWidth) {
+                val asset = gridCells[row][col]
+                if (asset != null) {
+                    val (phrase, assetPath) = asset
+                    val posX = startX + (col * cellWidth)
+                    val posY = startY - (row * cellHeight)
+
+                    val cell = TimetableCell(
+                        phrase = phrase,
+                        texture = Texture(Gdx.files.internal(assetPath)),
+                        row = row,
+                        col = col,
+                        positionX = posX,
+                        positionY = posY,
+                        width = cellWidth,
+                        height = cellHeight,
+                        occupied = false,
+                        correctSubject = null
+                    )
+
+                    timetableGrid.add(cell)
+
+                    // Füge Zelle zur Map hinzu für Tracking von mehrfachen Assets
+                    if (!phraseIdToCells.containsKey(phrase.id)) {
+                        phraseIdToCells[phrase.id] = mutableListOf()
+                    }
+                    phraseIdToCells[phrase.id]?.add(cell)
+                }
+            }
+        }
+    }
+
+    private fun createPatterns(
+        gridCells: Array<Array<Pair<PhraseEntity, String>?>>,
+        availableAssets: MutableMap<Pair<PhraseEntity, String>, Int>
+    ) {
+        val gridHeight = gridCells.size
+        val gridWidth = gridCells[0].size
+
+        // Zufällig entscheiden, wie viele Zellen belegt werden sollen (ca. 60-80%)
+        val totalCells = gridHeight * gridWidth
+        val filledCellsTarget = (totalCells * (0.6 + Math.random() * 0.2)).toInt()
+
+        // Für jedes Asset mit Anzahl > 1 versuchen, ein Muster zu erstellen
+        val assetsToPattern = availableAssets.filter { it.value > 1 }.toMutableMap()
+
+        for ((asset, count) in assetsToPattern) {
+            if (count <= 1) continue
+
+            when ((1..3).random()) {
+                1 -> createColumnPattern(gridCells, asset, count)
+                2 -> createRowPattern(gridCells, asset, count)
+                3 -> createRandomPattern(gridCells, asset, count)
+            }
+
+            availableAssets.remove(asset)
+        }
+
+        var filledCells = gridCells.sumOf { row -> row.count { it != null } }
+        val remainingAssets = availableAssets.entries.toMutableList()
+
+        while (filledCells < filledCellsTarget && remainingAssets.isNotEmpty()) {
+            val assetEntry = remainingAssets.random()
+            val (asset, count) = assetEntry.toPair()
+
+            val emptyCells = getEmptyCells(gridCells)
+            if (emptyCells.isEmpty()) break
+
+            val (row, col) = emptyCells.random()
+            gridCells[row][col] = asset
+            filledCells++
+
+            // Aktualisiere verbleibende Anzahl für dieses Asset
+            if (count <= 1) {
+                remainingAssets.remove(assetEntry)
+            } else {
+                remainingAssets.remove(assetEntry)
+                remainingAssets.add(object : MutableMap.MutableEntry<Pair<PhraseEntity, String>, Int> {
+                    override val key = asset
+                    override val value = count - 1
+                    override fun setValue(newValue: Int) = count
+                })
+            }
+        }
+    }
+
+    private fun createColumnPattern(
+        gridCells: Array<Array<Pair<PhraseEntity, String>?>>,
+        asset: Pair<PhraseEntity, String>,
+        count: Int
+    ) {
+        val gridHeight = gridCells.size
+        val gridWidth = gridCells[0].size
+
+        val colOptions = (0 until gridWidth).toMutableList()
+        colOptions.shuffle()
+
+        for (col in colOptions) {
+            // Finde freie Positionen in dieser Spalte
+            val freePositions = (0 until gridHeight).filter { row -> gridCells[row][col] == null }.toMutableList()
+
+            if (freePositions.size >= min(count, 3)) {
+                freePositions.shuffle()
+                for (i in 0 until min(count, 3)) {
+                    val row = freePositions[i]
+                    gridCells[row][col] = asset
+                }
+                return
+            }
+        }
+
+        createRandomPattern(gridCells, asset, count)
+    }
+
+    private fun createRowPattern(
+        gridCells: Array<Array<Pair<PhraseEntity, String>?>>,
+        asset: Pair<PhraseEntity, String>,
+        count: Int
+    ) {
+        val gridHeight = gridCells.size
+        val gridWidth = gridCells[0].size
+
+        // Wähle eine zufällige Zeile
+        val rowOptions = (0 until gridHeight).toMutableList()
+        rowOptions.shuffle()
+
+        for (row in rowOptions) {
+            // Finde freie Positionen in dieser Zeile
+            val freePositions = (0 until gridWidth).filter { col -> gridCells[row][col] == null }.toMutableList()
+
+            if (freePositions.size >= min(count, 3)) {
+                freePositions.shuffle()
+                // Platziere das Asset in der Zeile
+                for (i in 0 until min(count, 3)) {
+                    val col = freePositions[i]
+                    gridCells[row][col] = asset
+                }
+                return
+            }
+        }
+
+        // Fallback: Verwende einen zufälligen Ansatz
+        createRandomPattern(gridCells, asset, count)
+    }
+
+    private fun createRandomPattern(
+        gridCells: Array<Array<Pair<PhraseEntity, String>?>>,
+        asset: Pair<PhraseEntity, String>,
+        count: Int
+    ) {
+        val emptyCells = getEmptyCells(gridCells)
+        val placementCount = min(count, 3).coerceAtMost(emptyCells.size)
+
+        if (placementCount <= 0) return
+
+        // Platziere das Asset an zufälligen freien Stellen
+        for (i in 0 until placementCount) {
+            val (row, col) = emptyCells[i]
+            gridCells[row][col] = asset
+        }
+    }
+
+    private fun getEmptyCells(gridCells: Array<Array<Pair<PhraseEntity, String>?>>): List<Pair<Int, Int>> {
+        val emptyCells = mutableListOf<Pair<Int, Int>>()
+
+        for (row in gridCells.indices) {
+            for (col in gridCells[row].indices) {
+                if (gridCells[row][col] == null) {
+                    emptyCells.add(Pair(row, col))
+                }
+            }
+        }
+
+        return emptyCells
+    }
+
+    private fun min(a: Int, b: Int): Int {
+        return if (a < b) a else b
+    }
+
+    private fun setupEnglishSubjects(englishAssets: List<Pair<PhraseEntity, String>>) {
+        val subjectWidth = 210f
+        val subjectHeight = 91f
+        val startX = 100f
+        val startY = 700f
+        val spacing = 220f
+
+
+        for (i in englishAssets.indices) {
+            val row = i / 2
+            val col = i % 2
+            val (phrase, assetPath) = englishAssets[i]
+
+            val posX = startX + (col * spacing)
+            val posY = startY - (row * 100f)
+
+            englishSubjects.add(DraggableSubject(
+                phrase = phrase,
+                texture = Texture(Gdx.files.internal(assetPath)),
+                initialX = posX,
+                initialY = posY,
+                currentX = posX,
+                currentY = posY,
+                width = subjectWidth,
+                height = subjectHeight,
+                isBeingDragged = false,
+                isMatched = false
+            ))
+        }
+    }
 
     override fun show() {
-        // NICHT auf null setzen! Sonst empfängst du keine Inputs.
-        // Gdx.input.inputProcessor = null
-
-        // Lade die Kärtchen-Texturen beim Anzeigen des Screens
-        loadCardTextures()
-        initializeRasterSlots()
-    }
-
-    //Funktion um das Raster zu erstellen
-    private fun initializeRasterSlots() {
-        rasterSlots.clear() //Vorherige Slots entfernen
-        //über jede Zeile und Spalte des Rasters
-        for (row in 0 until rasterZeilen) {
-            for (col in 0 until rasterSpalten) {
-                //definiert wo jedes Feld im Raster platziert wird
-                val x = rasterStartX + col * (rasterFeldBreite + rasterAbstandX) * (viewport.worldWidth/800f)
-                val y = rasterStartY + row * (rasterFeldHoehe + rasterAbstandY) * (viewport.worldHeight/600f)
-                rasterSlots.add(RasterSlot(x, y))
-            }
-        }
-    }
-
-    private fun loadCardTextures() {
-        val directory = File(cardFolder)
-        if (directory.exists() && directory.isDirectory) {
-            val textures = directory.listFiles { file -> file.name.endsWith(".png") }
-                ?.map { file -> Texture(file.absolutePath) }
-                ?.shuffled() ?: emptyList() // Mischen der Reihenfolge
-
-            cards.clear() // das die Liste leer ist bevor neue Karten hinzugefügt werden
-
-            // Startpositionen für die Karten
-            val startYLeft = cardStartPosYFromTop * (viewport.worldHeight / 600f)
-            val startYRight = cardStartPosYFromTop * (viewport.worldHeight / 600f)
-
-            // Linke Spalte
-            for (i in 0 until min(cardsLeftColumn, textures.size)) {
-                val x = cardStartPosXLeft * (viewport.worldWidth / 800f)
-                val y = startYLeft - i * (cardHeight + cardSpacingY) * (viewport.worldHeight / 600f)
-                cards.add(Card(textures[i], x, y, x, y, cardWidth, cardHeight, false, i))
-            }
-
-            // Rechte Spalte
-            for (i in 0 until min(cardsRightColumn, textures.size - cardsLeftColumn)) {
-                val x = cardStartPosXRight * (viewport.worldWidth / 800f)
-                val y = startYRight - i * (cardHeight + cardSpacingY) * (viewport.worldHeight / 600f)
-                cards.add(Card(textures[i + cardsLeftColumn], x, y, x, y, cardWidth, cardHeight, false, (i + cardsLeftColumn)))
-            }
-        } else {
-            Gdx.app.error("MinigameSchuleScreen", "Kartenordner nicht gefunden: $cardFolder")
-        }
+        Gdx.input.inputProcessor = null
     }
 
     override fun render(delta: Float) {
-        handleInput(delta)
-
-        if (!isPaused && gameStarted && !gameOver) {
+        handleInput()
+        if (!isPaused && !gameEnded && gameStarted) {
             updateTime(delta)
         }
 
-        Gdx.gl.glClearColor(0.85490196f, 0.80784315f, 0.87058824f, 1f) // #dacede als RGB
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+        if (showErrorText) {
+            errorTextTimer += delta
+            if (errorTextTimer >= errorTextDuration) {
+                showErrorText = false
+            }
+        }
 
+        // Update button scaling
+        continueButtonScale += (continueButtonTargetScale - continueButtonScale) * scaleSpeed * delta
+        pauseButtonScale += (pauseButtonTargetScale - pauseButtonScale) * scaleSpeed * delta
+
+        // Clear screen
+        Gdx.gl.glClearColor(0.611f, 0.761f, 0.827f, 1f)
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         font = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
 
         viewport.apply()
         batch.projectionMatrix = viewport.camera.combined
         font.color = Color.BLACK
 
-        pauseButtonScale += (pauseButtonTargetScale - pauseButtonScale) * scaleSpeed * delta
-        continueButtonScale += (continueButtonTargetScale - continueButtonScale) * scaleSpeed * delta
-        tryAgainButtonScale += (tryAgainButtonTargetScale - tryAgainButtonScale) * scaleSpeed * delta
-        quitButtonScale += (quitButtonTargetScale - quitButtonScale) * scaleSpeed * delta
-
         batch.begin()
 
-        // Zeit zeichnen
+        // Render timetable background
+        batch.draw(timetableTexture,
+            timetablePosition.x - timetableSize.x / 2,
+            timetablePosition.y - timetableSize.y / 2,
+            timetableSize.x,
+            timetableSize.y)
+
+        // Render time
         batch.draw(timeTexture, timePosition.x, timePosition.y, timeSize.x, timeSize.y)
         font.data.setScale(0.3f, 0.3f)
         font.draw(batch, formatTime(timeLeft), timePosition.x + 20f, timePosition.y + timeSize.y / 1.4f)
 
-        // Pause- / Play-Button zeichnen
-        val texture: Texture = if (isPaused) playTexture else pauseTexture
+        // Render pause/play button
+        val buttonTexture = if (isPaused || gameEnded) playTexture else pauseTexture
+        pauseButtonScale = if (isPaused || gameEnded) 1f else pauseButtonScale
         batch.draw(
-            texture,
+            buttonTexture,
             pausePosition.x - (pauseSize.x * (pauseButtonScale - 1f) / 2),
             pausePosition.y - (pauseSize.y * (pauseButtonScale - 1f) / 2),
             pauseSize.x * pauseButtonScale,
             pauseSize.y * pauseButtonScale
         )
 
-        // Stundenplan anzeigen (nur wenn das Spiel läuft)
-        if (gameStarted && !gameOver && !gameWon) {
-            batch.draw(stundenplanTexture, stundenplanPosition.x, stundenplanPosition.y, stundenplanWidth * (viewport.worldWidth/800f), stundenplanHeight * (viewport.worldHeight/600f))
+        if (gameStarted && !gameEnded) {
+            timetableGrid.forEach { cell ->
+                // Wenn diese Zelle einen korrekten Subject hat, zeichne den stattdessen
+                if (cell.correctSubject != null) {
+                    batch.draw(
+                        cell.correctSubject!!.texture,
+                        cell.positionX,
+                        cell.positionY,
+                        cell.width,
+                        cell.height
+                    )
+                } else {
+                    batch.draw(
+                        cell.texture,
+                        cell.positionX,
+                        cell.positionY,
+                        cell.width,
+                        cell.height
+                    )
+                }
+            }
 
-            // **Raster zeichnen**
-            batch.end() // Beende den SpriteBatch, um den ShapeRenderer zu verwenden
-            drawGrid()
-            batch.begin() // Starte den SpriteBatch wieder
-        }
-
-        // Zeichne die Kärtchen
-        drawCards()
-
-        // Game Over Anzeige
-        if (gameOver || gameWon) {
-            batch.end()
-            Gdx.gl.glEnable(GL20.GL_BLEND)
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
-            shapeRenderer.color = Color(0f, 0f, 0f, 0.5f)
-            shapeRenderer.rect(0f, 0f, viewport.screenWidth.toFloat(), viewport.screenHeight.toFloat())
-            shapeRenderer.end()
-            Gdx.gl.glDisable(GL20.GL_BLEND)
-            batch.begin()
-
-            font.color = Color.WHITE
-            val glyphLayout = GlyphLayout()
-            font = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
-            font.data.setScale(0.7f, 0.7f)
-
-            if(gameWon) {
-                glyphLayout.setText(font, "CONGRATULATIONS")
-                val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
-                val gameOverY = (viewport.worldHeight / 2) + glyphLayout.height + 10f
-                font.draw(batch, "CONGRATULATIONS", gameOverX, gameOverY)
-
-                batch.draw(
-                    continueTexture,
-                    continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
-                    continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
-                    buttonSize.x * continueButtonScale,
-                    buttonSize.y * continueButtonScale
-                )
-            } else {
-                glyphLayout.setText(font, "GAME OVER")
-                val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
-                val gameOverY = (viewport.worldHeight) / 2 + glyphLayout.height + 10f
-                font.draw(batch, "GAME OVER", gameOverX, gameOverY)
-
-                batch.draw(
-                    tryAgainButtonTexture,
-                    tryAgainButtonPosition.x - (buttonSize.x * (tryAgainButtonScale - 1f) / 2),
-                    tryAgainButtonPosition.y - (buttonSize.y * (tryAgainButtonScale - 1f) / 2),
-                    buttonSize.x * tryAgainButtonScale,
-                    buttonSize.y * tryAgainButtonScale
-                )
-
-                batch.draw(
-                    quitButtonTexture,
-                    quitButtonPosition.x - (buttonSize.x * (quitButtonScale - 1f) / 2),
-                    quitButtonPosition.y - (buttonSize.y * (quitButtonScale - 1f) / 2),
-                    buttonSize.x * quitButtonScale,
-                    buttonSize.y * quitButtonScale
-                )
+            // Render draggable subjects
+            englishSubjects.forEach { subject ->
+                if (!subject.isMatched) {
+                    batch.draw(
+                        subject.texture,
+                        subject.currentX,
+                        subject.currentY,
+                        subject.width,
+                        subject.height
+                    )
+                }
             }
         }
-        // Startbildschirm
-        else if (!gameStarted && !gameOver) {
-            batch.end()
-            Gdx.gl.glEnable(GL20.GL_BLEND)
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
-            shapeRenderer.color = Color(0f, 0f, 0f, 0.65f)
-            shapeRenderer.rect(0f, 0f, viewport.screenWidth.toFloat(), viewport.screenHeight.toFloat())
-            shapeRenderer.end()
-            Gdx.gl.glDisable(GL20.GL_BLEND)
-            batch.begin()
 
-            font.color = Color.WHITE
-            val glyphLayout = GlyphLayout()
-            font.data.setScale(0.4f, 0.4f)
-            val text = "Ordne die Fächer dem Stundenplan zu"
-            glyphLayout.setText(font, text, Color.WHITE, viewport.worldWidth * 0.75f, Align.center, true)
-            val gamePausedX = (viewport.worldWidth - glyphLayout.width) / 2
-            val gamePausedY = (viewport.worldHeight / 2) + glyphLayout.height // Etwas oberhalb der Mitte
-            font.draw(batch, text, gamePausedX, gamePausedY, viewport.worldWidth * 0.75f, Align.center, true)
-
-            // Continue-Button anzeigen
-            batch.draw(
-                continueTexture,
-                continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
-                continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
-                buttonSize.x * continueButtonScale,
-                buttonSize.y * continueButtonScale
-            )
+        if (isPaused) {
+            renderPausedOverlay()
         }
-        // Game Paused Screen
-        else if (isPaused && gameStarted && !gameOver) {
-            batch.end()
-            Gdx.gl.glEnable(GL20.GL_BLEND)
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
-            shapeRenderer.color = Color(0f, 0f, 0f, 0.65f)
-            shapeRenderer.rect(0f, 0f, viewport.screenWidth.toFloat(), viewport.screenHeight.toFloat())
-            shapeRenderer.end()
-            Gdx.gl.glDisable(GL20.GL_BLEND)
-            batch.begin()
 
-            font = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
-            font.color = Color.WHITE
-            val glyphLayout = GlyphLayout()
-            font.data.setScale(0.7f, 0.7f)
-            glyphLayout.setText(font, "GAME PAUSED")
-            val gamePausedX = (viewport.worldWidth - glyphLayout.width) / 2
-            val gamePausedY = (viewport.worldHeight / 2) + glyphLayout.height + 10f
-            font.draw(batch, "GAME PAUSED", gamePausedX, gamePausedY)
-
-            // Continue-Button anzeigen
-            batch.draw(
-                continueTexture,
-                continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
-                continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
-                buttonSize.x * continueButtonScale,
-                buttonSize.y * continueButtonScale
-            )
+        if (!gameStarted) {
+            renderStartScreen()
         }
-        else {
+
+        if (gameEnded) {
+            renderGameEndScreen()
+        }
+
+        if (showErrorText) {
+            font.color = Color.RED
+            font.data.setScale(0.3f, 0.3f)
+            font.draw(batch, "Incorrect match!", errorTextPositionX, errorTextPositionY)
         }
 
         batch.end()
     }
 
-    // **Funktion zum Zeichnen des Rasters**
-    private fun drawGrid() {
-        shapeRenderer.projectionMatrix = viewport.camera.combined
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line)
-        shapeRenderer.color = Color.RED // Farbe des Rasters
-
-        // Startposition des Rasters (Punkt links oben)
-        val startX = 494f//stundenplanPosition.x
-        val startY = 162f //stundenplanPosition.y
-
-        for (row in 0 until rasterZeilen) {
-            for (col in 0 until rasterSpalten) {
-                val x = startX + col * (rasterFeldBreite + rasterAbstandX) * (viewport.worldWidth/800f)
-                val y = startY + row * (rasterFeldHoehe + rasterAbstandY) * (viewport.worldHeight/600f)
-
-                shapeRenderer.rect(
-                    x,
-                    y,
-                    rasterFeldBreite * (viewport.worldWidth/800f),
-                    rasterFeldHoehe * (viewport.worldHeight/600f)
-                )
-            }
-        }
-
+    private fun renderPausedOverlay() {
+        batch.end()
+        Gdx.gl.glEnable(GL20.GL_BLEND)
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
+        shapeRenderer.color = Color(0f, 0f, 0f, 0.65f)
+        shapeRenderer.rect(0f, 0f, viewport.worldWidth, viewport.worldHeight)
         shapeRenderer.end()
+        Gdx.gl.glDisable(GL20.GL_BLEND)
+        batch.begin()
+
+        font = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
+        font.color = Color.WHITE
+        val glyphLayout = GlyphLayout()
+        font.data.setScale(0.7f, 0.7f)
+        glyphLayout.setText(font, "GAME PAUSED")
+        val gamePausedX = (viewport.worldWidth - glyphLayout.width) / 2
+        val gamePausedY = (viewport.worldHeight / 2) + glyphLayout.height + 10f
+        font.draw(batch, "GAME PAUSED", gamePausedX, gamePausedY)
+
+        // Continue button
+        batch.draw(
+            continueTexture,
+            continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
+            continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
+            buttonSize.x * continueButtonScale,
+            buttonSize.y * continueButtonScale
+        )
     }
 
-    private fun drawCards() {
-        cards.forEach { card ->
-            if(card.originalSlot != null && card.originalSlot != -1) {
-                batch.draw(card.texture, card.x, card.y, card.width, card.height)
-            }
-        }
-        for (slot in rasterSlots) {
-            if(slot.isOccupied) {
-                batch.draw(slot.card!!.texture, slot.card!!.x, slot.card!!.y, slot.card!!.width, slot.card!!.height)
-            }
+    private fun renderStartScreen() {
+        batch.end()
+        Gdx.gl.glEnable(GL20.GL_BLEND)
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
+        shapeRenderer.color = Color(0f, 0f, 0f, 0.65f)
+        shapeRenderer.rect(0f, 0f, viewport.worldWidth, viewport.worldHeight)
+        shapeRenderer.end()
+        Gdx.gl.glDisable(GL20.GL_BLEND)
+        batch.begin()
+
+        font.color = Color.WHITE
+        val glyphLayout = GlyphLayout()
+        font.data.setScale(0.4f, 0.4f)
+        glyphLayout.setText(font, "Match the English subjects with the German ones on the timetable",
+            Color.WHITE, viewport.worldWidth * 0.75f, Align.center, true)
+        val instructionsX = (viewport.worldWidth - glyphLayout.width) / 2
+        val instructionsY = (viewport.worldHeight / 2) + glyphLayout.height
+        font.draw(batch, "Match the English subjects with the German ones on the timetable",
+            instructionsX, instructionsY, viewport.worldWidth * 0.75f, Align.center, true)
+
+        // Continue button
+        batch.draw(
+            continueTexture,
+            continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
+            continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
+            buttonSize.x * continueButtonScale,
+            buttonSize.y * continueButtonScale
+        )
+    }
+
+    private fun renderGameEndScreen() {
+        batch.end()
+        Gdx.gl.glEnable(GL20.GL_BLEND)
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
+        shapeRenderer.color = Color(0f, 0f, 0f, 0.5f)
+        shapeRenderer.rect(0f, 0f, viewport.worldWidth, viewport.worldHeight)
+        shapeRenderer.end()
+        Gdx.gl.glDisable(GL20.GL_BLEND)
+        batch.begin()
+
+        font.color = Color.WHITE
+        val glyphLayout = GlyphLayout()
+        font = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
+        font.data.setScale(0.7f, 0.7f)
+
+        if (isCompleted) {
+            glyphLayout.setText(font, "CONGRATULATIONS")
+            val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
+            val gameOverY = (viewport.worldHeight / 2) + glyphLayout.height + 10f
+            font.draw(batch, "CONGRATULATIONS", gameOverX, gameOverY)
+            batch.draw(
+                continueTexture,
+                continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
+                continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
+                buttonSize.x * continueButtonScale,
+                buttonSize.y * continueButtonScale
+            )
+        } else {
+            glyphLayout.setText(font, "GAME OVER")
+            val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
+            val gameOverY = (viewport.worldHeight) / 2 + glyphLayout.height + 10f
+            font.draw(batch, "GAME OVER", gameOverX, gameOverY)
+            batch.draw(
+                quitButtonTexture,
+                continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
+                continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
+                buttonSize.x * continueButtonScale,
+                buttonSize.y * continueButtonScale
+            )
         }
     }
 
-    private fun handleInput(delta: Float) {
+    private fun handleInput() {
         val mouseX = Gdx.input.x.toFloat() * viewport.worldWidth / Gdx.graphics.width
         val mouseY = (Gdx.graphics.height - Gdx.input.y.toFloat()) * viewport.worldHeight / Gdx.graphics.height
 
-        pauseButtonTargetScale = if (mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) &&
-            mouseY in pausePosition.y..(pausePosition.y + pauseSize.y)) {
-            1.1f
-        } else {
-            1f
-        }
-
+        // Update button hover effects
         continueButtonTargetScale = if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) &&
             mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
             1.1f
@@ -436,155 +597,195 @@ class MinigameSchuleScreen : KtxScreen {
             1f
         }
 
-        tryAgainButtonTargetScale = if (mouseX in tryAgainButtonPosition.x..(tryAgainButtonPosition.x + buttonSize.x) &&
-            mouseY in tryAgainButtonPosition.y..(tryAgainButtonPosition.y + buttonSize.y)) {
-            1.1f
-        } else {
-            1f
-        }
+        if (!gameEnded && gameStarted) {
+            pauseButtonTargetScale = if (mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) &&
+                mouseY in pausePosition.y..(pausePosition.y + pauseSize.y)) {
+                1.1f
+            } else {
+                1f
+            }
 
-        quitButtonTargetScale = if (mouseX in quitButtonPosition.x..(quitButtonPosition.x + buttonSize.x) &&
-            mouseY in quitButtonPosition.y..(quitButtonPosition.y + buttonSize.y)) {
-            1.1f
-        } else {
-            1f
-        }
+            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                if (!isPaused) {
+                    // Handle pause button click
+                    if (mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) &&
+                        mouseY in pausePosition.y..(pausePosition.y + pauseSize.y) &&
+                        !isDragging) {
+                        isPaused = !isPaused
+                        return
+                    }
 
+                    if (!showErrorText) {
+                        // Handle dragging subjects
+                        englishSubjects.forEach { subject ->
+                            if (!isDragging && !subject.isMatched && isPointInsideRect(
+                                    mouseX, mouseY,
+                                    subject.currentX, subject.currentY,
+                                    subject.width, subject.height)) {
+                                isDragging = true
+                                subject.isBeingDragged = true
+                                offsetX = mouseX - subject.currentX
+                                offsetY = mouseY - subject.currentY
+                            }
 
-        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            if (!gameStarted) { // Wenn das Spiel noch nicht gestartet wurde
+                            if (subject.isBeingDragged) {
+                                subject.currentX = mouseX - offsetX
+                                subject.currentY = mouseY - offsetY
+                            }
+                        }
+                    }
+                } else {
+                    // Handle continue button click in pause menu
+                    if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) &&
+                        mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
+                        isPaused = !isPaused
+                    }
+                }
+            } else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+                isPaused = true
+            } else {
+                if (!isPaused) {
+                    // Handle subject drop
+                    englishSubjects.forEach { subject ->
+                        if (subject.isBeingDragged) {
+                            subject.isBeingDragged = false
+                            isDragging = false
+
+                            val cellMatch = findMatchingCell(subject)
+                            if (cellMatch != null) {
+                                // Check if the subject matches the cell
+                                val isCorrect = isCellMatchCorrect(subject, cellMatch)
+                                if (isCorrect) {
+                                    // Alle Zellen mit der gleichen Phrase aktualisieren
+                                    val matchingCells = phraseIdToCells[cellMatch.phrase.id]
+                                    matchingCells?.forEach { cell ->
+                                        cell.occupied = true
+                                        cell.correctSubject = subject
+                                    }
+
+                                    // Mark subject as matched
+                                    subject.isMatched = true
+                                    minigame.phraseCheck(subject.phrase, true)
+
+                                    // Check if game is complete
+                                    if (minigame.isGameComplete() || areAllCellsOccupied()) {
+                                        gameEnded = true
+                                        isCompleted = true
+                                    }
+                                } else {
+                                    // Show error
+                                    showErrorText = true
+                                    errorTextTimer = 0f
+
+                                    var glyphLayout = GlyphLayout()
+                                    font.data.setScale(0.3f, 0.3f)
+                                    glyphLayout.setText(font, "Incorrect match!")
+
+                                    errorTextPositionX = (viewport.worldWidth - glyphLayout.width) / 2
+                                    errorTextPositionY = viewport.worldHeight / 2
+
+                                    minigame.phraseCheck(subject.phrase, false)
+
+                                    // Reset position
+                                    // Show error
+                                    showErrorText = true
+                                    errorTextTimer = 0f
+
+                                    glyphLayout = GlyphLayout()
+                                    font.data.setScale(0.3f, 0.3f)
+                                    glyphLayout.setText(font, "Incorrect match!")
+
+                                    errorTextPositionX = (viewport.worldWidth - glyphLayout.width) / 2
+                                    errorTextPositionY = viewport.worldHeight / 2
+
+                                    minigame.phraseCheck(subject.phrase, false)
+
+                                    // Reset position
+                                    subject.currentX = subject.initialX
+                                    subject.currentY = subject.initialY
+                                }
+                            } else {
+                                // Reset position if not dropped on a cell
+                                subject.currentX = subject.initialX
+                                subject.currentY = subject.initialY
+                            }
+                        }
+                    }
+                }
+            }
+        } else if (!gameStarted) {
+            // Handle start game button
+            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                 if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) &&
                     mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
-                    gameStarted = true // Starte das Spiel
-                }
-            }  // Wenn das Spiel bereits läuft
-            else if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) && mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y) && isPaused) {
-                isPaused = !isPaused
-            }
-            else if (gameStarted && mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) &&
-                mouseY in pausePosition.y..(pausePosition.y + pauseSize.y)) {
-                isPaused = true
-            } else if((gameOver || gameWon) && mouseX in tryAgainButtonPosition.x..(tryAgainButtonPosition.x + buttonSize.x) &&
-                mouseY in tryAgainButtonPosition.y..(tryAgainButtonPosition.y + buttonSize.y)){
-                resetGame()
-            } else if((gameOver || gameWon) && mouseX in quitButtonPosition.x..(quitButtonPosition.x + buttonSize.x) &&
-                mouseY in quitButtonPosition.y..(quitButtonPosition.y + buttonSize.y)) {
-                //TODO
-            }
-            else {
-                //ob auf eine Karte geklickt wurde
-                for (card in cards) {
-                    if (card.originalSlot != null && card.originalSlot != -1 && mouseX >= card.x && mouseX <= card.x + card.width &&
-                        mouseY >= card.y && mouseY <= card.y + card.height) {
-                        card.isDragging = true
-                        break // Nur eine Karte gleichzeitig ziehen
-                    }
+                    gameStarted = true
                 }
             }
-
         } else {
-            //Maustaste losgelassen -> Position zurücksetzen
-            for (card in cards) {
-                if (card.isDragging) {
-                    var slotFound = false
-                    for (slot in rasterSlots) {
-                        if (!slot.isOccupied &&
-                            card.x + card.width / 2f >= slot.x && card.x + card.width / 2f <= slot.x + rasterFeldBreite * (viewport.worldWidth/800f) &&
-                            card.y + card.height / 2f >= slot.y && card.y + card.height / 2f <= slot.y + rasterFeldHoehe * (viewport.worldHeight/600f)
-                        ) {
-                            // Karte in den Slot setzen
-                            card.x = slot.x
-                            card.y = slot.y
-                            card.isDragging = false
-                            slot.isOccupied = true
-                            slot.card = card
+            // Handle end game buttons
+            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) &&
+                    mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
+                    storePhraseDataAsync()
 
-                            slotFound = true
-                            break //Slot gefunden, nicht weitersuchen
-                        }
+                    /*stage.fire(GameEndEvent("SM"))
+
+                    if (game.containsScreen<MapScreen>()) {
+                        game.removeScreen<MapScreen>()
                     }
-                    if(!slotFound){
-                        if(card.originalSlot != -1) {
-                            card.x = when (card.originalSlot!! < cardsLeftColumn) {
-                                true -> cardStartPosXLeft * (viewport.worldWidth / 800f)
-                                false -> cardStartPosXRight * (viewport.worldWidth / 800f)
-                            }
-                            card.y = when (card.originalSlot!! < cardsLeftColumn) {
-                                true -> (cardStartPosYFromTop - card.originalSlot!! * (cardHeight + cardSpacingY)) * (viewport.worldHeight / 600f)
-                                false -> (cardStartPosYFromTop - (card.originalSlot!! - cardsLeftColumn) * (cardHeight + cardSpacingY)) * (viewport.worldHeight / 600f)
-                            }
-                        }else{
-                            for (slot in rasterSlots) {
-                                if(slot.card == card){
-                                    card.x = slot.x
-                                    card.y = slot.y
-                                    slot.card = null
-                                    slot.isOccupied = false
-                                }
-                            }
-                        }
-                    }
+                    game.addScreen(MapScreen(game, 31.104187f, 15.677063f))
+                    game.setScreen<MapScreen>()*/
                 }
-                card.isDragging = false
+            }
+        }
+    }
+
+    private fun areAllCellsOccupied(): Boolean {
+        // Check if all cells in the timetable grid are occupied
+        val uniquePhraseIds = phraseIdToCells.keys
+
+        // For each unique phrase ID, check if all corresponding cells are occupied
+        for (phraseId in uniquePhraseIds) {
+            val cells = phraseIdToCells[phraseId] ?: continue
+
+            // If any cell for this phrase ID is not occupied, return false
+            if (cells.any { !it.occupied }) {
+                return false
             }
         }
 
-        // Bewege die gezogene Karte
-        for (card in cards) {
-            if (card.isDragging) {
-                card.x = mouseX - card.width / 2 // Zentriere die Karte unter dem Mauszeiger
-                card.y = mouseY - card.height / 2 // Zentriere die Karte unter dem Mauszeiger
-            }
+        // All cells are occupied
+        return true
+    }
+
+
+    private fun findMatchingCell(subject: DraggableSubject): TimetableCell? {
+        return timetableGrid.find { cell ->
+            !cell.occupied && isPointInsideRect(
+                subject.currentX + (subject.width / 2),
+                subject.currentY + (subject.height / 2),
+                cell.positionX, cell.positionY,
+                cell.width, cell.height
+            )
         }
+    }
+
+    private fun isCellMatchCorrect(subject: DraggableSubject, cell: TimetableCell): Boolean {
+        // Check if the English subject matches the German cell
+        return subject.phrase.id == cell.phrase.id
+    }
+
+    private fun isPointInsideRect(x: Float, y: Float, rectX: Float, rectY: Float, rectWidth: Float, rectHeight: Float): Boolean {
+        return x >= rectX && x <= rectX + rectWidth && y >= rectY && y <= rectY + rectHeight
     }
 
     private fun updateTime(delta: Float) {
-        if (!isPaused && gameStarted && !gameOver) {
-            elapsedTime += delta
-            if (elapsedTime >= 1f) {
-                timeLeft--
-                elapsedTime -= 1f
-            }
-
-            if (timeLeft <= 0 && !gameOver) {
-                gameOver = true
-                gameStarted = false
-            }
-        }
-    }
-
-    // Funktion zum Überprüfen, ob alle Karten richtig platziert sind
-    private fun checkWinCondition() {
-        //TODO
-        gameWon = true
-    }
-
-    private fun resetGame(){
-        gameOver = false
-        gameWon = false
-        gameStarted = false
-        timeLeft = 30
-        elapsedTime = 0f
-
-        //Leere RasterSlots
-        for (slot in rasterSlots) {
-            slot.isOccupied = false
-            slot.card = null
-        }
-
-        //Reset Karten
-        for (card in cards) {
-            card.isDragging = false
-            if(card.originalSlot != null) {
-                card.x = when (card.originalSlot!! < cardsLeftColumn) {
-                    true -> cardStartPosXLeft * (viewport.worldWidth / 800f)
-                    false -> cardStartPosXRight * (viewport.worldWidth / 800f)
-                }
-                card.y = when (card.originalSlot!! < cardsLeftColumn) {
-                    true -> (cardStartPosYFromTop - card.originalSlot!! * (cardHeight + cardSpacingY)) * (viewport.worldHeight / 600f)
-                    false -> (cardStartPosYFromTop - (card.originalSlot!! - cardsLeftColumn) * (cardHeight + cardSpacingY)) * (viewport.worldHeight / 600f)
-                }
-            }
+        elapsedTime += delta
+        if (elapsedTime >= 1f && timeLeft > 0) {
+            timeLeft--
+            elapsedTime = 0f
+        } else if (timeLeft <= 0) {
+            gameEnded = true
         }
     }
 
@@ -594,21 +795,68 @@ class MinigameSchuleScreen : KtxScreen {
         return String.format("%02d:%02d", minutes, seconds)
     }
 
+    private fun storePhraseDataAsync() {
+        executor.submit {
+            minigame.storePhraseData()
+        }
+    }
+
     override fun resize(width: Int, height: Int) {
         viewport.update(width, height, true)
     }
 
+    override fun hide() {}
+    override fun pause() {}
+    override fun resume() {}
+
     override fun dispose() {
         batch.dispose()
         font.dispose()
+        shapeRenderer.dispose()
+        timetableTexture.dispose()
         timeTexture.dispose()
         pauseTexture.dispose()
         playTexture.dispose()
         continueTexture.dispose()
-        stundenplanTexture.dispose()
-        tryAgainButtonTexture.dispose()
         quitButtonTexture.dispose()
-        // Dispose aller Kärtchen-Texturen
-        cards.forEach { it.texture.dispose() }
+
+        // Dispose textures in timetable grid
+        timetableGrid.forEach { cell ->
+            cell.texture.dispose()
+        }
+
+        // Dispose textures in subjects
+        englishSubjects.forEach { subject ->
+            subject.texture.dispose()
+        }
+
+        executor.shutdown()
     }
+
+    // Data classes
+    private data class TimetableCell(
+        val phrase: PhraseEntity,
+        val texture: Texture,
+        val row: Int,
+        val col: Int,
+        val positionX: Float,
+        val positionY: Float,
+        val width: Float,
+        val height: Float,
+        var occupied: Boolean,
+        var correctSubject: DraggableSubject?
+    )
+
+    private data class DraggableSubject(
+        val phrase: PhraseEntity,
+        val texture: Texture,
+        val initialX: Float,
+        val initialY: Float,
+        var currentX: Float,
+        var currentY: Float,
+        val width: Float,
+        val height: Float,
+        var isBeingDragged: Boolean,
+        var isMatched: Boolean
+    )
 }

@@ -32,3 +32,4 @@ class linguExplorer : KtxGame<KtxScreen>() {
 }
 
 var userId = 1
+var saveNumber = 1
