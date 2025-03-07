@@ -55,14 +55,33 @@ class MapChangeSystem (
             println("Collision to $toGame")
 
 
+                if(toGame == "SM") {
+                    if (game.containsScreen<MinigameEssenScreen>()) {
+                        game.removeScreen<MinigameEssenScreen>()
+                    }
 
+                    game.addScreen(MinigameEssenScreen(game,gameStage))//gameStage))
+                    game.setScreen<MinigameEssenScreen>()
 
-                if (game.containsScreen<MinigameEssenScreen>()) {
-                    game.removeScreen<MinigameEssenScreen>()
+                } else if (toGame == "CL") {
+
+                    if (game.containsScreen<MinigameKleidungScreen>()) {
+                        game.removeScreen<MinigameKleidungScreen>()
+                    }
+
+                    game.addScreen(MinigameKleidungScreen(game))//gameStage))
+                    game.setScreen<MinigameKleidungScreen>()
+                } else if (toGame == "FM") {
+
+                    if (game.containsScreen<MinigameFamilieScreen>()) {
+                        game.removeScreen<MinigameFamilieScreen>()
+                    }
+
+                    game.addScreen(MinigameFamilieScreen(game))//gameStage))
+                    game.setScreen<MinigameFamilieScreen>()
                 }
 
-                game.addScreen(MinigameFamilieScreen(game))//gameStage))
-                game.setScreen<MinigameFamilieScreen>()
+
 
 
 

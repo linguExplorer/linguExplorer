@@ -479,7 +479,7 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
         if (game.containsScreen<MapScreen>()) {
             game.removeScreen<MapScreen>()
         }
-        game.addScreen(MapScreen(game, 10f, 10f))
+        game.addScreen(MapScreen(game, 12.5f, 15f))
         game.setScreen<MapScreen>()
     }
 

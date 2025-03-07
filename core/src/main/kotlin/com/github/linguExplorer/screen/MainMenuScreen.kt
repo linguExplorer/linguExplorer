@@ -377,6 +377,13 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                         isTransitioning = false
                         transitionRadius = 0f
                         loadingTime = 0f
+
+
+                        if (game.containsScreen<MapScreen>()) {
+                            game.removeScreen<MapScreen>()
+                        }
+
+                        game.addScreen(MapScreen(game, 30f, 30f))
                         game.setScreen<MapScreen>()
                     }
                 }
