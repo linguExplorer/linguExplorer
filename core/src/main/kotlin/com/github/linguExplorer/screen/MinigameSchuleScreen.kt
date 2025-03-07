@@ -140,15 +140,14 @@ class MinigameSchuleScreen() : KtxScreen {
     private fun setupTimetableGrid(germanAssets: List<Pair<PhraseEntity, String>>) {
         val gridWidth = 5
         val gridHeight = 7
-        val cellWidth = 230f
-        val cellHeight = 100f
-        val startX = timetableBasePosition.x - ((gridWidth * cellWidth) / 2)
-        val startY = timetableBasePosition.y + 250f
+        val cellWidth = 195f
+        val cellHeight = 85f
+        val startX = timetablePosition.x + timetableSize.x - 300f
+        val startY = timetablePosition.y + timetableSize.y + 145f
 
         // Erstelle eine Map mit verfügbaren Assets und deren möglicher Anzahl (1-3)
         val availableAssets = mutableMapOf<Pair<PhraseEntity, String>, Int>()
         germanAssets.forEach { asset ->
-            // Zufällig bestimmen, ob ein Asset mehrfach verwendet wird (1-3 mal)
             val repeatCount = (1..3).random()
             availableAssets[asset] = repeatCount
         }
@@ -175,8 +174,8 @@ class MinigameSchuleScreen() : KtxScreen {
                         col = col,
                         positionX = posX,
                         positionY = posY,
-                        width = cellWidth,
-                        height = cellHeight,
+                        width = cellWidth - 5f,
+                        height = cellHeight - 5f,
                         occupied = false,
                         correctSubject = null
                     )
@@ -197,8 +196,8 @@ class MinigameSchuleScreen() : KtxScreen {
         gridCells: Array<Array<Pair<PhraseEntity, String>?>>,
         availableAssets: MutableMap<Pair<PhraseEntity, String>, Int>
     ) {
-        val gridHeight = gridCells.size
-        val gridWidth = gridCells[0].size
+        val gridHeight = gridCells.size + 5f
+        val gridWidth = gridCells[0].size + 5f
 
         // Zufällig entscheiden, wie viele Zellen belegt werden sollen (ca. 60-80%)
         val totalCells = gridHeight * gridWidth
@@ -342,8 +341,8 @@ class MinigameSchuleScreen() : KtxScreen {
     }
 
     private fun setupEnglishSubjects(englishAssets: List<Pair<PhraseEntity, String>>) {
-        val subjectWidth = 210f
-        val subjectHeight = 91f
+        val subjectWidth = 189f
+        val subjectHeight = 80f
         val startX = 100f
         val startY = 700f
         val spacing = 220f
