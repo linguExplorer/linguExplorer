@@ -14,11 +14,17 @@ import EMailVerif from "@/pages/EMailVerif.vue";
 import CookieBanner from "@/components/CookieBanner.vue";
 import ToastComponent from "@/components/ToastComponent.vue";
 import ToastComponent_uch from "@/components/ToastComponent_uch.vue";
+import DownloadSeite from "@/pages/DownloadSeite.vue";
 const routes = [
   {
     path: "/toast",
     name: "toast",
     component: ToastComponent,
+  },
+  {
+    path: "/download",
+    name: "download",
+    component: DownloadSeite,
   },
 
   {
