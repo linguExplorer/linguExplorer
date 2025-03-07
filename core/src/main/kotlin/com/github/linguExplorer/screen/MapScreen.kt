@@ -163,8 +163,8 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
 
     }
 
-    private val uiStage: Stage = Stage(ExtendViewport(16f, 9f).apply {
-        setWorldSize(16f, 9f)
+    private val uiStage: Stage = Stage(ExtendViewport(1920f, 1080f).apply {
+        setWorldSize(1920f, 1080f)
     })
     //fixe Bilder Methode
     private fun addUIImages() {
@@ -187,7 +187,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         val moneyBagImage = com.badlogic.gdx.scenes.scene2d.ui.Image(moneyBagTexture)
 
         // Größe
-        val imageSize = 2f //Definiere die größe für die Bilder
+        val imageSize = 220f
         backpackImage.setSize(imageSize, imageSize)
         mapImage.setSize(imageSize, imageSize)
         phrasingBookImage.setSize(imageSize, imageSize)
@@ -196,8 +196,8 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
 
         // Position
         backpackImage.setPosition(12.8f, 7.2f)  // rechts oben
-        mapImage.setPosition(0f, 6.5f)     // links oben
-        phrasingBookImage.setPosition(14.5f, 0.5f) // rechts unten
+        mapImage.setPosition(10f, 830f)     // links oben
+        phrasingBookImage.setPosition(1750f, 40f) // rechts unten
         //progressBarImage.setPosition(0f, 8f) // Beispiel
         moneyBagImage.setPosition(14.5f, 7f)   // rechts oben
 

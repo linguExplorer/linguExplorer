@@ -20,7 +20,7 @@ fun main() {
     Lwjgl3Application(linguExplorer(), Lwjgl3ApplicationConfiguration().apply {
         setTitle("linguExplorer")
         setWindowedMode(1920, 1080)
-        setWindowIcon(*(arrayOf(128, 64, 32, 16).map { "libgdx$it.png" }.toTypedArray()))
+        setWindowIcon(*(arrayOf(128, 64, 32, 16).map { "xx_Images/wordmark/wordmark_scaled.png" }.toTypedArray()))
     })
 }
 

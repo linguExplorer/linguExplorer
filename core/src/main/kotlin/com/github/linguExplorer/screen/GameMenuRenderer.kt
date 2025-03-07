@@ -20,9 +20,8 @@ class GameMenuRenderer {
     // Menu state
     private var menuSet = true
     private var showSoundSettings = false
-    private lateinit var fontHeadliner: BitmapFont
+    private var fontHeadliner: BitmapFont = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
 
-    // Textures
     private val boxTexture: Texture
     private val resumeTexture: Texture
     private val soundSettingsTexture: Texture
@@ -70,14 +69,11 @@ class GameMenuRenderer {
     private var soundeffectPreSave = 0f
     private var musicPreSave = 0f
 
-    // Initialize the class by setting circle positions based on volume parameters
+
     init {
-        // Load font only once
-        fontHeadliner = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
         fontHeadliner.color = Color.BLACK
         fontHeadliner.data.setScale(0.5f, 0.5f)
 
-        // Load textures in init block
         boxTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/box.png"))
         resumeTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/resume.png"))
         soundSettingsTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/soundsettings.png"))

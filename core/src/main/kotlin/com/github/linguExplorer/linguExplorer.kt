@@ -13,8 +13,11 @@ class linguExplorer : KtxGame<KtxScreen>() {
     override fun create() {
         DatabaseManager()
         Gdx.app.logLevel = Application.LOG_DEBUG // Debug mode aktivieren
-        addScreen(MainMenuScreen(this)) // Setzt den GameScreen
-        setScreen<MainMenuScreen>()
+        //addScreen(MainMenuScreen(this)) // Setzt den GameScreen
+        //setScreen<MainMenuScreen>()
+
+        addScreen(MapScreen(this, 30f, 30f))
+        setScreen<MapScreen>()
     }
 
     companion object {
