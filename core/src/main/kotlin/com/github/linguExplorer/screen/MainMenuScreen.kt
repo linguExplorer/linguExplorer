@@ -43,8 +43,10 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private var loadGameTexture: Texture = Texture("xx_Images/Buttons/spielstandLaden_green.png")
     private var settingsIconTexture: Texture = Texture("xx_Images/SettingsIcon.png")
     private var wordmarkTexture: Texture = Texture("xx_Images/wordmark/wordmark_scaled.png")
-    private var popupTexture: Texture = Texture("box.png")
+    private var popupTexture: Texture = Texture("MainMenu/popup.png")
     private var exitTexture: Texture = Texture("xx_Images/Buttons/red_X.png")
+    private var usedSlotTexture: Texture = Texture("MainMenu/menu_slot.png")
+    private var emptySlotTexture: Texture = Texture("MainMenu/menu_empty_slot.png")
     private val executor: ExecutorService = Executors.newFixedThreadPool(1)
     private var showPopup = false
     private var showMenu = false
@@ -65,7 +67,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private var executePositionX = 0f
     private var executePositionY = 0f
 
-    private val popUpSize = Vector2(1000f, 600f)
+    private val popUpSize = Vector2(1100f, 700f)
     private val exitSize = 90f
     private val popUpPosition: Vector2
         get() = Vector2(
@@ -227,52 +229,42 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                     gamePausedY = (viewport.worldHeight + glyphLayout.height) / 2
                     font.draw(batch, "Kein Spielstand vorhanden!", gamePausedX, gamePausedY)
                 } else if (userFound || newGamePopUp) {
-                    font.data.setScale(0.3f, 0.3f)
-                    val slotHeight = 120f
+                    font.data.setScale(0.4f, 0.4f)
+                    val slotHeight = 160f
                     val spacing = 20f
-                    val startY = popUpPosition.y + popUpSize.y - 140f
+                    val startY = popUpPosition.y + popUpSize.y - 130f
 
                     font.color = Color.BLACK
                     glyphLayout.setText(font, "Wähle einen Spielstand")
                     font.draw(batch, "Wähle einen Spielstand",
                         popUpPosition.x + (popUpSize.x - glyphLayout.width) / 2,
-                        startY + 50f)
+                        startY + 55f)
 
                     for ((index, slot) in saveSlots.withIndex()) {
                         val (user, checkpoint, topic) = slot
 
                         val slotY = startY - (slotHeight + spacing) * index
-                        val slotX = popUpPosition.x + 60f
-                        val slotWidth = popUpSize.x - 120f
+                        val slotX = popUpPosition.x + 90f
+                        val slotWidth = popUpSize.x - 180f
 
                         val isMouseOver = isMouseInArea(mousePos.x, mousePos.y, slotX, slotY - slotHeight, slotWidth, slotHeight)
                         val slotIsActive = user != null
 
-                        Gdx.gl.glEnable(GL20.GL_BLEND)
-                        batch.end()
-                        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
-                        shapeRenderer.color = when {
-                            isMouseOver && slotIsActive -> Color(0.9f, 0.9f, 0.7f, 0.7f)
-                            slotIsActive -> Color(0.8f, 0.8f, 0.8f, 0.7f)
-                            else -> Color(0.6f, 0.6f, 0.6f, 0.5f)
-                        }
-                        shapeRenderer.rect(slotX, slotY - slotHeight, slotWidth, slotHeight)
-                        shapeRenderer.end()
-                        Gdx.gl.glDisable(GL20.GL_BLEND)
+                        val slotTexture = if (slotIsActive) usedSlotTexture else emptySlotTexture
+                        batch.draw(slotTexture, slotX, slotY - slotHeight, slotWidth, slotHeight)
 
-                        Gdx.gl.glLineWidth(3f)
-                        Gdx.gl.glEnable(GL20.GL_BLEND)
-                        shapeRenderer.begin(ShapeRenderer.ShapeType.Line)
-                        shapeRenderer.color = when {
-                            isMouseOver && (slotIsActive || newGamePopUp) -> Color.YELLOW
-                            slotIsActive -> Color(0.2f, 0.2f, 0.2f, 1f)
-                            else -> Color(0.4f, 0.4f, 0.4f, 0.5f)
+                        if (isMouseOver && (slotIsActive || newGamePopUp)) {
+                            Gdx.gl.glLineWidth(3f)
+                            Gdx.gl.glEnable(GL20.GL_BLEND)
+                            batch.end()
+                            shapeRenderer.begin(ShapeRenderer.ShapeType.Line)
+                            shapeRenderer.color = Color.YELLOW
+                            shapeRenderer.rect(slotX, slotY - slotHeight, slotWidth, slotHeight)
+                            shapeRenderer.end()
+                            batch.begin()
+                            Gdx.gl.glDisable(GL20.GL_BLEND)
+                            Gdx.gl.glLineWidth(1f)
                         }
-                        shapeRenderer.rect(slotX, slotY - slotHeight, slotWidth, slotHeight)
-                        shapeRenderer.end()
-                        batch.begin()
-                        Gdx.gl.glDisable(GL20.GL_BLEND)
-                        Gdx.gl.glLineWidth(1f)
 
                         font.color = Color.BLACK
 
@@ -283,19 +275,19 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                                 slotX + (slotWidth - glyphLayout.width) / 2,
                                 slotY - slotHeight/2 + glyphLayout.height/2)
                         } else {
-                            font.data.setScale(0.25f, 0.25f)
-                            val textStartY = slotY - 20f
+                            font.data.setScale(0.23f, 0.23f)
+                            val textStartY = slotY - 30f
 
                             glyphLayout.setText(font, "Name: ${user!!.name}")
-                            font.draw(batch, "Name: ${user.name}", slotX + 20f, textStartY)
+                            font.draw(batch, "Name: ${user.name}", slotX + 40f, textStartY)
 
                             val formattedTime = checkpoint?.currentTime?.atZone(ZoneId.systemDefault())
                                 ?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) ?: "-"
                             glyphLayout.setText(font, "Speicherzeit: $formattedTime")
-                            font.draw(batch, "Speicherzeit: $formattedTime", slotX + 20f, textStartY - 30f)
+                            font.draw(batch, "Speicherzeit: $formattedTime", slotX + 40f, textStartY - 35f)
 
                             glyphLayout.setText(font, "Aktuelles Thema: $topic")
-                            font.draw(batch, "Aktuelles Thema: $topic", slotX + 20f, textStartY - 60f)
+                            font.draw(batch, "Aktuelles Thema: $topic", slotX + 40f, textStartY - 70f)
                         }
 
                         if (isMouseOver && Gdx.input.justTouched() && (slotIsActive || newGamePopUp)) {
