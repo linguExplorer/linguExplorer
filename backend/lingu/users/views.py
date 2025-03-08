@@ -23,62 +23,88 @@ from django.shortcuts import get_object_or_404
 import os
 import tempfile
 import subprocess
+import uuid
+import shutil
 
-import os
-import subprocess
-from django.conf import settings
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from django.http import FileResponse
 
 class DownloadView(APIView):
     def get(self, request):
+        # Benutzer-ID aus den GET-Parametern holen
         user_id = request.GET.get('userid')
         if not user_id:
             return Response("Benutzer-ID fehlt", status=400)
 
-        # Pfade
-        original_script = os.path.join(settings.BASE_DIR, "wrapper", "linguExplorer_original.py")
-        config_dir = os.path.join(settings.BASE_DIR, "wrapper", "configs")
-        os.makedirs(config_dir, exist_ok=True)  # Erstelle den Konfigurationsordner, falls nicht vorhanden
-        config_path = os.path.join(config_dir, f"config_{uuid.uuid4()}.properties")  # Eindeutiger Dateiname
-        output_exe = os.path.join(settings.BASE_DIR, "wrapper", f"linguExplorer_personalized_{uuid.uuid4()}.exe")
+        # Pfade definieren
+        cs_source_path = os.path.join(settings.BASE_DIR, "wrapper", "Program.cs")  # C#-Quelldatei
+        resource_path = os.path.join(settings.BASE_DIR, "wrapper", "linguExplorer.exe")  # Eingebettete Ressource
+        output_dir = os.path.join(settings.BASE_DIR, "wrapper", "output")  # Ausgabeverzeichnis
+        os.makedirs(output_dir, exist_ok=True)  # Erstelle das Ausgabeverzeichnis, falls nicht vorhanden
+        output_exe = os.path.join(output_dir, f"linguExplorer_personalized_{uuid.uuid4()}.exe")  # Eindeutiger Dateiname
 
-        # Erstelle temporäre Konfigurationsdatei
-        with open(config_path, "w") as f:
-            f.write(f"userid={user_id}\n")
-
-        # Erstelle die .exe-Datei mit PyInstaller (embedded config)
+        # EXE-Datei erstellen
         try:
-            self.build_exe(original_script, config_path, output_exe)
+            self.build_exe(cs_source_path, user_id, output_exe, resource_path)
         except subprocess.CalledProcessError as e:
             return Response(f"Fehler beim Erstellen der .exe-Datei: {e}", status=500)
 
-        # Sende die Datei
+        # EXE-Datei als Download bereitstellen
         try:
             response = FileResponse(open(output_exe, "rb"), content_type="application/octet-stream")
             response["Content-Disposition"] = f'attachment; filename="linguExplorer.exe"'
             return response
         finally:
-            # Aufräumen: Lösche temporäre Dateien
-            os.remove(config_path)
+            # Temporäre Dateien löschen
             os.remove(output_exe)
 
-    def build_exe(self, script_path, config_path, output_exe):
-        # PyInstaller-Befehl: Erstellt eine .exe mit eingebetteter Konfiguration
-        command = [
-            "pyinstaller",
-            "--onefile",  # Erstellt eine einzelne .exe-Datei
-            "--add-data", f"{config_path}:.",  # Füge die Konfigurationsdatei hinzu
-            "--name", os.path.basename(output_exe).replace(".exe", ""),  # Name der .exe-Datei
-            script_path
-        ]
-        subprocess.run(command, check=True)
+    def build_exe(self, cs_source_path, user_id, output_exe, resource_path):
+        """
+        Erstellt eine .exe-Datei, indem die Benutzer-ID in den C#-Code eingebettet wird.
+        """
+        # Erstelle ein temporäres Verzeichnis für das .NET-Projekt
+        project_dir = os.path.join(settings.BASE_DIR, "wrapper", "temp_project")
+        os.makedirs(project_dir, exist_ok=True)
+
+        # Kopiere die C#-Quelldatei in das temporäre Verzeichnis
+        temp_cs_source_path = os.path.join(project_dir, "Program.cs")
+        shutil.copy(cs_source_path, temp_cs_source_path)
+
+        # Ersetze die Benutzer-ID im C#-Code
+        with open(temp_cs_source_path, "r") as f:
+            code = f.read()
+        new_code = code.replace("private const int USER_ID = 123456789;", f"private const int USER_ID = {user_id};")
+        with open(temp_cs_source_path, "w") as f:
+            f.write(new_code)
+
+        # Kopiere die Ressource in das temporäre Verzeichnis
+        shutil.copy(resource_path, os.path.join(project_dir, "linguExplorer.exe"))
+
+        # Erstelle eine .csproj-Datei für das Projekt
+        csproj_content = """
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType> <!-- Windows-Anwendung (kein Konsolenfenster) -->
+    <TargetFramework>net8.0</TargetFramework>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="linguExplorer.exe" />
+  </ItemGroup>
+</Project>
+        """
+        with open(os.path.join(project_dir, "WrapperProject.csproj"), "w") as f:
+            f.write(csproj_content)
+
+        # Kompiliere das Projekt und packe es in ein Single-File-Format
+        subprocess.run(["dotnet", "publish", "-c", "Release", "-o", os.path.dirname(output_exe)], cwd=project_dir, check=True)
 
         # Verschiebe die generierte .exe-Datei in das gewünschte Verzeichnis
-        dist_exe = os.path.join(settings.BASE_DIR, "dist", os.path.basename(output_exe))
+        dist_exe = os.path.join(os.path.dirname(output_exe), "WrapperProject.exe")
         os.replace(dist_exe, output_exe)
 
+        # Lösche das temporäre Projektverzeichnis
+        shutil.rmtree(project_dir)
 
 
 def activate(request, uidb64, token):
