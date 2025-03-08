@@ -25,7 +25,7 @@ import tempfile
 import subprocess
 import uuid
 import shutil
-
+import re
 
 class DownloadView(APIView):
     def get(self, request):
