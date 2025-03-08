@@ -68,10 +68,19 @@ class DownloadView(APIView):
         temp_cs_source_path = os.path.join(project_dir, "Program.cs")
         shutil.copy(cs_source_path, temp_cs_source_path)
 
-        # Ersetze die Benutzer-ID im C#-Code
+        # Ersetze die Benutzer-ID im C#-Code mit Regex
         with open(temp_cs_source_path, "r") as f:
             code = f.read()
-        new_code = code.replace("private const int USER_ID = 123456789;", f"private const int USER_ID = {user_id};")
+        print(f"Originaler Code:\n{code}")
+
+        # Verwende Regex, um die Benutzer-ID zu ersetzen
+        new_code = re.sub(
+            r"private const int USER_ID = \d+;",  # Suche nach "private const int USER_ID = <beliebige Zahl>;"
+            f"private const int USER_ID = {user_id};",  # Ersetze mit dem neuen Wert
+            code
+        )
+        print(f"Aktualisierter Code:\n{new_code}")
+
         with open(temp_cs_source_path, "w") as f:
             f.write(new_code)
 
