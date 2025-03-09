@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: io.github.libktx:ktx-math:1.12.1-rc2" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="io.github.libktx" artifactId="ktx-math" version="1.12.1-rc2" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.libktx/ktx-math/1.12.1-rc2/23320b96625c07e0b61d21ac8169f26da83fdb10/ktx-math-1.12.1-rc2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.libktx/ktx-math/1.12.1-rc2/73d5ad6438cf06e3d4c3f1b9f3eaf673fc358ebc/ktx-math-1.12.1-rc2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.libktx/ktx-math/1.12.1-rc2/6bb3b29f859f8011fa8cb1ca4a2a4cfab15e6c20/ktx-math-1.12.1-rc2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

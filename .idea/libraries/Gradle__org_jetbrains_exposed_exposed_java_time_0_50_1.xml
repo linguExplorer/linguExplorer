@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jetbrains.exposed:exposed-java-time:0.50.1" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.jetbrains.exposed" artifactId="exposed-java-time" version="0.50.1" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.exposed/exposed-java-time/0.50.1/cf9499cd72b22ec721c9bc4e586d616db6ea198f/exposed-java-time-0.50.1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.exposed/exposed-java-time/0.50.1/76022fc24981b24a90232dbc862a554ec43dc45e/exposed-java-time-0.50.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.exposed/exposed-java-time/0.50.1/707c0a437052c3bd8ecca06b3970bc70416a2143/exposed-java-time-0.50.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.xpenatan.gdx-teavm:backend-teavm:1.0.4" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="com.github.xpenatan.gdx-teavm" artifactId="backend-teavm" version="1.0.4" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.xpenatan.gdx-teavm/backend-teavm/1.0.4/890ede8396f2365be417d3f7d73fd2abd3857040/backend-teavm-1.0.4.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.xpenatan.gdx-teavm/backend-teavm/1.0.4/93a0916674c7bbf679b0e02d1bb49318a2343ede/backend-teavm-1.0.4-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.xpenatan.gdx-teavm/backend-teavm/1.0.4/6125cfa750c21043db8938fda40dbf6a83c978e/backend-teavm-1.0.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

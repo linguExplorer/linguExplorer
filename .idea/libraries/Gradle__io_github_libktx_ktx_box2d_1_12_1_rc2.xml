@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: io.github.libktx:ktx-box2d:1.12.1-rc2" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="io.github.libktx" artifactId="ktx-box2d" version="1.12.1-rc2" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.libktx/ktx-box2d/1.12.1-rc2/12be361935ac0dc81503c2f756c26ba7d2e4f34c/ktx-box2d-1.12.1-rc2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.libktx/ktx-box2d/1.12.1-rc2/a9a7e23f00a8b5cf31986458c81eac6794c5af0f/ktx-box2d-1.12.1-rc2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.libktx/ktx-box2d/1.12.1-rc2/81d2da2366709a839dd4caf774f92f29cc8873c3/ktx-box2d-1.12.1-rc2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

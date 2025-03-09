@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.xpenatan.gdx-teavm:asset-loader:1.0.4" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="com.github.xpenatan.gdx-teavm" artifactId="asset-loader" version="1.0.4" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.xpenatan.gdx-teavm/asset-loader/1.0.4/b0b5174e281307c39b7f716632816d0d1e4f3ea9/asset-loader-1.0.4.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.xpenatan.gdx-teavm/asset-loader/1.0.4/f4b72a95df607dbab58ff00c84d440c9cefed960/asset-loader-1.0.4-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.xpenatan.gdx-teavm/asset-loader/1.0.4/696f89d453806033c9384a501ad8bf53b09c374d/asset-loader-1.0.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

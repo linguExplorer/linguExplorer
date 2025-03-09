@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: org.teavm:teavm-relocated-libs-rhino:0.10.2" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.teavm" artifactId="teavm-relocated-libs-rhino" version="0.10.2" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.teavm/teavm-relocated-libs-rhino/0.10.2/252571154bc26bb58489d2207b75f6b366481040/teavm-relocated-libs-rhino-0.10.2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.teavm/teavm-relocated-libs-rhino/0.10.2/2ad14aed781c4a73ed4dbb421966d408a0a06686/teavm-relocated-libs-rhino-0.10.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.teavm/teavm-relocated-libs-rhino/0.10.2/2ad14aed781c4a73ed4dbb421966d408a0a06686/teavm-relocated-libs-rhino-0.10.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

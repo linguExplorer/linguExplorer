@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: org.teavm:teavm-tooling:0.10.2" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.teavm" artifactId="teavm-tooling" version="0.10.2" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.teavm/teavm-tooling/0.10.2/614bb7bcee09cbf11d74b38bb40bffda6ca5c142/teavm-tooling-0.10.2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.teavm/teavm-tooling/0.10.2/7ec1d300c89f7f0d4643b371c2ed1b965163f70c/teavm-tooling-0.10.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.teavm/teavm-tooling/0.10.2/50f0fc25b63d4c6511ba18b880d2efcc1c551229/teavm-tooling-0.10.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: org.teavm:teavm-metaprogramming-impl:0.10.2" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.teavm" artifactId="teavm-metaprogramming-impl" version="0.10.2" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.teavm/teavm-metaprogramming-impl/0.10.2/6c96018769ae3fe5801ffa7a89b57798a3b62f54/teavm-metaprogramming-impl-0.10.2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.teavm/teavm-metaprogramming-impl/0.10.2/d95985bed3290729cdc4108f650216ff39278275/teavm-metaprogramming-impl-0.10.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.teavm/teavm-metaprogramming-impl/0.10.2/843c04b2eaf6361fabd1ee6604a7148f654fc701/teavm-metaprogramming-impl-0.10.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

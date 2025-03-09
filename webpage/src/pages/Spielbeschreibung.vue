@@ -37,9 +37,8 @@
     </header>
 
     <!-- Content -->
-    <main class="max-w-full mx-auto">
+    <main class="max-w-full mx-auto relative">
       <!-- Background Images -->
-      <!--<img src="@/assets/xx_Images/xx_Images/cloud.png" alt="Wolke" class="w-[160px] sm:min-w-[320px] absolute z-2 translate-x-[-42vw] translate-y-[-10vh] sm:translate-x-[-42vw] sm:translate-y-[-1vh]" />-->
       <img
         src="@/assets/xx_Images/xx_Images/sun.png"
         alt="Sonne"
@@ -97,18 +96,10 @@
         </button>
       </template>
 
-      <!-- Character Image - neben dem "Jetzt spielen" button -->
-      <img
-        src="@/assets/xx_Images/xx_Images/Charactee New.png"
-        alt="Character"
-        class= "xxl:min-w-[400px] lg:w-[370px] md:w-[270px] sm:w-[180px] w-[140px] absolute z-1 sm:translate-x-[-35vw] translate-x-[-25vw] xxl:lg:translate-y-[44vh] lg:translate-y-[61.5vh] md:translate-y-[45vh] sm:translate-y-[34.5vh] translate-y-[30vh]"
-      />
-
       <!-- Gras Bild -->
       <section
-        class="bg-grass-background w-full relative z-0 lg:mt-[52px] md:mt-[-24px] sm:mt-[-12px] mt-[-12px]"
+        class="bg-grass-background w-full relative z-1 lg:mt-[52px] md:mt-[-24px] sm:mt-[-12px] mt-[-12px]"
       >
-        <!--bg-[#ffb305]-->
         <ul
           class="list-none lg:mx-36 md:mx-20 sm:mx-9 mx-9 my-36 flex flex-col items-center"
         >
@@ -209,8 +200,32 @@
               nachzuschlagen und ihren Lernfortschritt zu verfolgen.
             </p>
           </li>
+
+          <li
+            class="lg:w-[1050px] md:w-[700px] sm:w-[300px] w-[300px] flex flex-col items-center justify-center bg-[#f6f5f1] lg:mt-32 md:mt-20 sm:mt-20 mt-20"
+          >
+            <h2
+              class="font-pixelsplitter text-center px-14 pt-14 lg:text-3xl md:text-2xl sm:text-xl text-xl"
+            >
+              Erstellt von:
+            </h2>
+            <ul class="font-vcr text-left px-10 sm:px-20 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] pt-12 pb-16">
+              <li>Alexander Nems</li>
+              <li>Thuy Tien Luong</li>
+              <li>Benjamin Bician</li>
+              <li>Helena Stindl</li>
+              <li>Britta Reinwart</li>
+            </ul>
+          </li>
         </ul>
       </section>
+
+      <!-- Character Image - neben dem "Jetzt spielen" button -->
+      <img
+        src="@/assets/xx_Images/xx_Images/Charactee New.png"
+        alt="Character"
+        class="xxl:min-w-[400px] lg:w-[370px] md:w-[270px] sm:w-[180px] w-[140px] absolute z-10 sm:translate-x-[-35vw] translate-x-[-25vw] xxl:lg:translate-y-[44vh] lg:translate-y-[62vh] md:translate-y-[45.5vh] sm:translate-y-[35vh] translate-y-[30.5vh]"
+      />
     </main>
 
     <footer id="footer" class="bg-[#99b305] text-black">
@@ -232,62 +247,8 @@
     </footer>
   </div>
 </template>
-<script>
-import { mapState, mapActions } from "vuex";
-import { onMounted, ref } from "vue";
-import { useStore } from "vuex";
-import { Toaster, toast } from "vue-sonner";
-import { useRoute } from 'vue-router';
-import ToastComponent from "@/components/ToastComponent.vue";
-import { shallowRef } from 'vue';
-
-export default {
-  name: "SpielbeschreibungPage",
-  setup() {
-    const message = ref("Du bist nicht mehr eingeloggt!");
-    const store = useStore();
-    onMounted(async () => {
-      const route = useRoute();
-
-      const error = route.query.error;
-      if (error === 'invalid-link') {
-        toast.custom(shallowRef(ToastComponent), { duration: 3000,
-    
-    message: 'Dies ist eine benutzerdefinierte Toast-Nachricht!'
-  });
-      }
-      try {
-        const res = await fetch("https://da.linguexplorer.com/api/user", {
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-        });
-        if (!res.ok) {
-          await store.dispatch("logout");
-        } else {
-          await store.dispatch("login");
-        }
-      } catch (e) {
-        console.error("Fehler beim Senden der Anfrage:", e);
-      }
-    });
-
-    return {
-      message,
-    };
-  },
-  computed: {
-    isLoggedIn() {
-      return this.$store.getters.isAuthenticated;
-    },
-  },
-};
-</script>
-<style scoped>
-.hover-button img {
-  transition: transform 0.2s ease-in-out;
-}
-
-.hover-button img:hover {
-  transform: scale(1.1);
-}
+<style>
+  html, body {
+    overflow-x: hidden;
+  }
 </style>

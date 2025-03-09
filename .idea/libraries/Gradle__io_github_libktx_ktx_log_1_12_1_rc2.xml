@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: io.github.libktx:ktx-log:1.12.1-rc2" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="io.github.libktx" artifactId="ktx-log" version="1.12.1-rc2" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.libktx/ktx-log/1.12.1-rc2/1dbc0921ca0872549a6549c33a80875c4f16421e/ktx-log-1.12.1-rc2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.libktx/ktx-log/1.12.1-rc2/22efcefe227ec4eae6124cb2f2a4dd52e42f57c6/ktx-log-1.12.1-rc2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.libktx/ktx-log/1.12.1-rc2/9de88474bb2bceb6f3ae90abc3311d712ce200cf/ktx-log-1.12.1-rc2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

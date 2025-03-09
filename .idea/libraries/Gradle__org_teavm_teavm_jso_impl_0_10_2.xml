@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: org.teavm:teavm-jso-impl:0.10.2" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.teavm" artifactId="teavm-jso-impl" version="0.10.2" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.teavm/teavm-jso-impl/0.10.2/5500c6e1e10993d09cbfdde28ec3aa7cfb44c047/teavm-jso-impl-0.10.2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.teavm/teavm-jso-impl/0.10.2/11a3028876e53850ebbb5a718d815a6dab27d609/teavm-jso-impl-0.10.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.teavm/teavm-jso-impl/0.10.2/64d098664fd76a6c0c2d6b9b3c2cb947ce0e49d4/teavm-jso-impl-0.10.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

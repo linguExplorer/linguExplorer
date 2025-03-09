@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: io.github.quillraven.fleks:Fleks:1.6-JVM" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="io.github.quillraven.fleks" artifactId="Fleks" version="1.6-JVM" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.quillraven.fleks/Fleks/1.6-JVM/86c57de390297c32293b0214f627c2dba9d77d5e/Fleks-1.6-JVM.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: io.github.libktx:ktx-assets:1.12.1-rc2" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="io.github.libktx" artifactId="ktx-assets" version="1.12.1-rc2" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.libktx/ktx-assets/1.12.1-rc2/169ceae022612601c46b7e4a71a6d2d889efa1be/ktx-assets-1.12.1-rc2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.libktx/ktx-assets/1.12.1-rc2/f422b17ee8a7cfec8fb5fa72dd13ba79cb3cd660/ktx-assets-1.12.1-rc2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.libktx/ktx-assets/1.12.1-rc2/f50652b26e5c35cdd402bf5f57da83b94903ec09/ktx-assets-1.12.1-rc2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

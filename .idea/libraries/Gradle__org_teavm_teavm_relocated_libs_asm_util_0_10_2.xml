@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: org.teavm:teavm-relocated-libs-asm-util:0.10.2" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.teavm" artifactId="teavm-relocated-libs-asm-util" version="0.10.2" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.teavm/teavm-relocated-libs-asm-util/0.10.2/fe94c78c38381d352f356e895e7dd00f3211bda0/teavm-relocated-libs-asm-util-0.10.2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.teavm/teavm-relocated-libs-asm-util/0.10.2/2ad14aed781c4a73ed4dbb421966d408a0a06686/teavm-relocated-libs-asm-util-0.10.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.teavm/teavm-relocated-libs-asm-util/0.10.2/2ad14aed781c4a73ed4dbb421966d408a0a06686/teavm-relocated-libs-asm-util-0.10.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

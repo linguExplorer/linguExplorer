@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: io.github.libktx:ktx-tiled:1.12.1-rc2" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="io.github.libktx" artifactId="ktx-tiled" version="1.12.1-rc2" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.libktx/ktx-tiled/1.12.1-rc2/d8a4968e283a945a70741eeafd311ca93d1c6c11/ktx-tiled-1.12.1-rc2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.libktx/ktx-tiled/1.12.1-rc2/38f9ef2bb0acc5a1e003e18c88d6368a92b872d0/ktx-tiled-1.12.1-rc2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.libktx/ktx-tiled/1.12.1-rc2/7f83bfecca214e8f02a3ba1807ece55749e0e093/ktx-tiled-1.12.1-rc2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
