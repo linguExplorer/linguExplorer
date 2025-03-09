@@ -138,12 +138,13 @@ class MinigameSchuleScreen() : KtxScreen {
     }
 
     private fun setupTimetableGrid(germanAssets: List<Pair<PhraseEntity, String>>) {
-        val gridWidth = 5
-        val gridHeight = 7
-        val cellWidth = 195f
-        val cellHeight = 85f
-        val startX = timetablePosition.x + timetableSize.x - 300f
-        val startY = timetablePosition.y + timetableSize.y + 145f
+        val gridWidth = 5 //Spalten
+        val gridHeight = 7 //Zeilen
+        val cellWidth = 195f //width von Zelle im Raster
+        val cellHeight = 85f //height von Zelle im Raster
+        val startX = timetablePosition.x + timetableSize.x - 300f //x koordinate links oben
+        val startY = timetablePosition.y + timetableSize.y + 145f //y koordinate links oben
+        val rowSpacing = 4f // Abstand zwischen den Zeilen
 
         // Erstelle eine Map mit verfügbaren Assets und deren möglicher Anzahl (1-3)
         val availableAssets = mutableMapOf<Pair<PhraseEntity, String>, Int>()
@@ -165,7 +166,7 @@ class MinigameSchuleScreen() : KtxScreen {
                 if (asset != null) {
                     val (phrase, assetPath) = asset
                     val posX = startX + (col * cellWidth)
-                    val posY = startY - (row * cellHeight)
+                    val posY = startY - (row * (cellHeight + rowSpacing))
 
                     val cell = TimetableCell(
                         phrase = phrase,
@@ -174,8 +175,8 @@ class MinigameSchuleScreen() : KtxScreen {
                         col = col,
                         positionX = posX,
                         positionY = posY,
-                        width = cellWidth - 5f,
-                        height = cellHeight - 5f,
+                        width = cellWidth- 1f,
+                        height = cellHeight - 1f,
                         occupied = false,
                         correctSubject = null
                     )
