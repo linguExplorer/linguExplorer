@@ -224,7 +224,7 @@
       <img
         src="@/assets/xx_Images/xx_Images/Charactee New.png"
         alt="Character"
-        class="xxl:min-w-[400px] lg:w-[370px] md:w-[270px] sm:w-[180px] w-[140px] absolute z-10 sm:translate-x-[-35vw] translate-x-[-25vw] xxl:lg:translate-y-[44vh] lg:translate-y-[62vh] md:translate-y-[45.5vh] sm:translate-y-[35vh] translate-y-[30.5vh]"
+        class="xxl:min-w-[400px] lg:w-[370px] md:w-[270px] sm:w-[180px] w-[140px] absolute z-10 sm:translate-x-[-35vw] translate-x-[-25vw] xxl:lg:translate-y-[44vh] lg:translate-y-[62vh] md:translate-y-[45.5vh] sm:translate-y-[35vh] translate-y-[30vh]"
       />
     </main>
 
