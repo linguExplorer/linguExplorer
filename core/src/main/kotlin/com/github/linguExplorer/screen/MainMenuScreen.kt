@@ -43,10 +43,12 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private var loadGameTexture: Texture = Texture("xx_Images/Buttons/spielstandLaden_green.png")
     private var settingsIconTexture: Texture = Texture("xx_Images/SettingsIcon.png")
     private var wordmarkTexture: Texture = Texture("xx_Images/wordmark/wordmark_scaled.png")
-    private var popupTexture: Texture = Texture("MainMenu/popup.png")
+    private var popupTexture: Texture = Texture("MainMenu/box2.png")
     private var exitTexture: Texture = Texture("xx_Images/Buttons/red_X.png")
-    private var usedSlotTexture: Texture = Texture("MainMenu/menu_slot.png")
-    private var emptySlotTexture: Texture = Texture("MainMenu/menu_empty_slot.png")
+    private var usedSlotTexture: Texture = Texture("MainMenu/greenbox.png")
+    private var emptySlotTexture: Texture = Texture("MainMenu/greybox.png")
+    private var penTexture: Texture = Texture("MainMenu/penGrey.png")
+    private var spielStartenButtonTexture: Texture = Texture("MainMenu/spielstandStarten.png")
     private val executor: ExecutorService = Executors.newFixedThreadPool(1)
     private var showPopup = false
     private var showMenu = false
@@ -67,8 +69,10 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private var executePositionX = 0f
     private var executePositionY = 0f
 
+    private val popUpButtonSize = Vector2(180f, 55f)
     private val popUpSize = Vector2(1100f, 700f)
     private val exitSize = 90f
+    private val editSize = 35f
     private val popUpPosition: Vector2
         get() = Vector2(
             (viewport.worldWidth / 2 - popUpSize.x / 2),
@@ -196,7 +200,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             Gdx.gl.glDisable(GL20.GL_BLEND)
             batch.begin()
             batch.draw(popupTexture, popUpPosition.x, popUpPosition.y, popUpSize.x, popUpSize.y)
-            batch.draw(exitTexture, popUpPosition.x + popUpSize.x - 120f, popUpPosition.y + popUpSize.y - 100f, exitSize, exitSize)
+            batch.draw(exitTexture, popUpPosition.x + popUpSize.x - 110f, popUpPosition.y + popUpSize.y - 110f, exitSize, exitSize)
             font.color = Color.BLACK
             var gamePausedX: Float
             var gamePausedY: Float
@@ -230,16 +234,17 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                     font.draw(batch, "Kein Spielstand vorhanden!", gamePausedX, gamePausedY)
                 } else if (userFound || newGamePopUp) {
                     font.data.setScale(0.4f, 0.4f)
-                    val slotHeight = 160f
+                    val slotHeight = 165f
                     val spacing = 20f
-                    val startY = popUpPosition.y + popUpSize.y - 130f
+                    val startY = popUpPosition.y + popUpSize.y - 120f
 
                     font.color = Color.BLACK
                     glyphLayout.setText(font, "Wähle einen Spielstand")
                     font.draw(batch, "Wähle einen Spielstand",
                         popUpPosition.x + (popUpSize.x - glyphLayout.width) / 2,
-                        startY + 55f)
+                        startY + 65f)
 
+                    // Inside the for loop where saveSlots are rendered
                     for ((index, slot) in saveSlots.withIndex()) {
                         val (user, checkpoint, topic) = slot
 
@@ -247,24 +252,10 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                         val slotX = popUpPosition.x + 90f
                         val slotWidth = popUpSize.x - 180f
 
-                        val isMouseOver = isMouseInArea(mousePos.x, mousePos.y, slotX, slotY - slotHeight, slotWidth, slotHeight)
                         val slotIsActive = user != null
 
                         val slotTexture = if (slotIsActive) usedSlotTexture else emptySlotTexture
                         batch.draw(slotTexture, slotX, slotY - slotHeight, slotWidth, slotHeight)
-
-                        if (isMouseOver && (slotIsActive || newGamePopUp)) {
-                            Gdx.gl.glLineWidth(3f)
-                            Gdx.gl.glEnable(GL20.GL_BLEND)
-                            batch.end()
-                            shapeRenderer.begin(ShapeRenderer.ShapeType.Line)
-                            shapeRenderer.color = Color.YELLOW
-                            shapeRenderer.rect(slotX, slotY - slotHeight, slotWidth, slotHeight)
-                            shapeRenderer.end()
-                            batch.begin()
-                            Gdx.gl.glDisable(GL20.GL_BLEND)
-                            Gdx.gl.glLineWidth(1f)
-                        }
 
                         font.color = Color.BLACK
 
@@ -274,9 +265,41 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                             font.draw(batch, "Leerer Spielstand",
                                 slotX + (slotWidth - glyphLayout.width) / 2,
                                 slotY - slotHeight/2 + glyphLayout.height/2)
+
+                            // For empty slots in new game mode, allow clicking the slot itself
+                            if (newGamePopUp && Gdx.input.justTouched() && isMouseInArea(mousePos.x, mousePos.y, slotX, slotY - slotHeight, slotWidth, slotHeight)) {
+                                saveNumber = index + 1
+                                newGame = true
+                                isTransitioning = true
+                                loadingTime = 0f
+                            }
                         } else {
+                            // Draw pen icon
+                            val penX = slotX + slotWidth - 65f
+                            val penY = slotY - 65f
+                            batch.draw(penTexture, penX, penY, editSize, editSize)
+
+                            val buttonX = slotX + slotWidth - popUpButtonSize.x - 30f
+                            val buttonY = slotY - popUpButtonSize.y - 85f
+                            batch.draw(spielStartenButtonTexture, buttonX, buttonY, popUpButtonSize.x, popUpButtonSize.y)
+
+                            val isButtonHovered = isMouseInArea(mousePos.x, mousePos.y, buttonX, buttonY, popUpButtonSize.x, popUpButtonSize.y)
+
+                            if (isButtonHovered) {
+                                Gdx.gl.glLineWidth(3f)
+                                Gdx.gl.glEnable(GL20.GL_BLEND)
+                                batch.end()
+                                shapeRenderer.begin(ShapeRenderer.ShapeType.Line)
+                                shapeRenderer.color = Color.YELLOW
+                                shapeRenderer.rect(buttonX, buttonY, popUpButtonSize.x, popUpButtonSize.y)
+                                shapeRenderer.end()
+                                batch.begin()
+                                Gdx.gl.glDisable(GL20.GL_BLEND)
+                                Gdx.gl.glLineWidth(1f)
+                            }
+
                             font.data.setScale(0.23f, 0.23f)
-                            val textStartY = slotY - 30f
+                            val textStartY = slotY - 40f
 
                             glyphLayout.setText(font, "Name: ${user!!.name}")
                             font.draw(batch, "Name: ${user.name}", slotX + 40f, textStartY)
@@ -288,23 +311,27 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
 
                             glyphLayout.setText(font, "Aktuelles Thema: $topic")
                             font.draw(batch, "Aktuelles Thema: $topic", slotX + 40f, textStartY - 70f)
-                        }
 
-                        if (isMouseOver && Gdx.input.justTouched() && (slotIsActive || newGamePopUp)) {
-                            if (user != null && newGamePopUp) {
-                                userAlreadyExists = true
-                            } else {
-                                if (!newGamePopUp) {
-                                    this.user = user!!
-                                    currentCheckpoint = checkpoint!!
-                                    currentTopic = topic!!
-                                    loadGame = true
+                            if (Gdx.input.justTouched() && isMouseInArea(mousePos.x, mousePos.y, penX, penY, editSize, editSize)) {
+                                println("Pen clicked for save slot ${index + 1}!")
+                            }
+
+                            if (Gdx.input.justTouched() && isButtonHovered) {
+                                if (user != null && newGamePopUp) {
+                                    userAlreadyExists = true
                                 } else {
-                                    saveNumber = index + 1
-                                    newGame = true
+                                    if (!newGamePopUp) {
+                                        this.user = user!!
+                                        currentCheckpoint = checkpoint!!
+                                        currentTopic = topic!!
+                                        loadGame = true
+                                    } else {
+                                        saveNumber = index + 1
+                                        newGame = true
+                                    }
+                                    isTransitioning = true
+                                    loadingTime = 0f
                                 }
-                                isTransitioning = true
-                                loadingTime = 0f
                             }
                         }
                     }
@@ -328,9 +355,9 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
 
                 val animatedDots = ".".repeat(dotCount)
                 val loadingText = when {
-                    loadingTime >= 30f -> "Versuch es erneut :("
-                    loadingTime >= 20f -> "Only a few more seconds$animatedDots"
-                    loadingTime >= 10f -> "Lean back and wait$animatedDots"
+                    loadingTime >= 30f -> "Da ist was schiefgelaufen :(. Versuch es nochmal"
+                    loadingTime >= 18f -> "Fast geschafft$animatedDots"
+                    loadingTime >= 9f -> "Hab noch Geduld$animatedDots"
                     else -> "Loading$animatedDots"
                 }
 
@@ -436,18 +463,22 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                 val allUsers = UserRepository().getAllUsersById(userId)
                 val allCheckpoints = CheckpointRepository().getAllCheckpointsForUser(userId) ?: emptyList()
 
-                saveSlots.clear() // Clear existing slots
+                saveSlots.clear()
 
                 for (i in 0 until 3) {
-                    if (i < allUsers.size) {
-                        val user = allUsers[i]
-                        val checkpoint = allCheckpoints.getOrNull(i)
+                    saveSlots.add(Triple(null, null, null))
+                }
+
+                for (user in allUsers) {
+                    val saveIndex = user.saveNumber - 1
+
+                    if (saveIndex in 0..2) {
+                        val checkpoint = allCheckpoints.find { it.saveNumber == user.saveNumber }
+
                         val latestProgress = UserProgressRepository().getLatestUserProgress(user.id, user.saveNumber)
                         val topic = latestProgress?.let { TopicRepository().getTopicById(it.topicId)?.name } ?: "-"
 
-                        saveSlots.add(Triple(user, checkpoint, topic))
-                    } else {
-                        saveSlots.add(Triple(null, null, null))
+                        saveSlots[saveIndex] = Triple(user, checkpoint, topic)
                     }
                 }
 
