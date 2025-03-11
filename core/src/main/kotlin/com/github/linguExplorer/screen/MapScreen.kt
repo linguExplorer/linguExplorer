@@ -116,18 +116,18 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         // fixe Bilder hinzufügen
         addUIImages()
 
-            PlayerKeyboardInputProcessor(world, stage, world.mapper(), world.mapper(), stage, pathSystem )
+        PlayerKeyboardInputProcessor(world, stage, world.mapper(), world.mapper(), stage, pathSystem )
 
-            val playerInputProcessor = PlayerKeyboardInputProcessor(world, stage, world.mapper(), world.mapper(), stage, pathSystem)
-            // InputMultiplexer um Spielfigur + UI zu verarbeiten
-            inputMultiplexer = InputMultiplexer()
-            inputMultiplexer.addProcessor(uiStage)
-            inputMultiplexer.addProcessor(stage)
-            inputMultiplexer.addProcessor(playerInputProcessor)
-            // Spielfigur und Welt-Stage
-            inputMultiplexer.addProcessor(uiStage) // UI-Stage*/
+        val playerInputProcessor = PlayerKeyboardInputProcessor(world, stage, world.mapper(), world.mapper(), stage, pathSystem)
+        // InputMultiplexer um Spielfigur + UI zu verarbeiten
+        inputMultiplexer = InputMultiplexer()
+        inputMultiplexer.addProcessor(uiStage)
+        inputMultiplexer.addProcessor(stage)
+        inputMultiplexer.addProcessor(playerInputProcessor)
+        // Spielfigur und Welt-Stage
+        inputMultiplexer.addProcessor(uiStage) // UI-Stage*/
 
-            Gdx.input.inputProcessor = inputMultiplexer //Multiplexer als Input-Prozessor setzen
+        Gdx.input.inputProcessor = inputMultiplexer //Multiplexer als Input-Prozessor setzen
 
 
     }
@@ -157,8 +157,20 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         val imageSize = 220f
         mapImage.setSize(imageSize, imageSize)
         phrasingBookImage.setSize(imageSize, imageSize)
-        mapImage.setPosition(20f, uiStage.viewport.worldHeight - imageSize - 20f)
-        phrasingBookImage.setPosition(uiStage.viewport.worldWidth - imageSize - 20f, 20f)
+
+        val padding = 20f // Abstand vom Rand
+
+        //Map Image (links oben)
+        mapImage.setPosition(
+            padding,
+            uiStage.viewport.worldHeight - imageSize - padding
+        )
+
+        //PhrasingBook Image (rechts unten)
+        phrasingBookImage.setPosition(
+            uiStage.viewport.worldWidth - imageSize - padding,
+            padding
+        )
 
         uiStage.addActor(mapImage)
         uiStage.addActor(phrasingBookImage)
