@@ -12,5 +12,5 @@ fun main() {
         width = 0
         height = 0
     }
-    TeaApplication(linguExplorer(), config)
+   // TeaApplication(linguExplorer(), config)
 }

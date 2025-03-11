@@ -12,9 +12,14 @@ import com.github.linguExplorer.screen.MapScreen
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
 
-class linguExplorer : KtxGame<KtxScreen>() {
+class linguExplorer() : KtxGame<KtxScreen>() {
+
+    private val userId: String? = ConfigManager.readUserId()
 
     override fun create() {
+
+        println("Benutzer-ID: $userId")
+
         DatabaseManager()
         Gdx.app.logLevel = Application.LOG_DEBUG // Debug mode aktivieren
         addScreen(MainMenuScreen(this)) // Setzt den GameScreen
