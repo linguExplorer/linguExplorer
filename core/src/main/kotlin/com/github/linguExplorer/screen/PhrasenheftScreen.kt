@@ -108,8 +108,6 @@ class PhrasenheftScreen (
     override fun render(delta: Float) {
         // Prüfen, ob der Export abgeschlossen ist
         if (exportCompleted) {
-            game.setScreen<MapScreen>()
-            return
         }
 
         handleInput()
@@ -146,6 +144,7 @@ class PhrasenheftScreen (
             batch.draw(nextTexture, nextPosition.x, nextPosition.y, backSize.x, backSize.y)
         }
         batch.draw(sortTexture, sortPosition.x, sortPosition.y, sortSize.x, sortSize.y)
+        batch.draw(sortTexture, sortPosition.x, sortPosition.y + 200f, sortSize.x, sortSize.y)
         batch.draw(closeTexture, closePosition.x, closePosition.y, closeSize.x, closeSize.y)
 
         currentY = heftY + heftSize.y - 140f
@@ -222,7 +221,6 @@ class PhrasenheftScreen (
 
     private fun handleInput() {
         if (isExportingPDF) {
-            // When exporting, do not process input
             return
         }
 
@@ -274,27 +272,30 @@ class PhrasenheftScreen (
                 }
             }
 
-            // Close button
-            if (mouseX in closePosition.x..(closePosition.x + closeSize.x) &&
-                mouseY in closePosition.y..(closePosition.y + closeSize.y)) {
+            if (mouseX in sortPosition.x..(sortPosition.x + sortSize.x) &&
+                mouseY in sortPosition.y + 200f..(sortPosition.y + sortSize.y + 200f)) {
                 if (!isExportingPDF) {
                     isExportingPDF = true
                     startExportPDF()
                 }
             }
+
+            // Close button
+            if (mouseX in closePosition.x..(closePosition.x + closeSize.x) &&
+                mouseY in closePosition.y..(closePosition.y + closeSize.y)) {
+                game.setScreen<MapScreen>()
+                return
+            }
         }
     }
 
     private fun startExportPDF() {
-        // Führe den Export in einem separaten Thread aus, um Blockieren des UI-Threads zu vermeiden
         executor.submit {
             try {
                 if (Gdx.app.type == Application.ApplicationType.Desktop) {
-                    // Verwende SwingUtilities.invokeAndWait um sicherzustellen, dass der Dialog im richtigen Thread ausgeführt wird
                     val filePathRef = arrayOfNulls<String>(1)
                     val wasCancelledRef = booleanArrayOf(false)
 
-                    // Ausführen des JFileChooser im Swing-Thread
                     SwingUtilities.invokeAndWait {
                         try {
                             val chooser = javax.swing.JFileChooser()
@@ -420,7 +421,6 @@ class PhrasenheftScreen (
         backTexture.disposeSafely()
         sortTexture.disposeSafely()
         shapeRenderer.dispose()
-        // Beenden des Executors
         executor.shutdown()
     }
 }

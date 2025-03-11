@@ -3,8 +3,6 @@ package com.github.linguExplorer.screen
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputMultiplexer
-import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
@@ -13,8 +11,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
-import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -159,26 +155,13 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
 
         // Größe
         val imageSize = 220f
-        backpackImage.setSize(imageSize, imageSize)
         mapImage.setSize(imageSize, imageSize)
         phrasingBookImage.setSize(imageSize, imageSize)
-        //progressBarImage.setSize(imageSize, imageSize-1f)
-        moneyBagImage.setSize(imageSize, imageSize)
+        mapImage.setPosition(20f, uiStage.viewport.worldHeight - imageSize - 20f)
+        phrasingBookImage.setPosition(uiStage.viewport.worldWidth - imageSize - 20f, 20f)
 
-        // Position
-        backpackImage.setPosition(12.8f, 7.2f)  // rechts oben
-        mapImage.setPosition(10f, 830f)     // links oben
-        phrasingBookImage.setPosition(1750f, 40f) // rechts unten
-        //progressBarImage.setPosition(0f, 8f) // Beispiel
-        moneyBagImage.setPosition(14.5f, 7f)   // rechts oben
-
-        // Bilder zur UI-Stage hinzufügen
-        uiStage.addActor(backpackImage)
         uiStage.addActor(mapImage)
         uiStage.addActor(phrasingBookImage)
-        //uiStage.addActor(progressBarImage)
-        uiStage.addActor(moneyBagImage)
-
 
 
         backpackImage.addListener(object : ClickListener() {
