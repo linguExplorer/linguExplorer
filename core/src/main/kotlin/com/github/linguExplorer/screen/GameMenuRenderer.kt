@@ -19,15 +19,15 @@ import com.github.linguExplorer.soundEffectVolume
 class GameMenuRenderer {
     // Menu state
     private var menuSet = true
-    private var showSoundSettings = false
+    private var showSoundSettings = false //Flag (ob Soundeinstellungen angezeigt werden)
     private var fontHeadliner: BitmapFont = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
 
     private val boxTexture: Texture
     private val resumeTexture: Texture
-    private val soundSettingsTexture: Texture
+    private val soundSettingsTexture: Texture //Textur für den "Soundeinstellungen"-Button
     private val quitGameTexture: Texture
     private val wordmarkTexture: Texture
-    private val applyTexture: Texture
+    private val applyTexture: Texture // Textur für den "Anwenden"-Button in den Soundeinstellungen
     private val redXTexture: Texture
     private val barnoneTexture: Texture
     private val barfullTexture: Texture
@@ -85,7 +85,7 @@ class GameMenuRenderer {
         barfullTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/barfull.png"))
         circleTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/circle.png"))
 
-        updateCirclePositionsFromVolumes()
+        updateCirclePositionsFromVolumes() // Initialisiert die Positionen der Kreise basierend auf den aktuellen Lautstärken
     }
 
     fun renderGameMenu(batch: SpriteBatch, font: BitmapFont, glyphLayout: GlyphLayout, viewport: Viewport, shapeRenderer: ShapeRenderer) {
@@ -155,6 +155,7 @@ class GameMenuRenderer {
         // Handle input and update volumes
         handleInput(viewport)
 
+        // Aktualisiert die Lautstärken basierend auf den Slider-Positionen
         if (isDraggingMaster || isDraggingSoundeffects || isDraggingMusic) {
             updateVolumesFromCirclePositions()
         }
@@ -164,8 +165,11 @@ class GameMenuRenderer {
      * Updates circle positions based on current volume parameters
      */
     private fun updateCirclePositionsFromVolumes() {
+        // Berechnet die X-Position des Master-Volume-Kreises
         masterCircleXOffset = masterVolume * (barnoneWidth - circleSize.x)
+        // Berechnet die X-Position des Soundeffekt-Volume-Kreises
         soundeffectsCircleXOffset = soundEffectVolume * (barnoneWidth - circleSize.x)
+        // Berechnet die X-Position des Musik-Volume-Kreises
         musicCircleXOffset = musicVolume * (barnoneWidth - circleSize.x)
     }
 
@@ -173,8 +177,11 @@ class GameMenuRenderer {
      * Updates volume parameters based on current circle positions
      */
     private fun updateVolumesFromCirclePositions() {
+        // Berechnet das Master-Volume basierend auf der Kreisposition
         masterVolume = masterCircleXOffset / (barnoneWidth - circleSize.x)
+        // Berechnet das Soundeffekt-Volume
         soundEffectVolume = soundeffectsCircleXOffset / (barnoneWidth - circleSize.x)
+        // Berechnet das Musik-Volume
         musicVolume = musicCircleXOffset / (barnoneWidth - circleSize.x)
     }
 
@@ -354,7 +361,7 @@ class GameMenuRenderer {
                 musicVolume = musicPreSave
 
                 // Make sure circle positions match restored volumes
-                updateCirclePositionsFromVolumes()
+                updateCirclePositionsFromVolumes() // Aktualisiert die Kreispositionen basierend auf den aktuellen Lautstärken
 
                 showSoundSettings = false
             }

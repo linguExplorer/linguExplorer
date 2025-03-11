@@ -36,6 +36,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private lateinit var font: BitmapFont
     private val viewport: Viewport = ExtendViewport(1920f, 1080f)
     private val glyphLayout = GlyphLayout()
+    // Hintergrundmusik
     private lateinit var music: Music
 
     private var backgroundTexture: Texture = Texture("xx_map_assets/Map/ref.png")
@@ -50,10 +51,11 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private var penTexture: Texture = Texture("MainMenu/penGrey.png")
     private var spielStartenButtonTexture: Texture = Texture("MainMenu/spielstandStarten.png")
     private val executor: ExecutorService = Executors.newFixedThreadPool(1)
-    private var showPopup = false
-    private var showMenu = false
-    private var newGamePopUp = false
-    private var loadGamePopUp = false
+    //Menü
+    private var showPopup = false //Popup-Fenster
+    private var showMenu = false //Einstellungsmenü
+    private var newGamePopUp = false //Popup für ein neues Spiel
+    private var loadGamePopUp = false //Popup zum Laden von Spiel
     private var threadExecuted = false
     private var loadingTime = 0f
     private var userFound = false
@@ -63,30 +65,35 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private lateinit var user: UserEntity
     private lateinit var currentTopic: String
     private lateinit var currentCheckpoint: CheckpointEntity
+    // Speichert die Spielstände (
     val saveSlots = mutableListOf<Triple<UserEntity?, CheckpointEntity?, String?>>()
     private var loadingScreenRenderer = LoadingScreenRenderer()
     private val gameMenuRenderer = GameMenuRenderer()
     private var executePositionX = 0f
     private var executePositionY = 0f
 
+    //Konstanten für UI-Elemente
     private val popUpButtonSize = Vector2(180f, 55f)
     private val popUpSize = Vector2(1100f, 700f)
     private val exitSize = 90f
     private val editSize = 35f
+    //Position des Popup-Fensters berechnen
     private val popUpPosition: Vector2
         get() = Vector2(
             (viewport.worldWidth / 2 - popUpSize.x / 2),
             (viewport.worldHeight / 2 - popUpSize.y / 2)
         )
-
+    //Animation für Charakter
     private val textureAtlas = TextureAtlas("graphics/idle_animation.atlas")
     private val playerTexture: Texture = Texture("graphics/idle_animation.png")
     private lateinit var gifAnimation: Animation<TextureRegion>
     private var animationTime = 0f
 
+    //Animation für "Loading"-Punkte
     private var dotAnimationTime = 0f
     private var dotCount = 0
 
+    //Hintergurnd Scroll
     private val overlayWidth = 1200f
     private val overlayHeight = 700f
     private val settingsIconSize = 80f
@@ -95,6 +102,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private var speedX = 100f
     private var speedY = 50f
 
+    //Übergang zum nächsten Screen
     private var isTransitioning = false
     private var transitionRadius = 0f
     private var transitionCenter = Vector2()
@@ -102,6 +110,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         get() = max(viewport.worldWidth, viewport.worldHeight) * 1.5f
 
     override fun show() {
+        //Musik starten
         music = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Hintergrundmusik/Hintergrundmusik_linguExplorer.mp3"))
         music.isLooping = true
         music.play()
@@ -111,14 +120,18 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
 
     override fun render(delta: Float) {
         viewport.apply()
+        // Setzt die Lautstärke der Musik, wenn kein Übergang stattfindet
+        // musicVolume und masterVolume sind globale Variablen für die Lautstärkeeinstellungen
         if (!isTransitioning) music.volume = 0.5f * musicVolume * masterVolume
         val screenWidth = viewport.worldWidth
         val screenHeight = viewport.worldHeight
 
+        //Holt die Mausposition
         val mousePos = Vector2(Gdx.input.x.toFloat(), Gdx.input.y.toFloat()).also {
             viewport.unproject(it)
         }
 
+        //Skalierung des Hintergrunds
         val backgroundWidth = backgroundTexture.width.toFloat()
         val backgroundHeight = backgroundTexture.height.toFloat()
         val scale = 1.5f
@@ -131,6 +144,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
 
         transitionCenter.set(viewport.worldWidth / 2f, viewport.worldHeight / 2f)
 
+        //Hintergrundposition für den Scrolling-Effekt
         backgroundOffsetX += speedX * delta
         backgroundOffsetY += speedY * delta
 
@@ -150,6 +164,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             speedY = -speedY
         }
 
+        // Projektionsmatrix für Batch und ShapeRenderer
         batch.projectionMatrix = viewport.camera.combined
         shapeRenderer.projectionMatrix = viewport.camera.combined
 
@@ -157,6 +172,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         batch.draw(backgroundTexture, backgroundOffsetX, backgroundOffsetY, scaledWidth, scaledHeight)
         batch.end()
 
+        // halbtransparentes Overlay
         val overlayColor = Color(0f, 0f, 0f, 0.65f)
         Gdx.gl.glEnable(GL20.GL_BLEND)
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
@@ -168,6 +184,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         Gdx.gl.glDisable(GL20.GL_BLEND)
 
         batch.begin()
+        //Wordmark, Buttons + Settings-Icon
         val wordmarkHeight = 220f
         val wordmarkAspectRatio = wordmarkTexture.width.toFloat() / wordmarkTexture.height.toFloat()
         val wordmarkWidth = wordmarkHeight * wordmarkAspectRatio
@@ -192,6 +209,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         batch.end()
 
         if (showPopup) {
+            //dunkler Hintergrund
             Gdx.gl.glEnable(GL20.GL_BLEND)
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
             shapeRenderer.color = Color(0f, 0f, 0f, 0.5f)
@@ -205,11 +223,13 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             var gamePausedX: Float
             var gamePausedY: Float
 
+            //wenn Exit-Kreuz geklickt
             if (Gdx.input.justTouched() && !isTransitioning) {
                 if (isMouseInArea(mousePos.x, mousePos.y, popUpPosition.x + popUpSize.x - 120f, popUpPosition.y + popUpSize.y - 100f, exitSize, exitSize)) {
                     if (userAlreadyExists) {
                         userAlreadyExists = false
                     } else {
+                        // Schließt Popup-Fenster
                         showPopup = false
                         loadGamePopUp = false
                         newGamePopUp = false
@@ -219,7 +239,9 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                 }
             }
 
+            //wenn Thread abgeschlossen
             if (threadExecuted) {
+                //Benutzer existiert bereits
                 if (userAlreadyExists) {
                     font.data.setScale(0.4f, 0.4f)
                     glyphLayout.setText(font, "USER EXISTIERT!")
@@ -227,6 +249,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                     gamePausedY = (viewport.worldHeight + glyphLayout.height) / 2
                     font.draw(batch, "USER EXISTIERT!", gamePausedX, gamePausedY)
                 } else if (loadGamePopUp && !userFound) {
+                    //kein Spielstand vorhanden
                     font.data.setScale(0.4f, 0.4f)
                     glyphLayout.setText(font, "Kein Spielstand vorhanden!")
                     gamePausedX = (viewport.worldWidth - glyphLayout.width) / 2
@@ -244,6 +267,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                         popUpPosition.x + (popUpSize.x - glyphLayout.width) / 2,
                         startY + 65f)
 
+                    // Schleife durch Spielstände
                     // Inside the for loop where saveSlots are rendered
                     for ((index, slot) in saveSlots.withIndex()) {
                         val (user, checkpoint, topic) = slot
@@ -344,6 +368,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                     )
                 }
             } else {
+               // Zeigt den Ladebildschirm
                 loadingTime += delta
 
                 font.data.setScale(0.4f, 0.4f)
@@ -370,7 +395,9 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             batch.end()
         }
 
+        //Escape-Taste gedrückt
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !isTransitioning ) {
+            //Schließt Popup-Fenster
             userAlreadyExists = false
             showPopup = false
             loadGamePopUp = false
@@ -379,19 +406,26 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             loadingTime = 0f
         }
 
+        //Übergang findet statt
         if (isTransitioning) {
+            // Erhöht Radius von Kreises
             transitionRadius += 1500 * delta
+            //Kreis bedeckt gesamten Bildschirm ->
             if (transitionRadius >= maxRadius) {
                 loadingTime += delta
+                // wenn Spiel geladen / neues Spiel gestartet wird
                 if (loadGamePopUp || newGamePopUp) {
+                    // Lädt den Checkpoint
                     loadCheckpoint()
                     loadGamePopUp = false
                     newGamePopUp = false
                 }
 
                 loadingScreenRenderer.renderAnimatedText(batch, font, glyphLayout, viewport,"Loading", delta, 1f, true)
+                // wenn Thread abgeschlossen + Ladezeit abgelaufen
                 if (threadExecuted && loadingTime > 3f) {
                     println("HUH")
+                    // Wechselt zum MapScreen
                     Gdx.app.postRunnable {
                         isTransitioning = false
                         transitionRadius = 0f
@@ -409,6 +443,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                 return
             }
 
+            //Wenn die Musik noch nicht still -> immer leiser
             if(music.volume > 0.005f) {
                 music.volume -= (0.002f * masterVolume * musicVolume)
             } else if (music.volume <= 0.005f) {
@@ -427,6 +462,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             return
         }
 
+        // Setzt OnResumeClicked-Listener
         gameMenuRenderer.setOnResumeClicked {
             showMenu = false
         }
@@ -436,18 +472,25 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             return
         }
 
+        //wenn der Benutzer auf einen Button klickt
         if (Gdx.input.justTouched()) {
+            //wenn der Benutzer auf das Settings-Icon klickt...
             if (isMouseInArea(mousePos.x, mousePos.y, settingsX, settingsY, settingsIconSize, settingsIconSize)) {
+                // Zeigt das Menü an
                 showMenu = true
                 return
             }
 
+            // auf "Neues Spiel"-Button klicken
             if (isMouseInArea(mousePos.x, mousePos.y, buttonX, startNewGameButtonY, startNewGameTexture.width.toFloat(), startNewGameTexture.height.toFloat())) {
+                // Zeigt Popup-Fenster an
                 showPopup = true
                 newGamePopUp = true
+                // Überprüft Benutzer
                 checkUser()
             }
 
+            //auf "Spielstand laden" klicken
             if (isMouseInArea(mousePos.x, mousePos.y, buttonX, loadGameButtonY, loadGameTexture.width.toFloat(), loadGameTexture.height.toFloat())) {
                 showPopup = true
                 loadGamePopUp = true
@@ -456,6 +499,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         }
     }
 
+    // Überprüft den Benutzer (asynchron)
     private fun checkUser() {
         threadExecuted = false
         executor.submit {
@@ -489,6 +533,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     }
 
 
+    // Lädt den Checkpoint (asynchron)
     private fun loadCheckpoint() {
         threadExecuted = false
         executor.submit {
@@ -516,11 +561,13 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         }
     }
 
+    // ob sich Maus innerhalb eines Bereichs befindet
     private fun isMouseInArea(mouseX: Float, mouseY: Float, areaX: Float, areaY: Float, areaWidth: Float, areaHeight: Float): Boolean {
         return mouseX >= areaX && mouseX <= areaX + areaWidth &&
             mouseY >= areaY && mouseY <= areaY + areaHeight
     }
 
+    //Öffnet eine Webseite
     private fun openWebpage(url: String) {
         if (Desktop.isDesktopSupported()) {
             Desktop.getDesktop().browse(URI(url))
@@ -529,10 +576,12 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         }
     }
 
+    //wenn die Fenstergröße geändert wird
     override fun resize(width: Int, height: Int) {
         viewport.update(width, height, true)
     }
 
+    //wenn der Screen geschlossen
     override fun dispose() {
         playerTexture.disposeSafely()
         textureAtlas.disposeSafely()
