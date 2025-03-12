@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.Touchable
+import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
@@ -97,6 +98,16 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
 
     private var inputMultiplexer = InputMultiplexer()
 
+    //UI Elemente
+    private lateinit var backpackImage: Image
+    private lateinit var mapImage: Image
+    private lateinit var phrasingBookImage: Image
+    private lateinit var moneyBagImage: Image
+
+    //Größe der UI Elemente
+    private val imageSize = 220f
+    private val padding = 20f
+
 
 
     override fun show() {
@@ -145,32 +156,14 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         val moneyBagTexture = Texture("graphics/map-objects/Coinbag/v2/MoneyBag2-2.png.png")
 
         // Images für jedes Bild
-        val backpackImage = com.badlogic.gdx.scenes.scene2d.ui.Image(backpackTexture)
+        backpackImage = Image(backpackTexture)
         backpackImage.touchable = Touchable.enabled
 
-        val mapImage = com.badlogic.gdx.scenes.scene2d.ui.Image(mapTexture)
-        val phrasingBookImage = com.badlogic.gdx.scenes.scene2d.ui.Image(phrasingBookTexture)
-        backpackImage.touchable = Touchable.enabled
-        val moneyBagImage = com.badlogic.gdx.scenes.scene2d.ui.Image(moneyBagTexture)
+        mapImage = Image(mapTexture)
+        phrasingBookImage = Image(phrasingBookTexture)
 
-        // Größe
-        val imageSize = 220f
-        mapImage.setSize(imageSize, imageSize)
-        phrasingBookImage.setSize(imageSize, imageSize)
+        moneyBagImage = Image(moneyBagTexture)
 
-        val padding = 20f // Abstand vom Rand
-
-        //Map Image (links oben)
-        mapImage.setPosition(
-            padding,
-            uiStage.viewport.worldHeight - imageSize - padding
-        )
-
-        //PhrasingBook Image (rechts unten)
-        phrasingBookImage.setPosition(
-            uiStage.viewport.worldWidth - imageSize - padding,
-            padding
-        )
 
         uiStage.addActor(mapImage)
         uiStage.addActor(phrasingBookImage)
@@ -239,6 +232,20 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
 
 
         world.update(delta.coerceAtMost(update))
+
+
+        // Hier die Positionen basierend auf der aktuellen Viewport-Größe berechnen
+        mapImage.setPosition(
+            padding,
+            uiStage.viewport.worldHeight - imageSize - padding
+        )
+
+        phrasingBookImage.setPosition(
+            uiStage.viewport.worldWidth - imageSize - padding,
+            padding
+        )
+        mapImage.setSize(imageSize, imageSize)
+        phrasingBookImage.setSize(imageSize, imageSize)
 
 
         // Zeichne die UI-Stage
