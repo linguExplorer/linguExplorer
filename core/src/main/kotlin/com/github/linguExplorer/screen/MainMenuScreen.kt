@@ -50,6 +50,12 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private var emptySlotTexture: Texture = Texture("MainMenu/greybox.png")
     private var penTexture: Texture = Texture("MainMenu/penGrey.png")
     private var spielStartenButtonTexture: Texture = Texture("MainMenu/spielstandStarten.png")
+    private var showUserExistsConfirmation = false // ob das User Exists-Fenster angezeigt werden soll
+    private var userExistsBoxTexture: Texture = Texture("MainMenu/box3.png")
+    private var checkTexture: Texture = Texture("MainMenu/check.png")
+    private var showEnterNameDialog = false //  ob der Dialog angezeigt werden soll
+    private var spielstandStartenButtonTexture: Texture = Texture("MainMenu/spielstandStarten.png")
+    private var rectangleTexture: Texture = Texture("MainMenu/rectangle.png")
     private val executor: ExecutorService = Executors.newFixedThreadPool(1)
     //Menü
     private var showPopup = false //Popup-Fenster
@@ -116,6 +122,9 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         music.play()
         font = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
         gifAnimation = Animation(0.1f, textureAtlas.regions, Animation.PlayMode.LOOP)
+        checkTexture = Texture("MainMenu/check.png")
+        spielstandStartenButtonTexture = Texture("MainMenu/spielstandStarten.png")
+        rectangleTexture = Texture("MainMenu/rectangle.png")
     }
 
     override fun render(delta: Float) {
@@ -303,19 +312,17 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                             val penY = slotY - 65f
                             batch.draw(penTexture, penX, penY, editSize, editSize)
 
-                            val buttonX = slotX + slotWidth - popUpButtonSize.x - 30f
-                            val buttonY = slotY - popUpButtonSize.y - 85f
-                            batch.draw(spielStartenButtonTexture, buttonX, buttonY, popUpButtonSize.x, popUpButtonSize.y)
+                            // Überprüfe, ob die Maus über dem gesamten Kästchen ist
+                            val isBoxHovered = isMouseInArea(mousePos.x, mousePos.y, slotX, slotY - slotHeight, slotWidth, slotHeight)
 
-                            val isButtonHovered = isMouseInArea(mousePos.x, mousePos.y, buttonX, buttonY, popUpButtonSize.x, popUpButtonSize.y)
-
-                            if (isButtonHovered) {
+                            // Zeichne die gelbe Umrandung, wenn die Maus über dem Kästchen ist
+                            if (isBoxHovered) {
                                 Gdx.gl.glLineWidth(3f)
                                 Gdx.gl.glEnable(GL20.GL_BLEND)
                                 batch.end()
                                 shapeRenderer.begin(ShapeRenderer.ShapeType.Line)
                                 shapeRenderer.color = Color.YELLOW
-                                shapeRenderer.rect(buttonX, buttonY, popUpButtonSize.x, popUpButtonSize.y)
+                                shapeRenderer.rect(slotX, slotY - slotHeight, slotWidth, slotHeight)
                                 shapeRenderer.end()
                                 batch.begin()
                                 Gdx.gl.glDisable(GL20.GL_BLEND)
@@ -340,9 +347,10 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                                 println("Pen clicked for save slot ${index + 1}!")
                             }
 
-                            if (Gdx.input.justTouched() && isButtonHovered) {
+                            // Wenn die Maus über dem Kästchen ist und geklickt wird
+                            if (Gdx.input.justTouched() && isBoxHovered) {
                                 if (user != null && newGamePopUp) {
-                                    userAlreadyExists = true
+                                    showUserExistsConfirmation = true
                                 } else {
                                     if (!newGamePopUp) {
                                         this.user = user!!
@@ -368,7 +376,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                     )
                 }
             } else {
-               // Zeigt den Ladebildschirm
+                // Zeigt den Ladebildschirm
                 loadingTime += delta
 
                 font.data.setScale(0.4f, 0.4f)
@@ -456,6 +464,113 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             shapeRenderer.circle(transitionCenter.x, transitionCenter.y, transitionRadius)
             shapeRenderer.end()
             Gdx.gl.glDisable(GL20.GL_BLEND)
+        }
+
+        // Code zum Zeichnen des Infokästchens, der Buttons und zur Verarbeitung der Klicks hinzufügen (nach dem Ende der 'for' Schleife)
+        if (showUserExistsConfirmation) {
+            val boxWidth = 700f // Breite des Infokästchens
+            val boxHeight = 250f // Höhe des Infokästchens
+            val boxX = viewport.worldWidth / 2 - boxWidth / 2
+            val boxY = viewport.worldHeight / 2 - boxHeight / 2
+
+            // Dunkler Hintergrund, falls gewünscht
+            Gdx.gl.glEnable(GL20.GL_BLEND)
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
+            shapeRenderer.color = Color(0f, 0f, 0f, 0.5f) // Halbtransparent
+            shapeRenderer.rect(0f, 0f, viewport.worldWidth, viewport.worldHeight)
+            shapeRenderer.end()
+            Gdx.gl.glDisable(GL20.GL_BLEND)
+
+            batch.begin()
+
+            // Infokästchen zeichnen
+            batch.draw(userExistsBoxTexture, boxX, boxY, boxWidth, boxHeight)
+
+            // Buttons positionieren
+            val xButtonSize = 90f
+            val checkButtonSize = 90f
+            val xButtonX = boxX + 200f
+            val xButtonY = boxY + 40f
+            val checkButtonX = boxX + boxWidth - 200f - checkButtonSize
+            val checkButtonY = boxY + 40f
+
+            // Buttons zeichnen
+            batch.draw(exitTexture, xButtonX, xButtonY, xButtonSize, xButtonSize)
+            batch.draw(checkTexture, checkButtonX, checkButtonY, checkButtonSize, checkButtonSize)
+            batch.end()
+
+            batch.begin()
+            // Text zeichnen
+            font.data.setScale(0.23f, 0.23f)
+            val text = "Bist du dir sicher, dass du den\nSpielstand überschreiben möchtest?"
+            glyphLayout.setText(font, text)
+            val textX = boxX + (boxWidth - glyphLayout.width) / 2
+            val textY = boxY + boxHeight - 60f // Vertikale Positionierung
+            font.draw(batch, text, textX, textY)
+            batch.end()
+
+            // Klicks auf die Buttons verarbeiten
+            if (Gdx.input.justTouched()) {
+                if (isMouseInArea(mousePos.x, mousePos.y, xButtonX, xButtonY, xButtonSize, xButtonSize)) {
+                    showUserExistsConfirmation = false // Abbrechen
+                } else if (isMouseInArea(mousePos.x, mousePos.y, checkButtonX, checkButtonY, checkButtonSize, checkButtonSize)) {
+                    showUserExistsConfirmation = false
+                    //userAlreadyExists = true // Bestätigen
+                    showEnterNameDialog = true
+                }
+            }
+        }
+        // Code zum Anzeigen des Dialogs zur Namenseingabe
+        else if (showEnterNameDialog) {
+            val boxWidth = 700f // Breite des Dialogs
+            val boxHeight = 250f // Höhe des Dialogs
+            val boxX = viewport.worldWidth / 2 - boxWidth / 2
+            val boxY = viewport.worldHeight / 2 - boxHeight / 2
+
+            // Dunkler Hintergrund, falls gewünscht
+            Gdx.gl.glEnable(GL20.GL_BLEND)
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
+            shapeRenderer.color = Color(0f, 0f, 0f, 0.5f) // Halbtransparent
+            shapeRenderer.rect(0f, 0f, viewport.worldWidth, viewport.worldHeight)
+            shapeRenderer.end()
+            Gdx.gl.glDisable(GL20.GL_BLEND)
+
+            batch.begin()
+
+            // Dialog zeichnen
+            batch.draw(userExistsBoxTexture, boxX, boxY, boxWidth, boxHeight)
+
+            // Text positionieren und zeichnen
+            font.data.setScale(0.23f, 0.23f)
+            val text = "Spielernamen eingeben:"
+            glyphLayout.setText(font, text)
+            val textX = boxX + (boxWidth - glyphLayout.width) / 2
+            val textY = boxY + boxHeight - 60f
+            font.draw(batch, text, textX, textY)
+
+            // Rechteck zeichnen
+            val rectangleWidth = 550f // Breite des Rechtecks
+            val rectangleHeight = 46f // Höhe des Rechtecks
+            val rectangleX = boxX + (boxWidth - rectangleWidth) / 2 // Zentriert
+            val rectangleY = boxY + boxHeight - 140f // wegiger = höher
+            batch.draw(rectangleTexture, rectangleX, rectangleY, rectangleWidth, rectangleHeight)
+
+            // Button positionieren und zeichnen
+            val buttonWidth = 170f
+            val buttonHeight = 50f
+            val buttonX = boxX + (boxWidth - buttonWidth) / 2
+            val buttonY = boxY + 40f
+            batch.draw(spielstandStartenButtonTexture, buttonX, buttonY, buttonWidth, buttonHeight)
+            batch.end()
+
+            // Klick auf den Button verarbeiten
+            if (Gdx.input.justTouched()) {
+                if (isMouseInArea(mousePos.x, mousePos.y, buttonX, buttonY, buttonWidth, buttonHeight)) {
+                    showEnterNameDialog = false
+                    userAlreadyExists = true // User Exists-Anzeige aktivieren
+                    checkUser() //damit die User Exists Anzeige gerendert wird
+                }
+            }
         }
 
         if (showPopup) {
@@ -593,6 +708,10 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         settingsIconTexture.dispose()
         wordmarkTexture.dispose()
         popupTexture.dispose()
+        userExistsBoxTexture.disposeSafely()
+        checkTexture.disposeSafely()
+        rectangleTexture.disposeSafely()
+        spielstandStartenButtonTexture.disposeSafely()
     }
 
     companion object {
