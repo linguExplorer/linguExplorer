@@ -73,6 +73,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
             add<MapChangeSystem>()
             add<PathSystem>()
             add<MoveSystem>()
+            add<InteractSystem>()
             add<PhysicSystem>()
             add<AnimationSystem>()
             add<CameraSystem>()
@@ -230,16 +231,15 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
 
 
         // Zeichne die UI-Stage
-        uiStage.act(Math.min(delta, 1 / 30f)) // Update für die UI-Stage
-        uiStage.draw() // UI immer über der Welt
+       uiStage.act(Math.min(delta, 1 / 30f)) // Update für die UI-Stage
+       uiStage.draw() // UI immer über der Welt
 
 
         //Game Menü
 
 
-        if (menuSet) {
+       if (menuSet) {
             gameMenuRenderer.renderGameMenu(batch, font, glyphLayout, viewport, shapeRenderer)
-            return
         }
     }
 

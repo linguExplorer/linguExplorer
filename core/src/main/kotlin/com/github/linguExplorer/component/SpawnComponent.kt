@@ -12,7 +12,8 @@ data class SpawnCfg(
     val physicScaling: Vector2 = vec2(1f,1f),
     val physicOffset:Vector2 = vec2(0f, 0f),
     val bodyType: BodyDef.BodyType = BodyDef.BodyType.DynamicBody,
-    var aniType: AnimationType = AnimationType.IDLE
+    var aniType: AnimationType = AnimationType.IDLE,
+    val interact: Boolean = false
 
 )
 
