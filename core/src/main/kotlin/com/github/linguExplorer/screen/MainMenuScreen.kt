@@ -9,6 +9,9 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.*
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Skin
+import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.github.linguExplorer.*
@@ -18,6 +21,7 @@ import com.github.linguExplorer.repositories.CheckpointRepository
 import com.github.linguExplorer.repositories.TopicRepository
 import com.github.linguExplorer.repositories.UserProgressRepository
 import com.github.linguExplorer.repositories.UserRepository
+import ktx.actors.stage
 import java.awt.Desktop
 import java.net.URI
 import ktx.app.KtxScreen
@@ -32,6 +36,7 @@ import kotlin.math.max
 
 class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private var batch: SpriteBatch = SpriteBatch()
+    private var stage: Stage = Stage()
     private var shapeRenderer: ShapeRenderer = ShapeRenderer()
     private lateinit var font: BitmapFont
     private val viewport: Viewport = ExtendViewport(1920f, 1080f)
@@ -39,6 +44,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     // Hintergrundmusik
     private lateinit var music: Music
 
+    private val skin = Skin(Gdx.files.internal("MainMenu/FieldSkin.json"))
     private var backgroundTexture: Texture = Texture("xx_map_assets/Map/ref.png")
     private var startNewGameTexture: Texture = Texture("xx_Images/Buttons/neuesSpiel_green.png")
     private var loadGameTexture: Texture = Texture("xx_Images/Buttons/spielstandLaden_green.png")
@@ -89,6 +95,26 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             (viewport.worldWidth / 2 - popUpSize.x / 2),
             (viewport.worldHeight / 2 - popUpSize.y / 2)
         )
+
+
+    //input feld
+    val boxWidth = 700f // Breite des Infokästchens
+    val boxHeight = 250f // Höhe des Infokästchens
+    private val boxX = viewport.worldWidth / 2 - boxWidth / 2
+    private val boxY = viewport.worldHeight / 2 - boxHeight / 2
+
+    private val rectangleWidth = 550f // Breite des Rechtecks
+    private  val rectangleHeight = 46f // Höhe des Rechtecks
+
+
+    private  val rectangleX = boxX + (boxWidth - rectangleWidth) / 2 // Zentriert
+    private  val rectangleY = boxY + boxHeight - 140f // wegiger = höher
+
+    private var textField = TextField("", skin).apply {
+        setBounds((viewport.worldWidth / 2) - (rectangleWidth/2), viewport.worldHeight / 2 - (rectangleHeight/2), rectangleWidth, rectangleHeight) // Position und Größe
+        messageText = "Spielername eingeben" // Platzhaltertext
+    }
+
     //Animation für Charakter
     private val textureAtlas = TextureAtlas("graphics/idle_animation.atlas")
     private val playerTexture: Texture = Texture("graphics/idle_animation.png")
@@ -125,9 +151,23 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         checkTexture = Texture("MainMenu/check.png")
         spielstandStartenButtonTexture = Texture("MainMenu/spielstandStarten.png")
         rectangleTexture = Texture("MainMenu/rectangle.png")
+
+       textField = TextField("Blop", skin).apply {
+            setBounds((viewport.worldWidth / 2) - (rectangleWidth/2), viewport.worldHeight / 2 - (rectangleHeight/2), rectangleWidth, rectangleHeight) // Position und Größe
+            messageText = "Spielername eingeben" // Platzhaltertext
+        }
+
+
+
+        stage.addActor(textField)
+        Gdx.input.inputProcessor = stage
+
+
     }
 
-    override fun render(delta: Float) {
+
+
+        override fun render(delta: Float) {
         viewport.apply()
         // Setzt die Lautstärke der Musik, wenn kein Übergang stattfindet
         // musicVolume und masterVolume sind globale Variablen für die Lautstärkeeinstellungen
@@ -527,6 +567,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             val boxX = viewport.worldWidth / 2 - boxWidth / 2
             val boxY = viewport.worldHeight / 2 - boxHeight / 2
 
+
             // Dunkler Hintergrund, falls gewünscht
             Gdx.gl.glEnable(GL20.GL_BLEND)
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
@@ -539,6 +580,8 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
 
             // Dialog zeichnen
             batch.draw(userExistsBoxTexture, boxX, boxY, boxWidth, boxHeight)
+
+
 
             // Text positionieren und zeichnen
             font.data.setScale(0.23f, 0.23f)
@@ -553,7 +596,11 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             val rectangleHeight = 46f // Höhe des Rechtecks
             val rectangleX = boxX + (boxWidth - rectangleWidth) / 2 // Zentriert
             val rectangleY = boxY + boxHeight - 140f // wegiger = höher
-            batch.draw(rectangleTexture, rectangleX, rectangleY, rectangleWidth, rectangleHeight)
+
+
+
+            stage.act(delta)
+            stage.draw()
 
             // Button positionieren und zeichnen
             val buttonWidth = 170f
@@ -566,9 +613,11 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             // Klick auf den Button verarbeiten
             if (Gdx.input.justTouched()) {
                 if (isMouseInArea(mousePos.x, mousePos.y, buttonX, buttonY, buttonWidth, buttonHeight)) {
+                    name = textField.text.toString()
                     showEnterNameDialog = false
                     userAlreadyExists = true // User Exists-Anzeige aktivieren
                     checkUser() //damit die User Exists Anzeige gerendert wird
+
                 }
             }
         }
@@ -712,6 +761,8 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         checkTexture.disposeSafely()
         rectangleTexture.disposeSafely()
         spielstandStartenButtonTexture.disposeSafely()
+        skin.disposeSafely()
+        stage.disposeSafely()
     }
 
     companion object {
