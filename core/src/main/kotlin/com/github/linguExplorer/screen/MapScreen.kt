@@ -128,17 +128,16 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         Stage(ScreenViewport())
     }
 
-    // Initialisierung der UI-Elemente (lazy), um die Abhängigkeit von uiStage zu gewährleisten
+    // Initialisierung der UI-Elemente
     private val uiElements by lazy {
         UIElements(uiStage)
     }
 
-    // Hier die Größen und Positionen definieren
+    // Größen und Positionen
     private var upperBarHeight: Float = 0f
     private var settingsIconHeight: Float = 0f
     private var progressBarHeight: Float = 0f
 
-    // Hilfsklasse, um die UI-Elemente zu verwalten
     inner class UIElements(val uiStage: Stage) {
         // Bilder laden
         val backpackTexture = Texture("graphics/map-objects/Rucksack/v2/Backpack2.png")
@@ -151,7 +150,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         val settingsIconTexture = Texture(Gdx.files.internal("graphics/map-objects/SettingsIcon 1.png"))
         val progressBarTexture = Texture(Gdx.files.internal("graphics/map-objects/Prozentleiste2-1.png 1.png"))
 
-        // Images für jedes Bild
+        // Images
         val backpackImage = Image(backpackTexture).apply { touchable = Touchable.enabled }
         val mapImage = Image(mapTexture).apply {
             isVisible = false
@@ -198,20 +197,20 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
                     val newTexture = if (isBoxIn) boxInTexture else boxOutTexture
                     boxInImage.drawable = Image(newTexture).drawable
 
-                    // Aktualisiere die Größe
+                    // Größe aktualisieren
                     updateBoxImageSize()
 
-                    //Aktualisiere die Sichtbarkeit des Phrasenhefts und der Karte
+                    // Sichtbarkeit Phrasenhefts + Karte
                     isBoxOutVisible = !isBoxIn
                     mapImage.isVisible = isBoxOutVisible
                     phrasingBookImage.isVisible = isBoxOutVisible
 
-                    // Füge mapImage und phrasingBookImage nur zum Stage hinzu, wenn sie sichtbar sein sollen
+                    // mapImage und phrasingBookImage nur zum Stage wenn sichtbar
                     if (isBoxOutVisible) {
                         uiStage.addActor(mapImage)
                         uiStage.addActor(phrasingBookImage)
                     } else {
-                        // Entferne sie vom Stage, wenn sie nicht sichtbar sein sollen
+                        // entferne von Stage wenn nicht sichtbar
                         mapImage.remove()
                         phrasingBookImage.remove()
                     }
@@ -228,7 +227,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         }
 
         private fun recalculateMapAndPhrasebookPositions() {
-            //Positioniere Phrasenheft und Karte untereinander in der Box
+            // Phrasenheft + Karte untereinander
             mapImage.setPosition(
                 boxInImage.x + (boxInImage.width - mapImage.width) / 2 - 45f, //zentriert horizontal
                 boxInImage.y + boxInImage.height - mapImage.height - 45f //oberer Rand der Box - 10f Abstand
@@ -270,7 +269,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
     }
 
     private fun calculateUIElementSizesAndPositions() {
-        // Höhe basierend auf dem Seitenverhältnis und der Breite berechnen
+        // Höhe basierend auf Seitenverhältnis + Breite berechnen
         upperBarHeight = upperBarWidth / (uiElements.upperBarImage.width.toFloat() / uiElements.upperBarImage.height.toFloat())
         settingsIconHeight = settingsIconWidth / (uiElements.settingsIconImage.width.toFloat() / uiElements.settingsIconImage.height.toFloat())
         progressBarHeight = progressBarWidth / (uiElements.progressBarImage.width.toFloat() / uiElements.progressBarImage.height.toFloat())
@@ -280,10 +279,10 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         uiElements.settingsIconImage.setSize(settingsIconWidth, settingsIconHeight)
         uiElements.progressBarImage.setSize(progressBarWidth, progressBarHeight)
 
-        // Positionierung der neuen Bilder (nach der Größenänderung!)
+        // Positionierung Bilder
         uiElements.upperBarImage.setPosition(0f, uiStage.height - upperBarHeight) // Links oben
 
-        // Positionierung der Icons innerhalb der upperBar
+        // Positionierung Icons innerhalb der upperBar
         uiElements.settingsIconImage.setPosition(settingsIconXOffset, uiStage.height - upperBarHeight + (upperBarHeight - settingsIconHeight) / 2 + 10f) // Zentriert vertikal in der upperBar
         uiElements.progressBarImage.setPosition(settingsIconXOffset + settingsIconWidth + progressBarXOffset, uiStage.height - upperBarHeight + (upperBarHeight - progressBarHeight) / 2 + 10f) // Zentriert vertikal in der upperBar, rechts neben dem Settings-Icon
 
