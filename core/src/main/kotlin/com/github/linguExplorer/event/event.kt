@@ -24,3 +24,9 @@ class GameEndEvent(val game: String) : Event()
 class ClickDownEvent(val mouseX : Float, val mouseY: Float) : Event()
 
 class GamePause(val game: linguExplorer) : Event()
+
+//Events für locked und celebrate
+
+class GameCollideEvent(val miniGame: String) : Event ()
+
+class UnlockedEvent(val type: String) : Event()
