@@ -1,22 +1,19 @@
 package com.github.linguExplorer.screen
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.github.linguExplorer.linguExplorer
-import ktx.app.KtxScreen
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
-import com.badlogic.gdx.utils.Align
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.utils.viewport.Viewport
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.Input
-import com.badlogic.gdx.math.Rectangle
-import com.badlogic.gdx.math.MathUtils  // Importiere MathUtils
 
-class GameMenuScreen(val game: linguExplorer) : KtxScreen {
+class GameMenuScreen {
 
     private lateinit var batch: SpriteBatch
     private lateinit var boxTexture: Texture
@@ -31,34 +28,33 @@ class GameMenuScreen(val game: linguExplorer) : KtxScreen {
     private lateinit var wordmarkTexture: Texture
     private val wordmarkScale = 0.2f
     private lateinit var applyTexture: Texture
-    private val applyButtonWidth = 230f  // Breite für den Apply-Button
+    private val applyButtonWidth = 230f
     private var showSoundSettings = false
     private lateinit var redXTexture: Texture
-    private val redXSize = Vector2(60f, 60f) //rotes X-Symbols
+    private val redXSize = Vector2(60f, 60f)
     private lateinit var barnoneTexture: Texture
-    private lateinit var barfullTexture: Texture // Neue Textur für den farbigen Balken
-    private val barnoneWidth = 480f  // Breite des Balkens
-    private val barnoneHeight = 25f // Höhe des Balkens
-    private val headingLeftPadding = 50f // Abstand der Überschriften vom linken Rand
+    private lateinit var barfullTexture: Texture
+    private val barnoneWidth = 480f
+    private val barnoneHeight = 25f
+    private val headingLeftPadding = 50f
     private lateinit var circleTexture: Texture
-    private val circleSize = Vector2(50f, 50f) // Größe des Kreises
+    private val circleSize = Vector2(50f, 50f)
     private var masterCircleX: Float = 0f
     private var soundeffectsCircleX: Float = 0f
     private var musicCircleX: Float = 0f
     private var isDraggingMaster: Boolean = false
     private var isDraggingSoundeffects: Boolean = false
     private var isDraggingMusic: Boolean = false
-
-    // NEU: Offset-Variablen für die Kreispositionen
-    private var masterCircleXOffset: Float = 0f // Relativ zum Balkenstart
+    private var masterCircleXOffset: Float = 0f
     private var soundeffectsCircleXOffset: Float = 0f
     private var musicCircleXOffset: Float = 0f
-
     private var masterBarnoneY: Float = 0f
     private var soundeffectsBarnoneY: Float = 0f
     private var musicBarnoneY: Float = 0f
 
-    override fun show() {
+    var isMenuVisible: Boolean = false
+
+    init {
         batch = SpriteBatch()
         boxTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/box.png"))
         font = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
@@ -67,15 +63,17 @@ class GameMenuScreen(val game: linguExplorer) : KtxScreen {
         quitGameTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/quitgame.png"))
         wordmarkTexture = Texture(Gdx.files.internal("xx_Images/wordmark/wordmark_scaled.png"))
         applyTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/apply.png"))
-        redXTexture = Texture(Gdx.files.internal("xx_Images/Buttons/red_X.png")) // Lade die Textur für das rote X
-        barnoneTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/barnone.png")) // Lade die Textur für den Balken
-        barfullTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/barfull.png")) // Lade die Textur für den farbigen Balken
-        circleTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/circle.png")) // Lade die Textur für den Kreis
+        redXTexture = Texture(Gdx.files.internal("xx_Images/Buttons/red_X.png"))
+        barnoneTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/barnone.png"))
+        barfullTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/barfull.png"))
+        circleTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/circle.png"))
     }
 
-    override fun render(delta: Float) {
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+    fun render(batch: SpriteBatch, font: BitmapFont, glyphLayout: GlyphLayout, viewport: Viewport, shapeRenderer: ShapeRenderer, onMenuClose: () -> Unit) {
+        if (!isMenuVisible) return
+
+        //Gdx.gl.glClearColor(0f, 0f, 0f, 0.5f)
+        //Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
         val screenWidth = Gdx.graphics.width.toFloat()
         val screenHeight = Gdx.graphics.height.toFloat()
@@ -99,15 +97,13 @@ class GameMenuScreen(val game: linguExplorer) : KtxScreen {
         batch.draw(boxTexture, boxX, boxY, boxWidth, boxHeight)
 
         font.color = Color.BLACK
-        // Überschrift zeichnen
         font.data.setScale(0.4f)
         val headlineText = if (showSoundSettings) "SOUND" else "OPTIONS"
-        val headlineLayout = GlyphLayout(font, headlineText)
-        val headlineTextX = boxX + (boxWidth - headlineLayout.width) / 2
+        val headlineLayout2 = GlyphLayout(font, headlineText)
+        val headlineTextX = boxX + (boxWidth - headlineLayout2.width) / 2
         val headlineTextY = boxY + boxHeight - 80
         font.draw(batch, headlineText, headlineTextX, headlineTextY)
 
-        // Button-Positionierung (einmalig berechnen)
         val resumeButtonX = boxX + (boxWidth - buttonSize.x) / 2
         val resumeButtonY = headlineTextY - 120f - buttonSize.y
 
@@ -117,50 +113,36 @@ class GameMenuScreen(val game: linguExplorer) : KtxScreen {
         val quitGameButtonX = boxX + (boxWidth - buttonSize.x) / 2
         val quitGameButtonY = soundSettingsButtonY - buttonSize.y - buttonSpacing
 
-        // apply button
-        val applyButtonX = boxX + (boxWidth - applyButtonWidth) / 2  // Zentriere den schmaleren Button
+        val applyButtonX = boxX + (boxWidth - applyButtonWidth) / 2
         val applyButtonY = boxY - buttonSize.y / 2
 
-        // Position des roten X-Symbols
-        val redXButtonX = boxX + boxWidth - redXSize.x - 20 // 20 Pixel Abstand vom rechten Rand
-        val redXButtonY = boxY + boxHeight - redXSize.y - 20 // 20 Pixel Abstand vom oberen Rand
+        val redXButtonX = boxX + boxWidth - redXSize.x - 20
+        val redXButtonY = boxY + boxHeight - redXSize.y - 20
 
         if (!showSoundSettings) {
-            // Buttons zeichnen
             batch.draw(resumeTexture, resumeButtonX, resumeButtonY, buttonSize.x, buttonSize.y)
             batch.draw(soundSettingsTexture, soundSettingsButtonX, soundSettingsButtonY, buttonSize.x, buttonSize.y)
             batch.draw(quitGameTexture, quitGameButtonX, quitGameButtonY, buttonSize.x, buttonSize.y)
         } else {
-            // Zeichne das rote X-Symbol, wenn Soundeinstellungen angezeigt werden
             batch.draw(redXTexture, redXButtonX, redXButtonY, redXSize.x, redXSize.y)
 
-            //Startposition für die Sound-Einstellungen-Inhalte
-            var currentY = headlineTextY - 100f // Abstand zur Überschrift
-
-            // Schriftgröße für die Sound-Einstellungen-Überschriften
+            var currentY = headlineTextY - 100f
             font.data.setScale(0.2f)
 
-            val headingSpacing = 50f // Abstand zwischen Überschrift und Balken
-            val sectionSpacing = 45f // Abstand zwischen den Abschnitten (Überschrift + Balken)
+            val headingSpacing = 50f
+            val sectionSpacing = 45f
 
-            //Master Volume
             val masterText = "MASTER"
             val masterLayout = GlyphLayout(font, masterText)
-            val masterTextX = boxX + headingLeftPadding // Linksbündig mit Abstand
+            val masterTextX = boxX + headingLeftPadding
             font.draw(batch, masterText, masterTextX, currentY)
-            currentY -= masterLayout.height + headingSpacing // Abstand zum Balken
-            masterBarnoneY = currentY // Speichere die Y-Position für später
+            currentY -= masterLayout.height + headingSpacing
+            masterBarnoneY = currentY
 
-            //Zeichne zuerst die volle bar none textur
             batch.draw(barnoneTexture, boxX + headingLeftPadding, currentY, barnoneWidth, barnoneHeight)
 
-            // Definiere eine minimale Breite für die farbige Bar
-            val minColoredBarWidth = barnoneWidth * 0.1f //Beispielwert: 10% der gesamten Balkenlänge
-
-            // Berechne die gewünschte Breite basierend auf der Kugelposition
+            val minColoredBarWidth = barnoneWidth * 0.1f
             var masterColoredBarWidth = masterCircleX - (boxX + headingLeftPadding) + circleSize.x / 3
-
-            // Stelle sicher, dass die Breite nicht kleiner als die minimale Breite ist
             masterColoredBarWidth = Math.max(masterColoredBarWidth, minColoredBarWidth)
 
             val scaleX = masterColoredBarWidth / barfullTexture.width
@@ -169,43 +151,33 @@ class GameMenuScreen(val game: linguExplorer) : KtxScreen {
                 barfullTexture,
                 boxX + headingLeftPadding,
                 currentY,
-                masterColoredBarWidth, //Die tatsächliche Breite des gezeichneten Bereichs
+                masterColoredBarWidth,
                 barnoneHeight,
                 0,
                 0,
-                barfullTexture.width, //Die ursprüngliche Breite der Textur
+                barfullTexture.width,
                 barfullTexture.height,
                 false,
                 false
             )
 
-            // Berechne die Kreisposition basierend auf dem Offset
             masterCircleX = boxX + headingLeftPadding + masterCircleXOffset
-            // Stelle sicher, dass der Kreis innerhalb der Grenzen bleibt
             masterCircleX = MathUtils.clamp(masterCircleX, boxX + headingLeftPadding, boxX + headingLeftPadding + barnoneWidth - circleSize.x)
-            // Zeichne den Kreis
             batch.draw(circleTexture, masterCircleX, masterBarnoneY + barnoneHeight / 2f - circleSize.y / 2f, circleSize.x, circleSize.y)
 
-            currentY -= barnoneHeight + sectionSpacing // Abstand zur nächsten Überschrift
+            currentY -= barnoneHeight + sectionSpacing
 
-            // Soundeffects Volume
             val soundeffectsText = "SOUNDEFFECTS"
             val soundeffectsLayout = GlyphLayout(font, soundeffectsText)
-            val soundeffectsTextX = boxX + headingLeftPadding // Linksbündig mit Abstand
+            val soundeffectsTextX = boxX + headingLeftPadding
             font.draw(batch, soundeffectsText, soundeffectsTextX, currentY)
-            currentY -= soundeffectsLayout.height + headingSpacing // Abstand zum Balken
-            soundeffectsBarnoneY = currentY // Speichere die Y-Position für später
+            currentY -= soundeffectsLayout.height + headingSpacing
+            soundeffectsBarnoneY = currentY
 
-            //Zeichne zuerst die volle bar none textur
             batch.draw(barnoneTexture, boxX + headingLeftPadding, currentY, barnoneWidth, barnoneHeight)
 
-            // Definiere eine minimale Breite für die farbige Bar
-            val minSoundeffectsColoredBarWidth = barnoneWidth * 0.1f //Beispielwert: 10% der gesamten Balkenlänge
-
-            // Berechne die gewünschte Breite basierend auf der Kugelposition
+            val minSoundeffectsColoredBarWidth = barnoneWidth * 0.1f
             var soundeffectsColoredBarWidth = soundeffectsCircleX - (boxX + headingLeftPadding) + circleSize.x / 3
-
-            // Stelle sicher, dass die Breite nicht kleiner als die minimale Breite ist
             soundeffectsColoredBarWidth = Math.max(soundeffectsColoredBarWidth, minSoundeffectsColoredBarWidth)
 
             val soundeffectsScaleX = soundeffectsColoredBarWidth / barfullTexture.width
@@ -214,43 +186,33 @@ class GameMenuScreen(val game: linguExplorer) : KtxScreen {
                 barfullTexture,
                 boxX + headingLeftPadding,
                 currentY,
-                soundeffectsColoredBarWidth, //Die tatsächliche Breite des gezeichneten Bereichs
+                soundeffectsColoredBarWidth,
                 barnoneHeight,
                 0,
                 0,
-                barfullTexture.width, //Die ursprüngliche Breite der Textur
+                barfullTexture.width,
                 barfullTexture.height,
                 false,
                 false
             )
 
-            // Berechne die Kreisposition basierend auf dem Offset
             soundeffectsCircleX = boxX + headingLeftPadding + soundeffectsCircleXOffset
-            // Stelle sicher, dass der Kreis innerhalb der Grenzen bleibt
             soundeffectsCircleX = MathUtils.clamp(soundeffectsCircleX, boxX + headingLeftPadding, boxX + headingLeftPadding + barnoneWidth - circleSize.x)
-            // Zeichne den Kreis
             batch.draw(circleTexture, soundeffectsCircleX, soundeffectsBarnoneY + barnoneHeight / 2f - circleSize.y / 2f, circleSize.x, circleSize.y)
 
-            currentY -= barnoneHeight + sectionSpacing // Abstand zur nächsten Überschrift
+            currentY -= barnoneHeight + sectionSpacing
 
-            //Music Volume
             val musicText = "MUSIC"
             val musicLayout = GlyphLayout(font, musicText)
-            val musicTextX = boxX + headingLeftPadding // Linksbündig mit Abstand
+            val musicTextX = boxX + headingLeftPadding
             font.draw(batch, musicText, musicTextX, currentY)
-            currentY -= musicLayout.height + headingSpacing // Abstand zum Balken
-            musicBarnoneY = currentY // Speichere die Y-Position für später
+            currentY -= musicLayout.height + headingSpacing
+            musicBarnoneY = currentY
 
-            //Zeichne zuerst die volle bar none textur
             batch.draw(barnoneTexture, boxX + headingLeftPadding, currentY, barnoneWidth, barnoneHeight)
 
-            // Definiere eine minimale Breite für die farbige Bar
-            val minMusicColoredBarWidth = barnoneWidth * 0.1f //Beispielwert: 10% der gesamten Balkenlänge
-
-            // Berechne die gewünschte Breite basierend auf der Kugelposition
+            val minMusicColoredBarWidth = barnoneWidth * 0.1f
             var musicColoredBarWidth = musicCircleX - (boxX + headingLeftPadding) + circleSize.x / 3
-
-            // Stelle sicher, dass die Breite nicht kleiner als die minimale Breite ist
             musicColoredBarWidth = Math.max(musicColoredBarWidth, minMusicColoredBarWidth)
 
             val musicScaleX = musicColoredBarWidth / barfullTexture.width
@@ -259,40 +221,34 @@ class GameMenuScreen(val game: linguExplorer) : KtxScreen {
                 barfullTexture,
                 boxX + headingLeftPadding,
                 currentY,
-                musicColoredBarWidth, //Die tatsächliche Breite des gezeichneten Bereichs
+                musicColoredBarWidth,
                 barnoneHeight,
                 0,
                 0,
-                barfullTexture.width, //Die ursprüngliche Breite der Textur
+                barfullTexture.width,
                 barfullTexture.height,
                 false,
                 false
             )
 
-            // Berechne die Kreisposition basierend auf dem Offset
             musicCircleX = boxX + headingLeftPadding + musicCircleXOffset
-            // Stelle sicher, dass der Kreis innerhalb der Grenzen bleibt
             musicCircleX = MathUtils.clamp(musicCircleX, boxX + headingLeftPadding, boxX + headingLeftPadding + barnoneWidth - circleSize.x)
-            // Zeichne den Kreis
             batch.draw(circleTexture, musicCircleX, musicBarnoneY + barnoneHeight / 2f - circleSize.y / 2f, circleSize.x, circleSize.y)
 
-            currentY -= barnoneHeight + 50f // Abstand zum Apply Button
+            currentY -= barnoneHeight + 50f
 
-            // apply button
             batch.draw(applyTexture, applyButtonX, applyButtonY, applyButtonWidth, buttonSize.y)
         }
 
         batch.end()
 
-        // Eingabe verarbeiten (Positionen werden hier übergeben)
-        handleInput(resumeButtonX, resumeButtonY, soundSettingsButtonX, soundSettingsButtonY, quitGameButtonX, quitGameButtonY, applyButtonX, applyButtonY, applyButtonWidth, redXButtonX, redXButtonY)
+        handleInput(resumeButtonX, resumeButtonY, soundSettingsButtonX, soundSettingsButtonY, quitGameButtonX, quitGameButtonY, applyButtonX, applyButtonY, applyButtonWidth, redXButtonX, redXButtonY, onMenuClose)
     }
 
-    private fun handleInput(resumeButtonX: Float, resumeButtonY: Float, soundSettingsButtonX: Float, soundSettingsButtonY: Float, quitGameButtonX: Float, quitGameButtonY: Float, applyButtonX: Float, applyButtonY: Float, applyButtonWidth: Float, redXButtonX: Float, redXButtonY: Float) {
+    private fun handleInput(resumeButtonX: Float, resumeButtonY: Float, soundSettingsButtonX: Float, soundSettingsButtonY: Float, quitGameButtonX: Float, quitGameButtonY: Float, applyButtonX: Float, applyButtonY: Float, applyButtonWidth: Float, redXButtonX: Float, redXButtonY: Float, onMenuClose: () -> Unit) {
         val mouseX = Gdx.input.x.toFloat()
         val mouseY = Gdx.graphics.height - Gdx.input.y.toFloat()
 
-        //Funktion zum vereinfachen der Überprüfung auf Button gedrückt
         fun isButtonClicked(buttonX: Float, buttonY: Float, buttonWidth: Float, buttonHeight: Float): Boolean {
             return mouseX >= buttonX && mouseX <= buttonX + buttonWidth && mouseY >= buttonY && mouseY <= buttonY + buttonHeight
         }
@@ -304,22 +260,24 @@ class GameMenuScreen(val game: linguExplorer) : KtxScreen {
                 showSoundSettings = true
             }
 
-            // Überprüfen, ob der Apply-Button angeklickt wurde
             if (showSoundSettings && isButtonClicked(applyButtonX, applyButtonY, applyButtonWidth, buttonSize.y)) {
                 Gdx.app.log("DEBUG", "Apply Button clicked!")
                 showSoundSettings = false
             }
 
-            // Überprüfen, ob das rote X-Symbol angeklickt wurde
             if (showSoundSettings && isButtonClicked(redXButtonX, redXButtonY, redXSize.x, redXSize.y)) {
                 Gdx.app.log("DEBUG", "Red X Button clicked!")
-                showSoundSettings = false // Zurück zum Hauptmenü
+                showSoundSettings = false
+            }
+
+            if (!showSoundSettings && isButtonClicked(resumeButtonX, resumeButtonY, buttonSize.x, buttonSize.y)) {
+                Gdx.app.log("DEBUG", "Resume Button clicked!")
+                isMenuVisible = false
+                onMenuClose()
             }
         }
 
-        //Dragging Funktionalität einbauen
         if (showSoundSettings) {
-            // Beim Drücken: Überprüfe, ob ein Kreis angeklickt wurde
             if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
                 val circleTouchArea = 20f
                 val masterCircleY = masterBarnoneY + barnoneHeight / 2f - circleSize.y / 2f
@@ -339,14 +297,12 @@ class GameMenuScreen(val game: linguExplorer) : KtxScreen {
                 }
             }
 
-            // Beim Loslassen: Setze isDragging zurück
             if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                 isDraggingMaster = false
                 isDraggingSoundeffects = false
                 isDraggingMusic = false
             }
 
-            // Wenn ein Kreis gezogen wird: Aktualisiere die Position
             if (isDraggingMaster) {
                 masterCircleXOffset = mouseX - (boxX + headingLeftPadding) - circleSize.x / 2f
                 masterCircleXOffset = MathUtils.clamp(masterCircleXOffset, 0f, barnoneWidth - circleSize.x)
@@ -362,7 +318,7 @@ class GameMenuScreen(val game: linguExplorer) : KtxScreen {
         }
     }
 
-    override fun dispose() {
+    fun dispose() {
         batch.dispose()
         boxTexture.dispose()
         font.dispose()
