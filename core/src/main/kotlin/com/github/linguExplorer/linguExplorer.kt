@@ -9,22 +9,34 @@ import ktx.app.KtxGame
 import ktx.app.KtxScreen
 
 class linguExplorer : KtxGame<KtxScreen>() {
+    private val userId: Int = ConfigManager.readUserId()
 
     override fun create() {
+        println("Benutzer-ID: $userId")
+
         DatabaseManager()
         Gdx.app.logLevel = Application.LOG_DEBUG // Debug mode aktivieren
         //einkommentieren
+
         addScreen(MainMenuScreen(this)) // Setzt den GameScreen
         setScreen<MainMenuScreen>()
 
-        //addScreen(MapScreen(this, 30f, 30f))
-        //setScreen<MapScreen>()
+       //addScreen(MinigameFamilieScreen(this)) // Setzt den GameScreen
+       //setScreen<MinigameFamilieScreen>()
 
-        //addScreen(CharacterDialog(this))
+
+   
+
+      //  addScreen(CharacterDialog(this))
         //setScreen<CharacterDialog>()
+
 
        // addScreen(BlobDialog(this))
        //setScreen<BlobDialog>()
+
+        //addScreen(BlobDialog(this))
+        //setScreen<BlobDialog>()
+
     }
 
     companion object {
@@ -32,7 +44,8 @@ class linguExplorer : KtxGame<KtxScreen>() {
     }
 }
 
-var userId = 1
+var name ="Blob"
+val userId: Int = ConfigManager.readUserId()
 var saveNumber = 0
 var masterVolume = 1f
 var soundEffectVolume = 1f

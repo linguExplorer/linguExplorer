@@ -1,0 +1,25 @@
+{
+com.badlogic.gdx.graphics.g2d.BitmapFont: {
+	skinFong: {
+		file: skinFong.fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
+}
+com.badlogic.gdx.graphics.Color: {
+	RGBA_0_0_0_255: {
+		r: 0
+		g: 0
+		b: 0
+		a: 1
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
+	default: {
+		font: skinFong
+		fontColor: RGBA_0_0_0_255
+		background: rectangle
+	}
+}
+}

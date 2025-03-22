@@ -25,7 +25,7 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
 
     private val batch = SpriteBatch()
     private lateinit var font: BitmapFont
-    private val viewport: Viewport = ExtendViewport(1920f, 1080f) // Viewport auf 1920x1080 geändert
+    private val viewport: Viewport = ExtendViewport(1920f, 1080f)
     private val shapeRenderer = ShapeRenderer()
     private val executor: ExecutorService = Executors.newFixedThreadPool(1)
 
@@ -42,43 +42,25 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
 
     // Größen und Positionen skalieren
     private val tagSize = Vector2(200f * scaleFactor, 90f * scaleFactor)
-    private val pauseBasePosition = Vector2(180f * scaleFactor, 530f * scaleFactor)
-    private val pauseSize = Vector2(50f * scaleFactor, 50f * scaleFactor)
-    private val timeBasePosition = Vector2(20f * scaleFactor, 530f * scaleFactor)
-    private val timeSize = Vector2(150f * scaleFactor, 50f * scaleFactor)
-    private val quitButtonBasePosition = Vector2(430f * scaleFactor, 130f * scaleFactor)
-    private val continueButtonBasePosition = Vector2(0f, 175f * scaleFactor)
-    private val buttonSize = Vector2(250f * scaleFactor, 70f * scaleFactor)
 
     private val pausePosition: Vector2
-        get() = Vector2(
-            pauseBasePosition.x,
-            viewport.worldHeight - pauseSize.y - 30f
-        )
-
-    private val timePosition: Vector2
-        get() = Vector2(
-            timeBasePosition.x,
-            viewport.worldHeight - timeSize.y - 30f
-        )
-
-    private val quitButtonPosition: Vector2
-        get() = Vector2(
-            quitButtonBasePosition.x,
-            quitButtonBasePosition.y
-        )
+        get() = Vector2(310f, viewport.worldHeight - 120f)
+    private val pauseSize = Vector2(80f, 80f)
 
     private val continueButtonPosition: Vector2
         get() = Vector2(
             (viewport.worldWidth / 2) - (buttonSize.x / 2),
-            continueButtonBasePosition.y * (viewport.worldHeight / 1080f)
+            (viewport.worldHeight - buttonSize.y) / 2 - 50f
         )
+    private val buttonSize = Vector2(375f, 105f)
 
-    private var continueButtonScale = 1f
-    private var pauseButtonScale = 1f
-    private var continueButtonTargetScale = 1f
-    private var pauseButtonTargetScale = 1f
-    private val scaleSpeed = 5f
+    private val timePosition: Vector2
+        get() = Vector2(30f, viewport.worldHeight - 125f)
+    private val timeSize = Vector2(260f, 90f)
+
+
+
+
     private var phraseCountMax = 0
     private var phraseCorrectCounter = 0
 
@@ -142,8 +124,8 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
         batch.projectionMatrix = viewport.camera.combined
         font.color = Color.BLACK
 
-        continueButtonScale += (continueButtonTargetScale - continueButtonScale) * scaleSpeed * delta
-        pauseButtonScale += (pauseButtonTargetScale - pauseButtonScale) * scaleSpeed * delta
+
+
 
         batch.begin()
 
@@ -155,19 +137,18 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
         }
 
         val texture: Texture = if (isPaused || gameEnded) playTexture else pauseTexture
-        pauseButtonScale = if (isPaused || gameEnded) 1f else pauseButtonScale
 
         batch.draw(
             texture,
-            pausePosition.x - (pauseSize.x * (pauseButtonScale - 1f) / 2),
-            pausePosition.y - (pauseSize.y * (pauseButtonScale - 1f) / 2),
-            pauseSize.x * pauseButtonScale,
-            pauseSize.y * pauseButtonScale
+            pausePosition.x,
+            pausePosition.y,
+            pauseSize.x,
+            pauseSize.y
         )
 
         batch.draw(textFieldTexture, timePosition.x, timePosition.y, timeSize.x, timeSize.y)
         font.data.setScale(0.3f * scaleFactor, 0.3f * scaleFactor)
-        font.draw(batch, formatTime(timeLeft), timePosition.x + 20f * scaleFactor, timePosition.y + timeSize.y / 1.4f)
+        font.draw(batch, formatTime(timeLeft), timePosition.x + 15f * scaleFactor, timePosition.y + timeSize.y / 1.4f)
 
         batch.draw(textFieldTexture, viewport.worldWidth - timePosition.x - timeSize.x, timePosition.y, timeSize.x, timeSize.y)
         font.draw(batch, "$phraseCorrectCounter/$phraseCountMax", viewport.worldWidth - timePosition.x - timeSize.x + 20f * scaleFactor, timePosition.y + timeSize.y / 1.4f)
@@ -194,19 +175,19 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
             font = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
             font.color = Color.WHITE
             val glyphLayout = GlyphLayout()
-            font.data.setScale(0.7f * scaleFactor, 0.7f * scaleFactor)
+            font.data.setScale(1f, 1f)
             glyphLayout.setText(font, "GAME PAUSED")
             val gamePausedX = (viewport.worldWidth - glyphLayout.width) / 2
-            val gamePausedY = (viewport.worldHeight / 2) + glyphLayout.height + 10f * scaleFactor
+            val gamePausedY = (viewport.worldHeight / 2) + glyphLayout.height + 30f
             font.draw(batch, "GAME PAUSED", gamePausedX, gamePausedY)
 
-            // Continue-Button anzeigen
+
             batch.draw(
                 continueTexture,
-                continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
-                continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
-                buttonSize.x * continueButtonScale,
-                buttonSize.y * continueButtonScale
+                continueButtonPosition.x,
+                continueButtonPosition.y - (buttonSize.y / 2) + 15f,
+                buttonSize.x,
+                buttonSize.y
             )
         }
 
@@ -220,22 +201,32 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
             Gdx.gl.glDisable(GL20.GL_BLEND)
             batch.begin()
 
+            //TODO der text ist soooo knapp nicht in der mitte :((
             font.color = Color.WHITE
             val glyphLayout = GlyphLayout()
-            font.data.setScale(0.4f * scaleFactor, 0.4f * scaleFactor)
-            glyphLayout.setText(font, "Match the correct pairs")
-            val gamePausedX = (viewport.worldWidth - glyphLayout.width) / 2
-            val gamePausedY = (viewport.worldHeight / 2) + glyphLayout.height
-            font.draw(batch, "Match the correct pairs", gamePausedX, gamePausedY)
+            font.data.setScale(0.45f, 0.45f)
+
+            val text = "Put the items on the list in the basket"
+            font.draw(
+                batch,
+                text,
+                0f,
+                viewport.worldHeight / 2 + glyphLayout.height / 2 + 80f,
+                viewport.worldWidth,
+                Align.center,
+                true
+            )
 
             // Continue-Button anzeigen
             batch.draw(
                 continueTexture,
-                continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
-                continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
-                buttonSize.x * continueButtonScale,
-                buttonSize.y * continueButtonScale
+                continueButtonPosition.x,
+                continueButtonPosition.y - (buttonSize.y / 2) + 15f,
+                buttonSize.x,
+                buttonSize.y
             )
+
+            //batch.draw(continueTexture, continueButtonPosition.x, continueButtonPosition.y, buttonSize.x, buttonSize.y)
         }
 
         if (gameEnded) {
@@ -251,32 +242,40 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
             font.color = Color.WHITE
             val glyphLayout = GlyphLayout()
             font = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
-            font.data.setScale(0.7f * scaleFactor, 0.7f * scaleFactor)
+            font.data.setScale(1f, 1f)
 
             if (isCompleted) {
                 glyphLayout.setText(font, "CONGRATULATIONS")
                 val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
-                val gameOverY = (viewport.worldHeight / 2) + glyphLayout.height + 10f * scaleFactor
+                val gameOverY = (viewport.worldHeight / 2) + glyphLayout.height + 30f
                 font.draw(batch, "CONGRATULATIONS", gameOverX, gameOverY)
                 batch.draw(
                     continueTexture,
-                    continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
-                    continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
-                    buttonSize.x * continueButtonScale,
-                    buttonSize.y * continueButtonScale
+                    continueButtonPosition.x,
+                    continueButtonPosition.y - (buttonSize.y / 2) + 15f,
+                    buttonSize.x,
+                    buttonSize.y
                 )
             } else {
                 glyphLayout.setText(font, "GAME OVER")
                 val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
-                val gameOverY = (viewport.worldHeight) / 2 + glyphLayout.height + 10f * scaleFactor
+                val gameOverY = (viewport.worldHeight) / 2 + glyphLayout.height + 30f
                 font.draw(batch, "GAME OVER", gameOverX, gameOverY)
                 batch.draw(
                     quitButtonTexture,
-                    continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
-                    continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
-                    buttonSize.x * continueButtonScale,
-                    buttonSize.y * continueButtonScale
+                    continueButtonPosition.x,
+                    continueButtonPosition.y - (buttonSize.y / 2) + 15f,
+                    buttonSize.x,
+                    buttonSize.y
                 )
+
+                /*val extraSpacing = 120f // Zusätzlicher Abstand zwischen "GAME OVER" und "Try Again"
+            val buttonYSpacing = -70f // Abstand zwischen "Try Again" und "Quit"
+            val tryAgainButtonY = gameOverY - glyphLayout.height - extraSpacing
+            val quitButtonY = tryAgainButtonY - buttonSize.y - buttonYSpacing
+            val buttonX = (viewport.worldWidth - buttonSize.x) / 2
+            batch.draw(tryAgainButtonTexture, buttonX, tryAgainButtonY, buttonSize.x, buttonSize.y)
+            batch.draw(quitButtonTexture, buttonX, quitButtonY, buttonSize.x, buttonSize.y)*/
             }
         }
 
@@ -372,9 +371,6 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
     private fun handleInput() {
         val mouseX = Gdx.input.x.toFloat() * viewport.worldWidth / Gdx.graphics.width
         val mouseY = (Gdx.graphics.height - Gdx.input.y.toFloat()) * viewport.worldHeight / Gdx.graphics.height
-
-        continueButtonTargetScale = if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) &&
-            mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) 1.1f else 1f
 
         when {
             !gameEnded && gameStarted -> handleGameInput(mouseX, mouseY)

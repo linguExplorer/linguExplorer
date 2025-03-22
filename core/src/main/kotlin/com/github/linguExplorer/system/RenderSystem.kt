@@ -15,9 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.github.linguExplorer.component.ImageComponent
-import com.github.linguExplorer.event.ClickDownEvent
-import com.github.linguExplorer.event.GameChangeEvent
-import com.github.linguExplorer.event.MapChangeEvent
+import com.github.linguExplorer.event.*
 import com.github.linguExplorer.linguExplorer.Companion.UNIT_SCALE
 import com.github.quillraven.fleks.*
 import com.github.quillraven.fleks.collection.compareEntity
@@ -97,6 +95,18 @@ class RenderSystem(
             }
 
 
+            /////Funkion hier zum Lockscreen erstellen Welche Minigame es ist wird über Parameter angegeben
+
+
+
+            ////
+
+
+            ///Funktion für Celebrate oder Unlocked
+
+
+
+            ////
 
 
         }
@@ -121,12 +131,37 @@ class RenderSystem(
 
            }
 
+
            is ClickDownEvent -> {
                fadingCircles.add(FadingCircle(event.mouseX, event.mouseY))
                return true
+
+
+           }
+
+           //Event für Lockscreen catchen, welches Minigam es ist wird über Event übergeben
+           // Beispiel: (event.mouseX, event.mouseY)
+
+
+           is GameCollideEvent -> {
+               println(event.miniGame)
+
+
+
            }
 
 
+           //////////////
+
+
+
+           //Event für Celebrate oder unlocked
+
+           is UnlockedEvent -> {
+               println("Unlocked Event works")
+           }
+
+           /////////////
            is GameChangeEvent -> {
 
                println("Game change Event")
