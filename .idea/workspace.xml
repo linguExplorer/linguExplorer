@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d7ec178f-f3a4-43fd-aef4-ba006330d994" name="Changes" comment="" />
+    <list default="true" id="d7ec178f-f3a4-43fd-aef4-ba006330d994" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/webpage/src/pages/Spielbeschreibung.vue" beforeDir="false" afterPath="$PROJECT_DIR$/webpage/src/pages/Spielbeschreibung.vue" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -50,13 +52,14 @@
     "Kotlin.Lwjgl3Launcher.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "external.system.has.shared.sources": "true",
-    "git-widget-placeholder": "updated__mapscreen",
+    "git-widget-placeholder": "Webpage",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2024.2.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -101,6 +104,7 @@
       <workItem from="1742306684468" duration="3002000" />
       <workItem from="1742486715333" duration="4710000" />
       <workItem from="1742547263127" duration="7013000" />
+      <workItem from="1742657187051" duration="112000" />
     </task>
     <servers />
   </component>
