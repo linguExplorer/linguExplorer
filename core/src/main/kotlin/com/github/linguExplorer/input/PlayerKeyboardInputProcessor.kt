@@ -12,6 +12,7 @@ import com.github.linguExplorer.component.PhysicComponent
 import com.github.linguExplorer.component.PlayerComponent
 import com.github.linguExplorer.event.ActivateKeyEvent
 import com.github.linguExplorer.event.ClickDownEvent
+import com.github.linguExplorer.event.Interact
 import com.github.linguExplorer.event.fire
 import com.github.linguExplorer.system.PathSystem
 import com.github.quillraven.fleks.ComponentMapper
@@ -88,15 +89,24 @@ if (isCheckingDistance) {
                 UP, W -> {
                     playerSin = 1f
                     gameStage.fire(ActivateKeyEvent())
+
                 }
 
                 DOWN, S -> playerSin = -1f
                 RIGHT, D -> playerCos = 1f
                 LEFT, A -> playerCos = -1f
             }
+
+
             updatePlayerMovement()
             return true
         }
+        if(keycode == E) {
+
+            println("E gedrückt")
+            gameStage.fire(Interact())
+        }
+
         return false
     }
 

@@ -87,15 +87,6 @@ class MapChangeSystem (
                     game.setScreen<MinigameFamilieScreen>()
                 }
 
-
-
-
-
-
-
-
-
-
             triggerEntities.clear()
         }
     }

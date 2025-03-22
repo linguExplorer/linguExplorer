@@ -17,17 +17,26 @@ class linguExplorer : KtxGame<KtxScreen>() {
         DatabaseManager()
         Gdx.app.logLevel = Application.LOG_DEBUG // Debug mode aktivieren
         //einkommentieren
+
+        addScreen(MainMenuScreen(this)) // Setzt den GameScreen
+        setScreen<MainMenuScreen>()
+
        //addScreen(MinigameFamilieScreen(this)) // Setzt den GameScreen
        //setScreen<MinigameFamilieScreen>()
 
-        addScreen(MainMenuScreen(this))
-         setScreen<MainMenuScreen>()
+
+   
 
       //  addScreen(CharacterDialog(this))
         //setScreen<CharacterDialog>()
 
+
+       // addScreen(BlobDialog(this))
+       //setScreen<BlobDialog>()
+
         //addScreen(BlobDialog(this))
         //setScreen<BlobDialog>()
+
     }
 
     companion object {

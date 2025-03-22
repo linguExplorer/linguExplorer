@@ -37,6 +37,7 @@ class EntitySpawnSystem (
 
 
     private val playerEntities = world.family(allOf = arrayOf(PlayerComponent::class))
+    private val sdEntities = world.family(allOf = arrayOf(SdComponent::class))
     private val cachedCfgs = mutableMapOf<String, SpawnCfg>()
     private val cachedSizes = mutableMapOf<AnimationModel, Vector2>()
 
@@ -69,6 +70,7 @@ class EntitySpawnSystem (
                     box (w, h, cfg.physicOffset) {
                         isSensor = cfg.bodyType != BodyDef.BodyType.StaticBody
 
+
                     }
                     if (cfg.bodyType!= BodyDef.BodyType.StaticBody) {
                         val collH = h* 0.4f
@@ -94,6 +96,10 @@ class EntitySpawnSystem (
                     //entfernen collision onjects
                     add<CollisionComponent>()
                 }
+
+                if(cfg.interact) {
+                    add<SdComponent>()
+                }
             }
         }
         world.remove(entity)
@@ -107,7 +113,7 @@ class EntitySpawnSystem (
 
 
         val firstFrame = regions.first()
-        if(model.atlasKey == "nc") {
+        if(model.atlasKey == "nc" || model.atlasKey == "ncc" || model.atlasKey == "ncf" || model.atlasKey == "ncs" ) {
             vec2(firstFrame.originalWidth* (UNIT_SCALE), firstFrame.originalHeight* (UNIT_SCALE))
 
         } else {
@@ -127,8 +133,41 @@ class EntitySpawnSystem (
 
             "NC_1" -> SpawnCfg(AnimationModel.NC,
                 physicScaling = vec2(0.8f,0.5f),
+                speedScaling = 0f,
                 physicOffset = vec2(0f,-6f* UNIT_SCALE),
-                aniType = AnimationType.IDLE
+                bodyType = BodyDef.BodyType.StaticBody,
+                aniType = AnimationType.IDLE,
+                interact = true
+
+            )
+
+            "NC_2" -> SpawnCfg(AnimationModel.NCS,
+                physicScaling = vec2(0.8f,0.5f),
+                speedScaling = 0f,
+                physicOffset = vec2(0f,-6f* UNIT_SCALE),
+                bodyType = BodyDef.BodyType.StaticBody,
+                aniType = AnimationType.IDLE,
+                interact = true
+
+            )
+
+            "NC_3" -> SpawnCfg(AnimationModel.NCF,
+                physicScaling = vec2(0.8f,0.5f),
+                speedScaling = 0f,
+                physicOffset = vec2(0f,-6f* UNIT_SCALE),
+                bodyType = BodyDef.BodyType.StaticBody,
+                aniType = AnimationType.IDLE,
+                interact = true
+
+            )
+
+            "NC_4" -> SpawnCfg(AnimationModel.NCC,
+                physicScaling = vec2(0.8f,0.5f),
+                speedScaling = 0f,
+                physicOffset = vec2(0f,-6f* UNIT_SCALE),
+                bodyType = BodyDef.BodyType.StaticBody,
+                aniType = AnimationType.IDLE,
+                interact = true
 
             )
             else -> gdxError("Type $type no Spawn config")
@@ -151,7 +190,13 @@ class EntitySpawnSystem (
 
                     if(type == "Player" && playerEntities.isNotEmpty) {
                         return@forEach
-                    }
+
+                    } else if(type == "NC_1" && sdEntities.isNotEmpty) {
+
+                      return@forEach
+                        }
+
+
                     world.entity {
 
                         if (type == "Player") {
