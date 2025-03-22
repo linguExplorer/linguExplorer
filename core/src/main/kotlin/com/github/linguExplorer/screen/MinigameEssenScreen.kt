@@ -57,7 +57,7 @@ class MinigameEssenScreen(private val game: linguExplorer,
     private val listSize = Vector2(450f, 420f)
 
     private val pausePosition: Vector2
-        get() = Vector2(330f, viewport.worldHeight - 130f)
+        get() = Vector2(310f, viewport.worldHeight - 120f)
     private val pauseSize = Vector2(80f, 80f)
 
     private val shelfPosition1: Vector2
@@ -67,7 +67,7 @@ class MinigameEssenScreen(private val game: linguExplorer,
     private val shelfSize = Vector2(1250f, 40f)
 
     private val objectBasePositionX: Float
-        get() = viewport.worldWidth - 1100f
+        get() = viewport.worldWidth - 1150f
 
     private val tryAgainButtonBasePosition = Vector2(430f, 200f)
     private val quitButtonBasePosition = Vector2(430f, 130f)
@@ -79,7 +79,7 @@ class MinigameEssenScreen(private val game: linguExplorer,
     private val buttonSize = Vector2(375f, 105f)
 
     private val timePosition: Vector2
-        get() = Vector2(50f, viewport.worldHeight - 135f)
+        get() = Vector2(30f, viewport.worldHeight - 125f)
     private val timeSize = Vector2(260f, 90f)
 
     //Error Text
@@ -108,10 +108,6 @@ class MinigameEssenScreen(private val game: linguExplorer,
 
 
 
-    private var continueButtonScale = 1f
-    private var pauseButtonScale = 1f
-    private var continueButtonTargetScale = 1f
-    private var pauseButtonTargetScale = 1f
 
     private val scaleSpeed = 5f
 
@@ -168,8 +164,6 @@ class MinigameEssenScreen(private val game: linguExplorer,
             shapeRenderer.projectionMatrix = viewport.camera.combined
             font.color = Color.BLACK
 
-            continueButtonScale += (continueButtonTargetScale - continueButtonScale) * scaleSpeed * delta
-            pauseButtonScale += (pauseButtonTargetScale - pauseButtonScale) * scaleSpeed * delta
 
 
             batch.begin()
@@ -224,20 +218,17 @@ class MinigameEssenScreen(private val game: linguExplorer,
 
             // Pause- oder Play-Button anzeigen
             val texture: Texture = if (isPaused || gameEnded) playTexture else pauseTexture
-            pauseButtonScale = if (isPaused || gameEnded) 1f else pauseButtonScale
 
             batch.draw(
                 texture,
-                pausePosition.x - (pauseSize.x * (pauseButtonScale - 1f) / 2),
-                pausePosition.y - (pauseSize.y * (pauseButtonScale - 1f) / 2),
-                pauseSize.x * pauseButtonScale,
-                pauseSize.y * pauseButtonScale
-            )
+                pausePosition.x ,
+                pausePosition.y,
+                pauseSize.x, pauseSize.y)
 
             // Zeit
             batch.draw(timeTexture, timePosition.x, timePosition.y, timeSize.x, timeSize.y)
-            font.data.setScale(0.3f, 0.3f)
-            font.draw(batch, formatTime(timeLeft), timePosition.x + 20f, timePosition.y + timeSize.y / 1.4f)
+            font.data.setScale(0.5f, 0.5f)
+            font.draw(batch, formatTime(timeLeft), timePosition.x + 42.5f, timePosition.y + 62.5f)
 
             if (isPaused) {
                 batch.end()
@@ -255,17 +246,16 @@ class MinigameEssenScreen(private val game: linguExplorer,
                 font.data.setScale(1f, 1f)
                 glyphLayout.setText(font, "GAME PAUSED")
                 val gamePausedX = (viewport.worldWidth - glyphLayout.width) / 2
-                val gamePausedY = (viewport.worldHeight / 2) + glyphLayout.height + 10f
+                val gamePausedY = (viewport.worldHeight / 2) + glyphLayout.height + 30f
                 font.draw(batch, "GAME PAUSED", gamePausedX, gamePausedY)
-                println(objectBasePositionX)
 
                 // Continue-Button anzeigen
                 batch.draw(
                     continueTexture,
-                    continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
-                    continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
-                    buttonSize.x * continueButtonScale,
-                    buttonSize.y * continueButtonScale
+                    continueButtonPosition.x,
+                    continueButtonPosition.y - (buttonSize.y / 2) + 15f,
+                    buttonSize.x,
+                    buttonSize.y
                 )
             }
 
@@ -283,21 +273,13 @@ class MinigameEssenScreen(private val game: linguExplorer,
                 font.color = Color.WHITE
                 val glyphLayout = GlyphLayout()
                 font.data.setScale(0.45f, 0.45f)
-                glyphLayout.setText(
-                    font,
-                    "Put the items on the list in the basket",
-                    Color.WHITE,
-                    viewport.worldWidth,
-                    Align.center,
-                    true
-                )
-                val gamePausedX = (viewport.worldWidth - glyphLayout.width) / 2
-                val gamePausedY = (viewport.worldHeight / 2) + glyphLayout.height
+
+                val text = "Put the items on the list in the basket"
                 font.draw(
                     batch,
-                    "Put the items on the list in the basket",
-                    gamePausedX,
-                    gamePausedY,
+                    text,
+                    0f,
+                    viewport.worldHeight / 2 + glyphLayout.height / 2 + 80f,
                     viewport.worldWidth,
                     Align.center,
                     true
@@ -306,10 +288,10 @@ class MinigameEssenScreen(private val game: linguExplorer,
                 // Continue-Button anzeigen
                 batch.draw(
                     continueTexture,
-                    continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
-                    continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
-                    buttonSize.x * continueButtonScale,
-                    buttonSize.y * continueButtonScale
+                    continueButtonPosition.x,
+                    continueButtonPosition.y - (buttonSize.y / 2) + 15f,
+                    buttonSize.x,
+                    buttonSize.y
                 )
 
                 //batch.draw(continueTexture, continueButtonPosition.x, continueButtonPosition.y, buttonSize.x, buttonSize.y)
@@ -333,26 +315,26 @@ class MinigameEssenScreen(private val game: linguExplorer,
                 if (isCompleted) {
                     glyphLayout.setText(font, "CONGRATULATIONS")
                     val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
-                    val gameOverY = (viewport.worldHeight / 2) + glyphLayout.height + 10f
+                    val gameOverY = (viewport.worldHeight / 2) + glyphLayout.height + 30f
                     font.draw(batch, "CONGRATULATIONS", gameOverX, gameOverY)
                     batch.draw(
                         continueTexture,
-                        continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
-                        continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
-                        buttonSize.x * continueButtonScale,
-                        buttonSize.y * continueButtonScale
+                        continueButtonPosition.x,
+                        continueButtonPosition.y - (buttonSize.y / 2) + 15f,
+                        buttonSize.x,
+                        buttonSize.y
                     )
                 } else {
                     glyphLayout.setText(font, "GAME OVER")
                     val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
-                    val gameOverY = (viewport.worldHeight) / 2 + glyphLayout.height + 10f
+                    val gameOverY = (viewport.worldHeight) / 2 + glyphLayout.height + 30f
                     font.draw(batch, "GAME OVER", gameOverX, gameOverY)
                     batch.draw(
                         quitButtonTexture,
-                        continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
-                        continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
-                        buttonSize.x * continueButtonScale,
-                        buttonSize.y * continueButtonScale
+                        continueButtonPosition.x,
+                        continueButtonPosition.y - (buttonSize.y / 2) + 15f,
+                        buttonSize.x,
+                        buttonSize.y
                     )
 
                     /*val extraSpacing = 120f // Zusätzlicher Abstand zwischen "GAME OVER" und "Try Again"
@@ -393,22 +375,7 @@ class MinigameEssenScreen(private val game: linguExplorer,
         val mouseX = Gdx.input.x.toFloat() * viewport.worldWidth / Gdx.graphics.width
         val mouseY = (Gdx.graphics.height - Gdx.input.y.toFloat()) * viewport.worldHeight / Gdx.graphics.height
 
-        continueButtonTargetScale = if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) &&
-            mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
-            1.1f
-        } else {
-            1f
-        }
-
-
         if (!gameEnded && gameStarted) {
-            pauseButtonTargetScale = if (mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) &&
-                mouseY in pausePosition.y..(pausePosition.y + pauseSize.y)) {
-                1.1f
-            } else {
-                1f
-            }
-
             if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                 if (!isPaused) {
                     if (mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) && mouseY in pausePosition.y..(pausePosition.y + pauseSize.y)
@@ -420,7 +387,6 @@ class MinigameEssenScreen(private val game: linguExplorer,
                     }
 
                     if (!showErrorText) {
-
                         objects.forEach { obj ->
                             if (!isDragging && !obj.isCollected && isMouseInsideImage(mouseX, mouseY, obj)) {
                                 isDragging = true
@@ -438,7 +404,10 @@ class MinigameEssenScreen(private val game: linguExplorer,
                         }
                     }
                 } else {
-                    if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) && mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
+                    // Update the button hit area to match how it's drawn
+                    val buttonY = continueButtonPosition.y - (buttonSize.y / 2) + 15f
+                    if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) &&
+                        mouseY in buttonY..(buttonY + buttonSize.y)) {
                         isPaused = !isPaused
                     }
                 }
@@ -499,19 +468,24 @@ class MinigameEssenScreen(private val game: linguExplorer,
             }
         } else if (!gameStarted) {
             if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-                if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) && mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
+                // Update the button hit area to match how it's drawn
+                val buttonY = continueButtonPosition.y - (buttonSize.y / 2) + 15f
+                if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) &&
+                    mouseY in buttonY..(buttonY + buttonSize.y)) {
                     gameStarted = true
                 }
             }
         } else {
             if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-                if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) && mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
+                // Update the button hit area to match how it's drawn
+                val buttonY = continueButtonPosition.y - (buttonSize.y / 2) + 15f
+                if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) &&
+                    mouseY in buttonY..(buttonY + buttonSize.y)) {
                     storePhraseDataAsync()
 
                     stage.fire(GameEndEvent("SM"))
 
-
-                    if (game!!.containsScreen<MapScreen>()) {
+                    if (game.containsScreen<MapScreen>()) {
                         game.removeScreen<MapScreen>()
                     }
                     game.addScreen(MapScreen(game, 31.104187f,15.677063f))
@@ -567,9 +541,9 @@ class MinigameEssenScreen(private val game: linguExplorer,
                     shapeRenderer.color = Color.BLACK
                 }
 
-                shapeRenderer.rect(startX - 20f,
-                    (currentY - textHeight - 1.75f),
-                    textWidth,
+                shapeRenderer.rect(startX - 15f,
+                    (currentY - (textHeight / 2) + 2f),
+                    textWidth + 30f,
                     6f)
                 shapeRenderer.end()
                 batch.begin()
@@ -613,7 +587,6 @@ class MinigameEssenScreen(private val game: linguExplorer,
                     )
                 }
             }
-            println(objectBasePositionX)
             threadExecuted = true
         }
     }
@@ -624,8 +597,21 @@ class MinigameEssenScreen(private val game: linguExplorer,
         }
     }
 
+    private fun recalculatePositions() {
+        objects.forEach { obj ->
+            if (!obj.isCollected && !obj.isBeingDragged) {
+                obj.resetPositionX = objectBasePositionX
+                obj.basePositionX = objectBasePositionX
+            }
+        }
+    }
+
     override fun resize(width: Int, height: Int) {
         viewport.update(width, height, true)
+
+        if (::objects.isInitialized) {
+            recalculatePositions()
+        }
     }
 
     override fun hide() {}
