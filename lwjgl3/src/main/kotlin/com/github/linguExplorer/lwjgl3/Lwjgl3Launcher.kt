@@ -1,7 +1,7 @@
 @file:JvmName("Lwjgl3Launcher")
 
 package com.github.linguExplorer.lwjgl3
-
+import com.github.linguExplorer.ConfigManager
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
 import com.github.linguExplorer.linguExplorer
@@ -9,8 +9,16 @@ import com.github.linguExplorer.linguExplorer
 import net.arikia.dev.drpc.DiscordRPC
 import net.arikia.dev.drpc.DiscordRichPresence*/
 
-fun main() {
+fun main(args: Array<String>) {
     // Initialize the application
+
+    val userId = if (args.isNotEmpty()) args[0] else null
+
+    // Benutzer-ID in der Konfigurationsdatei speichern
+    if (userId != null) {
+        ConfigManager.saveUserId(userId)
+    }
+
     if (StartupHelper.startNewJvmIfRequired()) return
 
     // Initialize Discord RPC

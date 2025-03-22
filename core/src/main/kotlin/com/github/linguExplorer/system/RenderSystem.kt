@@ -145,6 +145,9 @@ class RenderSystem(
 
            is GameCollideEvent -> {
                println(event.miniGame)
+
+
+
            }
 
 

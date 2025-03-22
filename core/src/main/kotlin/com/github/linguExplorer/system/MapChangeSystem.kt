@@ -55,7 +55,11 @@ class MapChangeSystem (
         if(triggerEntities.isNotEmpty()) {
             println("Collision to $toGame")
 
+
+
                 gameStage.fire(GameCollideEvent(toGame)) // Event für Collision mit Minigame
+
+
 
                 if(toGame == "SM") {
                     if (game.containsScreen<MinigameEssenScreen>()) {
