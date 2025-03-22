@@ -3,6 +3,7 @@ package com.github.linguExplorer.screen
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputMultiplexer
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
@@ -88,6 +89,12 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
     private val boxTexture: Texture = Texture(Gdx.files.internal("xx_Images/GameMenü/box.png"))
     private var font: BitmapFont = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
 
+    // Progress font and text
+    private var progressFont: BitmapFont = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
+    private var progressText: String = "Thema: "
+    private var progressTextX: Float = 0f
+    private var progressTextY: Float = 0f
+
     private var inputMultiplexer = InputMultiplexer()
 
     //UI Elemente
@@ -118,7 +125,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
     private var isBoxIn = true
 
     // Fixe Höhe für BoxIn und BoxOut
-    private val fixedBoxHeight = 500f
+    private val fixedBoxHeight = 300f
 
     private var isBoxOutVisible = false
 
@@ -146,8 +153,8 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         val upperBarTexture = Texture(Gdx.files.internal("graphics/map-objects/upperbar 2.png"))
         val boxInTexture = Texture(Gdx.files.internal("graphics/map-objects/boxIn 1.png"))
         val boxOutTexture = Texture(Gdx.files.internal("graphics/map-objects/boxOut 2.png"))
-        val settingsIconTexture = Texture(Gdx.files.internal("graphics/map-objects/SettingsIcon 1.png"))
-        val progressBarTexture = Texture(Gdx.files.internal("graphics/map-objects/Prozentleiste2-1.png 1.png"))
+        val settingsIconTexture = Texture(Gdx.files.internal("xx_Images/Settingsicon.png"))
+        val progressBarTexture = Texture(Gdx.files.internal("graphics/map-objects/Prozentleiste/v2/Prozentleiste2-1.png"))
 
         // Images
         val backpackImage = Image(backpackTexture).apply { touchable = Touchable.enabled }
@@ -295,15 +302,33 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
 
         // Positionierung Icons innerhalb der upperBar
         uiElements.settingsIconImage.setPosition(settingsIconXOffset, uiStage.height - upperBarHeight + (upperBarHeight - settingsIconHeight) / 2 + 10f) // Zentriert vertikal in der upperBar
-        uiElements.progressBarImage.setPosition(settingsIconXOffset + settingsIconWidth + progressBarXOffset, uiStage.height - upperBarHeight + (upperBarHeight - progressBarHeight) / 2 + 10f) // Zentriert vertikal in der upperBar, rechts neben dem Settings-Icon
+
+        // Position der Prozentleiste
+        val progressBarX = settingsIconXOffset + settingsIconWidth + progressBarXOffset + 10f
+        val progressBarY = uiStage.height - upperBarHeight + (upperBarHeight - progressBarHeight) / 2
+        uiElements.progressBarImage.setPosition(progressBarX, progressBarY)
+
+        // Position des Progress Textes (genau auf der Prozentleiste)
+        progressTextX = progressBarX + 5f // Kleiner seitlicher Abstand für bessere Lesbarkeit
+        progressTextY = progressBarY + progressBarHeight / 2 + 5f // Vertikal mittig auf der Prozentleiste + kleiner Offset
 
         //Berechnung von BoxIn
         uiElements.updateBoxImageSize()
         uiElements.boxInImage.setPosition(0f, (uiStage.height - uiElements.boxInImage.height) / 2) // Links mittig
     }
 
-    override fun render(delta: Float) {
+    // Aktualisierte Methode zur Positionsbestimmung des Textes
+    private fun updateProgressTextPosition() {
+        // Nimm die exakte Position der Progressbar und positioniere den Text direkt darauf
+        progressTextX = uiElements.progressBarImage.x + 5f // Kleiner seitlicher Abstand für bessere Lesbarkeit
+        progressTextY = uiElements.progressBarImage.y + progressBarHeight / 2 + 5f // Mittig auf der Progressbar + kleiner Offset für bessere Lesbarkeit
+    }
 
+    fun updateProgressText(progress: Int) {
+        progressText = "Thema: "
+    }
+
+    override fun render(delta: Float) {
         shapeRenderer.projectionMatrix = viewport.camera.combined
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
@@ -321,9 +346,20 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         uiStage.act(Math.min(delta, 1 / 30f))
         uiStage.draw()
 
+        // Zeichne den Fortschrittstext
+        updateProgressTextPosition()
+
+        // Zeichne den Fortschrittstext mit der korrekten Projektion
+        batch.begin()
+        batch.projectionMatrix = uiStage.camera.combined // Wichtig: Verwende die gleiche Projektion wie die UI-Stage
+        progressFont.data.setScale(0.2f, 0.2f)
+        progressFont.color = Color.BLACK
+        progressFont.draw(batch, progressText, progressTextX, progressTextY + 30f)
+        batch.end()
+
         //Game Menü
         if (gameMenuScreen.isMenuVisible) {
-            gameMenuScreen.render(batch, font, glyphLayout, viewport, shapeRenderer) { // 'batch' für das GameMenu
+            gameMenuScreen.render(batch, font, glyphLayout, viewport, shapeRenderer) {
                 // wird aufgerufen, wenn Menü geschlossen wird
                 Gdx.app.postRunnable {
                     inputMultiplexer.addProcessor(stage) // Aktiviere Input im MapScreen wieder
@@ -343,6 +379,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         batch.dispose()
         boxTexture.dispose()
         font.dispose()
+        progressFont.dispose()
         shapeRenderer.disposeSafely()
         uiStage.disposeSafely()
         uiElements.backpackTexture.disposeSafely()
@@ -354,10 +391,10 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         uiElements.boxOutTexture.disposeSafely()
         uiElements.settingsIconTexture.disposeSafely()
         uiElements.progressBarTexture.disposeSafely()
-        gameMenuScreen.dispose() // Stelle sicher, dass GameMenuScreen auch disposed wird
+        gameMenuScreen.dispose()
     }
 
     companion object : KtxScreen {
-        private  val log = logger<MapScreen>()
+        private val log = logger<MapScreen>()
     }
 }
