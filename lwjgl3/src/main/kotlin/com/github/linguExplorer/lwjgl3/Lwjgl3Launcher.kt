@@ -12,7 +12,7 @@ import net.arikia.dev.drpc.DiscordRichPresence*/
 fun main(args: Array<String>) {
     // Initialize the application
 
-    val userId = if (args.isNotEmpty()) args[0] else null
+    val userId = if (args.isNotEmpty()) args[0].toIntOrNull() else null
 
     // Benutzer-ID in der Konfigurationsdatei speichern
     if (userId != null) {

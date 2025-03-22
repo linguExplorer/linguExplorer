@@ -13,16 +13,18 @@ object ConfigManager {
     }
 
     // Benutzer-ID speichern
-    fun saveUserId(userId: String) {
+    fun saveUserId(userId: Int) {
         configFile.writeText("userid=$userId")
     }
 
     // Benutzer-ID lesen
-    fun readUserId(): String? {
+    fun readUserId(): Int {
         return if (configFile.exists()) {
-            configFile.readText().split("=")[1] // Liest den Wert nach "userid="
+            val content = configFile.readText()
+            val userIdString = content.substringAfter("userid=").trim()
+            userIdString.toIntOrNull() ?: 1
         } else {
-            null
+            1
         }
     }
 }

@@ -9,7 +9,7 @@ import ktx.app.KtxGame
 import ktx.app.KtxScreen
 
 class linguExplorer : KtxGame<KtxScreen>() {
-    private val userId: String? = ConfigManager.readUserId()
+    private val userId: Int = ConfigManager.readUserId()
 
     override fun create() {
         println("Benutzer-ID: $userId")
@@ -36,7 +36,7 @@ class linguExplorer : KtxGame<KtxScreen>() {
 }
 
 var name ="Blob"
-var userId = 1
+val userId: Int = ConfigManager.readUserId()
 var saveNumber = 0
 var masterVolume = 1f
 var soundEffectVolume = 1f

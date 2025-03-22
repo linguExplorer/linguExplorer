@@ -673,6 +673,8 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
 
                 saveSlots.clear()
 
+                println("User Id ist $userId")
+
                 for (i in 0 until 3) {
                     saveSlots.add(Triple(null, null, null))
                 }
