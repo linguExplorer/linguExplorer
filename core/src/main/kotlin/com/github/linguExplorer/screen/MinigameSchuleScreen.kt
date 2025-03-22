@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
@@ -175,7 +174,7 @@ class MinigameSchuleScreen() : KtxScreen {
                         col = col,
                         positionX = posX,
                         positionY = posY,
-                        width = cellWidth- 1f,
+                        width = cellWidth - 1f,
                         height = cellHeight - 1f,
                         occupied = false,
                         correctSubject = null
@@ -197,10 +196,10 @@ class MinigameSchuleScreen() : KtxScreen {
         gridCells: Array<Array<Pair<PhraseEntity, String>?>>,
         availableAssets: MutableMap<Pair<PhraseEntity, String>, Int>
     ) {
-        val gridHeight = gridCells.size + 5f
-        val gridWidth = gridCells[0].size + 5f
+        val gridHeight = gridCells.size
+        val gridWidth = gridCells[0].size
 
-        // Zufällig entscheiden, wie viele Zellen belegt werden sollen (ca. 60-80%)
+        // Zufällig (wie viele Zellen belegt werden sollen) (60-80%)
         val totalCells = gridHeight * gridWidth
         val filledCellsTarget = (totalCells * (0.6 + Math.random() * 0.2)).toInt()
 
@@ -210,11 +209,14 @@ class MinigameSchuleScreen() : KtxScreen {
         for ((asset, count) in assetsToPattern) {
             if (count <= 1) continue
 
-            when ((1..3).random()) {
-                1 -> createColumnPattern(gridCells, asset, count)
-                2 -> createRowPattern(gridCells, asset, count)
-                3 -> createRandomPattern(gridCells, asset, count)
-            }
+            /*
+        when ((1..3).random()) {
+            1 -> createColumnPattern(gridCells, asset, count)
+            2 -> createRowPattern(gridCells, asset, count)
+            3 -> createRandomPattern(gridCells, asset, count)
+        }
+        */
+            distributeAssetRandomly(gridCells,asset,count)
 
             availableAssets.remove(asset)
         }
@@ -233,7 +235,7 @@ class MinigameSchuleScreen() : KtxScreen {
             gridCells[row][col] = asset
             filledCells++
 
-            // Aktualisiere verbleibende Anzahl für dieses Asset
+            // Aktualisiert verbleibende Anzahl für dieses Asset
             if (count <= 1) {
                 remainingAssets.remove(assetEntry)
             } else {
@@ -247,7 +249,7 @@ class MinigameSchuleScreen() : KtxScreen {
         }
     }
 
-    private fun createColumnPattern(
+    private fun distributeAssetRandomly(
         gridCells: Array<Array<Pair<PhraseEntity, String>?>>,
         asset: Pair<PhraseEntity, String>,
         count: Int
@@ -255,71 +257,26 @@ class MinigameSchuleScreen() : KtxScreen {
         val gridHeight = gridCells.size
         val gridWidth = gridCells[0].size
 
-        val colOptions = (0 until gridWidth).toMutableList()
-        colOptions.shuffle()
+        // Liste der möglichen Stunden (Zeilen)
+        val possibleRows = (0 until gridHeight).toMutableList()
 
-        for (col in colOptions) {
-            // Finde freie Positionen in dieser Spalte
-            val freePositions = (0 until gridHeight).filter { row -> gridCells[row][col] == null }.toMutableList()
+        // Liste mischen
+        possibleRows.shuffle()
 
-            if (freePositions.size >= min(count, 3)) {
-                freePositions.shuffle()
-                for (i in 0 until min(count, 3)) {
-                    val row = freePositions[i]
+        var placements = 0
+        //Stunden durchgehen + Karte platzieren
+        for (row in possibleRows) {
+            // eine zufällige Spalte in dieser Stunde
+            val possibleCols = (0 until gridWidth).toMutableList()
+            possibleCols.shuffle()
+            for (col in possibleCols) {
+                if (gridCells[row][col] == null) {
                     gridCells[row][col] = asset
+                    placements++
+                    break // nächste Stunde
                 }
-                return
             }
-        }
-
-        createRandomPattern(gridCells, asset, count)
-    }
-
-    private fun createRowPattern(
-        gridCells: Array<Array<Pair<PhraseEntity, String>?>>,
-        asset: Pair<PhraseEntity, String>,
-        count: Int
-    ) {
-        val gridHeight = gridCells.size
-        val gridWidth = gridCells[0].size
-
-        // Wähle eine zufällige Zeile
-        val rowOptions = (0 until gridHeight).toMutableList()
-        rowOptions.shuffle()
-
-        for (row in rowOptions) {
-            // Finde freie Positionen in dieser Zeile
-            val freePositions = (0 until gridWidth).filter { col -> gridCells[row][col] == null }.toMutableList()
-
-            if (freePositions.size >= min(count, 3)) {
-                freePositions.shuffle()
-                // Platziere das Asset in der Zeile
-                for (i in 0 until min(count, 3)) {
-                    val col = freePositions[i]
-                    gridCells[row][col] = asset
-                }
-                return
-            }
-        }
-
-        // Fallback: Verwende einen zufälligen Ansatz
-        createRandomPattern(gridCells, asset, count)
-    }
-
-    private fun createRandomPattern(
-        gridCells: Array<Array<Pair<PhraseEntity, String>?>>,
-        asset: Pair<PhraseEntity, String>,
-        count: Int
-    ) {
-        val emptyCells = getEmptyCells(gridCells)
-        val placementCount = min(count, 3).coerceAtMost(emptyCells.size)
-
-        if (placementCount <= 0) return
-
-        // Platziere das Asset an zufälligen freien Stellen
-        for (i in 0 until placementCount) {
-            val (row, col) = emptyCells[i]
-            gridCells[row][col] = asset
+            if (placements >= count) break // wenn alle Fächer platziert sind
         }
     }
 
