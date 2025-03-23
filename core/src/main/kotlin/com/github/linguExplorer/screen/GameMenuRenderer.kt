@@ -90,7 +90,6 @@ class GameMenuRenderer {
 
     fun renderGameMenu(batch: SpriteBatch, font: BitmapFont, glyphLayout: GlyphLayout, viewport: Viewport, shapeRenderer: ShapeRenderer) {
         // Reset menuSet to true when rendering the menu
-        menuSet = true
 
         font.color = Color.BLACK
         font.data.setScale(0.3f, 0.3f)
@@ -113,7 +112,7 @@ class GameMenuRenderer {
         Gdx.gl.glDisable(GL20.GL_BLEND)
 
         batch.begin()
-
+        println("renderung menu")
         // Draw box background
         batch.draw(boxTexture, boxX, boxY, 600f, 650f)
 

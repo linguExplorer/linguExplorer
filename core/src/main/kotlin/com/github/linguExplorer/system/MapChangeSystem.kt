@@ -17,6 +17,7 @@ import com.github.quillraven.fleks.AllOf
 import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.IteratingSystem
+import ktx.actors.stage
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
 import ktx.math.component1
@@ -55,6 +56,11 @@ class MapChangeSystem (
             println("Collision to $toGame")
 
 
+
+                gameStage.fire(GameCollideEvent(toGame)) // Event für Collision mit Minigame
+
+
+
                 if(toGame == "SM") {
                     if (game.containsScreen<MinigameEssenScreen>()) {
                         game.removeScreen<MinigameEssenScreen>()
@@ -80,15 +86,6 @@ class MapChangeSystem (
                     game.addScreen(MinigameFamilieScreen(game))//gameStage))
                     game.setScreen<MinigameFamilieScreen>()
                 }
-
-
-
-
-
-
-
-
-
 
             triggerEntities.clear()
         }

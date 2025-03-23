@@ -72,6 +72,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
             add<MapChangeSystem>()
             add<PathSystem>()
             add<MoveSystem>()
+            add<InteractSystem>()
             add<PhysicSystem>()
             add<AnimationSystem>()
             add<CameraSystem>()
