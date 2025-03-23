@@ -24,6 +24,17 @@ import com.itextpdf.layout.properties.UnitValue
 import java.io.File
 import com.badlogic.gdx.Application
 import com.github.linguExplorer.saveNumber
+import com.itextpdf.io.font.constants.StandardFonts.HELVETICA
+import com.itextpdf.io.font.constants.StandardFonts.HELVETICA_BOLD
+import com.itextpdf.io.image.ImageDataFactory
+import com.itextpdf.kernel.colors.ColorConstants
+import com.itextpdf.kernel.colors.DeviceRgb
+import com.itextpdf.kernel.font.PdfFontFactory
+import com.itextpdf.layout.borders.Border
+import com.itextpdf.layout.borders.SolidBorder
+import com.itextpdf.layout.properties.BorderRadius
+import com.itextpdf.layout.properties.TextAlignment
+import com.itextpdf.layout.properties.VerticalAlignment
 import java.util.*
 import java.util.concurrent.Executors
 import javax.swing.SwingUtilities
@@ -57,33 +68,32 @@ class PhrasenheftScreen (
     private val nextTexture = Texture(Gdx.files.internal("Phrasenheft/weiter.png"))
     private val backTexture = Texture(Gdx.files.internal("Phrasenheft/zurueck.png"))
     private val closeTexture = Texture(Gdx.files.internal("Phrasenheft/red_X.png"))
+    private val downloadTexture = Texture(Gdx.files.internal("Phrasenheft/Download.png"))
 
     private val heftSize = Vector2(1080f, 784f)
     private val nextSize = Vector2(backTexture.width.toFloat()*8, backTexture.height.toFloat()*8)
     private val backSize = Vector2(backTexture.width.toFloat()*8, backTexture.height.toFloat()*8)
     private val sortSize = Vector2(sortTexture.width.toFloat()*6, sortTexture.height.toFloat()*6)
     private val closeSize = Vector2(closeTexture.width.toFloat()*1.25f, closeTexture.height.toFloat()*1.25f)
+    private val downloadSize = Vector2(downloadTexture.width.toFloat()*0.5f, downloadTexture.height.toFloat()*0.5f)
 
     private var maxPages= (phrases.size/10f)//wie viele Phrasen max
     private var currentPage = 1
 
-    // Flag für den PDF-Export-Zustand
     private var isExportingPDF = false
-    // Flag, um zu überwachen, ob der Export abgeschlossen ist
     private var exportCompleted = false
-    // Der Ausführungsdienst für Thread-Management
     private val executor = Executors.newSingleThreadExecutor()
 
     private val nextPosition: Vector2
         get() = Vector2(
             viewport.worldWidth/2 + 600f,
-            (viewport.worldHeight - heftSize.y) - 200f
+            (viewport.worldHeight - heftSize.y) - 150f
         )
 
     private val backPosition: Vector2
         get() = Vector2(
             viewport.worldWidth/2 - 690f,
-            (viewport.worldHeight  - heftSize.y) - 200f
+            (viewport.worldHeight  - heftSize.y) - 150f
         )
 
     private val sortPosition: Vector2
@@ -106,9 +116,6 @@ class PhrasenheftScreen (
     }
 
     override fun render(delta: Float) {
-        // Prüfen, ob der Export abgeschlossen ist
-        if (exportCompleted) {
-        }
 
         handleInput()
         viewport.apply()
@@ -144,7 +151,7 @@ class PhrasenheftScreen (
             batch.draw(nextTexture, nextPosition.x, nextPosition.y, backSize.x, backSize.y)
         }
         batch.draw(sortTexture, sortPosition.x, sortPosition.y, sortSize.x, sortSize.y)
-        batch.draw(sortTexture, sortPosition.x, sortPosition.y + 200f, sortSize.x, sortSize.y)
+        batch.draw(downloadTexture, (viewport.worldWidth - downloadSize.x) / 2, 50f, downloadSize.x, downloadSize.y)
         batch.draw(closeTexture, closePosition.x, closePosition.y, closeSize.x, closeSize.y)
 
         currentY = heftY + heftSize.y - 140f
@@ -272,8 +279,8 @@ class PhrasenheftScreen (
                 }
             }
 
-            if (mouseX in sortPosition.x..(sortPosition.x + sortSize.x) &&
-                mouseY in sortPosition.y + 200f..(sortPosition.y + sortSize.y + 200f)) {
+            if (mouseX in (viewport.worldWidth - downloadSize.x) / 2..((viewport.worldWidth - downloadSize.x) / 2 + downloadSize.x) &&
+                mouseY in 50f..(50f + downloadSize.x)) {
                 if (!isExportingPDF) {
                     isExportingPDF = true
                     startExportPDF()
@@ -380,25 +387,107 @@ class PhrasenheftScreen (
         val pdfDocument = PdfDocument(pdfWriter)
         val document = Document(pdfDocument)
 
-        // Titel
-        document.add(Paragraph("linguExplorer Phrasenheft").setBold().setFontSize(18f))
 
-        // Tabelle mit zwei Spalten (Phrase & Übersetzung)
-        val table = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f))).useAllAvailableWidth()
+        val primaryColor = DeviceRgb(153, 179, 5)
+        val secondaryColor = DeviceRgb(242, 247, 230)
+        val headerBgColor = DeviceRgb(128, 153, 0) 
 
-        // Tabellenkopf
-        table.addHeaderCell(Cell().add(Paragraph("Phrase")).setBold())
-        table.addHeaderCell(Cell().add(Paragraph("Übersetzung")).setBold())
+        // Schriftarten und Stile
+        val titleFont = PdfFontFactory.createFont(HELVETICA_BOLD)
+        val textFont = PdfFontFactory.createFont(HELVETICA)
 
-        // Phrasen & Übersetzungen einfügen
-        for ((phrase, translation) in phrases) {
-            table.addCell(Cell().add(Paragraph(phrase)))
-            table.addCell(Cell().add(Paragraph(translation)))
+        // Titel mit Stil
+        val title = Paragraph("linguExplorer Phrasenheft")
+            .setFont(titleFont)
+            .setFontSize(24f)
+            .setFontColor(primaryColor)
+            .setBold()
+            .setTextAlignment(TextAlignment.CENTER)
+            .setMarginBottom(20f)
+
+        document.add(title)
+
+        // Untertitel hinzufügen
+        val subtitle = Paragraph("Deine persönliche Sprachsammlung")
+            .setFont(textFont)
+            .setFontSize(14f)
+            .setFontColor(DeviceRgb(100, 120, 0)) // Angepasst an die grüne Palette
+            .setTextAlignment(TextAlignment.CENTER)
+            .setMarginBottom(30f)
+
+        document.add(subtitle)
+
+        // Tabelle mit verbesserten Stilen
+        val table = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f)))
+            .useAllAvailableWidth()
+            .setMarginBottom(20f)
+            .setBorder(Border.NO_BORDER)
+
+        // Tabellenkopf mit Hintergrundfarbe
+        val headerCell1 = Cell()
+            .add(Paragraph("Phrase").setFontColor(ColorConstants.WHITE))
+            .setBackgroundColor(headerBgColor)
+            .setPadding(8f)
+            .setBorderRadius(BorderRadius(5f))
+            .setTextAlignment(TextAlignment.CENTER)
+
+        val headerCell2 = Cell()
+            .add(Paragraph("Übersetzung").setFontColor(ColorConstants.WHITE))
+            .setBackgroundColor(headerBgColor)
+            .setPadding(8f)
+            .setBorderRadius(BorderRadius(5f))
+            .setTextAlignment(TextAlignment.CENTER)
+
+        table.addHeaderCell(headerCell1)
+        table.addHeaderCell(headerCell2)
+
+        // Phrasen & Übersetzungen mit abwechselndem Hintergrund
+        for ((index, pair) in phrases.withIndex()) {
+            val (phrase, translation) = pair
+
+            // Abwechselnde Zeilenfarben
+            val bgColor = if (index % 2 == 0) secondaryColor else ColorConstants.WHITE
+
+            val phraseCell = Cell()
+                .add(Paragraph(phrase).setFont(textFont))
+                .setBackgroundColor(bgColor)
+                .setPadding(8f)
+                .setBorder(Border.NO_BORDER)
+                .setBorderBottom(SolidBorder(DeviceRgb(220, 230, 200), 0.5f)) // Hellgrüner Rand
+
+            val translationCell = Cell()
+                .add(Paragraph(translation).setFont(textFont))
+                .setBackgroundColor(bgColor)
+                .setPadding(8f)
+                .setBorder(Border.NO_BORDER)
+                .setBorderBottom(SolidBorder(DeviceRgb(220, 230, 200), 0.5f)) // Hellgrüner Rand
+
+            table.addCell(phraseCell)
+            table.addCell(translationCell)
         }
 
         document.add(table)
-        document.close()
 
+        // Fußzeile und Seitenzahl
+        val currentPage = pdfDocument.getNumberOfPages()
+        for (i in 1..currentPage) {
+            val pageSize = pdfDocument.getPage(i).getPageSize()
+            val footer = Paragraph("Seite $i / $currentPage")
+                .setFontSize(8f)
+                .setFontColor(primaryColor) // Grüne Seitenzahlen
+
+            document.showTextAligned(
+                footer,
+                pageSize.getWidth() - 30,
+                30f,
+                i,
+                TextAlignment.RIGHT,
+                VerticalAlignment.BOTTOM,
+                0f
+            )
+        }
+
+        document.close()
         println("PDF erfolgreich gespeichert: $filePath")
     }
 
