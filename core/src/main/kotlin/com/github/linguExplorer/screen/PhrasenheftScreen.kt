@@ -117,6 +117,11 @@ class PhrasenheftScreen (
 
     override fun render(delta: Float) {
 
+        if(exportCompleted) {
+            exportCompleted = false
+            isExportingPDF = false
+        }
+
         handleInput()
         viewport.apply()
         batch.projectionMatrix = viewport.camera.combined
@@ -390,7 +395,7 @@ class PhrasenheftScreen (
 
         val primaryColor = DeviceRgb(153, 179, 5)
         val secondaryColor = DeviceRgb(242, 247, 230)
-        val headerBgColor = DeviceRgb(128, 153, 0) 
+        val headerBgColor = DeviceRgb(128, 153, 0)
 
         // Schriftarten und Stile
         val titleFont = PdfFontFactory.createFont(HELVETICA_BOLD)
@@ -423,11 +428,16 @@ class PhrasenheftScreen (
             .setMarginBottom(20f)
             .setBorder(Border.NO_BORDER)
 
-        // Tabellenkopf mit Hintergrundfarbe
+        // Wichtig: Entfernen der standardmäßigen Header-Zellenbegrenzungen
+        table.setHorizontalBorderSpacing(0f)
+        table.setVerticalBorderSpacing(0f)
+
+        // Tabellenkopf mit Hintergrundfarbe und OHNE UMRANDUNG
         val headerCell1 = Cell()
             .add(Paragraph("Phrase").setFontColor(ColorConstants.WHITE))
             .setBackgroundColor(headerBgColor)
             .setPadding(8f)
+            .setBorder(Border.NO_BORDER) // Entfernt alle Rahmen
             .setBorderRadius(BorderRadius(5f))
             .setTextAlignment(TextAlignment.CENTER)
 
@@ -435,11 +445,20 @@ class PhrasenheftScreen (
             .add(Paragraph("Übersetzung").setFontColor(ColorConstants.WHITE))
             .setBackgroundColor(headerBgColor)
             .setPadding(8f)
+            .setBorder(Border.NO_BORDER) // Entfernt alle Rahmen
             .setBorderRadius(BorderRadius(5f))
             .setTextAlignment(TextAlignment.CENTER)
 
         table.addHeaderCell(headerCell1)
         table.addHeaderCell(headerCell2)
+
+        // Header-Style auf die gesamte Tabelle anwenden
+        table.setSkipFirstHeader(false)
+        table.setSkipLastFooter(false)
+
+        // Deaktiviere alle Tabellenbegrenzungen
+        table.setHorizontalBorderSpacing(0f)
+        table.setVerticalBorderSpacing(0f)
 
         // Phrasen & Übersetzungen mit abwechselndem Hintergrund
         for ((index, pair) in phrases.withIndex()) {
