@@ -77,10 +77,12 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private lateinit var user: UserEntity
     private lateinit var currentTopic: String
     private lateinit var currentCheckpoint: CheckpointEntity
+
+    
     // Speichert die Spielstände (
     val saveSlots = mutableListOf<Triple<UserEntity?, CheckpointEntity?, String?>>()
     private var loadingScreenRenderer = LoadingScreenRenderer()
-    private val gameMenuRenderer = GameUnlockScreenRenderer()
+    private val gameMenuRenderer = GameMenuRenderer()
     private var executePositionX = 0f
     private var executePositionY = 0f
 
@@ -627,16 +629,12 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         }
 
         // Setzt OnResumeClicked-Listener
-       /* gameMenuRenderer.setOnResumeClicked {
+        gameMenuRenderer.setOnResumeClicked {
             showMenu = false
-        }*/
+        }
 
         if (showMenu) {
-            gameMenuRenderer.renderTopicUpdate(
-                batch = batch,
-                viewport = viewport,
-                delta = Gdx.graphics.deltaTime, alpha = 1f,
-                fadingIn = true)
+            gameMenuRenderer.renderGameMenu(batch, font, glyphLayout, viewport, shapeRenderer)
             return
         }
 
