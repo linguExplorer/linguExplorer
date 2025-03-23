@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d7ec178f-f3a4-43fd-aef4-ba006330d994" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/webpage/src/pages/Spielbeschreibung.vue" beforeDir="false" afterPath="$PROJECT_DIR$/webpage/src/pages/Spielbeschreibung.vue" afterDir="false" />
-    </list>
+    <list default="true" id="d7ec178f-f3a4-43fd-aef4-ba006330d994" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -104,7 +102,7 @@
       <workItem from="1742306684468" duration="3002000" />
       <workItem from="1742486715333" duration="4710000" />
       <workItem from="1742547263127" duration="7013000" />
-      <workItem from="1742657187051" duration="112000" />
+      <workItem from="1742657187051" duration="167000" />
     </task>
     <servers />
   </component>
