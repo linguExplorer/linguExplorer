@@ -14,9 +14,13 @@ import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.ExtendViewport
+import com.badlogic.gdx.utils.viewport.Viewport
 import com.github.linguExplorer.component.ImageComponent
 import com.github.linguExplorer.event.*
+import com.github.linguExplorer.linguExplorer
 import com.github.linguExplorer.linguExplorer.Companion.UNIT_SCALE
+import com.github.linguExplorer.screen.BlobDialog
+import com.github.linguExplorer.screen.GameMenuRenderer
 import com.github.quillraven.fleks.*
 import com.github.quillraven.fleks.collection.compareEntity
 import ktx.actors.alpha
@@ -28,11 +32,16 @@ import ktx.tiled.forEachLayer
 @AllOf([ImageComponent::class])
 class RenderSystem(
     private val stage: Stage,
-    private val imageCmps:ComponentMapper<ImageComponent>
+    private val imageCmps:ComponentMapper<ImageComponent>,
+    private val gameStage: Stage,
+    private val game: linguExplorer,
+
 ) : EventListener, IteratingSystem(
     comparator = compareEntity{e1,e2 -> imageCmps[e1].compareTo(imageCmps[e2])}
 ) {
 
+    private val viewport: Viewport = ExtendViewport(1920f, 1080f)
+    private val BlobDialog = BlobDialog(game, viewport)
     private val bgdLayers = mutableListOf<TiledMapTileLayer>()
     private val fgdLayers = mutableListOf<TiledMapTileLayer>()
     private val mapRenderer = OrthogonalTiledMapRenderer(null, UNIT_SCALE, stage.batch)
@@ -46,7 +55,7 @@ class RenderSystem(
         val y: Float,
         var alpha: Float = 0.5f
     )
-    private val uiStage: Stage = Stage(ExtendViewport(16f, 9f)) // Eine Stage speziell für die UI
+    private val uiStage: Stage = Stage(viewport) // Eine Stage speziell für die UI
 
 
 
@@ -94,7 +103,6 @@ class RenderSystem(
                 }
             }
 
-
             /////Funkion hier zum Lockscreen erstellen Welche Minigame es ist wird über Parameter angegeben
 
 
@@ -107,9 +115,10 @@ class RenderSystem(
 
 
             ////
-
+            BlobDialog.render(Gdx.graphics.deltaTime)
 
         }
+
     }
     override fun onTickEntity(entity: Entity) {
         imageCmps[entity].image.toFront()
