@@ -25,7 +25,7 @@ class linguExplorer : KtxGame<KtxScreen>() {
        //setScreen<MinigameFamilieScreen>()
 
 
-   
+
 
       //  addScreen(CharacterDialog(this))
         //setScreen<CharacterDialog>()
@@ -46,7 +46,7 @@ class linguExplorer : KtxGame<KtxScreen>() {
 
 var name ="Blob"
 val userId: Int = ConfigManager.readUserId()
-var saveNumber = 0
+var saveNumber = 1
 var masterVolume = 1f
 var soundEffectVolume = 1f
 var musicVolume = 1f
