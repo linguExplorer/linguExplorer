@@ -55,8 +55,12 @@
     </p>
 
     <!-- Button -->
-    <button type="submit" class="hover-button lg:w-[150px] md:w-[140px] sm:w-[120px] w-[120px] mx-auto">
-      <img src="@/assets/xx_Images/xx_Images/Buttons/button_nochmal_versuchen.png" alt="Speichern" />
+    <button type="submit" class="lg:w-[150px] md:w-[140px] sm:w-[120px] w-[120px] mx-auto">
+      <img
+        src="@/assets/xx_Images/xx_Images/Buttons/button_nochmal_versuchen.png"
+        alt="Speichern"
+        class=""
+      />
     </button>
   </section>
 
@@ -102,13 +106,5 @@
   </script>
 
 <style scoped>
-.hover-button img {
-  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
-}
-.hover-button img:hover {
-  opacity: 0.8;
-  transform: scale(1.05);
-}
+
 </style>
-  
-  

@@ -10,7 +10,7 @@
           <!-- Button -->
           <button class="nav-button-spielbeschreibung hover-button">
             <img src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png" alt="Jetzt spielen"
-              class="lg:max-h-[46px] md:max-h-[45px] sm:max-h-[35px] max-h-[35px] px-2" />
+              class="lg:max-h-[46px] md:max-h-[45px] sm:max-h-[35px] max-h-[35px] px-2 hover:opacity-80 hover:scale-110 transform transition-transform duration-200 ease-in-out" />
           </button>
         </div>
       </section>

@@ -11,7 +11,7 @@
           />
         <div class="flex justify-center items-center space-x-2 sm:space-x-4">
           <!-- Button -->
-          <button class="nav-button-spielbeschreibung hover-button">
+          <button class="nav-button-spielbeschreibung hover:opacity-80 hover:scale-110 transform transition-transform duration-200 ease-in-out">
             <img 
               src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png" 
               alt="Jetzt spielen" 
@@ -99,7 +99,7 @@
      <!-- Footer -->
      <footer class="mt-auto">
       <section class="mx-auto p-4 flex justify-end items-center">
-        <button class="lg:max-w-[200px] md:max-w-[150px] sm:max-w-[100px] max-w-[100px] hover-button">
+        <button class="lg:max-w-[200px] md:max-w-[150px] sm:max-w-[100px] max-w-[100px] hover:opacity-80 hover:scale-110 transform transition-transform duration-200 ease-in-out">
           <router-link to="/" href="#">
             <img src="@/assets/xx_Images/xx_Images/Buttons/button zrk.png" alt="Zurück" />
           </router-link>
