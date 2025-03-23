@@ -32,7 +32,7 @@ class UserRepository {
             insertStatement.resultedValues?.first()?.toUser()
         }
 
-    /*fun deleteUserWithDependencies(userId: Int, saveNumber: Int) {
+    fun deleteUserWithDependencies(userId: Int, saveNumber: Int) {
         transaction {
             PhraseProgressHistory.deleteWhere {
                 (PhraseProgressHistory.userId eq userId) and (PhraseProgressHistory.saveNumber eq saveNumber)
@@ -46,11 +46,15 @@ class UserRepository {
                 (UserProgress.userId eq userId) and (UserProgress.saveNumber eq saveNumber)
             }
 
+            Checkpoint.deleteWhere {
+                (Checkpoint.userId eq userId) and (Checkpoint.saveNumber eq saveNumber)
+            }
+
             User.deleteWhere {
                 (User.id eq userId) and (User.saveNumber eq saveNumber)
             }
         }
-    }*/
+    }
 
     companion object {
         private fun ResultRow.toUser() = UserEntity(

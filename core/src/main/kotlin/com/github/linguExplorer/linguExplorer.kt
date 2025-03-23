@@ -44,9 +44,10 @@ class linguExplorer : KtxGame<KtxScreen>() {
     }
 }
 
-var name ="Blob"
+var name = "Blob"
+var currentTopic = ""
 val userId: Int = ConfigManager.readUserId()
-var saveNumber = 1
+var saveNumber = 0
 var masterVolume = 1f
 var soundEffectVolume = 1f
 var musicVolume = 1f
