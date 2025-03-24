@@ -38,7 +38,7 @@ import kotlin.math.max
 
 class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private var batch: SpriteBatch = SpriteBatch()
-    private var stage: Stage = Stage()
+    private var stage: Stage = Stage(ExtendViewport(1920f, 1080f))
     private var shapeRenderer: ShapeRenderer = ShapeRenderer()
     private lateinit var font: BitmapFont
     private val viewport: Viewport = ExtendViewport(1920f, 1080f)
