@@ -51,6 +51,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
     private var shapeRenderer: ShapeRenderer = ShapeRenderer()
     private val viewport: Viewport = ExtendViewport(1920f, 1080f)
     private val glyphLayout = GlyphLayout()
+    private val batch: SpriteBatch = SpriteBatch()
 
     private val world: World= world {
         injectables {
@@ -88,7 +89,6 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
     //Game Menü
     private var update = 0.25f
     private var menuSet = false
-    private val batch: SpriteBatch = SpriteBatch()
     private val boxTexture: Texture = Texture(Gdx.files.internal("xx_Images/GameMenü/box.png"))
     private var font: BitmapFont = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
 
