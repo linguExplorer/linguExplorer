@@ -84,8 +84,21 @@ abstract class MinigameSystem {
 
     fun updateUserInformation(userHistory: List<PhraseProgressHistoryEntity>) {
         val progressRepo = PhraseProgressRepository()
-        val historyRepo = PhraseProgressHistoryRepository()
         val phraseList = allPhrasesList.filter { it.topicId == this.topicId }
+        val userProgress = progressRepo.getAllPhraseProgressForUser(userId, this.topicId)
+            .filter { it.phraseId in phraseList.map { it.id }
+            }
+
+
+        if(userProgress.size == phraseList.size && userProgress.all { it.isMastered }) {
+            println("Alle Phrasen in diesem Thema sind bereits als 'mastered' markiert")
+            if(topicId == currentTopic.id) {
+                topicProgress = 1.0
+            }
+            return
+        }
+
+        val historyRepo = PhraseProgressHistoryRepository()
 
         var totalScore = 0.0
         var count = 0
@@ -110,6 +123,11 @@ abstract class MinigameSystem {
             println(topicProgress)
         }
     }
+
+
+
+
+
 
 
 

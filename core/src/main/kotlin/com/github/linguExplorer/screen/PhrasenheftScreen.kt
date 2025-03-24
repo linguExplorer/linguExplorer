@@ -25,6 +25,7 @@ import java.io.File
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.audio.Sound
 import com.github.linguExplorer.saveNumber
+import com.itextpdf.io.font.constants.StandardFonts
 import com.itextpdf.io.font.constants.StandardFonts.HELVETICA
 import com.itextpdf.io.font.constants.StandardFonts.HELVETICA_BOLD
 import com.itextpdf.io.image.ImageDataFactory
@@ -363,14 +364,17 @@ class PhrasenheftScreen (
                     // Verarbeiten des Ergebnisses
                     if (!wasCancelledRef[0] && filePathRef[0] != null) {
                         val filePath = filePathRef[0]!!
-                        exportPhrasesToPDF(phrases, filePath)
+                        try {
+                            exportPhrasesToPDF(phrases, filePath)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            println("Fehler beim PDF-Export: ${e.message}")
+                        }
 
-                        // Erfolgsmeldung im Konsolenlog
-                        println("PDF erfolgreich gespeichert unter: $filePath")
-
-                        // Zurück zum LibGDX-Thread und zum MapScreen wechseln
+                        // Zurück zum LibGDX-Thread
                         Gdx.app.postRunnable {
                             exportCompleted = true
+                            isExportingPDF = false
                         }
                     } else {
                         // Wenn abgebrochen, zurück zum normalen Zustand
@@ -380,20 +384,16 @@ class PhrasenheftScreen (
                     }
                 } else {
                     // Für Android und andere Plattformen
-                    // Einfach direkt im externen Speicher speichern
                     val filePath = Gdx.files.external("Phrasenheft.pdf").file().absolutePath
                     exportPhrasesToPDF(phrases, filePath)
 
-                    println("PDF gespeichert unter: $filePath")
-
-                    // Zurück zum LibGDX-Thread und zum MapScreen wechseln
                     Gdx.app.postRunnable {
                         exportCompleted = true
+                        isExportingPDF = false
                     }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                // Bei Fehler zurück zum normalen Zustand
                 Gdx.app.postRunnable {
                     isExportingPDF = false
                 }
@@ -401,124 +401,90 @@ class PhrasenheftScreen (
         }
     }
 
-    fun exportPhrasesToPDF(phrases: List<Pair<String, String>>, filePath: String) {
-        val file = File(filePath)
-        val pdfWriter = PdfWriter(file)
-        val pdfDocument = PdfDocument(pdfWriter)
-        val document = Document(pdfDocument)
+    private fun exportPhrasesToPDF(phrases: List<Pair<String, String>>, filePath: String) {
+        val writer = PdfWriter(filePath)
+        val pdf = PdfDocument(writer)
+        val document = Document(pdf)
 
+        // Schriftarten
+        val titleFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)
+        val textFont = PdfFontFactory.createFont(StandardFonts.HELVETICA)
 
+        // Farben
         val primaryColor = DeviceRgb(153, 179, 5)
         val secondaryColor = DeviceRgb(242, 247, 230)
         val headerBgColor = DeviceRgb(128, 153, 0)
 
-        // Schriftarten und Stile
-        val titleFont = PdfFontFactory.createFont(HELVETICA_BOLD)
-        val textFont = PdfFontFactory.createFont(HELVETICA)
+        // Titel
+        document.add(
+            Paragraph("linguExplorer Phrasenheft")
+                .setFont(titleFont)
+                .setFontSize(24f)
+                .setFontColor(primaryColor)
+                .setTextAlignment(TextAlignment.CENTER)
+        )
 
-        // Titel mit Stil
-        val title = Paragraph("linguExplorer Phrasenheft")
-            .setFont(titleFont)
-            .setFontSize(24f)
-            .setFontColor(primaryColor)
-            .setBold()
-            .setTextAlignment(TextAlignment.CENTER)
-            .setMarginBottom(20f)
+        document.add(
+            Paragraph("Deine persönliche Sprachsammlung")
+                .setFont(textFont)
+                .setFontSize(14f)
+                .setFontColor(DeviceRgb(100, 120, 0))
+                .setTextAlignment(TextAlignment.CENTER)
+                .setMarginBottom(20f)
+        )
 
-        document.add(title)
-
-        // Untertitel hinzufügen
-        val subtitle = Paragraph("Deine persönliche Sprachsammlung")
-            .setFont(textFont)
-            .setFontSize(14f)
-            .setFontColor(DeviceRgb(100, 120, 0)) // Angepasst an die grüne Palette
-            .setTextAlignment(TextAlignment.CENTER)
-            .setMarginBottom(30f)
-
-        document.add(subtitle)
-
-        // Tabelle mit verbesserten Stilen
+        // Tabelle
         val table = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f)))
             .useAllAvailableWidth()
             .setMarginBottom(20f)
-            .setBorder(Border.NO_BORDER)
 
-        // Wichtig: Entfernen der standardmäßigen Header-Zellenbegrenzungen
-        table.setHorizontalBorderSpacing(0f)
-        table.setVerticalBorderSpacing(0f)
+        // Header
+        table.addHeaderCell(
+            Cell().add(Paragraph("Phrase"))
+                .setBackgroundColor(headerBgColor)
+                .setFontColor(DeviceRgb(255, 255, 255))
+                .setTextAlignment(TextAlignment.CENTER)
+        )
+        table.addHeaderCell(
+            Cell().add(Paragraph("Übersetzung"))
+                .setBackgroundColor(headerBgColor)
+                .setFontColor(DeviceRgb(255, 255, 255))
+                .setTextAlignment(TextAlignment.CENTER)
+        )
 
-        // Tabellenkopf mit Hintergrundfarbe und OHNE UMRANDUNG
-        val headerCell1 = Cell()
-            .add(Paragraph("Phrase").setFontColor(ColorConstants.WHITE))
-            .setBackgroundColor(headerBgColor)
-            .setPadding(8f)
-            .setBorder(Border.NO_BORDER) // Entfernt alle Rahmen
-            .setBorderRadius(BorderRadius(5f))
-            .setTextAlignment(TextAlignment.CENTER)
-
-        val headerCell2 = Cell()
-            .add(Paragraph("Übersetzung").setFontColor(ColorConstants.WHITE))
-            .setBackgroundColor(headerBgColor)
-            .setPadding(8f)
-            .setBorder(Border.NO_BORDER) // Entfernt alle Rahmen
-            .setBorderRadius(BorderRadius(5f))
-            .setTextAlignment(TextAlignment.CENTER)
-
-        table.addHeaderCell(headerCell1)
-        table.addHeaderCell(headerCell2)
-
-        // Header-Style auf die gesamte Tabelle anwenden
-        table.setSkipFirstHeader(false)
-        table.setSkipLastFooter(false)
-
-        // Deaktiviere alle Tabellenbegrenzungen
-        table.setHorizontalBorderSpacing(0f)
-        table.setVerticalBorderSpacing(0f)
-
-        // Phrasen & Übersetzungen mit abwechselndem Hintergrund
+        // Phrasen hinzufügen
         for ((index, pair) in phrases.withIndex()) {
             val (phrase, translation) = pair
 
-            // Abwechselnde Zeilenfarben
-            val bgColor = if (index % 2 == 0) secondaryColor else ColorConstants.WHITE
+            val bgColor = if (index % 2 == 0) secondaryColor else DeviceRgb(255, 255, 255)
 
-            val phraseCell = Cell()
-                .add(Paragraph(phrase).setFont(textFont))
-                .setBackgroundColor(bgColor)
-                .setPadding(8f)
-                .setBorder(Border.NO_BORDER)
-                .setBorderBottom(SolidBorder(DeviceRgb(220, 230, 200), 0.5f)) // Hellgrüner Rand
-
-            val translationCell = Cell()
-                .add(Paragraph(translation).setFont(textFont))
-                .setBackgroundColor(bgColor)
-                .setPadding(8f)
-                .setBorder(Border.NO_BORDER)
-                .setBorderBottom(SolidBorder(DeviceRgb(220, 230, 200), 0.5f)) // Hellgrüner Rand
-
-            table.addCell(phraseCell)
-            table.addCell(translationCell)
+            table.addCell(
+                Cell().add(Paragraph(phrase))
+                    .setBackgroundColor(bgColor)
+                    .setBorder(Border.NO_BORDER)
+            )
+            table.addCell(
+                Cell().add(Paragraph(translation))
+                    .setBackgroundColor(bgColor)
+                    .setBorder(Border.NO_BORDER)
+            )
         }
 
         document.add(table)
 
-        // Fußzeile und Seitenzahl
-        val currentPage = pdfDocument.getNumberOfPages()
-        for (i in 1..currentPage) {
-            val pageSize = pdfDocument.getPage(i).getPageSize()
-            val footer = Paragraph("Seite $i / $currentPage")
-                .setFontSize(8f)
-                .setFontColor(primaryColor) // Grüne Seitenzahlen
-
-            document.showTextAligned(
-                footer,
-                pageSize.getWidth() - 30,
-                30f,
-                i,
-                TextAlignment.RIGHT,
-                VerticalAlignment.BOTTOM,
-                0f
-            )
+        // Seitenzahlen
+        val pageCount = pdf.numberOfPages
+        for (pageNum in 1..pageCount) {
+            pdf.getPage(pageNum).let { page ->
+                val pageSize = page.pageSize
+                val canvas = com.itextpdf.kernel.pdf.canvas.PdfCanvas(page)
+                canvas.beginText()
+                    .setFontAndSize(titleFont, 10f)
+                    .setFillColor(primaryColor)
+                    .moveText(pageSize.width - 50.0, 30.0)
+                    .showText("Seite $pageNum / $pageCount")
+                    .endText()
+            }
         }
 
         document.close()

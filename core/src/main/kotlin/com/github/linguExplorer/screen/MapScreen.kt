@@ -47,7 +47,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
     private val phWorld = createWorld(gravity = vec2()).apply {
         autoClearForces = false
     }
-    private val gameMenuScreen = GameMenuScreen() // Instanz des GameMenuScreen
+    private val gameMenuRenderer = GameMenuRenderer() // Instanz des GameMenuScreen
     private var shapeRenderer: ShapeRenderer = ShapeRenderer()
     private val viewport: Viewport = ExtendViewport(1920f, 1080f)
     private val glyphLayout = GlyphLayout()
@@ -235,12 +235,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
             settingsIconImage.addListener(object : ClickListener() {  // Hinzugefügt: Listener für Settings Icon
                 override fun clicked(event: InputEvent?, x: Float, y: Float) {
                     println("Settings Icon clicked")
-                    gameMenuScreen.isMenuVisible = true // Zeige Game Menu
-                    if(gameMenuScreen.isMenuVisible){
-                        inputMultiplexer.removeProcessor(stage) // Verhindere Input im MapScreen
-                    } else {
-                        inputMultiplexer.addProcessor(stage) // Aktiviere Input im MapScreen wieder
-                    }
+                    menuSet = true
                 }
             })
         }
@@ -338,15 +333,18 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
     }
 
     override fun render(delta: Float) {
+        batch.projectionMatrix = viewport.camera.combined
         shapeRenderer.projectionMatrix = viewport.camera.combined
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            gameMenuScreen.isMenuVisible = !gameMenuScreen.isMenuVisible
-            if(gameMenuScreen.isMenuVisible){
-                inputMultiplexer.removeProcessor(stage) // Verhindert Input im MapScreen
+
+            if (menuSet) {
+                menuSet = false
             } else {
-                inputMultiplexer.addProcessor(stage) // Aktiviere Input im MapScreen wieder
+                menuSet = true
             }
+
+            println("is clicked")
         }
 
         world.update(delta.coerceAtMost(update))
@@ -366,15 +364,20 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         progressFont.draw(batch, progressText, progressTextX, progressTextY + 30f)
         batch.end()
 
-        //Game Menü
-        if (gameMenuScreen.isMenuVisible) {
-            gameMenuScreen.render(batch, font, glyphLayout, viewport, shapeRenderer) {
-                // wird aufgerufen, wenn Menü geschlossen wird
-                Gdx.app.postRunnable {
-                    inputMultiplexer.addProcessor(stage) // Aktiviere Input im MapScreen wieder
-                    Gdx.input.inputProcessor = inputMultiplexer
-                }
-            }
+        gameMenuRenderer.setOnResumeClicked {
+            menuSet = false
+        }
+
+        if (menuSet) {
+            println("MENU IS SET TO TRUE!")
+            println("Batch is drawing: ${batch.isDrawing}")
+            println("Viewport dimensions: ${viewport.worldWidth} x ${viewport.worldHeight}")
+            gameMenuRenderer.renderGameMenu(batch, font, glyphLayout, uiStage.viewport, shapeRenderer)
+            Gdx.input.inputProcessor = null
+            update = 0f
+        } else {
+            Gdx.input.inputProcessor = inputMultiplexer
+            update = 0.25f
         }
     }
 
@@ -408,7 +411,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         uiElements.boxOutTexture.disposeSafely()
         uiElements.settingsIconTexture.disposeSafely()
         uiElements.progressBarTexture.disposeSafely()
-        gameMenuScreen.dispose()
+        gameMenuRenderer.dispose()
     }
 
     companion object : KtxScreen {

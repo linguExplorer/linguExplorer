@@ -808,6 +808,8 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                 CheckpointRepository().addCheckpoint(userId, saveNumber, 0, 30f, 30f, Timestamp(System.currentTimeMillis()))
                 executePositionX = 30f
                 executePositionY = 30f
+                val topicId = TopicRepository().getTopicIdByName("Schule")
+                currentTopic = TopicRepository().getTopicById(topicId)!!
             } else if(newGame) {
                 UserRepository().addUser(userId, saveNumber, name)
                 CheckpointRepository().addCheckpoint(userId, saveNumber, 0, 30f, 30f, Timestamp(System.currentTimeMillis()))
