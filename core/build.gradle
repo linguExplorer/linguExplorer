@@ -27,6 +27,9 @@ dependencies {
   implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
   implementation "mysql:mysql-connector-java:8.0.29"
 
+  implementation 'com.github.Vatuu:discord-rpc:1.6.2'
+  implementation "com.itextpdf:itext7-core:7.2.5"
+
 
   // Weitere nützliche Abhängigkeiten (optional)
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

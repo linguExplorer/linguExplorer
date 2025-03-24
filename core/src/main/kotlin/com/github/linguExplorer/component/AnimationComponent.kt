@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 
 
 enum class AnimationModel{
-    PLAYER, UNDEFINED;
+    PLAYER, NC, UNDEFINED, NCC, NCF, NCS;
 
     val atlasKey: String = this.toString().lowercase()
 

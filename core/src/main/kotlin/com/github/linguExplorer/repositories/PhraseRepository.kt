@@ -94,7 +94,7 @@ class PhraseRepository {
             return@transaction result
         }*/
 
-    fun getLimitedPhrasesByTopicNameForUser(topicId: Int?, userId: Int, size: Int): List<PhraseEntity> =
+    fun getLimitedPhrasesByTopicNameForUser(topicId: Int?, userId: Int, saveNumber: Int, size: Int): List<PhraseEntity> =
         transaction {
             val phaseProgressRepository = PhraseProgressRepository()
             val phaseProgressHistoryRepository = PhraseProgressHistoryRepository()
@@ -105,10 +105,10 @@ class PhraseRepository {
             val allPhrases = getPhrasesByTopicId(topicId)
 
             // Alle Fortschritte für den Benutzer in einem Rutsch abfragen
-            val progressMap = phaseProgressRepository.getAllPhraseProgressForUser(userId)
+            val progressMap = phaseProgressRepository.getAllPhraseProgressForUser(userId, saveNumber)
                 .associateBy { it.phraseId }
 
-            val userHistory = phaseProgressHistoryRepository.getAllEntriesForUser(userId)
+            val userHistory = phaseProgressHistoryRepository.getAllEntriesForUser(userId, saveNumber)
 
             val unMasteredPhrases = allPhrases.filter { phrase ->
                 val progress = progressMap[phrase.id]

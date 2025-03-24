@@ -13,14 +13,43 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.github.linguExplorer.linguExplorer
 import com.github.linguExplorer.repositories.PhraseProgressRepository
+import com.github.linguExplorer.userId
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
+import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfWriter
+import com.itextpdf.layout.Document
+import com.itextpdf.layout.element.*
+import com.itextpdf.layout.properties.UnitValue
+import java.io.File
+import com.badlogic.gdx.Application
+import com.badlogic.gdx.audio.Sound
+import com.github.linguExplorer.saveNumber
+import com.itextpdf.io.font.constants.StandardFonts.HELVETICA
+import com.itextpdf.io.font.constants.StandardFonts.HELVETICA_BOLD
+import com.itextpdf.io.image.ImageDataFactory
+import com.itextpdf.kernel.colors.ColorConstants
+import com.itextpdf.kernel.colors.DeviceRgb
+import com.itextpdf.kernel.font.PdfFontFactory
+import com.itextpdf.layout.borders.Border
+import com.itextpdf.layout.borders.SolidBorder
+import com.itextpdf.layout.properties.BorderRadius
+import com.itextpdf.layout.properties.TextAlignment
+import com.itextpdf.layout.properties.VerticalAlignment
+import java.util.*
+import java.util.concurrent.Executors
+import javax.swing.SwingUtilities
 
 class PhrasenheftScreen (
+    private val game: linguExplorer
 ): KtxScreen {
     private var font = BitmapFont()
     private val batch = SpriteBatch()
     private val shapeRenderer = ShapeRenderer()
+    private val viewport: Viewport = ExtendViewport(1920f, 1080f)
+
+    private var pageFlipSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Soundeffekte/page_flip.mp3"))
+    private var soundPlaying = false
 
     private enum class SortState {
         ASCENDING_PHRASE, DESCENDING_PHRASE, ASCENDING_TRANSLATION, DESCENDING_TRANSLATION
@@ -28,19 +57,14 @@ class PhrasenheftScreen (
     private var currentSortState = SortState.ASCENDING_PHRASE
     private var sortText = "Phrase aufsteigend"
 
-    private val phrasesOfProgress = PhraseProgressRepository().getAllPhrasesOfUserProgress(123)
+    private val phrasesOfProgress = PhraseProgressRepository().getAllPhrasesOfUserProgress(userId, saveNumber)
     private var phrases = phrasesOfProgress.map {
         it.phrase to it.translation
-
     }
 
     private val lineHeight = 56f
     private val spacing = 260f
-    private val padding = 20f
-    private var currentY = 778f
-
-
-
+    private var currentY: Float = 0f
 
     // Texturen
     private val heftTexture = Texture(Gdx.files.internal("Phrasenheft/heft_design.png"))
@@ -48,63 +72,63 @@ class PhrasenheftScreen (
     private val nextTexture = Texture(Gdx.files.internal("Phrasenheft/weiter.png"))
     private val backTexture = Texture(Gdx.files.internal("Phrasenheft/zurueck.png"))
     private val closeTexture = Texture(Gdx.files.internal("Phrasenheft/red_X.png"))
+    private val downloadTexture = Texture(Gdx.files.internal("Phrasenheft/Download.png"))
 
-
-    private val heftSize = Vector2(heftTexture.width.toFloat()*8, heftTexture.height.toFloat()*8)
+    private val heftSize = Vector2(1080f, 784f)
     private val nextSize = Vector2(backTexture.width.toFloat()*8, backTexture.height.toFloat()*8)
     private val backSize = Vector2(backTexture.width.toFloat()*8, backTexture.height.toFloat()*8)
     private val sortSize = Vector2(sortTexture.width.toFloat()*6, sortTexture.height.toFloat()*6)
     private val closeSize = Vector2(closeTexture.width.toFloat()*1.25f, closeTexture.height.toFloat()*1.25f)
-
-
-    private val viewport: Viewport = ExtendViewport(800f, 600f)
-
+    private val downloadSize = Vector2(downloadTexture.width.toFloat()*0.5f, downloadTexture.height.toFloat()*0.5f)
 
     private var maxPages= (phrases.size/10f)//wie viele Phrasen max
     private var currentPage = 1
 
+    private var isExportingPDF = false
+    private var exportCompleted = false
+    private val executor = Executors.newSingleThreadExecutor()
+
     private val nextPosition: Vector2
         get() = Vector2(
-            viewport.screenWidth/2 + 600f,
-            (viewport.screenHeight - heftSize.y) - 200f
+            viewport.worldWidth/2 + 600f,
+            (viewport.worldHeight - heftSize.y) - 150f
         )
-
 
     private val backPosition: Vector2
         get() = Vector2(
-            viewport.screenWidth/2 - 690f,
-            (viewport.screenHeight  - heftSize.y) - 200f
+            viewport.worldWidth/2 - 690f,
+            (viewport.worldHeight  - heftSize.y) - 150f
         )
-
 
     private val sortPosition: Vector2
         get() = Vector2(
-            viewport.screenWidth/2 - 690f,
-            (viewport.screenHeight/2f + heftSize.y/2f) - sortSize.y
+            viewport.worldWidth/2 - 690f,
+            (viewport.worldHeight/2f + heftSize.y/2f) - sortSize.y
         )
 
     private val closePosition: Vector2
         get() = Vector2(
-            viewport.screenWidth.toFloat() - 150f,
-            (viewport.screenHeight - 50f) - sortSize.y
+            viewport.worldWidth - 150f,
+            (viewport.worldHeight - 50f) - sortSize.y
         )
-
 
     private val textX = sortPosition.x
     private val textY = sortPosition.y
+
     override fun show() {
-
         Gdx.input.inputProcessor = null
-
-        viewport.update(Gdx.graphics.width, Gdx.graphics.height, true)
-        viewport.camera.position.set(viewport.worldWidth / 2, viewport.worldHeight / 2, 0f)
-        viewport.camera.update()
     }
 
     override fun render(delta: Float) {
-        handleInput()
 
+        if(exportCompleted) {
+            exportCompleted = false
+            isExportingPDF = false
+        }
+
+        handleInput()
         viewport.apply()
+        batch.projectionMatrix = viewport.camera.combined
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
         batch.begin()
@@ -113,20 +137,20 @@ class PhrasenheftScreen (
         font.color = Color.BLACK
         font.data.setScale(0.3f, 0.3f)
 
-        val screenHeight = viewport.screenHeight
-        val screenWidth = viewport.screenWidth
+        val screenHeight = viewport.worldHeight
+        val screenWidth = viewport.worldWidth
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
         shapeRenderer.color = Color(156 / 255f, 194 / 255f, 211 / 255f, 1f)
-        shapeRenderer.rect(padding, padding, screenWidth - padding * 2, screenHeight - padding * 2)
+        shapeRenderer.rect(0f, 0f, screenWidth, screenHeight)
         shapeRenderer.end()
 
         batch.end()
 
         batch.begin()
 
-        val heftX = screenWidth / 2f - heftSize.x / 2f
-        val heftY = screenHeight / 2f - heftSize.y / 2f
+        val heftX = (screenWidth - heftSize.x) / 2f
+        val heftY = (screenHeight - heftSize.y) / 2f
         batch.draw(heftTexture, heftX, heftY, heftSize.x, heftSize.y)
 
         if ((currentPage - 1) > 0) {
@@ -136,29 +160,28 @@ class PhrasenheftScreen (
             batch.draw(nextTexture, nextPosition.x, nextPosition.y, backSize.x, backSize.y)
         }
         batch.draw(sortTexture, sortPosition.x, sortPosition.y, sortSize.x, sortSize.y)
+        batch.draw(downloadTexture, (viewport.worldWidth - downloadSize.x) / 2, 50f, downloadSize.x, downloadSize.y)
         batch.draw(closeTexture, closePosition.x, closePosition.y, closeSize.x, closeSize.y)
 
-
-        val startX = screenWidth / 4f + 70f
+        currentY = heftY + heftSize.y - 140f
+        val startX = heftX + 130f
         var adjustedY = currentY
 
         layout.setText(font, "English")
         var titleTextWidth = layout.width
         var titleX = startX - (titleTextWidth / 2)
         font.draw(batch, "English", titleX, adjustedY + 75f)
-        titleX += 550f
+        titleX += 558f
         font.draw(batch, "English", titleX, adjustedY + 75f)
         layout.setText(font, "Deutsch")
         titleTextWidth = layout.width
         titleX = startX + spacing - (titleTextWidth / 2)
         font.draw(batch, "Deutsch", titleX, adjustedY + 75f)
-        titleX += 550f
+        titleX += 558f
         font.draw(batch, "Deutsch", titleX, adjustedY + 75f)
 
         val phrasesPerPage = 20
         val phrasesPerColumn = 10
-
-
 
         font = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
         font.data.setScale(0.2f, 0.2f)
@@ -180,7 +203,7 @@ class PhrasenheftScreen (
                 val columnOffset = if ((index - pageStartIndex) <= phrasesPerColumn) {
                     0f
                 } else {
-                    550f
+                    558f
                 }
 
                 layout.setText(font, phraseText)
@@ -205,54 +228,55 @@ class PhrasenheftScreen (
 
         val sideText = "Sortiert nach: $sortText"
 
-
-        //val fontRotationMatrix = batch.transformMatrix.cpy()
-        //fontRotationMatrix.setToRotation(0f, 0f, 1f, 90f)
-        //batch.transformMatrix = fontRotationMatrix
-
         font.data.setScale(0.15f, 0.15f)
         layout.setText(font, sideText)
         font.draw(batch, sideText, sortPosition.x, sortPosition.y + sortSize.y + 30f )
 
-       // batch.transformMatrix.idt()
-
         batch.end()
     }
 
-
-
-
     private fun handleInput() {
-        val mouseX = Gdx.input.x.toFloat() * viewport.screenWidth/ Gdx.graphics.width
-        val mouseY = (Gdx.graphics.height - Gdx.input.y.toFloat()) * viewport.screenHeight / Gdx.graphics.height
+        if (isExportingPDF) {
+            return
+        }
 
+        if (!Gdx.input.isTouched()) {
+            soundPlaying = false
+        }
+
+        val mouseX = viewport.unproject(Vector2(Gdx.input.x.toFloat(), Gdx.input.y.toFloat())).x
+        val mouseY = viewport.unproject(Vector2(Gdx.input.x.toFloat(), Gdx.input.y.toFloat())).y
 
         if (Gdx.input.justTouched()) {
-
-
-                if (mouseX in nextPosition.x..(nextPosition.x + backSize.x) && mouseY in nextPosition.y..(nextPosition.y + backSize.y)
-                ) {
-
-                    if((currentPage-1) + 1 <  maxPages-1f) {
-                        currentPage++
-
+            // Next button
+            if (mouseX in nextPosition.x..(nextPosition.x + backSize.x) &&
+                mouseY in nextPosition.y..(nextPosition.y + backSize.y)) {
+                if((currentPage-1) + 1 <  maxPages-1f) {
+                    currentPage++
+                    if (!soundPlaying) {
+                        pageFlipSound?.play(1.0f)
+                        soundPlaying = true
                     }
-                    println("Button Next, $currentPage")
-
                 }
+                println("Button Next, $currentPage")
+            }
 
-            if (mouseX in backPosition.x..(backPosition.x + backSize.x) && mouseY in backPosition.y..(backPosition.y + backSize.y)
-            ) {
-
+            // Back button
+            if (mouseX in backPosition.x..(backPosition.x + backSize.x) &&
+                mouseY in backPosition.y..(backPosition.y + backSize.y)) {
                 if((currentPage-1) - 1 >=  0) {
                     currentPage--
-
+                    if (!soundPlaying) {
+                        pageFlipSound?.play(1.0f)
+                        soundPlaying = true
+                    }
                 }
                 println("Button Back, $currentPage")
             }
 
-            if (mouseX in sortPosition.x..(sortPosition.x + sortSize.x) && mouseY in sortPosition.y..(sortPosition.y + sortSize.y)
-            ) {
+            // Sort button
+            if (mouseX in sortPosition.x..(sortPosition.x + sortSize.x) &&
+                mouseY in sortPosition.y..(sortPosition.y + sortSize.y)) {
                 currentSortState = when (currentSortState) {
                     SortState.ASCENDING_PHRASE -> SortState.DESCENDING_PHRASE
                     SortState.DESCENDING_PHRASE -> SortState.ASCENDING_TRANSLATION
@@ -275,27 +299,236 @@ class PhrasenheftScreen (
                 }
             }
 
-
-            if (mouseX in closePosition.x..(closePosition.x + closeSize.x) && mouseY in closePosition.y..(closePosition.y + closeSize.y)
-            ) {
-                println("NEIN!!")
-
+            if (mouseX in (viewport.worldWidth - downloadSize.x) / 2..((viewport.worldWidth - downloadSize.x) / 2 + downloadSize.x) &&
+                mouseY in 50f..(50f + downloadSize.x)) {
+                if (!isExportingPDF) {
+                    isExportingPDF = true
+                    startExportPDF()
+                }
             }
 
-
-
+            // Close button
+            if (mouseX in closePosition.x..(closePosition.x + closeSize.x) &&
+                mouseY in closePosition.y..(closePosition.y + closeSize.y)) {
+                game.setScreen<MapScreen>()
+                return
             }
-
+        }
     }
 
+    private fun startExportPDF() {
+        executor.submit {
+            try {
+                if (Gdx.app.type == Application.ApplicationType.Desktop) {
+                    val filePathRef = arrayOfNulls<String>(1)
+                    val wasCancelledRef = booleanArrayOf(false)
 
-        override fun resize(width: Int, height: Int) {
+                    SwingUtilities.invokeAndWait {
+                        try {
+                            val chooser = javax.swing.JFileChooser()
+                            chooser.dialogTitle = "PDF speichern unter"
+
+                            // Standarddateiname vorschlagen
+                            val defaultFile = File("Phrasenheft.pdf")
+                            chooser.selectedFile = defaultFile
+
+                            // Nur PDF-Dateien anzeigen/akzeptieren
+                            val fileFilter = javax.swing.filechooser.FileNameExtensionFilter("PDF Dateien (*.pdf)", "pdf")
+                            chooser.fileFilter = fileFilter
+
+                            // Das Dialogfenster anzeigen
+                            val returnVal = chooser.showSaveDialog(null)
+
+                            if (returnVal == javax.swing.JFileChooser.APPROVE_OPTION) {
+                                // Benutzer hat einen Speicherort ausgewählt
+                                val selectedFile = chooser.selectedFile
+                                var filePath = selectedFile.absolutePath
+
+                                // Sicherstellen, dass die Datei die .pdf-Erweiterung hat
+                                if (!filePath.lowercase(Locale.getDefault()).endsWith(".pdf")) {
+                                    filePath += ".pdf"
+                                }
+
+                                filePathRef[0] = filePath
+                            } else {
+                                // Benutzer hat abgebrochen
+                                wasCancelledRef[0] = true
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            wasCancelledRef[0] = true
+                        }
+                    }
+
+                    // Verarbeiten des Ergebnisses
+                    if (!wasCancelledRef[0] && filePathRef[0] != null) {
+                        val filePath = filePathRef[0]!!
+                        exportPhrasesToPDF(phrases, filePath)
+
+                        // Erfolgsmeldung im Konsolenlog
+                        println("PDF erfolgreich gespeichert unter: $filePath")
+
+                        // Zurück zum LibGDX-Thread und zum MapScreen wechseln
+                        Gdx.app.postRunnable {
+                            exportCompleted = true
+                        }
+                    } else {
+                        // Wenn abgebrochen, zurück zum normalen Zustand
+                        Gdx.app.postRunnable {
+                            isExportingPDF = false
+                        }
+                    }
+                } else {
+                    // Für Android und andere Plattformen
+                    // Einfach direkt im externen Speicher speichern
+                    val filePath = Gdx.files.external("Phrasenheft.pdf").file().absolutePath
+                    exportPhrasesToPDF(phrases, filePath)
+
+                    println("PDF gespeichert unter: $filePath")
+
+                    // Zurück zum LibGDX-Thread und zum MapScreen wechseln
+                    Gdx.app.postRunnable {
+                        exportCompleted = true
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                // Bei Fehler zurück zum normalen Zustand
+                Gdx.app.postRunnable {
+                    isExportingPDF = false
+                }
+            }
+        }
+    }
+
+    fun exportPhrasesToPDF(phrases: List<Pair<String, String>>, filePath: String) {
+        val file = File(filePath)
+        val pdfWriter = PdfWriter(file)
+        val pdfDocument = PdfDocument(pdfWriter)
+        val document = Document(pdfDocument)
+
+
+        val primaryColor = DeviceRgb(153, 179, 5)
+        val secondaryColor = DeviceRgb(242, 247, 230)
+        val headerBgColor = DeviceRgb(128, 153, 0)
+
+        // Schriftarten und Stile
+        val titleFont = PdfFontFactory.createFont(HELVETICA_BOLD)
+        val textFont = PdfFontFactory.createFont(HELVETICA)
+
+        // Titel mit Stil
+        val title = Paragraph("linguExplorer Phrasenheft")
+            .setFont(titleFont)
+            .setFontSize(24f)
+            .setFontColor(primaryColor)
+            .setBold()
+            .setTextAlignment(TextAlignment.CENTER)
+            .setMarginBottom(20f)
+
+        document.add(title)
+
+        // Untertitel hinzufügen
+        val subtitle = Paragraph("Deine persönliche Sprachsammlung")
+            .setFont(textFont)
+            .setFontSize(14f)
+            .setFontColor(DeviceRgb(100, 120, 0)) // Angepasst an die grüne Palette
+            .setTextAlignment(TextAlignment.CENTER)
+            .setMarginBottom(30f)
+
+        document.add(subtitle)
+
+        // Tabelle mit verbesserten Stilen
+        val table = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f)))
+            .useAllAvailableWidth()
+            .setMarginBottom(20f)
+            .setBorder(Border.NO_BORDER)
+
+        // Wichtig: Entfernen der standardmäßigen Header-Zellenbegrenzungen
+        table.setHorizontalBorderSpacing(0f)
+        table.setVerticalBorderSpacing(0f)
+
+        // Tabellenkopf mit Hintergrundfarbe und OHNE UMRANDUNG
+        val headerCell1 = Cell()
+            .add(Paragraph("Phrase").setFontColor(ColorConstants.WHITE))
+            .setBackgroundColor(headerBgColor)
+            .setPadding(8f)
+            .setBorder(Border.NO_BORDER) // Entfernt alle Rahmen
+            .setBorderRadius(BorderRadius(5f))
+            .setTextAlignment(TextAlignment.CENTER)
+
+        val headerCell2 = Cell()
+            .add(Paragraph("Übersetzung").setFontColor(ColorConstants.WHITE))
+            .setBackgroundColor(headerBgColor)
+            .setPadding(8f)
+            .setBorder(Border.NO_BORDER) // Entfernt alle Rahmen
+            .setBorderRadius(BorderRadius(5f))
+            .setTextAlignment(TextAlignment.CENTER)
+
+        table.addHeaderCell(headerCell1)
+        table.addHeaderCell(headerCell2)
+
+        // Header-Style auf die gesamte Tabelle anwenden
+        table.setSkipFirstHeader(false)
+        table.setSkipLastFooter(false)
+
+        // Deaktiviere alle Tabellenbegrenzungen
+        table.setHorizontalBorderSpacing(0f)
+        table.setVerticalBorderSpacing(0f)
+
+        // Phrasen & Übersetzungen mit abwechselndem Hintergrund
+        for ((index, pair) in phrases.withIndex()) {
+            val (phrase, translation) = pair
+
+            // Abwechselnde Zeilenfarben
+            val bgColor = if (index % 2 == 0) secondaryColor else ColorConstants.WHITE
+
+            val phraseCell = Cell()
+                .add(Paragraph(phrase).setFont(textFont))
+                .setBackgroundColor(bgColor)
+                .setPadding(8f)
+                .setBorder(Border.NO_BORDER)
+                .setBorderBottom(SolidBorder(DeviceRgb(220, 230, 200), 0.5f)) // Hellgrüner Rand
+
+            val translationCell = Cell()
+                .add(Paragraph(translation).setFont(textFont))
+                .setBackgroundColor(bgColor)
+                .setPadding(8f)
+                .setBorder(Border.NO_BORDER)
+                .setBorderBottom(SolidBorder(DeviceRgb(220, 230, 200), 0.5f)) // Hellgrüner Rand
+
+            table.addCell(phraseCell)
+            table.addCell(translationCell)
+        }
+
+        document.add(table)
+
+        // Fußzeile und Seitenzahl
+        val currentPage = pdfDocument.getNumberOfPages()
+        for (i in 1..currentPage) {
+            val pageSize = pdfDocument.getPage(i).getPageSize()
+            val footer = Paragraph("Seite $i / $currentPage")
+                .setFontSize(8f)
+                .setFontColor(primaryColor) // Grüne Seitenzahlen
+
+            document.showTextAligned(
+                footer,
+                pageSize.getWidth() - 30,
+                30f,
+                i,
+                TextAlignment.RIGHT,
+                VerticalAlignment.BOTTOM,
+                0f
+            )
+        }
+
+        document.close()
+        println("PDF erfolgreich gespeichert: $filePath")
+    }
+
+    override fun resize(width: Int, height: Int) {
         // Update the viewport on resize
-
         viewport.update(width, height, true)
     }
-
-
 
     override fun hide() {}
 
@@ -311,5 +544,6 @@ class PhrasenheftScreen (
         backTexture.disposeSafely()
         sortTexture.disposeSafely()
         shapeRenderer.dispose()
+        executor.shutdown()
     }
 }

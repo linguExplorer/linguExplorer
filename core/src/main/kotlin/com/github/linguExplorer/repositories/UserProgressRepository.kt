@@ -1,72 +1,93 @@
 package com.github.linguExplorer.repositories
 
 import com.github.linguExplorer.models.*
-import org.jetbrains.exposed.sql.transactions.transaction
+import com.github.linguExplorer.saveNumber
+import com.github.linguExplorer.userId
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class UserProgressRepository {
-    fun getUserProgress(userId: Int, topicId: Int): UserProgressEntity? =
+
+    fun getUserProgress(userId: Int, saveNumber: Int, topicId: Int): UserProgressEntity? =
         transaction {
             UserProgress
-                .select { (UserProgress.userId eq userId) and (UserProgress.topicId eq topicId) }
+                .select {
+                    (UserProgress.userId eq userId) and
+                        (UserProgress.saveNumber eq saveNumber) and
+                        (UserProgress.topicId eq topicId)
+                }
                 .map { it.toUserProgress() }
                 .singleOrNull()
         }
 
-
-    fun addProgess(userId: Int, topic: TopicEntity?): UserProgressEntity? =
+    fun addProgress(userId: Int, saveNumber: Int, topicId: Int): UserProgressEntity? =
         transaction {
-            if (topic != null) {
-                val insertStatement = UserProgress.insert {
-                    it[UserProgress.userId] = userId
-                    it[UserProgress.topicId] = topic.id
-                    it[UserProgress.isMastered] = false
-                }
-                insertStatement.resultedValues?.first()?.toUserProgress()
-            } else {
-                return@transaction null
+            val insertStatement = UserProgress.insert {
+                it[UserProgress.userId] = userId
+                it[UserProgress.saveNumber] = saveNumber
+                it[UserProgress.topicId] = topicId
+                it[UserProgress.isMastered] = false
             }
+            insertStatement.resultedValues?.first()?.toUserProgress()
         }
 
-    fun removeUserProgresses(userId: Int): Boolean =
+    fun removeUserProgresses(userId: Int, saveNumber: Int): Boolean =
         transaction {
-            val deletedRows = Topic.deleteWhere { UserProgress.userId eq id }
+            val deletedRows = UserProgress.deleteWhere {
+                (UserProgress.userId eq userId) and
+                    (UserProgress.saveNumber eq saveNumber)
+            }
             deletedRows > 0
         }
 
-    fun changeMasteredState(userProgressEntity: UserProgressEntity?) =
+    fun changeMasteredState(userId: Int, saveNumber: Int, topicId: Int, isMastered: Boolean) =
         transaction {
-            if (userProgressEntity != null) {
-                UserProgress.update({
-                    UserProgress.userId eq userProgressEntity.userId and
-                        (UserProgress.topicId eq userProgressEntity.topicId)
-                }) {
-                    it[isMastered] = true
+            UserProgress.update({
+                (UserProgress.userId eq userId) and
+                    (UserProgress.saveNumber eq saveNumber) and
+                    (UserProgress.topicId eq topicId)
+            }) {
+                it[UserProgress.isMastered] = isMastered
+            }
+        }
+
+    /*fun checkIfMastered(topic: String, userId: Int, saveNumber: Int): Boolean {
+        val phraseList = PhraseRepository().getPhrasesByTopicName(topic)
+        val userProgressList = PhraseProgressRepository().getAllPhraseProgressForUser(userId, saveNumber)
+
+        val masteredProgressList = userProgressList.filter { progress ->
+            progress.isMastered && progress.phraseId in phraseList.map { it.id }
+        }
+
+        return phraseList.size == masteredProgressList.size
+    }*/
+
+    fun getLatestUserProgress(userId: Int, saveNumber: Int): UserProgressEntity? =
+        transaction {
+            UserProgress
+                .select {
+                    (UserProgress.userId eq userId) and
+                        (UserProgress.saveNumber eq saveNumber)
                 }
-            } else {
-                return@transaction null
-            }
+                .orderBy(UserProgress.topicId, SortOrder.DESC)
+                .map { it.toUserProgress() }
+                .firstOrNull()
         }
 
-    fun checkIfMastered(topic: String, userId: Int): Boolean {
-            val phraseList = PhraseRepository().getPhrasesByTopicName(topic)
-            val userProgressList = PhraseProgressRepository().getAllPhraseProgressForUser(userId)
+    fun getUpcomingUserProgress(userId: Int, saveNumber: Int): Int? {
+        val latestProgress = getLatestUserProgress(userId, saveNumber) ?: return 1
 
-            val masteredProgressList = userProgressList.filter { progress ->
-                progress.isMastered && progress.phraseId in phraseList.map { it.id }
-            }
-
-            return phraseList.size == masteredProgressList.size
-        }
-
+        return latestProgress.topicId.plus(1)
+    }
 
 
     companion object {
         private fun ResultRow.toUserProgress() = UserProgressEntity(
             this[UserProgress.userId],
+            this[UserProgress.saveNumber],
             this[UserProgress.topicId],
-            this[UserProgress.isMastered],
+            this[UserProgress.isMastered]
         )
     }
 }

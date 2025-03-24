@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
@@ -12,10 +13,9 @@ import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile
 import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.github.linguExplorer.component.ImageComponent
-import com.github.linguExplorer.event.ClickDownEvent
-import com.github.linguExplorer.event.GameChangeEvent
-import com.github.linguExplorer.event.MapChangeEvent
+import com.github.linguExplorer.event.*
 import com.github.linguExplorer.linguExplorer.Companion.UNIT_SCALE
 import com.github.quillraven.fleks.*
 import com.github.quillraven.fleks.collection.compareEntity
@@ -46,6 +46,9 @@ class RenderSystem(
         val y: Float,
         var alpha: Float = 0.5f
     )
+    private val uiStage: Stage = Stage(ExtendViewport(16f, 9f)) // Eine Stage speziell für die UI
+
+
 
     override fun onTick() {
         super.onTick()
@@ -67,7 +70,8 @@ class RenderSystem(
                     fgdLayers.forEach {mapRenderer.renderTileLayer(it)}
                 }
             }
-
+            //uiStage.act(Math.min(60f, 1 / 30f)) // Update für die UI-Stage
+            //uiStage.draw()
 
             // Zeichne Kreise hier
             val iterator = fadingCircles.iterator()
@@ -89,6 +93,22 @@ class RenderSystem(
                     }
                 }
             }
+
+
+            /////Funkion hier zum Lockscreen erstellen Welche Minigame es ist wird über Parameter angegeben
+
+
+
+            ////
+
+
+            ///Funktion für Celebrate oder Unlocked
+
+
+
+            ////
+
+
         }
     }
     override fun onTickEntity(entity: Entity) {
@@ -111,12 +131,37 @@ class RenderSystem(
 
            }
 
+
            is ClickDownEvent -> {
                fadingCircles.add(FadingCircle(event.mouseX, event.mouseY))
                return true
+
+
+           }
+
+           //Event für Lockscreen catchen, welches Minigam es ist wird über Event übergeben
+           // Beispiel: (event.mouseX, event.mouseY)
+
+
+           is GameCollideEvent -> {
+               println(event.miniGame)
+
+
+
            }
 
 
+           //////////////
+
+
+
+           //Event für Celebrate oder unlocked
+
+           is UnlockedEvent -> {
+               println("Unlocked Event works")
+           }
+
+           /////////////
            is GameChangeEvent -> {
 
                println("Game change Event")

@@ -2,6 +2,10 @@
 buildscript {
   repositories {
     gradlePluginPortal()
+    mavenCentral()
+    google()  // Google Maven Repository
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
   }
   dependencies {
     classpath "io.github.fourlastor:construo:1.5.1"

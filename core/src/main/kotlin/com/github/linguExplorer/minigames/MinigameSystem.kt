@@ -1,12 +1,9 @@
 package com.github.linguExplorer.minigames
 
-import com.github.linguExplorer.database.allPhraseAssets
-import com.github.linguExplorer.database.allPhrasesList
-import com.github.linguExplorer.database.phraseIndex
+import com.github.linguExplorer.*
 import com.github.linguExplorer.models.PhraseEntity
+import com.github.linguExplorer.models.PhraseProgressHistoryEntity
 import com.github.linguExplorer.repositories.*
-import com.github.linguExplorer.userId
-import kotlin.random.Random
 
 // Elternklasse Minigame
 abstract class MinigameSystem {
@@ -40,25 +37,24 @@ abstract class MinigameSystem {
     }
 
 
-    /**
-     * Speichert die erfassten Daten in die Datenbank
-     */
     fun storePhraseData() {
         val progressRepo = PhraseProgressRepository()
         val historyRepo = PhraseProgressHistoryRepository()
 
-        val userProgress = progressRepo.getAllPhraseProgressForUser(userId)
-        val userHistory = historyRepo.getAllEntriesForUser(userId)
+        val userProgress = progressRepo.getAllPhraseProgressForUser(userId, saveNumber)
+        val userHistory = historyRepo.getAllEntriesForUser(userId, saveNumber)
         val phrasesGameHistory = mutableListOf<Pair<Int, Boolean>>()
-        val phrasesProgress = mutableListOf<Triple<Int, Int, Boolean>>()
+        val phrasesProgress = mutableListOf<PhraseProgressData>() // Statt Triple nutzen wir jetzt ein Quadruple
         val phraseStateUpdates = mutableListOf<Int>()
+        val phraseIndexList = mutableListOf<Double>()
 
         capturedPhrases.forEach { (phrase, correctSet) ->
             val relevantProgress = userProgress.find { it.phraseId == phrase.id }
             val correctIndex = historyRepo.calculateCorrectIndex(phrase.id, userHistory)
+            phraseIndexList.add(correctIndex)
 
             if (relevantProgress == null) {
-                phrasesProgress.add(Triple(phrase.id, userId, false))
+                phrasesProgress.add(PhraseProgressData(phrase.id, userId, saveNumber, false)) // saveNumber wird jetzt hinzugefügt
             }
 
             // Beide möglichen Werte aus dem Set verarbeiten (max. 1x true und 1x false pro Phrase)
@@ -73,11 +69,47 @@ abstract class MinigameSystem {
         }
 
         progressRepo.addMultiplePhraseProgress(phrasesProgress)
-        historyRepo.addPhraseProgressHistories(userId, phrasesGameHistory)
+        historyRepo.addPhraseProgressHistories(userId, saveNumber, phrasesGameHistory) // saveNumber wird hier ebenfalls übergeben
         if (phraseStateUpdates.isNotEmpty()) {
-            progressRepo.changeMultipleMasteredStates(userId, phraseStateUpdates)
+            progressRepo.changeMultipleMasteredStates(userId, saveNumber, phraseStateUpdates)
+        }
+
+        if (UserProgressRepository().getUserProgress(userId, saveNumber, topicId) == null) {
+            UserProgressRepository().addProgress(userId, saveNumber, topicId)
+        }
+
+        updateUserInformation(userHistory)
+    }
+
+
+    fun updateUserInformation(userHistory: List<PhraseProgressHistoryEntity>) {
+        val historyRepo = PhraseProgressHistoryRepository()
+        val phraseList = allPhrasesList.filter { it.topicId == this.topicId }
+
+        var totalScore = 0.0
+        var count = 0
+
+        phraseList.forEach { phrase ->
+            val correctIndex = historyRepo.calculateCorrectIndex(phrase.id, userHistory)
+            var score = 0.0
+            if (correctIndex >= phraseIndex) {
+                score = 1.0
+            } else if (correctIndex == -1.0) {
+                score = 0.0
+            } else {
+                score = correctIndex / phraseIndex
+            }
+
+            totalScore += score
+            count++
+        }
+        if(topicId == currentTopic.id) {
+            topicProgress = if (count > 0) totalScore / count else 0.0
+            println("HII")
+            println(topicProgress)
         }
     }
+
 
 
     /**

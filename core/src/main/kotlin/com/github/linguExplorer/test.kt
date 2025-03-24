@@ -10,7 +10,7 @@ import com.github.linguExplorer.repositories.PhraseRepository
 
     fun main() {
         DatabaseManager()
-        var test = PhraseProgressRepository().getAllPhraseProgressForUser(userId)
+        var test = PhraseProgressRepository().getAllPhraseProgressForUser(userId, saveNumber)
         test.forEach { phrase ->
             println("${PhraseRepository().getPhrase(phrase.phraseId)} und das ist ${phrase.isMastered}")
         }

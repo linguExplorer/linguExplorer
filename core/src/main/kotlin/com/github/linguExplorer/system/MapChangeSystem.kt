@@ -1,5 +1,6 @@
 package com.github.linguExplorer.system
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.physics.box2d.World
@@ -16,6 +17,7 @@ import com.github.quillraven.fleks.AllOf
 import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.IteratingSystem
+import ktx.actors.stage
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
 import ktx.math.component1
@@ -54,13 +56,36 @@ class MapChangeSystem (
             println("Collision to $toGame")
 
 
-            if (key) {
-               println("ja")
-                game.addScreen(LoadingScreen(game, gameStage))
-               game.setScreen<LoadingScreen>()
-           }
+
+                gameStage.fire(GameCollideEvent(toGame)) // Event für Collision mit Minigame
 
 
+
+                if(toGame == "SM") {
+                    if (game.containsScreen<MinigameEssenScreen>()) {
+                        game.removeScreen<MinigameEssenScreen>()
+                    }
+
+                    game.addScreen(MinigameEssenScreen(game,gameStage))//gameStage))
+                    game.setScreen<MinigameEssenScreen>()
+
+                } else if (toGame == "CL") {
+
+                    if (game.containsScreen<MinigameKleidungScreen>()) {
+                        game.removeScreen<MinigameKleidungScreen>()
+                    }
+
+                    game.addScreen(MinigameKleidungScreen(game))//gameStage))
+                    game.setScreen<MinigameKleidungScreen>()
+                } else if (toGame == "FM") {
+
+                    if (game.containsScreen<MinigameFamilieScreen>()) {
+                        game.removeScreen<MinigameFamilieScreen>()
+                    }
+
+                    game.addScreen(MinigameFamilieScreen(game))//gameStage))
+                    game.setScreen<MinigameFamilieScreen>()
+                }
 
             triggerEntities.clear()
         }
