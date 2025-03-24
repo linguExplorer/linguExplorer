@@ -23,20 +23,14 @@
     
         <div class="lg:w-[900px] md:w-[600px] sm:w-[400px] w-[400px] flex flex-row items-center justify-between px-4 py-4 gap-4">
           <div class="flex flex-col space-y-4 items-center">
-            <button class="hover-button" @click="startNewGame">
+            <button class="hover-button" @click="download">
               <img
-                src="@/assets/xx_Images/xx_Images/Buttons/neuesSpiel_green.png"
+                src="@/assets/xx_Images/xx_Images/Buttons/spiel_herunterladen 1.png"
                 alt="Jetzt spielen"
-                class="lg:h-[50px] md:h-[40px] sm:h-[30px] h-[30px] hover:opacity-80"
+                class="lg:h-[100px] md:h-[80px] sm:h-[60px] h-[60px] hover:opacity-80"
               />
             </button>
-            <button class="hover-button" @click="loadGame">
-              <img
-                src="@/assets/xx_Images/xx_Images/Buttons/spielstandLaden_green.png"
-                alt="Spielstand laden"
-                class="lg:h-[50px] md:h-[40px] sm:h-[30px] h-[30px] hover:opacity-80"
-              />
-            </button>
+        
             <div v-if="showNoSavesMessage" class="text-red-500 mt-2">
                 Keine Spielstände gefunden.
               </div>
@@ -56,13 +50,17 @@
 <script>
 import { onMounted , ref} from 'vue';
 import { useStore } from 'vuex';
-import { toast } from 'vue-sonner'
+import { reactive } from "vue";
+import { useRoute } from 'vue-router';
+import { shallowRef } from 'vue';
+import { Toaster, toast } from "vue-sonner";
 
 export default {
   name: "Afterlogin",
   setup() {
     const message = ref("Du bist nicht mehr eingeloggt!");
     const store = useStore();
+    const userid = ref(0);
     onMounted(async () => {
       try {
         const res = await fetch("https://da.linguexplorer.com/api/user", {
@@ -72,6 +70,8 @@ export default {
         if (!res.ok) {
           await store.dispatch("logout");
         } else {
+          const content = await res.json();
+          userid.value = content.id
           await store.dispatch("login");
         }
       } catch (e) {
@@ -79,9 +79,56 @@ export default {
       }
     });
 
+
+    const download = async () => {
+  try {
+    const res = await fetch(`https://da.linguexplorer.com/api/download?userid=${userid.value}`, {
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      console.log('Fehler beim Herunterladen der Datei');
+      return;
+    }
+
+    const contentDisposition = res.headers.get('Content-Disposition');
+    const filename = contentDisposition
+      ? contentDisposition.split('filename=')[1].replace(/['"]/g, '')
+      : 'linguExplorer.exe';
+
+    
+    const blob = await res.blob();
+
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename; 
+    document.body.appendChild(a);
+    a.click(); 
+
+    // Aufräumen
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+
+    console.log('Datei erfolgreich heruntergeladen');
+  } catch (e) {
+    console.error("Fehler beim Senden der Anfrage:", e);
+  }
+};
+
+
+
     return {
       message,
+      download
+
     };
+
+
+
+
+
   },
   computed: {
     isLoggedIn() {

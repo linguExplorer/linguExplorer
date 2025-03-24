@@ -15,6 +15,7 @@ import CookieBanner from "@/components/CookieBanner.vue";
 import ToastComponent from "@/components/ToastComponent.vue";
 import ToastComponent_uch from "@/components/ToastComponent_uch.vue";
 import DownloadSeite from "@/pages/DownloadSeite.vue";
+import DownloadSeiteCopy from "@/pages/DownloadSeite copy.vue";
 const routes = [
   {
     path: "/toast",
@@ -26,7 +27,11 @@ const routes = [
     name: "download",
     component: DownloadSeite,
   },
-
+  {
+    path: "/downloadtest",
+    name: "downloadtest",
+    component: DownloadSeiteCopy,
+  },
   {
     path: "/CheckToast",
     name: "toast",
