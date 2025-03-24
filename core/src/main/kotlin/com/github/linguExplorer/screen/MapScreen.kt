@@ -295,7 +295,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
             is startDialogEvent -> {
 
                 println("Dialog mit ${event.name} wird gestartet")
-                BlobDialog.show(event.entity, event.name)
+                BlobDialog.show(event.entity, "npc_sarah")
 
                 return true
 
