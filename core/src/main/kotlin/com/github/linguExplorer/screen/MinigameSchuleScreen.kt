@@ -62,8 +62,8 @@ class MinigameSchuleScreen() : KtxScreen {
     // Getter für die dynamischen Positionen
     private val timetablePosition: Vector2
         get() = Vector2(
-            timetableBasePosition.x * (viewport.worldWidth / 1920f),
-            timetableBasePosition.y * (viewport.worldHeight / 1080f)
+            timetableBasePosition.x,
+            timetableBasePosition.y
         )
 
     private val pausePosition: Vector2
@@ -119,15 +119,12 @@ class MinigameSchuleScreen() : KtxScreen {
     private val phraseIdToCells = mutableMapOf<Int, MutableList<TimetableCell>>()
 
     init {
-        // Initialisierung
         minigame.loadMinigamePhrases()
         minigame.loadAllPhrases()
 
         // Lade Assets
         val germanAssets = minigame.loadGermanAssets()
-        println("DONE")
         val englishAssets = minigame.loadEnglishAssets()
-        englishAssets.forEach { println(it.second) }
 
         // Timetable Grid erstellen (5x7 Grid)
         setupTimetableGrid(germanAssets)
@@ -137,28 +134,23 @@ class MinigameSchuleScreen() : KtxScreen {
     }
 
     private fun setupTimetableGrid(germanAssets: List<Pair<PhraseEntity, String>>) {
-        val gridWidth = 5 //Spalten
-        val gridHeight = 7 //Zeilen
-        val cellWidth = 195f //width von Zelle im Raster
-        val cellHeight = 85f //height von Zelle im Raster
-        val startX = timetablePosition.x + timetableSize.x - 300f //x koordinate links oben
-        val startY = timetablePosition.y + timetableSize.y + 145f //y koordinate links oben
-        val rowSpacing = 4f // Abstand zwischen den Zeilen
+        val gridWidth = 5 // Spalten
+        val gridHeight = 7 // Zeilen
+        val cellWidth = 195f
+        val cellHeight = 85f
+        val startX = timetablePosition.x - (gridWidth * cellWidth) / 2 + 105f
+        val startY = timetablePosition.y + (timetableSize.y / 2) - 190f
+        val rowSpacing = 4f
 
-        // Erstelle eine Map mit verfügbaren Assets und deren möglicher Anzahl (1-3)
         val availableAssets = mutableMapOf<Pair<PhraseEntity, String>, Int>()
         germanAssets.forEach { asset ->
             val repeatCount = (1..3).random()
             availableAssets[asset] = repeatCount
         }
 
-        // Bereite ein Array für das Grid vor (mit null für leere Zellen)
         val gridCells = Array(gridHeight) { Array<Pair<PhraseEntity, String>?>(gridWidth) { null } }
-
-        // Erstelle Muster für wiederholte Assets
         createPatterns(gridCells, availableAssets)
 
-        // Fülle das Grid mit den Assets
         for (row in 0 until gridHeight) {
             for (col in 0 until gridWidth) {
                 val asset = gridCells[row][col]
@@ -182,7 +174,6 @@ class MinigameSchuleScreen() : KtxScreen {
 
                     timetableGrid.add(cell)
 
-                    // Füge Zelle zur Map hinzu für Tracking von mehrfachen Assets
                     if (!phraseIdToCells.containsKey(phrase.id)) {
                         phraseIdToCells[phrase.id] = mutableListOf()
                     }
@@ -198,26 +189,14 @@ class MinigameSchuleScreen() : KtxScreen {
     ) {
         val gridHeight = gridCells.size
         val gridWidth = gridCells[0].size
-
-        // Zufällig (wie viele Zellen belegt werden sollen) (60-80%)
         val totalCells = gridHeight * gridWidth
         val filledCellsTarget = (totalCells * (0.6 + Math.random() * 0.2)).toInt()
 
-        // Für jedes Asset mit Anzahl > 1 versuchen, ein Muster zu erstellen
         val assetsToPattern = availableAssets.filter { it.value > 1 }.toMutableMap()
 
         for ((asset, count) in assetsToPattern) {
             if (count <= 1) continue
-
-            /*
-        when ((1..3).random()) {
-            1 -> createColumnPattern(gridCells, asset, count)
-            2 -> createRowPattern(gridCells, asset, count)
-            3 -> createRandomPattern(gridCells, asset, count)
-        }
-        */
-            distributeAssetRandomly(gridCells,asset,count)
-
+            distributeAssetRandomly(gridCells, asset, count)
             availableAssets.remove(asset)
         }
 
@@ -235,7 +214,6 @@ class MinigameSchuleScreen() : KtxScreen {
             gridCells[row][col] = asset
             filledCells++
 
-            // Aktualisiert verbleibende Anzahl für dieses Asset
             if (count <= 1) {
                 remainingAssets.remove(assetEntry)
             } else {
@@ -256,33 +234,26 @@ class MinigameSchuleScreen() : KtxScreen {
     ) {
         val gridHeight = gridCells.size
         val gridWidth = gridCells[0].size
-
-        // Liste der möglichen Stunden (Zeilen)
         val possibleRows = (0 until gridHeight).toMutableList()
-
-        // Liste mischen
         possibleRows.shuffle()
 
         var placements = 0
-        //Stunden durchgehen + Karte platzieren
         for (row in possibleRows) {
-            // eine zufällige Spalte in dieser Stunde
             val possibleCols = (0 until gridWidth).toMutableList()
             possibleCols.shuffle()
             for (col in possibleCols) {
                 if (gridCells[row][col] == null) {
                     gridCells[row][col] = asset
                     placements++
-                    break // nächste Stunde
+                    break
                 }
             }
-            if (placements >= count) break // wenn alle Fächer platziert sind
+            if (placements >= count) break
         }
     }
 
     private fun getEmptyCells(gridCells: Array<Array<Pair<PhraseEntity, String>?>>): List<Pair<Int, Int>> {
         val emptyCells = mutableListOf<Pair<Int, Int>>()
-
         for (row in gridCells.indices) {
             for (col in gridCells[row].indices) {
                 if (gridCells[row][col] == null) {
@@ -290,12 +261,7 @@ class MinigameSchuleScreen() : KtxScreen {
                 }
             }
         }
-
         return emptyCells
-    }
-
-    private fun min(a: Int, b: Int): Int {
-        return if (a < b) a else b
     }
 
     private fun setupEnglishSubjects(englishAssets: List<Pair<PhraseEntity, String>>) {
@@ -304,7 +270,6 @@ class MinigameSchuleScreen() : KtxScreen {
         val startX = 100f
         val startY = 700f
         val spacing = 220f
-
 
         for (i in englishAssets.indices) {
             val row = i / 2
@@ -329,10 +294,6 @@ class MinigameSchuleScreen() : KtxScreen {
         }
     }
 
-    override fun show() {
-        Gdx.input.inputProcessor = null
-    }
-
     override fun render(delta: Float) {
         handleInput()
         if (!isPaused && !gameEnded && gameStarted) {
@@ -346,11 +307,9 @@ class MinigameSchuleScreen() : KtxScreen {
             }
         }
 
-        // Update button scaling
         continueButtonScale += (continueButtonTargetScale - continueButtonScale) * scaleSpeed * delta
         pauseButtonScale += (pauseButtonTargetScale - pauseButtonScale) * scaleSpeed * delta
 
-        // Clear screen
         Gdx.gl.glClearColor(0.611f, 0.761f, 0.827f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         font = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
@@ -385,8 +344,8 @@ class MinigameSchuleScreen() : KtxScreen {
         )
 
         if (gameStarted && !gameEnded) {
+            // Render timetable cells
             timetableGrid.forEach { cell ->
-                // Wenn diese Zelle einen korrekten Subject hat, zeichne den stattdessen
                 if (cell.correctSubject != null) {
                     batch.draw(
                         cell.correctSubject!!.texture,
@@ -440,6 +399,7 @@ class MinigameSchuleScreen() : KtxScreen {
 
         batch.end()
     }
+
 
     private fun renderPausedOverlay() {
         batch.end()
