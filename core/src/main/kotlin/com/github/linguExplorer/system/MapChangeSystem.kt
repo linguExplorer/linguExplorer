@@ -79,6 +79,12 @@ class MapChangeSystem (
                         game.addScreen(MinigameFamilieScreen(game))
                         game.setScreen<MinigameFamilieScreen>()
                     }
+
+                    "SC" -> {
+                        game.removeScreen<MinigameSchuleScreen>()
+                        game.addScreen(MinigameSchuleScreen())
+                        game.setScreen<MinigameSchuleScreen>()
+                    }
                 }
                 lastTriggerTimes[toGame] = currentTime
 
