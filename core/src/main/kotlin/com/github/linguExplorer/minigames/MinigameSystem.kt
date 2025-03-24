@@ -83,6 +83,7 @@ abstract class MinigameSystem {
 
 
     fun updateUserInformation(userHistory: List<PhraseProgressHistoryEntity>) {
+        val progressRepo = PhraseProgressRepository()
         val historyRepo = PhraseProgressHistoryRepository()
         val phraseList = allPhrasesList.filter { it.topicId == this.topicId }
 

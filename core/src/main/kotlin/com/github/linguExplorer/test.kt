@@ -1,17 +1,13 @@
 package com.github.linguExplorer
 
 import com.github.linguExplorer.database.DatabaseManager
+import com.github.linguExplorer.database.checkIfTopicAvailable
 import com.github.linguExplorer.models.PhraseProgress
-import com.github.linguExplorer.repositories.PhraseAssetRepository
-import com.github.linguExplorer.repositories.PhraseProgressHistoryRepository
-import com.github.linguExplorer.repositories.PhraseProgressRepository
-import com.github.linguExplorer.repositories.PhraseRepository
+import com.github.linguExplorer.repositories.*
 
 
-    fun main() {
+fun main() {
         DatabaseManager()
-        var test = PhraseProgressRepository().getAllPhraseProgressForUser(userId, saveNumber)
-        test.forEach { phrase ->
-            println("${PhraseRepository().getPhrase(phrase.phraseId)} und das ist ${phrase.isMastered}")
-        }
+        var test = TopicRepository().getTopicById(4)
+        println(checkIfTopicAvailable(userId, 2, test!!.id))
     }

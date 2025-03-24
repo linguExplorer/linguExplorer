@@ -50,8 +50,6 @@ class linguExplorer : KtxGame<KtxScreen>() {
 }
 
 
-var userId = 1
-var saveNumber = 1
 var name = "Blob"
 lateinit var currentTopic: TopicEntity
 var topicProgress = 0.0
