@@ -1,6 +1,7 @@
 package com.github.linguExplorer.system
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -34,20 +35,22 @@ class RenderSystem(
     private val stage: Stage,
     private val imageCmps:ComponentMapper<ImageComponent>,
     private val gameStage: Stage,
+    private val uiStage: Stage,
     private val game: linguExplorer,
+    private var inputMultiplexer : InputMultiplexer
 
 ) : EventListener, IteratingSystem(
     comparator = compareEntity{e1,e2 -> imageCmps[e1].compareTo(imageCmps[e2])}
 ) {
 
     private val viewport: Viewport = ExtendViewport(1920f, 1080f)
-    private val BlobDialog = BlobDialog(game, viewport)
     private val bgdLayers = mutableListOf<TiledMapTileLayer>()
     private val fgdLayers = mutableListOf<TiledMapTileLayer>()
     private val mapRenderer = OrthogonalTiledMapRenderer(null, UNIT_SCALE, stage.batch)
     private val orthoCam = stage.camera as OrthographicCamera
     private val shapeRenderer = ShapeRenderer()
     private val fadingCircles = mutableListOf<FadingCircle>()
+//    private val BlobDialog = BlobDialog(game, viewport, inputMultiplexer)
 
 
     data class FadingCircle(
@@ -55,7 +58,6 @@ class RenderSystem(
         val y: Float,
         var alpha: Float = 0.5f
     )
-    private val uiStage: Stage = Stage(viewport) // Eine Stage speziell für die UI
 
 
 
@@ -115,7 +117,6 @@ class RenderSystem(
 
 
             ////
-            BlobDialog.render(Gdx.graphics.deltaTime)
 
         }
 

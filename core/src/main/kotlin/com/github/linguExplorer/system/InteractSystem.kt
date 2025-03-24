@@ -3,9 +3,12 @@ package com.github.linguExplorer.system
 
 import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.EventListener
+import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.linguExplorer.component.*
 import com.github.linguExplorer.event.GameEndEvent
 import com.github.linguExplorer.event.Interact
+import com.github.linguExplorer.event.fire
+import com.github.linguExplorer.event.startDialogEvent
 import com.github.quillraven.fleks.*
 import kotlin.math.sqrt
 
@@ -17,7 +20,9 @@ class InteractSystem(
     private val playerCmps: ComponentMapper<PlayerComponent>,
     private val SpawnCmps: ComponentMapper<SpawnComponent>,
     private val moveCmps: ComponentMapper<MoveComponent>,
-) : IteratingSystem(), EventListener {
+    private val gameStage: Stage,
+
+    ) : IteratingSystem(), EventListener {
 
     private var playerx = 0f
     private var playery = 0f
@@ -37,6 +42,8 @@ class InteractSystem(
 
         if (sdComponent.contains(entity)) {
             with(phComponent[entity]) {
+
+
                 // Aktualisiere die Position der Entität in der Map
                 sdPositions[entity] = body.position.x to body.position.y
             }
@@ -56,6 +63,8 @@ class InteractSystem(
                 val (sdPosx, sdPosy) = position
                 val distance = calculateDistance(playerx, playery, sdPosx, sdPosy)
                 if (distance <= interactionDistance) {
+
+                    sdComponent[entity].name?.let { startDialogEvent(entity, it) }?.let { gameStage.fire(it) }
                     println("Interaktion erfolgreich mit Entität $entity bei ($sdPosx, $sdPosy)")
                 }
             }

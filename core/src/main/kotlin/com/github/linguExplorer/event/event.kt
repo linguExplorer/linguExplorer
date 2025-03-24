@@ -5,6 +5,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell
 import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.linguExplorer.linguExplorer
+import com.github.quillraven.fleks.Entity
 import kotlin.reflect.jvm.internal.impl.incremental.components.Position
 
 fun Stage.fire(event: Event) {
@@ -25,6 +26,7 @@ class ClickDownEvent(val mouseX : Float, val mouseY: Float) : Event()
 
 class GamePause(val game: linguExplorer) : Event()
 
+class startDialogEvent(val entity: Entity, val name: String) : Event()
 
 class Interact() : Event()
 //Events für locked und celebrate

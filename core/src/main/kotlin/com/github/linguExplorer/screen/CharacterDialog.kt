@@ -32,7 +32,6 @@ class CharacterDialog(private val game: linguExplorer, private val viewport: Vie
         dialogImage.setPosition(xPosition, bottomMargin)
 
         uiStage.addActor(dialogImage)
-        Gdx.input.inputProcessor = uiStage
     }
 
     fun render(delta: Float, batch: SpriteBatch) { // SpriteBatch übergeben!

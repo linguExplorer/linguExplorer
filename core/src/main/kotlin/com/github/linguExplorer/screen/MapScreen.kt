@@ -10,11 +10,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.maps.tiled.TiledMap
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
-import com.badlogic.gdx.scenes.scene2d.EventListener
-import com.badlogic.gdx.scenes.scene2d.InputEvent
-import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.Touchable
+import com.badlogic.gdx.scenes.scene2d.*
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.viewport.ExtendViewport
@@ -23,6 +21,7 @@ import com.github.linguExplorer.component.*
 import com.github.linguExplorer.event.GamePause
 import com.github.linguExplorer.event.MapChangeEvent
 import com.github.linguExplorer.event.fire
+import com.github.linguExplorer.event.startDialogEvent
 import com.github.linguExplorer.input.PlayerKeyboardInputProcessor
 import com.github.linguExplorer.linguExplorer
 import com.github.linguExplorer.system.*
@@ -33,8 +32,9 @@ import ktx.assets.disposeSafely
 import ktx.box2d.createWorld
 import ktx.log.logger
 import ktx.math.vec2
+import ktx.tiled.forEachLayer
 
-class MapScreen(private val game: linguExplorer, private val tempX: Float, private val tempY : Float) : KtxScreen {
+class MapScreen(private val game: linguExplorer, private val tempX: Float, private val tempY : Float) : KtxScreen, EventListener {
 
     private val stage :Stage = Stage(ExtendViewport(16f,9f))
     private val textureAtlas = TextureAtlas("graphics/entities.atlas")
@@ -47,6 +47,10 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
     private var shapeRenderer: ShapeRenderer = ShapeRenderer()
     private val viewport: Viewport = ExtendViewport(1920f, 1080f)
     private val glyphLayout = GlyphLayout()
+    private val uiStage: Stage = Stage(ExtendViewport(1920f, 1080f).apply {
+        setWorldSize(1920f, 1080f)
+    })
+    private var inputMultiplexer = InputMultiplexer()
 
 
 
@@ -54,6 +58,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
     private val world: World= world {
 
         injectables {
+            add(inputMultiplexer)
             add(stage)
             add(textureAtlas)
             add(phWorld)
@@ -86,6 +91,8 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
 
     private val pathSystem = world.system<PathSystem>()
 
+    private var BlobDialog = BlobDialog(game, viewport)
+
 
 
     //Game Menü
@@ -97,7 +104,6 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
     private var boxY: Float = 0f
     private var font: BitmapFont = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
 
-    private var inputMultiplexer = InputMultiplexer()
 
     //UI Elemente
     private lateinit var backpackImage: Image
@@ -130,23 +136,26 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
 
         PlayerKeyboardInputProcessor(world, stage, world.mapper(), world.mapper(), stage, pathSystem )
 
+
         val playerInputProcessor = PlayerKeyboardInputProcessor(world, stage, world.mapper(), world.mapper(), stage, pathSystem)
         // InputMultiplexer um Spielfigur + UI zu verarbeiten
         inputMultiplexer = InputMultiplexer()
+        inputMultiplexer.addProcessor(BlobDialog.getStage())
+
         inputMultiplexer.addProcessor(uiStage)
         inputMultiplexer.addProcessor(stage)
         inputMultiplexer.addProcessor(playerInputProcessor)
+
         // Spielfigur und Welt-Stage
         inputMultiplexer.addProcessor(uiStage) // UI-Stage*/
 
         Gdx.input.inputProcessor = inputMultiplexer //Multiplexer als Input-Prozessor setzen
 
+        stage.addListener(this)
 
     }
 
-    private val uiStage: Stage = Stage(ExtendViewport(1920f, 1080f).apply {
-        setWorldSize(1920f, 1080f)
-    })
+
     //fixe Bilder Methode
     private fun addUIImages() {
         // Bilder laden
@@ -168,6 +177,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
 
         uiStage.addActor(mapImage)
         uiStage.addActor(phrasingBookImage)
+
 
 
         backpackImage.addListener(object : ClickListener() {
@@ -232,6 +242,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         }
 
 
+
         world.update(delta.coerceAtMost(update))
 
 
@@ -260,6 +271,9 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
        if (menuSet) {
             gameMenuRenderer.renderGameMenu(batch, font, glyphLayout, viewport, shapeRenderer)
         }
+
+        BlobDialog.render(Gdx.graphics.deltaTime)
+
     }
 
     override fun dispose() {
@@ -275,7 +289,24 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         shapeRenderer.dispose()
     }
 
-    companion object : KtxScreen {
+    override fun handle(event: Event): Boolean {
+
+        when (event) {
+            is startDialogEvent -> {
+
+                println("Dialog mit ${event.name} wird gestartet")
+                BlobDialog.show(event.entity, event.name)
+
+                return true
+
+            }
+
+        }
+        return false
+
+
+    }
+        companion object : KtxScreen {
         private  val log = logger<MapScreen>()
     }
 }
