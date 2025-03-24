@@ -3,6 +3,7 @@ package com.github.linguExplorer.screen
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.audio.Music
+import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
@@ -43,6 +44,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private val viewport: Viewport = ExtendViewport(1920f, 1080f)
     private val glyphLayout = GlyphLayout()
     private lateinit var music: Music
+    private var selectSound: Sound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Soundeffekte/game_select.mp3"))
 
     private val skin = Skin(Gdx.files.internal("MainMenu/FieldSkin.json"))
     private var backgroundTexture: Texture = Texture("xx_map_assets/Map/ref.png")
@@ -74,6 +76,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private var userAlreadyExists = false
     private var loadGame = false
     private var newGame = false
+    private var soundPlayed = false
     private lateinit var user: UserEntity
     private lateinit var currentCheckpoint: CheckpointEntity
     private var currentEditSlotIndex = -1
@@ -607,7 +610,6 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                                         userAlreadyExists = true
                                         this.user = user!!
                                         currentCheckpoint = checkpoint!!
-                                        currentTopic = topic!!
                                     } else {
                                         saveNumber = currentEditSlotIndex + 1
                                         newGame = true
@@ -661,6 +663,10 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         }
 
         if (isTransitioning) {
+            if (!soundPlayed) {
+                selectSound.play(0.7f * masterVolume * soundEffectVolume)
+                soundPlayed = true
+            }
             transitionRadius += 1500 * delta
             if (transitionRadius >= maxRadius) {
                 loadingTime += delta

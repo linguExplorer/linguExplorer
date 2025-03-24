@@ -22,6 +22,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.github.linguExplorer.component.*
+import com.github.linguExplorer.currentTopic
 import com.github.linguExplorer.event.GamePause
 import com.github.linguExplorer.event.MapChangeEvent
 import com.github.linguExplorer.event.fire
@@ -190,10 +191,16 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
             phrasingBookImage.addListener(object : ClickListener() {
                 override fun clicked(event: InputEvent?, x: Float, y: Float) {
                     println("Phrasebook clicked")
-                    if (!game.containsScreen<PhrasenheftScreen>()) {
-                        game.addScreen(PhrasenheftScreen(game))
-                    }
-                    game.setScreen<PhrasenheftScreen>()
+
+                    Thread {
+                        Gdx.app.postRunnable {
+                            if (!game.containsScreen<PhrasenheftScreen>()) {
+                                game.removeScreen<PhrasenheftScreen>()
+                            }
+                            game.addScreen(PhrasenheftScreen(game))
+                            game.setScreen<PhrasenheftScreen>()
+                        }
+                    }.start()
                 }
             })
 
@@ -326,7 +333,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
     }
 
     fun updateProgressText(progress: Int) {
-        progressText = "Thema: "
+        progressText = "Thema: $currentTopic"
     }
 
     override fun render(delta: Float) {

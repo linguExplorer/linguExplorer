@@ -17,8 +17,11 @@ import com.badlogic.gdx.utils.Align
 import com.github.linguExplorer.event.GameEndEvent
 import com.github.linguExplorer.event.fire
 import com.github.linguExplorer.linguExplorer
+import com.github.linguExplorer.masterVolume
 import com.github.linguExplorer.minigames.EssenMinigame
 import com.github.linguExplorer.models.PhraseEntity
+import com.github.linguExplorer.musicVolume
+import com.github.linguExplorer.soundEffectVolume
 import ktx.app.KtxScreen
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -53,7 +56,7 @@ class MinigameEssenScreen(private val game: linguExplorer,
     private val basketSize = Vector2(650f, 500f)
 
     private val listPosition: Vector2
-    get() = Vector2(viewport.worldWidth - 800f, 0f)
+        get() = Vector2(viewport.worldWidth - 800f, 0f)
     private val listSize = Vector2(450f, 420f)
 
     private val pausePosition: Vector2
@@ -99,18 +102,13 @@ class MinigameEssenScreen(private val game: linguExplorer,
 
     // Getter für die dynamischen Positionen
 
-
     private val tryAgainButtonPosition: Vector2
         get() = Vector2(
             tryAgainButtonBasePosition.x * (viewport.worldWidth / 800f),
             tryAgainButtonBasePosition.y * (viewport.worldHeight / 600f)
         )
 
-
-
-
     private val scaleSpeed = 5f
-
 
     // Zeit
     private var timeLeft = 30
@@ -127,21 +125,75 @@ class MinigameEssenScreen(private val game: linguExplorer,
     private var loadingScreenRenderer = LoadingScreenRenderer()
     private var threadExecuted = false
 
+    // Transition properties
+    private var isTransitioning = false
+    private var transitionRadius = 0f
+    private val maxRadius = 2500f
+    private var loadingTime = 0f
+    private var threadWorking = false
+
+    private var backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Hintergrundmusik/minigame_music.mp3"))
+    private var correctSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Soundeffekte/correct.mp3"))
+    private var wrongSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Soundeffekte/wrong.mp3"))
+    private var gameEndSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Soundeffekte/game_end.mp3"))
+
+
+
     private val minigame = EssenMinigame()
     private lateinit var objects: List<DraggableObject>
-
 
     override fun show() {
         loadPhraseData()
         Gdx.input.inputProcessor = null
+
+        backgroundMusic.isLooping = true
+        backgroundMusic.volume = musicVolume * masterVolume
+        backgroundMusic.play()
     }
 
     private var isPaused = false
 
     override fun render(delta: Float) {
         font = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
+
+        // Handle transition to MapScreen
+        if (isTransitioning) {
+            transitionRadius += 1500 * delta
+            if (transitionRadius >= maxRadius) {
+                loadingTime += delta
+
+                if (!threadWorking) {
+                    storePhraseDataAsync()
+                    threadWorking = true
+                }
+
+                loadingScreenRenderer.renderAnimatedText(batch, font, glyphLayout, viewport, "Loading", delta, 1f, true)
+
+                if (threadExecuted && loadingTime > 2f) {
+                    Gdx.app.postRunnable {
+                        isTransitioning = false
+                        transitionRadius = 0f
+                        loadingTime = 0f
+
+                        if (game.containsScreen<MapScreen>()) {
+                            game.removeScreen<MapScreen>()
+                        }
+                        game.addScreen(MapScreen(game, 31.104187f, 15.677063f))
+                        game.setScreen<MapScreen>()
+                    }
+                }
+                return
+            }
+            Gdx.gl.glEnable(GL20.GL_BLEND)
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
+            shapeRenderer.color = Color.BLACK
+            shapeRenderer.circle(viewport.worldWidth / 2, viewport.worldHeight / 2, transitionRadius)
+            shapeRenderer.end()
+            Gdx.gl.glDisable(GL20.GL_BLEND)
+        }
+
         if (!threadExecuted) {
-            loadingScreenRenderer.renderAnimatedText(batch, font, glyphLayout, ExtendViewport(1920f, 1080f),"Loading", delta, 1f, true)
+            loadingScreenRenderer.renderAnimatedText(batch, font, glyphLayout, viewport, "Loading", delta, 1f, true)
         } else {
             handleInput()
             if (!isPaused && !gameEnded && gameStarted) {
@@ -424,6 +476,7 @@ class MinigameEssenScreen(private val game: linguExplorer,
                                 if (isCorrect) {
                                     //Objekt als eingesammelt markieren
                                     obj.isCollected = true
+                                    correctSound.play(0.7f * masterVolume * soundEffectVolume)
                                     val initialXOffset = 80f //weiter rechts zeichnen
                                     // Position des Objekts im Korb berechnen
                                     // Startposition Korb + Abstand Rand + Position in Reihe % 5 * Abstand zwischen Objekten
@@ -441,6 +494,8 @@ class MinigameEssenScreen(private val game: linguExplorer,
                                         currentBasketRow++
                                 } else {
                                     // Text mit "Fehler!" anzeigen
+                                    wrongSound.play(0.7f * masterVolume * soundEffectVolume)
+                                    
                                     showErrorText = true
                                     errorTextTimer = 0f
 
@@ -481,20 +536,17 @@ class MinigameEssenScreen(private val game: linguExplorer,
                 val buttonY = continueButtonPosition.y - (buttonSize.y / 2) + 15f
                 if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) &&
                     mouseY in buttonY..(buttonY + buttonSize.y)) {
+                    // Begin transition to MapScreen with loading display
+                    isTransitioning = true
+                    loadingTime = 0f
+
+                    // Start data storage in background thread
                     storePhraseDataAsync()
-
                     stage.fire(GameEndEvent("SM"))
-
-                    if (game.containsScreen<MapScreen>()) {
-                        game.removeScreen<MapScreen>()
-                    }
-                    game.addScreen(MapScreen(game, 31.104187f,15.677063f))
-                    game.setScreen<MapScreen>()
                 }
             }
         }
     }
-
 
     private fun updateTime(delta: Float) {
         elapsedTime += delta
@@ -526,7 +578,6 @@ class MinigameEssenScreen(private val game: linguExplorer,
             glyphLayout.setText(font, phrase.phrase)
             val textWidth = glyphLayout.width
             val textHeight = glyphLayout.height
-
 
             font.draw(batch, phrase.phrase, startX, currentY)
 
@@ -628,7 +679,9 @@ class MinigameEssenScreen(private val game: linguExplorer,
         shelfTexture.dispose()
         tryAgainButtonTexture.dispose()
         quitButtonTexture.dispose()
-        objects.forEach { it.texture.dispose() }
+        if (::objects.isInitialized) {
+            objects.forEach { it.texture.dispose() }
+        }
     }
 
     private data class DraggableObject(

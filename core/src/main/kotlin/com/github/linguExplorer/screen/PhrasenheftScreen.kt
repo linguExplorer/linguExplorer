@@ -23,6 +23,7 @@ import com.itextpdf.layout.element.*
 import com.itextpdf.layout.properties.UnitValue
 import java.io.File
 import com.badlogic.gdx.Application
+import com.badlogic.gdx.audio.Sound
 import com.github.linguExplorer.saveNumber
 import com.itextpdf.io.font.constants.StandardFonts.HELVETICA
 import com.itextpdf.io.font.constants.StandardFonts.HELVETICA_BOLD
@@ -46,6 +47,9 @@ class PhrasenheftScreen (
     private val batch = SpriteBatch()
     private val shapeRenderer = ShapeRenderer()
     private val viewport: Viewport = ExtendViewport(1920f, 1080f)
+
+    private var pageFlipSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Soundeffekte/page_flip.mp3"))
+    private var soundPlaying = false
 
     private enum class SortState {
         ASCENDING_PHRASE, DESCENDING_PHRASE, ASCENDING_TRANSLATION, DESCENDING_TRANSLATION
@@ -236,7 +240,10 @@ class PhrasenheftScreen (
             return
         }
 
-        // Use viewport's unproject method to get correct world coordinates
+        if (!Gdx.input.isTouched()) {
+            soundPlaying = false
+        }
+
         val mouseX = viewport.unproject(Vector2(Gdx.input.x.toFloat(), Gdx.input.y.toFloat())).x
         val mouseY = viewport.unproject(Vector2(Gdx.input.x.toFloat(), Gdx.input.y.toFloat())).y
 
@@ -246,6 +253,10 @@ class PhrasenheftScreen (
                 mouseY in nextPosition.y..(nextPosition.y + backSize.y)) {
                 if((currentPage-1) + 1 <  maxPages-1f) {
                     currentPage++
+                    if (!soundPlaying) {
+                        pageFlipSound?.play(1.0f)
+                        soundPlaying = true
+                    }
                 }
                 println("Button Next, $currentPage")
             }
@@ -255,6 +266,10 @@ class PhrasenheftScreen (
                 mouseY in backPosition.y..(backPosition.y + backSize.y)) {
                 if((currentPage-1) - 1 >=  0) {
                     currentPage--
+                    if (!soundPlaying) {
+                        pageFlipSound?.play(1.0f)
+                        soundPlaying = true
+                    }
                 }
                 println("Button Back, $currentPage")
             }
