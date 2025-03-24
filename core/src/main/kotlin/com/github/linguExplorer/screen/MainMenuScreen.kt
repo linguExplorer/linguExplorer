@@ -17,12 +17,10 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.github.linguExplorer.*
 import com.github.linguExplorer.models.CheckpointEntity
+import com.github.linguExplorer.models.PhraseProgressHistoryEntity
 import com.github.linguExplorer.models.User
 import com.github.linguExplorer.models.UserEntity
-import com.github.linguExplorer.repositories.CheckpointRepository
-import com.github.linguExplorer.repositories.TopicRepository
-import com.github.linguExplorer.repositories.UserProgressRepository
-import com.github.linguExplorer.repositories.UserRepository
+import com.github.linguExplorer.repositories.*
 import ktx.actors.stage
 import java.awt.Desktop
 import java.net.URI
@@ -43,7 +41,6 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private lateinit var font: BitmapFont
     private val viewport: Viewport = ExtendViewport(1920f, 1080f)
     private val glyphLayout = GlyphLayout()
-    private lateinit var music: Music
     private var selectSound: Sound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Soundeffekte/game_select.mp3"))
 
     private val skin = Skin(Gdx.files.internal("MainMenu/FieldSkin.json"))
@@ -84,6 +81,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
 
 
     val saveSlots = mutableListOf<Triple<UserEntity?, CheckpointEntity?, String?>>()
+    private lateinit var topicString: String
     private var loadingScreenRenderer = LoadingScreenRenderer()
     private val gameMenuRenderer = GameMenuRenderer()
     private var executePositionX = 0f
@@ -449,7 +447,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                                     if (!newGamePopUp) {
                                         this.user = user!!
                                         currentCheckpoint = checkpoint!!
-                                        currentTopic = topic!!
+                                        topicString = topic!!
                                         loadGame = true
                                     } else {
                                         saveNumber = index + 1
@@ -696,7 +694,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             }
 
             if(music.volume > 0.005f) {
-                music.volume -= (0.002f * masterVolume * musicVolume)
+                music.volume -= (0.004f * masterVolume * musicVolume)
             } else if (music.volume <= 0.005f) {
                 music.volume = 0f
             }
@@ -818,6 +816,13 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             } else {
                 CheckpointRepository().updateCheckpoint(user.id, user.saveNumber, null, null, null, Timestamp(System.currentTimeMillis()))
                 saveNumber = user.saveNumber
+                println (topicString)
+                if (!(this.topicString.equals("-"))) {
+                    println("HIII")
+                    val topicId = TopicRepository().getTopicIdByName(topicString)
+                    currentTopic = TopicRepository().getTopicById(topicId)!!
+                    updateUserInformation(PhraseProgressHistoryRepository().getAllEntriesForUser(userId, saveNumber), topicId!!)
+                }
                 executePositionX = currentCheckpoint.positionX
                 executePositionY = currentCheckpoint.positionY
                 println (executePositionX)
@@ -841,12 +846,30 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             mouseY >= areaY && mouseY <= areaY + areaHeight
     }
 
-    //Öffnet eine Webseite
-    private fun openWebpage(url: String) {
-        if (Desktop.isDesktopSupported()) {
-            Desktop.getDesktop().browse(URI(url))
-        } else {
-            println("Desktop-Modus nicht unterstützt.")
+    fun updateUserInformation(userHistory: List<PhraseProgressHistoryEntity>, topicId: Int) {
+        val historyRepo = PhraseProgressHistoryRepository()
+        val phraseList = allPhrasesList.filter { it.topicId == topicId }
+
+        var totalScore = 0.0
+        var count = 0
+
+        phraseList.forEach { phrase ->
+            val correctIndex = historyRepo.calculateCorrectIndex(phrase.id, userHistory)
+            var score = 0.0
+            if (correctIndex >= phraseIndex) {
+                score = 1.0
+            } else if (correctIndex == -1.0) {
+                score = 0.0
+            } else {
+                score = correctIndex / phraseIndex
+            }
+
+            totalScore += score
+            count++
+        }
+        if (topicId == currentTopic.id) {
+            topicProgress = if (count > 0) totalScore / count else 0.0
+            println(topicProgress)
         }
     }
 

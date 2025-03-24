@@ -132,10 +132,10 @@ class MinigameEssenScreen(private val game: linguExplorer,
     private var loadingTime = 0f
     private var threadWorking = false
 
-    private var backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Hintergrundmusik/minigame_music.mp3"))
-    private var correctSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Soundeffekte/correct.mp3"))
-    private var wrongSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Soundeffekte/wrong.mp3"))
-    private var gameEndSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Soundeffekte/game_end.mp3"))
+    private var backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Hintergrundmusik/Hintergrundmusik_Essen.mp3"))
+    private var correctSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Soundeffekte/richtig.mp3"))
+    private var wrongSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Soundeffekte/falsch.mp3"))
+    //private var gameEndSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Soundeffekte/game_end.mp3"))
 
 
 
@@ -147,8 +147,7 @@ class MinigameEssenScreen(private val game: linguExplorer,
         Gdx.input.inputProcessor = null
 
         backgroundMusic.isLooping = true
-        backgroundMusic.volume = musicVolume * masterVolume
-        backgroundMusic.play()
+        backgroundMusic.volume = 0.7f* musicVolume * masterVolume
     }
 
     private var isPaused = false
@@ -178,6 +177,8 @@ class MinigameEssenScreen(private val game: linguExplorer,
                         if (game.containsScreen<MapScreen>()) {
                             game.removeScreen<MapScreen>()
                         }
+                        backgroundMusic.stop()
+                        stage.fire(GameEndEvent("SM"))
                         game.addScreen(MapScreen(game, 31.104187f, 15.677063f))
                         game.setScreen<MapScreen>()
                     }
@@ -476,7 +477,7 @@ class MinigameEssenScreen(private val game: linguExplorer,
                                 if (isCorrect) {
                                     //Objekt als eingesammelt markieren
                                     obj.isCollected = true
-                                    correctSound.play(0.7f * masterVolume * soundEffectVolume)
+                                    correctSound.play(0.8f * masterVolume * soundEffectVolume)
                                     val initialXOffset = 80f //weiter rechts zeichnen
                                     // Position des Objekts im Korb berechnen
                                     // Startposition Korb + Abstand Rand + Position in Reihe % 5 * Abstand zwischen Objekten
@@ -495,7 +496,7 @@ class MinigameEssenScreen(private val game: linguExplorer,
                                 } else {
                                     // Text mit "Fehler!" anzeigen
                                     wrongSound.play(0.7f * masterVolume * soundEffectVolume)
-                                    
+
                                     showErrorText = true
                                     errorTextTimer = 0f
 
@@ -528,6 +529,7 @@ class MinigameEssenScreen(private val game: linguExplorer,
                 if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) &&
                     mouseY in buttonY..(buttonY + buttonSize.y)) {
                     gameStarted = true
+                    backgroundMusic.play()
                 }
             }
         } else {
@@ -537,12 +539,9 @@ class MinigameEssenScreen(private val game: linguExplorer,
                 if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) &&
                     mouseY in buttonY..(buttonY + buttonSize.y)) {
                     // Begin transition to MapScreen with loading display
+                    println("BITTEEEE")
                     isTransitioning = true
                     loadingTime = 0f
-
-                    // Start data storage in background thread
-                    storePhraseDataAsync()
-                    stage.fire(GameEndEvent("SM"))
                 }
             }
         }

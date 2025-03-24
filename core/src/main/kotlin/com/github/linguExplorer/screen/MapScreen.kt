@@ -29,6 +29,7 @@ import com.github.linguExplorer.event.fire
 import com.github.linguExplorer.input.PlayerKeyboardInputProcessor
 import com.github.linguExplorer.linguExplorer
 import com.github.linguExplorer.system.*
+import com.github.linguExplorer.topicProgress
 import com.github.quillraven.fleks.World
 import com.github.quillraven.fleks.world
 import ktx.app.KtxScreen
@@ -93,7 +94,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
 
     // Progress font and text
     private var progressFont: BitmapFont = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
-    private var progressText: String = "Thema: "
+    private var progressText: String = "Thema: ${currentTopic.name}"
     private var progressTextX: Float = 0f
     private var progressTextY: Float = 0f
 
@@ -156,7 +157,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         val boxInTexture = Texture(Gdx.files.internal("graphics/map-objects/boxIn 1.png"))
         val boxOutTexture = Texture(Gdx.files.internal("graphics/map-objects/boxOut 2.png"))
         val settingsIconTexture = Texture(Gdx.files.internal("xx_Images/Settingsicon.png"))
-        val progressBarTexture = Texture(Gdx.files.internal("graphics/map-objects/Prozentleiste/v2/Prozentleiste2-1.png"))
+        val progressBarTexture = Texture(Gdx.files.internal("graphics/map-objects/Prozentleiste/v2/Prozentleiste2-${mapValueToRange()}.png"))
 
         // Images
         val backpackImage = Image(backpackTexture).apply { touchable = Touchable.enabled }
@@ -333,7 +334,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
     }
 
     fun updateProgressText(progress: Int) {
-        progressText = "Thema: $currentTopic"
+        progressText = "Thema: ${currentTopic.name}"
     }
 
     override fun render(delta: Float) {
@@ -375,6 +376,14 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
                 }
             }
         }
+    }
+
+    private fun mapValueToRange(): Int {
+        val clampedValue = topicProgress.coerceIn(0.0, 1.0)
+
+        val rangeIndex = (clampedValue * 11).toInt()
+
+        return if (clampedValue == 1.0) 11 else rangeIndex + 1
     }
 
     override fun dispose() {

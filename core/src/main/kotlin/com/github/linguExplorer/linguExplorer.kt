@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game
 import com.github.linguExplorer.database.DatabaseManager
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
+import com.github.linguExplorer.models.TopicEntity
 import com.github.linguExplorer.screen.*
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
@@ -45,7 +46,8 @@ class linguExplorer : KtxGame<KtxScreen>() {
 }
 
 var name = "Blob"
-var currentTopic = ""
+lateinit var currentTopic: TopicEntity
+var topicProgress = 0.0
 val userId: Int = ConfigManager.readUserId()
 var saveNumber = 0
 var masterVolume = 1f
