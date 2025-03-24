@@ -4,9 +4,8 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
 import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile
@@ -14,12 +13,14 @@ import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.ExtendViewport
+import com.badlogic.gdx.utils.viewport.Viewport
 import com.github.linguExplorer.component.ImageComponent
 import com.github.linguExplorer.event.*
 import com.github.linguExplorer.linguExplorer.Companion.UNIT_SCALE
+import com.github.linguExplorer.screen.GameUnlockScreenRenderer
+import com.github.linguExplorer.screen.LockScreenRenderer
 import com.github.quillraven.fleks.*
 import com.github.quillraven.fleks.collection.compareEntity
-import ktx.actors.alpha
 import ktx.assets.disposeSafely
 import ktx.graphics.use
 import ktx.tiled.forEachLayer
@@ -39,7 +40,9 @@ class RenderSystem(
     private val orthoCam = stage.camera as OrthographicCamera
     private val shapeRenderer = ShapeRenderer()
     private val fadingCircles = mutableListOf<FadingCircle>()
-
+    private var showLock = false
+    private var showUnlocked = false
+    private var lockTimer = 0f
 
     data class FadingCircle(
         val x: Float,
@@ -48,12 +51,14 @@ class RenderSystem(
     )
     private val uiStage: Stage = Stage(ExtendViewport(16f, 9f)) // Eine Stage speziell für die UI
 
+    private val gviewport: Viewport = ExtendViewport(1920f, 1080f)
 
 
     override fun onTick() {
         super.onTick()
         with(stage) {
             viewport.apply()
+            gviewport.update(Gdx.graphics.width, Gdx.graphics.height, true)
 
             AnimatedTiledMapTile.updateAnimationBaseTime()
             mapRenderer.setView(orthoCam)
@@ -108,6 +113,25 @@ class RenderSystem(
 
             ////
 
+            if(showLock) {
+
+                lockTimer += deltaTime
+                if(lockTimer >= 3f) {
+                    showLock = false
+                    lockTimer = 0f
+                }
+                LockScreenRenderer().render(SpriteBatch(), gviewport, deltaTime)
+            }
+
+            if(showUnlocked) {
+
+                lockTimer += deltaTime
+                if(lockTimer >= 3f) {
+                    showUnlocked = false
+                    lockTimer = 0f
+                }
+                GameUnlockScreenRenderer().renderTopicUpdate(SpriteBatch(), gviewport, deltaTime, 1f, true)
+            }
 
         }
     }
@@ -143,9 +167,11 @@ class RenderSystem(
            // Beispiel: (event.mouseX, event.mouseY)
 
 
-           is GameCollideEvent -> {
-               println(event.miniGame)
+           is LockScreenEvent -> {
 
+               showLock = true
+               lockTimer = 0f
+               println(event.miniGame)
 
 
            }
@@ -158,7 +184,10 @@ class RenderSystem(
            //Event für Celebrate oder unlocked
 
            is UnlockedEvent -> {
-               println("Unlocked Event works")
+
+               showUnlocked = true
+               lockTimer = 0f
+
            }
 
            /////////////
@@ -173,7 +202,11 @@ class RenderSystem(
         return false
     }
 
+    fun resize(width: Int, height: Int) {
+        gviewport.update(width, height, true)
+    }
     override fun onDispose() {
         mapRenderer.disposeSafely()
+
     }
 }

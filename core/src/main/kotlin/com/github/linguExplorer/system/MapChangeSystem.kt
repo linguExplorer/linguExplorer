@@ -1,7 +1,5 @@
 package com.github.linguExplorer.system
 
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.scenes.scene2d.Event
@@ -10,26 +8,18 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.linguExplorer.component.*
 import com.github.linguExplorer.component.PhysicComponent.Companion.physicCmpFromShape2D
 import com.github.linguExplorer.event.*
-import com.github.linguExplorer.input.PlayerKeyboardInputProcessor
 import com.github.linguExplorer.linguExplorer
 import com.github.linguExplorer.screen.*
 import com.github.quillraven.fleks.AllOf
 import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.IteratingSystem
-import ktx.actors.stage
-import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
-import ktx.math.component1
-import ktx.math.component2
 
 import ktx.tiled.id
 import ktx.tiled.layer
 import ktx.tiled.property
 import ktx.tiled.shape
-import java.util.*
-import kotlin.concurrent.schedule
-import kotlin.reflect.KClass
 
 @AllOf([MGComponent::class])
 class MapChangeSystem (
@@ -57,17 +47,28 @@ class MapChangeSystem (
 
 
 
-                gameStage.fire(GameCollideEvent(toGame)) // Event für Collision mit Minigame
+                // Event für Collision mit Minigame
 
+           // gameStage.fire(UnlockedEvent("hi"))
 
+          //  gameStage.fire(LockScreenEvent(toGame))
 
                 if(toGame == "SM") {
+
+
+                    gameStage.fire(UnlockedEvent("hi"))
+
+
+
+
                     if (game.containsScreen<MinigameEssenScreen>()) {
                         game.removeScreen<MinigameEssenScreen>()
                     }
 
                     game.addScreen(MinigameEssenScreen(game,gameStage))//gameStage))
                     game.setScreen<MinigameEssenScreen>()
+
+
 
                 } else if (toGame == "CL") {
 

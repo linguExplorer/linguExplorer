@@ -5,19 +5,11 @@ import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.github.linguExplorer.masterVolume
-import com.github.linguExplorer.repositories.TopicRepository
-import com.github.linguExplorer.repositories.UserProgressRepository
-import com.github.linguExplorer.saveNumber
 import com.github.linguExplorer.soundEffectVolume
-import com.github.linguExplorer.userId
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 
 class LockScreenRenderer {
@@ -27,6 +19,9 @@ class LockScreenRenderer {
     private var soundPlayed = false
     private var isFinished = false
     private var texturePath = "graphics/map-objects/(Un)lock/lock.png"
+    private var onResumeClicked: () -> Unit = {}
+    private var showLock = true
+
 
 
     fun render(batch: SpriteBatch, viewport: Viewport, delta: Float): Boolean {
@@ -93,6 +88,13 @@ class LockScreenRenderer {
         batch.end()
 
         return isFinished
+    }
+
+    fun setOnResumeClicked(callback: () -> Unit) {
+        onResumeClicked = {
+            showLock = false  // Hier wird menuSet auf false gesetzt
+            callback()
+        }
     }
 
     fun isFinished(): Boolean {
