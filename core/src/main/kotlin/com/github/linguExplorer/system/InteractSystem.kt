@@ -64,7 +64,7 @@ class InteractSystem(
                 val distance = calculateDistance(playerx, playery, sdPosx, sdPosy)
                 if (distance <= interactionDistance) {
 
-                    sdComponent[entity].name?.let { startDialogEvent(entity, it) }?.let { gameStage.fire(it) }
+                    gameStage.fire(startDialogEvent(entity,"tets"  ))
                     println("Interaktion erfolgreich mit Entität $entity bei ($sdPosx, $sdPosy)")
                 }
             }
