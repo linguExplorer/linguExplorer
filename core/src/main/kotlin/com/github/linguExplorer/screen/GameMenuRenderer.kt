@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.github.linguExplorer.linguExplorer
 import com.github.linguExplorer.masterVolume
 import com.github.linguExplorer.musicVolume
 import com.github.linguExplorer.soundEffectVolume
@@ -69,8 +70,8 @@ class GameMenuRenderer {
     private var soundeffectPreSave = 0f
     private var musicPreSave = 0f
 
-
     //Which Menu
+    private var game: linguExplorer = linguExplorer()
     private var isMainMenu = true
 
     init {
@@ -91,13 +92,15 @@ class GameMenuRenderer {
         updateCirclePositionsFromVolumes() // Initialisiert die Positionen der Kreise basierend auf den aktuellen Lautstärken
     }
 
-    fun renderGameMenu(batch: SpriteBatch, font: BitmapFont, glyphLayout: GlyphLayout, viewport: Viewport, shapeRenderer: ShapeRenderer, mainMenu: Boolean) {
+    fun renderGameMenu(batch: SpriteBatch, font: BitmapFont, glyphLayout: GlyphLayout, viewport: Viewport, shapeRenderer: ShapeRenderer, mainMenu: Boolean, linguGame: linguExplorer) {
         // Reset menuSet to true when rendering the menu
 
         if(!mainMenu) {
             isMainMenu = false
         } else {
             isMainMenu = true
+            game = linguGame
+
         }
 
         font.color = Color.BLACK
@@ -315,9 +318,10 @@ class GameMenuRenderer {
 
                 if(isMainMenu) {
                     Gdx.app.exit()
-
                 } else {
-
+                    game.removeScreen<MainMenuScreen>()
+                    game.addScreen(MainMenuScreen(game))
+                    game.setScreen<MainMenuScreen>()
 
                 }
 

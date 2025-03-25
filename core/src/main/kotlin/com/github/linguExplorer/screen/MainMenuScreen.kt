@@ -722,7 +722,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         }
 
         if (showMenu) {
-            gameMenuRenderer.renderGameMenu(batch, font, glyphLayout, viewport, shapeRenderer, true)
+            gameMenuRenderer.renderGameMenu(batch, font, glyphLayout, viewport, shapeRenderer, true, game)
             return
         }
 

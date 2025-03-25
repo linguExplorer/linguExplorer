@@ -399,7 +399,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         }
 
         if (menuSet) {
-            gameMenuRenderer.renderGameMenu(batch, font, glyphLayout, viewport,shapeRenderer, false)
+            gameMenuRenderer.renderGameMenu(batch, font, glyphLayout, viewport,shapeRenderer, false, game)
             Gdx.input.inputProcessor = null
             update = 0f
         } else {
