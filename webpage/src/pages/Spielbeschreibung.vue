@@ -247,6 +247,43 @@
     </footer>
   </div>
 </template>
+<script>
+import { mapState, mapActions } from "vuex";
+import { onMounted, ref } from "vue";
+import { useStore } from "vuex";
+
+export default {
+  name: "SpielbeschreibungPage",
+  setup() {
+    const message = ref("Du bist nicht mehr eingeloggt!");
+    const store = useStore();
+    onMounted(async () => {
+      try {
+        const res = await fetch("https://da.linguexplorer.com/api/user", {
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        });
+        if (!res.ok) {
+          await store.dispatch("logout");
+        } else {
+          await store.dispatch("login");
+        }
+      } catch (e) {
+        console.error("Fehler beim Senden der Anfrage:", e);
+      }
+    });
+
+    return {
+      message,
+    };
+  },
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters.isAuthenticated;
+    },
+  },
+};
+</script>
 <style>
   html, body {
     overflow-x: hidden;
