@@ -4,12 +4,17 @@ import com.badlogic.gdx.Game
 import com.github.linguExplorer.database.DatabaseManager
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.utils.viewport.ScreenViewport
+import com.github.linguExplorer.models.TopicEntity
 import com.github.linguExplorer.screen.*
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
 
 class linguExplorer : KtxGame<KtxScreen>() {
     private val userId: Int = ConfigManager.readUserId()
+
+    lateinit var stage: Stage  // Stage als Klassenmember
 
     override fun create() {
         println("Benutzer-ID: $userId")
@@ -25,7 +30,7 @@ class linguExplorer : KtxGame<KtxScreen>() {
        //setScreen<MinigameFamilieScreen>()
 
 
-   
+
 
       //  addScreen(CharacterDialog(this))
         //setScreen<CharacterDialog>()
@@ -44,10 +49,12 @@ class linguExplorer : KtxGame<KtxScreen>() {
     }
 }
 
-var name ="Blob"
+
+var name = "Blob"
+lateinit var currentTopic: TopicEntity
+var topicProgress = 0.0
 val userId: Int = ConfigManager.readUserId()
 var saveNumber = 0
 var masterVolume = 1f
 var soundEffectVolume = 1f
 var musicVolume = 1f
-

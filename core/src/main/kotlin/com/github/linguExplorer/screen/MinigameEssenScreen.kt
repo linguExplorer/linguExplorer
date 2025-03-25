@@ -17,15 +17,17 @@ import com.badlogic.gdx.utils.Align
 import com.github.linguExplorer.event.GameEndEvent
 import com.github.linguExplorer.event.fire
 import com.github.linguExplorer.linguExplorer
+import com.github.linguExplorer.masterVolume
 import com.github.linguExplorer.minigames.EssenMinigame
 import com.github.linguExplorer.models.PhraseEntity
+import com.github.linguExplorer.musicVolume
+import com.github.linguExplorer.soundEffectVolume
 import ktx.app.KtxScreen
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class MinigameEssenScreen(private val game: linguExplorer,
                           private val stage: Stage
-
 ) : KtxScreen {
 
     private val batch = SpriteBatch()
@@ -37,7 +39,6 @@ class MinigameEssenScreen(private val game: linguExplorer,
 
     var textgap = 2f
 
-    // Texturen
     private val basketTexture = Texture(Gdx.files.internal("Minigames/basket.png"))
     private val listTexture = Texture(Gdx.files.internal("Minigames/list.png"))
     private val timeTexture = Texture(Gdx.files.internal("Minigames/time.png"))
@@ -48,12 +49,11 @@ class MinigameEssenScreen(private val game: linguExplorer,
     private val tryAgainButtonTexture = Texture(Gdx.files.internal("Minigames/btn_tryAgain.png"))
     private val quitButtonTexture = Texture(Gdx.files.internal("Minigames/btn_quitMinigame.png"))
 
-    // Positionen und Größen
     private val basketPosition = Vector2(150f, 0f)
     private val basketSize = Vector2(650f, 500f)
 
     private val listPosition: Vector2
-    get() = Vector2(viewport.worldWidth - 800f, 0f)
+        get() = Vector2(viewport.worldWidth - 800f, 0f)
     private val listSize = Vector2(450f, 420f)
 
     private val pausePosition: Vector2
@@ -82,23 +82,17 @@ class MinigameEssenScreen(private val game: linguExplorer,
         get() = Vector2(30f, viewport.worldHeight - 125f)
     private val timeSize = Vector2(260f, 90f)
 
-    //Error Text
     private var showErrorText = false
     private var errorTextTimer = 0f
-    private val errorTextDuration = 2f // Dauer
+    private val errorTextDuration = 2f
     private var errorTextPositionX = 0f
     private var errorTextPositionY = 0f
 
-    // roter Strich
     private var errorLine = false
 
-    //Positionen der Objekte im Korb
     private val collectedObjectPositions = mutableListOf<Vector2>()
-    private val collectedObjectSpacing = 55f // Abstand zwischen den Objekten im Korb
+    private val collectedObjectSpacing = 55f
     private var currentBasketRow = 0
-
-    // Getter für die dynamischen Positionen
-
 
     private val tryAgainButtonPosition: Vector2
         get() = Vector2(
@@ -107,16 +101,9 @@ class MinigameEssenScreen(private val game: linguExplorer,
         )
 
 
-
-
-    private val scaleSpeed = 5f
-
-
-    // Zeit
     private var timeLeft = 30
     private var elapsedTime = 0f
 
-    // Spielstatus
     private var isDragging = false
     private var offsetX = 0f
     private var offsetY = 0f
@@ -127,23 +114,99 @@ class MinigameEssenScreen(private val game: linguExplorer,
     private var loadingScreenRenderer = LoadingScreenRenderer()
     private var threadExecuted = false
 
+    private var isTransitioning = false
+    private var transitionRadius = 0f
+    private val maxRadius = Math.sqrt((1920f * 1920f + 1080f * 1080f).toDouble()).toFloat()
+    private var loadingTime = 0f
+    private var threadWorking = false
+    private var initialLoadingTime = 0f
+
+    private var backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Hintergrundmusik/Hintergrundmusik_Essen.mp3"))
+    private var correctSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Soundeffekte/richtig.mp3"))
+    private var wrongSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Soundeffekte/falsch.mp3"))
+
     private val minigame = EssenMinigame()
     private lateinit var objects: List<DraggableObject>
-
 
     override fun show() {
         loadPhraseData()
         Gdx.input.inputProcessor = null
+
+        backgroundMusic.isLooping = true
+        backgroundMusic.volume = 0.5f* musicVolume * masterVolume
+
+        initialLoadingTime = 0f
     }
 
     private var isPaused = false
 
     override fun render(delta: Float) {
         font = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
+
+        if (isTransitioning) {
+            transitionRadius += 1000f * delta
+            if (transitionRadius >= maxRadius) {
+                loadingTime += delta
+
+                if (!threadWorking) {
+                    storePhraseDataAsync()
+                    threadWorking = true
+                }
+
+                Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
+                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+                loadingScreenRenderer.renderAnimatedText(batch, font, glyphLayout, viewport, "Loading", delta, 1f, true)
+
+                if (threadExecuted && loadingTime > 2f) {
+                    Gdx.app.postRunnable {
+                        isTransitioning = false
+                        transitionRadius = 0f
+                        loadingTime = 0f
+
+                        if (game.containsScreen<MapScreen>()) {
+                            game.removeScreen<MapScreen>()
+                        }
+                        backgroundMusic.stop()
+                        stage.fire(GameEndEvent("SM"))
+                        game.addScreen(MapScreen(game, 31.104187f, 15.677063f))
+                        game.setScreen<MapScreen>()
+                    }
+                }
+                return
+            }
+
+            Gdx.gl.glClearColor(0.611f, 0.761f, 0.827f, 1f)
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+
+            viewport.apply()
+            batch.projectionMatrix = viewport.camera.combined
+            shapeRenderer.projectionMatrix = viewport.camera.combined
+
+            batch.begin()
+            batch.end()
+
+            Gdx.gl.glEnable(GL20.GL_BLEND)
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
+            shapeRenderer.color = Color(0f, 0f, 0f, 1f)
+            shapeRenderer.circle(viewport.worldWidth / 2, viewport.worldHeight / 2, transitionRadius)
+            shapeRenderer.end()
+            Gdx.gl.glDisable(GL20.GL_BLEND)
+        }
+
+        if (!threadExecuted and !isTransitioning) {
+            initialLoadingTime += delta
+            loadingScreenRenderer.renderAnimatedText(batch, font, glyphLayout, viewport, "Loading", delta, 1f, true)
+
+            if (initialLoadingTime < 2f) {
+                return
+            }
+        }
+
+        handleInput()
         if (!threadExecuted) {
-            loadingScreenRenderer.renderAnimatedText(batch, font, glyphLayout, ExtendViewport(1920f, 1080f),"Loading", delta, 1f, true)
+            loadingScreenRenderer.renderAnimatedText(batch, font, glyphLayout, viewport, "Loading", delta, 1f, true)
         } else {
-            handleInput()
             if (!isPaused && !gameEnded && gameStarted) {
                 updateTime(delta)
             }
@@ -164,24 +227,17 @@ class MinigameEssenScreen(private val game: linguExplorer,
             shapeRenderer.projectionMatrix = viewport.camera.combined
             font.color = Color.BLACK
 
-
-
             batch.begin()
 
-            // Zeichne Regale und andere Spielfunktionen
             batch.draw(shelfTexture, shelfPosition1.x, shelfPosition1.y, shelfSize.x, shelfSize.y)
             batch.draw(shelfTexture, shelfPosition2.x, shelfPosition2.y, shelfSize.x, shelfSize.y)
             batch.draw(listTexture, listPosition.x, listPosition.y, listSize.x, listSize.y)
 
-
-            // Fehlertext wird hier gezeichnet
             if (showErrorText) {
                 font.color = Color.RED
                 font.data.setScale(0.3f, 0.3f)
                 glyphLayout.setText(font, "False!")
-                //font.draw(batch, "False!", errorTextPositionX, errorTextPositionY)
             }
-
 
             var positionOffsetX = 0f
             var positionOffsetY = 0f
@@ -205,7 +261,6 @@ class MinigameEssenScreen(private val game: linguExplorer,
                     positionOffsetX += 140f
                 }
 
-
                 renderPhrasesOnScreen(batch, font, listPosition.x + 45f, listSize.y - 70f, 30f)
             }
 
@@ -216,7 +271,6 @@ class MinigameEssenScreen(private val game: linguExplorer,
                 isCompleted = true
             }
 
-            // Pause- oder Play-Button anzeigen
             val texture: Texture = if (isPaused || gameEnded) playTexture else pauseTexture
 
             batch.draw(
@@ -225,7 +279,6 @@ class MinigameEssenScreen(private val game: linguExplorer,
                 pausePosition.y,
                 pauseSize.x, pauseSize.y)
 
-            // Zeit
             batch.draw(timeTexture, timePosition.x, timePosition.y, timeSize.x, timeSize.y)
             font.data.setScale(0.5f, 0.5f)
             font.draw(batch, formatTime(timeLeft), timePosition.x + 42.5f, timePosition.y + 62.5f)
@@ -249,7 +302,6 @@ class MinigameEssenScreen(private val game: linguExplorer,
                 val gamePausedY = (viewport.worldHeight / 2) + glyphLayout.height + 30f
                 font.draw(batch, "GAME PAUSED", gamePausedX, gamePausedY)
 
-                // Continue-Button anzeigen
                 batch.draw(
                     continueTexture,
                     continueButtonPosition.x,
@@ -269,7 +321,6 @@ class MinigameEssenScreen(private val game: linguExplorer,
                 Gdx.gl.glDisable(GL20.GL_BLEND)
                 batch.begin()
 
-                //TODO der text ist soooo knapp nicht in der mitte :((
                 font.color = Color.WHITE
                 val glyphLayout = GlyphLayout()
                 font.data.setScale(0.45f, 0.45f)
@@ -285,7 +336,6 @@ class MinigameEssenScreen(private val game: linguExplorer,
                     true
                 )
 
-                // Continue-Button anzeigen
                 batch.draw(
                     continueTexture,
                     continueButtonPosition.x,
@@ -293,8 +343,6 @@ class MinigameEssenScreen(private val game: linguExplorer,
                     buttonSize.x,
                     buttonSize.y
                 )
-
-                //batch.draw(continueTexture, continueButtonPosition.x, continueButtonPosition.y, buttonSize.x, buttonSize.y)
             }
 
             if (gameEnded) {
@@ -336,39 +384,11 @@ class MinigameEssenScreen(private val game: linguExplorer,
                         buttonSize.x,
                         buttonSize.y
                     )
-
-                    /*val extraSpacing = 120f // Zusätzlicher Abstand zwischen "GAME OVER" und "Try Again"
-                val buttonYSpacing = -70f // Abstand zwischen "Try Again" und "Quit"
-                val tryAgainButtonY = gameOverY - glyphLayout.height - extraSpacing
-                val quitButtonY = tryAgainButtonY - buttonSize.y - buttonYSpacing
-                val buttonX = (viewport.worldWidth - buttonSize.x) / 2
-                batch.draw(tryAgainButtonTexture, buttonX, tryAgainButtonY, buttonSize.x, buttonSize.y)
-                batch.draw(quitButtonTexture, buttonX, quitButtonY, buttonSize.x, buttonSize.y)*/
                 }
             }
 
             batch.end()
         }
-    }
-
-    private fun restartGame() {
-        // Zurücksetzen der Zeit
-        timeLeft = 4
-        elapsedTime = 0f
-
-        // Zurücksetzen des Spielfortschritts
-        objects.forEach { obj ->
-            obj.isCollected = false
-            obj.isBeingDragged = false
-            obj.basePositionX = obj.resetPositionX
-            obj.basePositionY = obj.resetPositionY
-        }
-
-        // Zurücksetzen des Spielstatus
-        gameEnded = false
-        isPaused = false
-        collectedObjectPositions.clear()
-        currentBasketRow = 0
     }
 
     private fun handleInput() {
@@ -424,6 +444,7 @@ class MinigameEssenScreen(private val game: linguExplorer,
                                 if (isCorrect) {
                                     //Objekt als eingesammelt markieren
                                     obj.isCollected = true
+                                    correctSound.play(0.9f * masterVolume * soundEffectVolume)
                                     val initialXOffset = 80f //weiter rechts zeichnen
                                     // Position des Objekts im Korb berechnen
                                     // Startposition Korb + Abstand Rand + Position in Reihe % 5 * Abstand zwischen Objekten
@@ -441,6 +462,8 @@ class MinigameEssenScreen(private val game: linguExplorer,
                                         currentBasketRow++
                                 } else {
                                     // Text mit "Fehler!" anzeigen
+                                    wrongSound.play(1.2f * masterVolume * soundEffectVolume)
+
                                     showErrorText = true
                                     errorTextTimer = 0f
 
@@ -473,6 +496,7 @@ class MinigameEssenScreen(private val game: linguExplorer,
                 if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) &&
                     mouseY in buttonY..(buttonY + buttonSize.y)) {
                     gameStarted = true
+                    backgroundMusic.play()
                 }
             }
         } else {
@@ -481,20 +505,14 @@ class MinigameEssenScreen(private val game: linguExplorer,
                 val buttonY = continueButtonPosition.y - (buttonSize.y / 2) + 15f
                 if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) &&
                     mouseY in buttonY..(buttonY + buttonSize.y)) {
-                    storePhraseDataAsync()
-
-                    stage.fire(GameEndEvent("SM"))
-
-                    if (game.containsScreen<MapScreen>()) {
-                        game.removeScreen<MapScreen>()
-                    }
-                    game.addScreen(MapScreen(game, 31.104187f,15.677063f))
-                    game.setScreen<MapScreen>()
+                    // Begin transition to MapScreen with loading display
+                    println("BITTEEEE")
+                    isTransitioning = true
+                    loadingTime = 0f
                 }
             }
         }
     }
-
 
     private fun updateTime(delta: Float) {
         elapsedTime += delta
@@ -526,7 +544,6 @@ class MinigameEssenScreen(private val game: linguExplorer,
             glyphLayout.setText(font, phrase.phrase)
             val textWidth = glyphLayout.width
             val textHeight = glyphLayout.height
-
 
             font.draw(batch, phrase.phrase, startX, currentY)
 
@@ -628,7 +645,9 @@ class MinigameEssenScreen(private val game: linguExplorer,
         shelfTexture.dispose()
         tryAgainButtonTexture.dispose()
         quitButtonTexture.dispose()
-        objects.forEach { it.texture.dispose() }
+        if (::objects.isInitialized) {
+            objects.forEach { it.texture.dispose() }
+        }
     }
 
     private data class DraggableObject(

@@ -1,11 +1,9 @@
 package com.github.linguExplorer.minigames
 
-import com.github.linguExplorer.allPhrasesList
-import com.github.linguExplorer.phraseIndex
+import com.github.linguExplorer.*
 import com.github.linguExplorer.models.PhraseEntity
+import com.github.linguExplorer.models.PhraseProgressHistoryEntity
 import com.github.linguExplorer.repositories.*
-import com.github.linguExplorer.saveNumber
-import com.github.linguExplorer.userId
 
 // Elternklasse Minigame
 abstract class MinigameSystem {
@@ -48,10 +46,12 @@ abstract class MinigameSystem {
         val phrasesGameHistory = mutableListOf<Pair<Int, Boolean>>()
         val phrasesProgress = mutableListOf<PhraseProgressData>() // Statt Triple nutzen wir jetzt ein Quadruple
         val phraseStateUpdates = mutableListOf<Int>()
+        val phraseIndexList = mutableListOf<Double>()
 
         capturedPhrases.forEach { (phrase, correctSet) ->
             val relevantProgress = userProgress.find { it.phraseId == phrase.id }
             val correctIndex = historyRepo.calculateCorrectIndex(phrase.id, userHistory)
+            phraseIndexList.add(correctIndex)
 
             if (relevantProgress == null) {
                 phrasesProgress.add(PhraseProgressData(phrase.id, userId, saveNumber, false)) // saveNumber wird jetzt hinzugefügt
@@ -77,7 +77,58 @@ abstract class MinigameSystem {
         if (UserProgressRepository().getUserProgress(userId, saveNumber, topicId) == null) {
             UserProgressRepository().addProgress(userId, saveNumber, topicId)
         }
+
+        updateUserInformation(userHistory)
     }
+
+
+    fun updateUserInformation(userHistory: List<PhraseProgressHistoryEntity>) {
+        val progressRepo = PhraseProgressRepository()
+        val phraseList = allPhrasesList.filter { it.topicId == this.topicId }
+        val userProgress = progressRepo.getAllPhraseProgressForUser(userId, this.topicId)
+            .filter { it.phraseId in phraseList.map { it.id }
+            }
+
+
+        if(userProgress.size == phraseList.size && userProgress.all { it.isMastered }) {
+            println("Alle Phrasen in diesem Thema sind bereits als 'mastered' markiert")
+            if(topicId == currentTopic.id) {
+                topicProgress = 1.0
+                UserProgressRepository().changeMasteredState(userId, saveNumber, topicId, true)
+            }
+            return
+        }
+
+        val historyRepo = PhraseProgressHistoryRepository()
+
+        var totalScore = 0.0
+        var count = 0
+
+        phraseList.forEach { phrase ->
+            val correctIndex = historyRepo.calculateCorrectIndex(phrase.id, userHistory)
+            var score = 0.0
+            if (correctIndex >= phraseIndex) {
+                score = 1.0
+            } else if (correctIndex == -1.0) {
+                score = 0.0
+            } else {
+                score = correctIndex / phraseIndex
+            }
+
+            totalScore += score
+            count++
+        }
+        if(topicId == currentTopic.id) {
+            topicProgress = if (count > 0) totalScore / count else 0.0
+            println("HII")
+            println(topicProgress)
+        }
+    }
+
+
+
+
+
 
 
 

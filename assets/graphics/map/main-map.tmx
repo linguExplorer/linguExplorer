@@ -62,21 +62,25 @@
   <object id="10" x="508.072" y="480.167" width="25.7154" height="8.54545">
    <properties>
     <property name="toGame" value="SM"/>
+    <property name="topicId" type="int" value="2"/>
    </properties>
   </object>
   <object id="25" x="663.333" y="255" width="32.3333" height="10.6667">
    <properties>
     <property name="toGame" value="SC"/>
+    <property name="topicId" type="int" value="4"/>
    </properties>
   </object>
   <object id="26" x="179" y="464" width="61" height="9.66667">
    <properties>
     <property name="toGame" value="FM"/>
+    <property name="topicId" type="int" value="3"/>
    </properties>
   </object>
   <object id="27" x="405.667" y="671.333" width="37" height="11.3333">
    <properties>
     <property name="toGame" value="CL"/>
+    <property name="topicId" type="int" value="1"/>
    </properties>
   </object>
  </objectgroup>

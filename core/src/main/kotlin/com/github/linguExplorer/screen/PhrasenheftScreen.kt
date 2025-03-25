@@ -23,7 +23,20 @@ import com.itextpdf.layout.element.*
 import com.itextpdf.layout.properties.UnitValue
 import java.io.File
 import com.badlogic.gdx.Application
+import com.badlogic.gdx.audio.Sound
 import com.github.linguExplorer.saveNumber
+import com.itextpdf.io.font.constants.StandardFonts
+import com.itextpdf.io.font.constants.StandardFonts.HELVETICA
+import com.itextpdf.io.font.constants.StandardFonts.HELVETICA_BOLD
+import com.itextpdf.io.image.ImageDataFactory
+import com.itextpdf.kernel.colors.ColorConstants
+import com.itextpdf.kernel.colors.DeviceRgb
+import com.itextpdf.kernel.font.PdfFontFactory
+import com.itextpdf.layout.borders.Border
+import com.itextpdf.layout.borders.SolidBorder
+import com.itextpdf.layout.properties.BorderRadius
+import com.itextpdf.layout.properties.TextAlignment
+import com.itextpdf.layout.properties.VerticalAlignment
 import java.util.*
 import java.util.concurrent.Executors
 import javax.swing.SwingUtilities
@@ -35,6 +48,9 @@ class PhrasenheftScreen (
     private val batch = SpriteBatch()
     private val shapeRenderer = ShapeRenderer()
     private val viewport: Viewport = ExtendViewport(1920f, 1080f)
+
+    private var pageFlipSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Soundeffekte/page_flip.mp3"))
+    private var soundPlaying = false
 
     private enum class SortState {
         ASCENDING_PHRASE, DESCENDING_PHRASE, ASCENDING_TRANSLATION, DESCENDING_TRANSLATION
@@ -57,33 +73,32 @@ class PhrasenheftScreen (
     private val nextTexture = Texture(Gdx.files.internal("Phrasenheft/weiter.png"))
     private val backTexture = Texture(Gdx.files.internal("Phrasenheft/zurueck.png"))
     private val closeTexture = Texture(Gdx.files.internal("Phrasenheft/red_X.png"))
+    private val downloadTexture = Texture(Gdx.files.internal("Phrasenheft/Download.png"))
 
     private val heftSize = Vector2(1080f, 784f)
     private val nextSize = Vector2(backTexture.width.toFloat()*8, backTexture.height.toFloat()*8)
     private val backSize = Vector2(backTexture.width.toFloat()*8, backTexture.height.toFloat()*8)
     private val sortSize = Vector2(sortTexture.width.toFloat()*6, sortTexture.height.toFloat()*6)
     private val closeSize = Vector2(closeTexture.width.toFloat()*1.25f, closeTexture.height.toFloat()*1.25f)
+    private val downloadSize = Vector2(downloadTexture.width.toFloat()*0.5f, downloadTexture.height.toFloat()*0.5f)
 
     private var maxPages= (phrases.size/10f)//wie viele Phrasen max
     private var currentPage = 1
 
-    // Flag für den PDF-Export-Zustand
     private var isExportingPDF = false
-    // Flag, um zu überwachen, ob der Export abgeschlossen ist
     private var exportCompleted = false
-    // Der Ausführungsdienst für Thread-Management
     private val executor = Executors.newSingleThreadExecutor()
 
     private val nextPosition: Vector2
         get() = Vector2(
             viewport.worldWidth/2 + 600f,
-            (viewport.worldHeight - heftSize.y) - 200f
+            (viewport.worldHeight - heftSize.y) - 150f
         )
 
     private val backPosition: Vector2
         get() = Vector2(
             viewport.worldWidth/2 - 690f,
-            (viewport.worldHeight  - heftSize.y) - 200f
+            (viewport.worldHeight  - heftSize.y) - 150f
         )
 
     private val sortPosition: Vector2
@@ -106,8 +121,10 @@ class PhrasenheftScreen (
     }
 
     override fun render(delta: Float) {
-        // Prüfen, ob der Export abgeschlossen ist
-        if (exportCompleted) {
+
+        if(exportCompleted) {
+            exportCompleted = false
+            isExportingPDF = false
         }
 
         handleInput()
@@ -144,7 +161,7 @@ class PhrasenheftScreen (
             batch.draw(nextTexture, nextPosition.x, nextPosition.y, backSize.x, backSize.y)
         }
         batch.draw(sortTexture, sortPosition.x, sortPosition.y, sortSize.x, sortSize.y)
-        batch.draw(sortTexture, sortPosition.x, sortPosition.y + 200f, sortSize.x, sortSize.y)
+        batch.draw(downloadTexture, (viewport.worldWidth - downloadSize.x) / 2, 50f, downloadSize.x, downloadSize.y)
         batch.draw(closeTexture, closePosition.x, closePosition.y, closeSize.x, closeSize.y)
 
         currentY = heftY + heftSize.y - 140f
@@ -224,7 +241,10 @@ class PhrasenheftScreen (
             return
         }
 
-        // Use viewport's unproject method to get correct world coordinates
+        if (!Gdx.input.isTouched()) {
+            soundPlaying = false
+        }
+
         val mouseX = viewport.unproject(Vector2(Gdx.input.x.toFloat(), Gdx.input.y.toFloat())).x
         val mouseY = viewport.unproject(Vector2(Gdx.input.x.toFloat(), Gdx.input.y.toFloat())).y
 
@@ -234,6 +254,10 @@ class PhrasenheftScreen (
                 mouseY in nextPosition.y..(nextPosition.y + backSize.y)) {
                 if((currentPage-1) + 1 <  maxPages-1f) {
                     currentPage++
+                    if (!soundPlaying) {
+                        pageFlipSound?.play(1.0f)
+                        soundPlaying = true
+                    }
                 }
                 println("Button Next, $currentPage")
             }
@@ -243,6 +267,10 @@ class PhrasenheftScreen (
                 mouseY in backPosition.y..(backPosition.y + backSize.y)) {
                 if((currentPage-1) - 1 >=  0) {
                     currentPage--
+                    if (!soundPlaying) {
+                        pageFlipSound?.play(1.0f)
+                        soundPlaying = true
+                    }
                 }
                 println("Button Back, $currentPage")
             }
@@ -272,8 +300,8 @@ class PhrasenheftScreen (
                 }
             }
 
-            if (mouseX in sortPosition.x..(sortPosition.x + sortSize.x) &&
-                mouseY in sortPosition.y + 200f..(sortPosition.y + sortSize.y + 200f)) {
+            if (mouseX in (viewport.worldWidth - downloadSize.x) / 2..((viewport.worldWidth - downloadSize.x) / 2 + downloadSize.x) &&
+                mouseY in 50f..(50f + downloadSize.x)) {
                 if (!isExportingPDF) {
                     isExportingPDF = true
                     startExportPDF()
@@ -336,14 +364,17 @@ class PhrasenheftScreen (
                     // Verarbeiten des Ergebnisses
                     if (!wasCancelledRef[0] && filePathRef[0] != null) {
                         val filePath = filePathRef[0]!!
-                        exportPhrasesToPDF(phrases, filePath)
+                        try {
+                            exportPhrasesToPDF(phrases, filePath)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            println("Fehler beim PDF-Export: ${e.message}")
+                        }
 
-                        // Erfolgsmeldung im Konsolenlog
-                        println("PDF erfolgreich gespeichert unter: $filePath")
-
-                        // Zurück zum LibGDX-Thread und zum MapScreen wechseln
+                        // Zurück zum LibGDX-Thread
                         Gdx.app.postRunnable {
                             exportCompleted = true
+                            isExportingPDF = false
                         }
                     } else {
                         // Wenn abgebrochen, zurück zum normalen Zustand
@@ -353,20 +384,16 @@ class PhrasenheftScreen (
                     }
                 } else {
                     // Für Android und andere Plattformen
-                    // Einfach direkt im externen Speicher speichern
                     val filePath = Gdx.files.external("Phrasenheft.pdf").file().absolutePath
                     exportPhrasesToPDF(phrases, filePath)
 
-                    println("PDF gespeichert unter: $filePath")
-
-                    // Zurück zum LibGDX-Thread und zum MapScreen wechseln
                     Gdx.app.postRunnable {
                         exportCompleted = true
+                        isExportingPDF = false
                     }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                // Bei Fehler zurück zum normalen Zustand
                 Gdx.app.postRunnable {
                     isExportingPDF = false
                 }
@@ -374,31 +401,93 @@ class PhrasenheftScreen (
         }
     }
 
-    fun exportPhrasesToPDF(phrases: List<Pair<String, String>>, filePath: String) {
-        val file = File(filePath)
-        val pdfWriter = PdfWriter(file)
-        val pdfDocument = PdfDocument(pdfWriter)
-        val document = Document(pdfDocument)
+    private fun exportPhrasesToPDF(phrases: List<Pair<String, String>>, filePath: String) {
+        val writer = PdfWriter(filePath)
+        val pdf = PdfDocument(writer)
+        val document = Document(pdf)
+
+        // Schriftarten
+        val titleFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)
+        val textFont = PdfFontFactory.createFont(StandardFonts.HELVETICA)
+
+        // Farben
+        val primaryColor = DeviceRgb(153, 179, 5)
+        val secondaryColor = DeviceRgb(242, 247, 230)
+        val headerBgColor = DeviceRgb(128, 153, 0)
 
         // Titel
-        document.add(Paragraph("linguExplorer Phrasenheft").setBold().setFontSize(18f))
+        document.add(
+            Paragraph("linguExplorer Phrasenheft")
+                .setFont(titleFont)
+                .setFontSize(24f)
+                .setFontColor(primaryColor)
+                .setTextAlignment(TextAlignment.CENTER)
+        )
 
-        // Tabelle mit zwei Spalten (Phrase & Übersetzung)
-        val table = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f))).useAllAvailableWidth()
+        document.add(
+            Paragraph("Deine persönliche Sprachsammlung")
+                .setFont(textFont)
+                .setFontSize(14f)
+                .setFontColor(DeviceRgb(100, 120, 0))
+                .setTextAlignment(TextAlignment.CENTER)
+                .setMarginBottom(20f)
+        )
 
-        // Tabellenkopf
-        table.addHeaderCell(Cell().add(Paragraph("Phrase")).setBold())
-        table.addHeaderCell(Cell().add(Paragraph("Übersetzung")).setBold())
+        // Tabelle
+        val table = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f)))
+            .useAllAvailableWidth()
+            .setMarginBottom(20f)
 
-        // Phrasen & Übersetzungen einfügen
-        for ((phrase, translation) in phrases) {
-            table.addCell(Cell().add(Paragraph(phrase)))
-            table.addCell(Cell().add(Paragraph(translation)))
+        // Header
+        table.addHeaderCell(
+            Cell().add(Paragraph("Phrase"))
+                .setBackgroundColor(headerBgColor)
+                .setFontColor(DeviceRgb(255, 255, 255))
+                .setTextAlignment(TextAlignment.CENTER)
+        )
+        table.addHeaderCell(
+            Cell().add(Paragraph("Übersetzung"))
+                .setBackgroundColor(headerBgColor)
+                .setFontColor(DeviceRgb(255, 255, 255))
+                .setTextAlignment(TextAlignment.CENTER)
+        )
+
+        // Phrasen hinzufügen
+        for ((index, pair) in phrases.withIndex()) {
+            val (phrase, translation) = pair
+
+            val bgColor = if (index % 2 == 0) secondaryColor else DeviceRgb(255, 255, 255)
+
+            table.addCell(
+                Cell().add(Paragraph(phrase))
+                    .setBackgroundColor(bgColor)
+                    .setBorder(Border.NO_BORDER)
+            )
+            table.addCell(
+                Cell().add(Paragraph(translation))
+                    .setBackgroundColor(bgColor)
+                    .setBorder(Border.NO_BORDER)
+            )
         }
 
         document.add(table)
-        document.close()
 
+        // Seitenzahlen
+        val pageCount = pdf.numberOfPages
+        for (pageNum in 1..pageCount) {
+            pdf.getPage(pageNum).let { page ->
+                val pageSize = page.pageSize
+                val canvas = com.itextpdf.kernel.pdf.canvas.PdfCanvas(page)
+                canvas.beginText()
+                    .setFontAndSize(titleFont, 10f)
+                    .setFillColor(primaryColor)
+                    .moveText(pageSize.width - 50.0, 30.0)
+                    .showText("Seite $pageNum / $pageCount")
+                    .endText()
+            }
+        }
+
+        document.close()
         println("PDF erfolgreich gespeichert: $filePath")
     }
 

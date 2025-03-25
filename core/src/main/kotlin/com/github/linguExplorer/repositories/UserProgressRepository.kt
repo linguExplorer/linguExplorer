@@ -1,6 +1,8 @@
 package com.github.linguExplorer.repositories
 
 import com.github.linguExplorer.models.*
+import com.github.linguExplorer.saveNumber
+import com.github.linguExplorer.userId
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -72,6 +74,13 @@ class UserProgressRepository {
                 .map { it.toUserProgress() }
                 .firstOrNull()
         }
+
+    fun getUpcomingUserProgress(userId: Int, saveNumber: Int): Int? {
+        val latestProgress = getLatestUserProgress(userId, saveNumber) ?: return 1
+
+        return latestProgress.topicId.plus(1)
+    }
+
 
     companion object {
         private fun ResultRow.toUserProgress() = UserProgressEntity(
