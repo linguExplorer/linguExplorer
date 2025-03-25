@@ -11,7 +11,6 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import com.github.linguExplorer.masterVolume
 import com.github.linguExplorer.soundEffectVolume
 
-
 class LockScreenRenderer {
     private var displayTime = 3f // 3 Sekunden Anzeigedauer
     private var lockTexture: Texture? = null
@@ -22,15 +21,22 @@ class LockScreenRenderer {
     private var onResumeClicked: () -> Unit = {}
     private var showLock = true
 
-
+    /**
+     * Spielt den Lock-Sound einmalig ab.
+     * Muss explizit aufgerufen werden, bevor render() verwendet wird.
+     */
+    fun playLockSound() {
+        if (!soundPlayed) {
+            lockSound.play(0.7f * masterVolume * soundEffectVolume)
+            soundPlayed = true
+        }
+    }
 
     fun render(batch: SpriteBatch, viewport: Viewport, delta: Float): Boolean {
-        // Wenn bereits fertig, nichts mehr rendern
         if (isFinished) {
             return true
         }
 
-        // Textur laden, wenn noch nicht geschehen
         if (lockTexture == null) {
             try {
                 lockTexture = Texture(Gdx.files.internal(texturePath))
@@ -41,20 +47,12 @@ class LockScreenRenderer {
             }
         }
 
-        // Sound abspielen, wenn noch nicht geschehen
-        if (!soundPlayed) {
-            lockSound.play(0.7f * masterVolume * soundEffectVolume)
-            soundPlayed = true
-        }
-
-        // Zeit aktualisieren
         displayTime -= delta
         if (displayTime <= 0f) {
             isFinished = true
             return true
         }
 
-        // Hintergrund zeichnen
         val shapeRenderer = ShapeRenderer()
         Gdx.gl.glEnable(GL20.GL_BLEND)
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
@@ -64,11 +62,9 @@ class LockScreenRenderer {
         shapeRenderer.end()
         Gdx.gl.glDisable(GL20.GL_BLEND)
 
-        // Viewport anwenden
         viewport.apply()
         batch.projectionMatrix = viewport.camera.combined
 
-        // Textur zeichnen
         batch.begin()
         lockTexture?.let { texture ->
             val scale = 0.55f
@@ -79,10 +75,10 @@ class LockScreenRenderer {
             val y = (viewport.worldHeight - scaledHeight) / 2
 
             batch.draw(
-                texture,        // Die Textur
-                x, y,           // Position (x, y)
-                scaledWidth,    // Breite
-                scaledHeight    // Höhe
+                texture,
+                x, y,
+                scaledWidth,
+                scaledHeight
             )
         }
         batch.end()
@@ -92,7 +88,7 @@ class LockScreenRenderer {
 
     fun setOnResumeClicked(callback: () -> Unit) {
         onResumeClicked = {
-            showLock = false  // Hier wird menuSet auf false gesetzt
+            showLock = false
             callback()
         }
     }

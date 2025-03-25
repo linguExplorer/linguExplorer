@@ -56,6 +56,7 @@ class RenderSystem(
     private var showLock = false
     private var showUnlocked = false
     private var lockTimer = 0f
+    private var hasLockSoundPlayed = false
 
     data class FadingCircle(
         val x: Float,
@@ -127,6 +128,7 @@ class RenderSystem(
 
             if(showLock) {
 
+
                 lockTimer += deltaTime
                 if(lockTimer >= 3f) {
                     showLock = false
@@ -186,6 +188,7 @@ class RenderSystem(
                lockTimer = 0f
                println(event.miniGame)
 
+               LockScreenRenderer().playLockSound()
 
            }
 
