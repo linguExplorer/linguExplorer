@@ -202,51 +202,63 @@
           </li>
 
           <li
-            class="lg:w-[1050px] md:w-[700px] sm:w-[300px] w-[300px] flex flex-col items-center justify-center bg-[#f6f5f1] lg:mt-32 md:mt-20 sm:mt-20 mt-20"
-          >
-            <h2
-              class="font-pixelsplitter text-center px-14 pt-14 lg:text-3xl md:text-2xl sm:text-xl text-xl"
-            >
-              Erstellt von:
+            class="lg:w-[1050px] md:w-[700px] sm:w-[300px] w-[300px] flex flex-col items-center justify-center bg-[#f6f5f1] lg:mt-32 md:mt-20 sm:mt-20 mt-20">
+            <h2 class="font-pixelsplitter text-center px-14 pt-14 lg:text-3xl md:text-2xl sm:text-xl text-xl">Unser Team:
             </h2>
-            <ul class="font-vcr text-left px-10 sm:px-20 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] pt-12 pb-16">
-              <li>Alexander Nems</li>
-              <li>Thuy Tien Luong</li>
-              <li>Benjamin Bician</li>
-              <li>Helena Stindl</li>
-              <li>Britta Reinwart</li>
-            </ul>
+            <div class="flex flex-col items-center justify-center pt-12 pb-16">
+              <div class="flex flex-row flex-wrap justify-center gap-8">
+                <div class="flex flex-col items-center">
+                  <img src="@/assets/xx_Images/xx_Images/Characters/Alex.png" alt="Alex" class="w-32 h-32 object-cover" />
+                  <p class="font-vcr text-center mt-2 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px]">Alex</p>
+                </div>
+                <div class="flex flex-col items-center">
+                  <img src="@/assets/xx_Images/xx_Images/Characters/Benjamin.png" alt="Benjamin"
+                    class="w-32 h-32 object-cover" />
+                  <p class="font-vcr text-center mt-2 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px]">Benjamin
+                  </p>
+                </div>
+                <div class="flex flex-col items-center">
+                  <img src="@/assets/xx_Images/xx_Images/Characters/Britta.png" alt="Britta"
+                    class="w-32 h-32 object-cover" />
+                  <p class="font-vcr text-center mt-2 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px]">Britta</p>
+                </div>
+                <div class="flex flex-col items-center">
+                  <img src="@/assets/xx_Images/xx_Images/Characters/Helena.png" alt="Helena"
+                    class="w-32 h-32 object-cover" />
+                  <p class="font-vcr text-center mt-2 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px]">Helena</p>
+                </div>
+                <div class="flex flex-col items-center">
+                  <img src="@/assets/xx_Images/xx_Images/Characters/Tien.png" alt="Tien" class="w-32 h-32 object-cover" />
+                  <p class="font-vcr text-center mt-2 lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px]">Tien</p>
+                </div>
+              </div>
+            </div>
           </li>
+
         </ul>
       </section>
 
-      <!-- Character Image - neben dem "Jetzt spielen" button -->
-      <img
-        src="@/assets/xx_Images/xx_Images/Charactee New.png"
-        alt="Character"
-        class="xxl:min-w-[400px] lg:w-[370px] md:w-[270px] sm:w-[180px] w-[140px] absolute z-10 sm:translate-x-[-35vw] translate-x-[-25vw] xxl:lg:translate-y-[44vh] lg:translate-y-[62vh] md:translate-y-[45.5vh] sm:translate-y-[35vh] translate-y-[30vh]"
-      />
     </main>
 
     <footer id="footer" class="bg-[#99b305] text-black">
       <section
-        class="max-w-full lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] mx-10 sm:mx-20 p-[3px] flex justify-between items-center"
-      >
+        class="max-w-full lg:text-[20px] md:text-[16px] sm:text-[14px] text-[14px] mx-10 sm:mx-20 p-[3px] flex justify-between items-center">
         <nav class="flex flex-row gap-4" aria-label="footer">
           <router-link to="/impressum" href="#">
             <a href="#" class="hover:opacity-90 font-vcr">Impressum</a>
           </router-link>
           <router-link to="/datenschutz" href="#">
-            <a href="#" class="hover:opacity-90 font-vcr"
-              >Datenschutzerklärung</a
-            >
+            <a href="#" class="hover:opacity-90 font-vcr">Datenschutzerklärung</a>
           </router-link>
         </nav>
         <a href="#top" class="hover:opacity-90 font-vcr">nach oben</a>
       </section>
     </footer>
+
+
   </div>
 </template>
+
 <script>
 import { mapState, mapActions } from "vuex";
 import { onMounted, ref } from "vue";
