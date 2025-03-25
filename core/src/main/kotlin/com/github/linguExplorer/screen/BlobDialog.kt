@@ -28,6 +28,8 @@ class BlobDialog(
     private lateinit var gifAnimation: Animation<TextureRegion>
     private var animationTime = 0f
     private var smallFont: BitmapFont = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
+    private var ButtonFont: BitmapFont = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
+
     private val skin = Skin(Gdx.files.internal("xx_Images/Dialogfenster/DialogButton/button.json"))
     private val buttons = Array(4) { Button(skin) }
 
@@ -205,7 +207,6 @@ class BlobDialog(
                     // Textdimensionen berechnen
                     fontLayout.setText(smallFont, text)
                     val textWidth = fontLayout.width
-                    val textHeight = fontLayout.height
 
                     // Text zentriert über dem Button rendern
                     smallFont.draw(
