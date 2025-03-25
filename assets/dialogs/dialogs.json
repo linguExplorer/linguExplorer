@@ -10,16 +10,39 @@
           "options": [
             {
               "text": "Just wanted to chat",
-              "next": "response_chat"
+              "next": "response_repair"
             },
             {
               "text": "Need help with repairs",
-              "next": "response_repair"
+              "next": "response_chat"
+            },
+            {
+              "text": "Need help witht repairs",
+              "next": "response_test"
+            },
+            {
+              "text": "Need help witht repairs",
+              "next": "response_desk"
             }
           ]
         },
         {
           "id": "response_chat",
+          "text": "AGreat Test",
+          "options": [
+            {
+              "text": "Just wanted to chat",
+              "next": "response_test"
+            }
+          ]
+        },
+        {
+          "id": "response_test",
+          "text": "Always nice to see you! Let's talk again soon.",
+          "isEnd": true
+        },
+        {
+          "id": "response_desk",
           "text": "Always nice to see you! Let's talk again soon.",
           "isEnd": true
         }
