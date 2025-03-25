@@ -74,6 +74,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private var loadGame = false
     private var newGame = false
     private var soundPlayed = false
+    private var introduction = false
     private lateinit var user: UserEntity
     private lateinit var currentCheckpoint: CheckpointEntity
     private var currentEditSlotIndex = -1
@@ -681,13 +682,17 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                         transitionRadius = 0f
                         loadingTime = 0f
 
-
-                        if (game.containsScreen<MapScreen>()) {
-                            game.removeScreen<MapScreen>()
+                        if (introduction) {
+                            game.addScreen(IntroductionScreen(game))
+                            game.setScreen<IntroductionScreen>()
+                        } else {
+                            if (game.containsScreen<MapScreen>()) {
+                                game.removeScreen<MapScreen>()
+                            }
+                            game.addScreen(MapScreen(game, 30f, 30f))
+                            game.setScreen<MapScreen>()
                         }
 
-                        game.addScreen(MapScreen(game, 30f, 30f))
-                        game.setScreen<MapScreen>()
                     }
                 }
                 return
@@ -825,6 +830,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             if (newGame) {
                 val topicId = TopicRepository().getTopicIdByName("Kleidung")
                 currentTopic = TopicRepository().getTopicById(topicId)!!
+                introduction = true
             } else {
                 println("HIII")
                 val topicId = TopicRepository().getTopicIdByName(topicString)

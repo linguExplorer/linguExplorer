@@ -39,7 +39,7 @@ class MinigameSchuleScreen() : KtxScreen {
     private val quitButtonTexture = Texture(Gdx.files.internal("Minigames/btn_quitMinigame.png"))
 
     // Positionen und Größen
-    private val timetableBasePosition = Vector2(1250f, 700f)
+    private val timetableBasePosition = Vector2(1250f, 600f)
     private val timetableSize = Vector2(1200f, 730f)
 
     private val pausePosition: Vector2
@@ -245,7 +245,7 @@ class MinigameSchuleScreen() : KtxScreen {
         val subjectWidth = 189f
         val subjectHeight = 80f
         val startX = 100f
-        val startY = 700f
+        val startY = 800f
         val spacing = 220f
 
         for (i in englishAssets.indices) {
@@ -318,7 +318,7 @@ class MinigameSchuleScreen() : KtxScreen {
             pauseSize.y
         )
 
-        if (gameStarted && !gameEnded) {
+        if (gameStarted) {
             // Render timetable cells
             timetableGrid.forEach { cell ->
                 if (cell.correctSubject != null) {
