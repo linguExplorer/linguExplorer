@@ -70,6 +70,9 @@ class GameMenuRenderer {
     private var musicPreSave = 0f
 
 
+    //Which Menu
+    private var isMainMenu = true
+
     init {
         fontHeadliner.color = Color.BLACK
         fontHeadliner.data.setScale(0.5f, 0.5f)
@@ -88,8 +91,14 @@ class GameMenuRenderer {
         updateCirclePositionsFromVolumes() // Initialisiert die Positionen der Kreise basierend auf den aktuellen Lautstärken
     }
 
-    fun renderGameMenu(batch: SpriteBatch, font: BitmapFont, glyphLayout: GlyphLayout, viewport: Viewport, shapeRenderer: ShapeRenderer) {
+    fun renderGameMenu(batch: SpriteBatch, font: BitmapFont, glyphLayout: GlyphLayout, viewport: Viewport, shapeRenderer: ShapeRenderer, mainMenu: Boolean) {
         // Reset menuSet to true when rendering the menu
+
+        if(!mainMenu) {
+            isMainMenu = false
+        } else {
+            isMainMenu = true
+        }
 
         font.color = Color.BLACK
         font.data.setScale(0.3f, 0.3f)
@@ -303,7 +312,17 @@ class GameMenuRenderer {
         // Quit button
         if (isButtonTouched(mouseX, mouseY, buttonX, currentY, buttonSize.x, buttonSize.y)) {
             if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+
+                if(isMainMenu) {
+                    Gdx.app.exit()
+
+                } else {
+
+
+                }
+
                 onQuitClicked()
+
             }
         }
     }

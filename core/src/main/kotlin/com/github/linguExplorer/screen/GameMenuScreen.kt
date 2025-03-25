@@ -275,6 +275,9 @@ class GameMenuScreen {
                 isMenuVisible = false
                 onMenuClose()
             }
+            if(!showSoundSettings && isButtonClicked(quitGameButtonX, quitGameButtonY, buttonSize.x ,buttonSize.y)) {
+                println("quit")
+            }
         }
 
         if (showSoundSettings) {
