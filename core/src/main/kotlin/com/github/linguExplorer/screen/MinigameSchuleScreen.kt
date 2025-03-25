@@ -42,15 +42,12 @@ class MinigameSchuleScreen() : KtxScreen {
     private val timetableBasePosition = Vector2(1250f, 700f)
     private val timetableSize = Vector2(1200f, 730f)
 
-    private val pauseBasePosition = Vector2(180f, 970f)
-    private val pauseSize = Vector2(50f, 50f)
-
-    private val buttonSize = Vector2(250f, 70f)
-    private val quitButtonBasePosition = Vector2(430f, 130f)
-    private val continueButtonBasePosition = Vector2(0f, 175f)
-
-    private val timeBasePosition = Vector2(20f, 970f)
-    private val timeSize = Vector2(150f, 50f)
+    private val pausePosition: Vector2
+        get() = Vector2(310f, viewport.worldHeight - 120f)
+    private val pauseSize = Vector2(80f, 80f)
+    private val timePosition: Vector2
+        get() = Vector2(30f, viewport.worldHeight - 125f)
+    private val timeSize = Vector2(260f, 90f)
 
     // Error Text
     private var showErrorText = false
@@ -66,29 +63,15 @@ class MinigameSchuleScreen() : KtxScreen {
             timetableBasePosition.y
         )
 
-    private val pausePosition: Vector2
-        get() = Vector2(
-            pauseBasePosition.x,
-            pauseBasePosition.y * (viewport.worldHeight / 1080f)
-        )
-
-    private val quitButtonPosition: Vector2
-        get() = Vector2(
-            quitButtonBasePosition.x * (viewport.worldWidth / 1920f),
-            quitButtonBasePosition.y * (viewport.worldHeight / 1080f)
-        )
-
-    private val timePosition: Vector2
-        get() = Vector2(
-            timeBasePosition.x,
-            timeBasePosition.y * (viewport.worldHeight / 1080f)
-        )
-
+    private val tryAgainButtonBasePosition = Vector2(430f, 200f)
+    private val quitButtonBasePosition = Vector2(430f, 130f)
     private val continueButtonPosition: Vector2
         get() = Vector2(
             (viewport.worldWidth / 2) - (buttonSize.x / 2),
-            continueButtonBasePosition.y * (viewport.worldHeight / 1080f)
+            (viewport.worldHeight - buttonSize.y) / 2 - 50f
         )
+    private val buttonSize = Vector2(375f, 105f)
+
 
     // Button Scaling
     private var continueButtonScale = 1f
@@ -380,126 +363,110 @@ class MinigameSchuleScreen() : KtxScreen {
         }
 
         if (isPaused) {
-            renderPausedOverlay()
+            batch.end()
+            Gdx.gl.glEnable(GL20.GL_BLEND)
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
+            shapeRenderer.color = Color(0f, 0f, 0f, 0.65f)
+            shapeRenderer.rect(0f, 0f, viewport.worldWidth, viewport.worldHeight)
+            shapeRenderer.end()
+            Gdx.gl.glDisable(GL20.GL_BLEND)
+            batch.begin()
+
+            font = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
+            font.color = Color.WHITE
+            val glyphLayout = GlyphLayout()
+            font.data.setScale(1f, 1f)
+            glyphLayout.setText(font, "GAME PAUSED")
+            val gamePausedX = (viewport.worldWidth - glyphLayout.width) / 2
+            val gamePausedY = (viewport.worldHeight / 2) + glyphLayout.height + 30f
+            font.draw(batch, "GAME PAUSED", gamePausedX, gamePausedY)
+
+            batch.draw(
+                continueTexture,
+                continueButtonPosition.x,
+                continueButtonPosition.y - (buttonSize.y / 2) + 15f,
+                buttonSize.x,
+                buttonSize.y
+            )
         }
 
         if (!gameStarted) {
-            renderStartScreen()
+            batch.end()
+            Gdx.gl.glEnable(GL20.GL_BLEND)
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
+            shapeRenderer.color = Color(0f, 0f, 0f, 0.65f)
+            shapeRenderer.rect(0f, 0f, viewport.worldWidth, viewport.worldHeight)
+            shapeRenderer.end()
+            Gdx.gl.glDisable(GL20.GL_BLEND)
+            batch.begin()
+
+            font.color = Color.WHITE
+            val glyphLayout = GlyphLayout()
+            font.data.setScale(0.45f, 0.45f)
+
+            val text = "Put the items on the list in the basket"
+            font.draw(
+                batch,
+                text,
+                0f,
+                viewport.worldHeight / 2 + glyphLayout.height / 2 + 80f,
+                viewport.worldWidth,
+                Align.center,
+                true
+            )
+
+            batch.draw(
+                continueTexture,
+                continueButtonPosition.x,
+                continueButtonPosition.y - (buttonSize.y / 2) + 15f,
+                buttonSize.x,
+                buttonSize.y
+            )
         }
 
         if (gameEnded) {
-            renderGameEndScreen()
+            batch.end()
+            Gdx.gl.glEnable(GL20.GL_BLEND)
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
+            shapeRenderer.color = Color(0f, 0f, 0f, 0.5f)
+            shapeRenderer.rect(0f, 0f, viewport.worldWidth, viewport.worldHeight)
+            shapeRenderer.end()
+            Gdx.gl.glDisable(GL20.GL_BLEND)
+            batch.begin()
+
+            font.color = Color.WHITE
+            val glyphLayout = GlyphLayout()
+            font = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
+            font.data.setScale(1f, 1f)
+
+            if (isCompleted) {
+                glyphLayout.setText(font, "CONGRATULATIONS")
+                val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
+                val gameOverY = (viewport.worldHeight / 2) + glyphLayout.height + 30f
+                font.draw(batch, "CONGRATULATIONS", gameOverX, gameOverY)
+                batch.draw(
+                    continueTexture,
+                    continueButtonPosition.x,
+                    continueButtonPosition.y - (buttonSize.y / 2) + 15f,
+                    buttonSize.x,
+                    buttonSize.y
+                )
+            } else {
+                glyphLayout.setText(font, "GAME OVER")
+                val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
+                val gameOverY = (viewport.worldHeight) / 2 + glyphLayout.height + 30f
+                font.draw(batch, "GAME OVER", gameOverX, gameOverY)
+                batch.draw(
+                    quitButtonTexture,
+                    continueButtonPosition.x,
+                    continueButtonPosition.y - (buttonSize.y / 2) + 15f,
+                    buttonSize.x,
+                    buttonSize.y
+                )
+            }
         }
 
-        if (showErrorText) {
-            font.color = Color.RED
-            font.data.setScale(0.3f, 0.3f)
-            font.draw(batch, "Incorrect match!", errorTextPositionX, errorTextPositionY)
-        }
-
         batch.end()
-    }
-
-
-    private fun renderPausedOverlay() {
-        batch.end()
-        Gdx.gl.glEnable(GL20.GL_BLEND)
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
-        shapeRenderer.color = Color(0f, 0f, 0f, 0.65f)
-        shapeRenderer.rect(0f, 0f, viewport.worldWidth, viewport.worldHeight)
-        shapeRenderer.end()
-        Gdx.gl.glDisable(GL20.GL_BLEND)
-        batch.begin()
-
-        font = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
-        font.color = Color.WHITE
-        val glyphLayout = GlyphLayout()
-        font.data.setScale(0.7f, 0.7f)
-        glyphLayout.setText(font, "GAME PAUSED")
-        val gamePausedX = (viewport.worldWidth - glyphLayout.width) / 2
-        val gamePausedY = (viewport.worldHeight / 2) + glyphLayout.height + 10f
-        font.draw(batch, "GAME PAUSED", gamePausedX, gamePausedY)
-
-        // Continue button
-        batch.draw(
-            continueTexture,
-            continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
-            continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
-            buttonSize.x * continueButtonScale,
-            buttonSize.y * continueButtonScale
-        )
-    }
-
-    private fun renderStartScreen() {
-        batch.end()
-        Gdx.gl.glEnable(GL20.GL_BLEND)
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
-        shapeRenderer.color = Color(0f, 0f, 0f, 0.65f)
-        shapeRenderer.rect(0f, 0f, viewport.worldWidth, viewport.worldHeight)
-        shapeRenderer.end()
-        Gdx.gl.glDisable(GL20.GL_BLEND)
-        batch.begin()
-
-        font.color = Color.WHITE
-        val glyphLayout = GlyphLayout()
-        font.data.setScale(0.4f, 0.4f)
-        glyphLayout.setText(font, "Match the English subjects with the German ones on the timetable",
-            Color.WHITE, viewport.worldWidth * 0.75f, Align.center, true)
-        val instructionsX = (viewport.worldWidth - glyphLayout.width) / 2
-        val instructionsY = (viewport.worldHeight / 2) + glyphLayout.height
-        font.draw(batch, "Match the English subjects with the German ones on the timetable",
-            instructionsX, instructionsY, viewport.worldWidth * 0.75f, Align.center, true)
-
-        // Continue button
-        batch.draw(
-            continueTexture,
-            continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
-            continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
-            buttonSize.x * continueButtonScale,
-            buttonSize.y * continueButtonScale
-        )
-    }
-
-    private fun renderGameEndScreen() {
-        batch.end()
-        Gdx.gl.glEnable(GL20.GL_BLEND)
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
-        shapeRenderer.color = Color(0f, 0f, 0f, 0.5f)
-        shapeRenderer.rect(0f, 0f, viewport.worldWidth, viewport.worldHeight)
-        shapeRenderer.end()
-        Gdx.gl.glDisable(GL20.GL_BLEND)
-        batch.begin()
-
-        font.color = Color.WHITE
-        val glyphLayout = GlyphLayout()
-        font = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
-        font.data.setScale(0.7f, 0.7f)
-
-        if (isCompleted) {
-            glyphLayout.setText(font, "CONGRATULATIONS")
-            val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
-            val gameOverY = (viewport.worldHeight / 2) + glyphLayout.height + 10f
-            font.draw(batch, "CONGRATULATIONS", gameOverX, gameOverY)
-            batch.draw(
-                continueTexture,
-                continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
-                continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
-                buttonSize.x * continueButtonScale,
-                buttonSize.y * continueButtonScale
-            )
-        } else {
-            glyphLayout.setText(font, "GAME OVER")
-            val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
-            val gameOverY = (viewport.worldHeight) / 2 + glyphLayout.height + 10f
-            font.draw(batch, "GAME OVER", gameOverX, gameOverY)
-            batch.draw(
-                quitButtonTexture,
-                continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
-                continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
-                buttonSize.x * continueButtonScale,
-                buttonSize.y * continueButtonScale
-            )
-        }
     }
 
     private fun handleInput() {

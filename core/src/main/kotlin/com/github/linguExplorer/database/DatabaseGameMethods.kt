@@ -11,10 +11,12 @@ fun checkIfTopicAvailable(userId: Int, saveNumber: Int, topicId: Int): Boolean {
 
         if (topicId == TopicRepository().getFirstTopic().id) return@transaction true
 
-        val currentProgress = UserProgressRepository().getUserProgress(userId, saveNumber, topicId)
+        var currentProgress = UserProgressRepository().getUserProgress(userId, saveNumber, topicId)
         if (currentProgress != null) return@transaction true
 
-        val previousTopic = TopicRepository().getTopicById(topicId - 1) ?: return@transaction false
+        currentProgress = UserProgressRepository().getUserProgress(userId, saveNumber, topicId - 1)
+        if (currentProgress != null && currentProgress.isMastered) return@transaction true
+
 
         return@transaction false
     }

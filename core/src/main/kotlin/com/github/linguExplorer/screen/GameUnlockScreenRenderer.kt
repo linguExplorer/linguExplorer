@@ -10,12 +10,9 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.viewport.Viewport
-import com.github.linguExplorer.masterVolume
+import com.github.linguExplorer.*
 import com.github.linguExplorer.repositories.TopicRepository
 import com.github.linguExplorer.repositories.UserProgressRepository
-import com.github.linguExplorer.saveNumber
-import com.github.linguExplorer.soundEffectVolume
-import com.github.linguExplorer.userId
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -57,20 +54,14 @@ class GameUnlockScreenRenderer {
             // Pfad ermitteln und für später speichern (OpenGL-sicher)
             executor.execute {
                 try {
-                    val topicName = TopicRepository().getTopicById(
-                        UserProgressRepository().getLatestUserProgress(userId, saveNumber)?.topicId
-                    )?.name
-
-                    if (topicName != null) {
-                        futureTexturePath = "graphics/map-objects/(Un)lock/Done_$topicName.png"
-                    }
+                    val topicName = currentTopic.name
+                    futureTexturePath = "graphics/map-objects/(Un)lock/Done_$topicName.png"
                 } catch (e: Exception) {
                     Gdx.app.error("GameUnlockScreenRenderer", "Fehler beim Ermitteln des Topics: $e")
                 }
             }
         }
 
-        // Den Pfad verwenden, um im Hauptthread die Textur zu laden
         if (futureTexturePath != null && unlockTexture == null) {
             try {
                 unlockTexture = Texture(Gdx.files.internal(futureTexturePath!!))
@@ -81,13 +72,12 @@ class GameUnlockScreenRenderer {
             }
         }
 
-        // Spiele den Sound ab, wenn Animation beginnt
         if (fadingIn && !soundPlayed && unlockTexture != null) {
             unlockSound.play(0.7f * masterVolume * soundEffectVolume)
             soundPlayed = true
         }
 
-        // Timer aktualisieren wenn Textur vorhanden
+
         if (unlockTexture != null) {
             loadingTime -= delta
 
@@ -98,12 +88,12 @@ class GameUnlockScreenRenderer {
                 // Neuen Texturpfad im Thread ermitteln
                 executor.execute {
                     try {
-                        val upcomingTopicName = TopicRepository().getTopicById(
-                            UserProgressRepository().getUpcomingUserProgress(userId, saveNumber)
-                        )?.name
+                        val upcomingTopic = TopicRepository().getTopicById(
+                            UserProgressRepository().getUpcomingUserProgress(userId, saveNumber))
 
-                        if (upcomingTopicName != null) {
-                            futureTexturePath = "graphics/map-objects/(Un)lock/Unlock_$upcomingTopicName.png"
+                        if (upcomingTopic != null) {
+                            currentTopic = upcomingTopic
+                            futureTexturePath = "graphics/map-objects/(Un)lock/Unlock_${upcomingTopic.name}.png"
                         }
                     } catch (e: Exception) {
                         Gdx.app.error("GameUnlockScreenRenderer", "Fehler beim Ermitteln des Upcoming Topics: $e")
@@ -168,10 +158,10 @@ class GameUnlockScreenRenderer {
             batch.setColor(1f, 1f, 1f, alpha)
 
             batch.draw(
-                texture,           // Die Textur
-                x, y,              // Position (x, y)
-                scaledWidth,       // Breite
-                scaledHeight       // Höhe
+                texture,
+                x, y,
+                scaledWidth,
+                scaledHeight
             )
         }
 

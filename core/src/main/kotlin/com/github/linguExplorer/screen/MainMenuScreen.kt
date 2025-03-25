@@ -808,8 +808,6 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                 CheckpointRepository().addCheckpoint(userId, saveNumber, 0, 30f, 30f, Timestamp(System.currentTimeMillis()))
                 executePositionX = 30f
                 executePositionY = 30f
-                val topicId = TopicRepository().getTopicIdByName("Schule")
-                currentTopic = TopicRepository().getTopicById(topicId)!!
             } else if(newGame) {
                 UserRepository().addUser(userId, saveNumber, name)
                 CheckpointRepository().addCheckpoint(userId, saveNumber, 0, 30f, 30f, Timestamp(System.currentTimeMillis()))
@@ -819,15 +817,20 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                 CheckpointRepository().updateCheckpoint(user.id, user.saveNumber, null, null, null, Timestamp(System.currentTimeMillis()))
                 saveNumber = user.saveNumber
                 println (topicString)
-                if (!(this.topicString.equals("-"))) {
-                    println("HIII")
-                    val topicId = TopicRepository().getTopicIdByName(topicString)
-                    currentTopic = TopicRepository().getTopicById(topicId)!!
-                    updateUserInformation(PhraseProgressHistoryRepository().getAllEntriesForUser(userId, saveNumber), topicId!!)
-                }
                 executePositionX = currentCheckpoint.positionX
                 executePositionY = currentCheckpoint.positionY
                 println (executePositionX)
+            }
+
+            if (newGame) {
+                val topicId = TopicRepository().getTopicIdByName("Schule")
+                currentTopic = TopicRepository().getTopicById(topicId)!!
+            } else {
+                println("HIII")
+                val topicId = TopicRepository().getTopicIdByName(topicString)
+                currentTopic = TopicRepository().getTopicById(topicId)!!
+                topicProgress = 1.0
+                //updateUserInformation(PhraseProgressHistoryRepository().getAllEntriesForUser(userId, saveNumber), topicId!!)
             }
             println("HI")
             newGame = false

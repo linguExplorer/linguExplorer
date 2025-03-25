@@ -48,6 +48,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         autoClearForces = false
     }
     private val gameMenuRenderer = GameMenuRenderer() // Instanz des GameMenuScreen
+    private val gameUnlockScreenRenderer = GameUnlockScreenRenderer()
     private var shapeRenderer: ShapeRenderer = ShapeRenderer()
     private val viewport: Viewport = ExtendViewport(1920f, 1080f)
     private val glyphLayout = GlyphLayout()
@@ -157,7 +158,14 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         val boxInTexture = Texture(Gdx.files.internal("graphics/map-objects/boxIn 1.png"))
         val boxOutTexture = Texture(Gdx.files.internal("graphics/map-objects/boxOut 2.png"))
         val settingsIconTexture = Texture(Gdx.files.internal("xx_Images/Settingsicon.png"))
-        val progressBarTexture = Texture(Gdx.files.internal("graphics/map-objects/Prozentleiste/v2/Prozentleiste2-${mapValueToRange()}.png"))
+        var progressBarTexture = Texture(Gdx.files.internal("graphics/map-objects/Prozentleiste/v2/Prozentleiste2-${mapValueToRange()}.png"))
+
+
+        fun updateProgressBarTexture() {
+            progressBarTexture.disposeSafely() // Dispose of the old texture
+            progressBarTexture = Texture(Gdx.files.internal("graphics/map-objects/Prozentleiste/v2/Prozentleiste2-${mapValueToRange()}.png"))
+            progressBarImage.drawable = Image(progressBarTexture).drawable
+        }
 
         // Images
         val backpackImage = Image(backpackTexture).apply { touchable = Touchable.enabled }
@@ -173,7 +181,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         val upperBarImage = Image(upperBarTexture)
         val boxInImage = Image(boxInTexture)
         val settingsIconImage = Image(settingsIconTexture)
-        val progressBarImage = Image(progressBarTexture)
+        var progressBarImage = Image(progressBarTexture)
 
         init {
             // Images hinzufügen
@@ -287,6 +295,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
     override fun resize(width: Int, height: Int) {
         stage.viewport.update(width, height, true)
         uiStage.viewport.update(width, height, true)
+        viewport.update(width, height, true)
         calculateUIElementSizesAndPositions() // UI Elemente bei Resize neu berechnen
     }
 
@@ -328,24 +337,14 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         progressTextY = uiElements.progressBarImage.y + progressBarHeight / 2 + 5f // Mittig auf der Progressbar + kleiner Offset für bessere Lesbarkeit
     }
 
-    fun updateProgressText(progress: Int) {
+    fun updateProgressText() {
         progressText = "Thema: ${currentTopic.name}"
     }
 
     override fun render(delta: Float) {
+        viewport.apply()
         batch.projectionMatrix = viewport.camera.combined
         shapeRenderer.projectionMatrix = viewport.camera.combined
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-
-            if (menuSet) {
-                menuSet = false
-            } else {
-                menuSet = true
-            }
-
-            println("is clicked")
-        }
 
         world.update(delta.coerceAtMost(update))
 
@@ -364,15 +363,36 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         progressFont.draw(batch, progressText, progressTextX, progressTextY + 30f)
         batch.end()
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            if (menuSet) {
+                menuSet = false
+            } else {
+                menuSet = true
+            }
+
+            println("is clicked")
+        }
+
+        if (topicProgress == 1.0) {
+            var isFinished = gameUnlockScreenRenderer.renderTopicUpdate(batch, viewport, delta, 1f, true)
+            Gdx.input.inputProcessor = null
+            update = 0f
+            updateProgressText()
+
+            if(isFinished) {
+                topicProgress = 0.0
+                uiElements.updateProgressBarTexture()
+            }
+
+            return
+        }
+
         gameMenuRenderer.setOnResumeClicked {
             menuSet = false
         }
 
         if (menuSet) {
-            println("MENU IS SET TO TRUE!")
-            println("Batch is drawing: ${batch.isDrawing}")
-            println("Viewport dimensions: ${viewport.worldWidth} x ${viewport.worldHeight}")
-            gameMenuRenderer.renderGameMenu(batch, font, glyphLayout, uiStage.viewport, shapeRenderer)
+            gameMenuRenderer.renderGameMenu(batch, font, glyphLayout, viewport, shapeRenderer)
             Gdx.input.inputProcessor = null
             update = 0f
         } else {
@@ -380,6 +400,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
             update = 0.25f
         }
     }
+
 
     private fun mapValueToRange(): Int {
         val clampedValue = topicProgress.coerceIn(0.0, 1.0)
