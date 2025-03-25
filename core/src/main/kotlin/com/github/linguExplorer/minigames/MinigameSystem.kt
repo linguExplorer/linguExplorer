@@ -94,6 +94,7 @@ abstract class MinigameSystem {
             println("Alle Phrasen in diesem Thema sind bereits als 'mastered' markiert")
             if(topicId == currentTopic.id) {
                 topicProgress = 1.0
+                UserProgressRepository().changeMasteredState(userId, saveNumber, topicId, true)
             }
             return
         }

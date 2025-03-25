@@ -73,12 +73,6 @@ class MinigameSchuleScreen() : KtxScreen {
     private val buttonSize = Vector2(375f, 105f)
 
 
-    // Button Scaling
-    private var continueButtonScale = 1f
-    private var pauseButtonScale = 1f
-    private var continueButtonTargetScale = 1f
-    private var pauseButtonTargetScale = 1f
-    private val scaleSpeed = 5f
 
     // Zeit
     private var timeLeft = 60
@@ -290,8 +284,6 @@ class MinigameSchuleScreen() : KtxScreen {
             }
         }
 
-        continueButtonScale += (continueButtonTargetScale - continueButtonScale) * scaleSpeed * delta
-        pauseButtonScale += (pauseButtonTargetScale - pauseButtonScale) * scaleSpeed * delta
 
         Gdx.gl.glClearColor(0.611f, 0.761f, 0.827f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
@@ -312,18 +304,18 @@ class MinigameSchuleScreen() : KtxScreen {
 
         // Render time
         batch.draw(timeTexture, timePosition.x, timePosition.y, timeSize.x, timeSize.y)
-        font.data.setScale(0.3f, 0.3f)
-        font.draw(batch, formatTime(timeLeft), timePosition.x + 20f, timePosition.y + timeSize.y / 1.4f)
+        font.data.setScale(0.5f, 0.5f)
+        font.draw(batch, formatTime(timeLeft), timePosition.x + 42.5f, timePosition.y + 62.5f)
 
         // Render pause/play button
         val buttonTexture = if (isPaused || gameEnded) playTexture else pauseTexture
-        pauseButtonScale = if (isPaused || gameEnded) 1f else pauseButtonScale
+
         batch.draw(
             buttonTexture,
-            pausePosition.x - (pauseSize.x * (pauseButtonScale - 1f) / 2),
-            pausePosition.y - (pauseSize.y * (pauseButtonScale - 1f) / 2),
-            pauseSize.x * pauseButtonScale,
-            pauseSize.y * pauseButtonScale
+            pausePosition.x,
+            pausePosition.y,
+            pauseSize.x,
+            pauseSize.y
         )
 
         if (gameStarted && !gameEnded) {
@@ -473,21 +465,7 @@ class MinigameSchuleScreen() : KtxScreen {
         val mouseX = Gdx.input.x.toFloat() * viewport.worldWidth / Gdx.graphics.width
         val mouseY = (Gdx.graphics.height - Gdx.input.y.toFloat()) * viewport.worldHeight / Gdx.graphics.height
 
-        // Update button hover effects
-        continueButtonTargetScale = if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) &&
-            mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
-            1.1f
-        } else {
-            1f
-        }
-
         if (!gameEnded && gameStarted) {
-            pauseButtonTargetScale = if (mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) &&
-                mouseY in pausePosition.y..(pausePosition.y + pauseSize.y)) {
-                1.1f
-            } else {
-                1f
-            }
 
             if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                 if (!isPaused) {

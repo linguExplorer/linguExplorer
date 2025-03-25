@@ -634,7 +634,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
 
                 val animatedDots = ".".repeat(dotCount)
                 val loadingText = when {
-                    loadingTime >= 30f -> "Da ist was schiefgelaufen :(. Versuch es nochmal"
+                    loadingTime >= 30f -> "Da ist was schiefgelaufen :(\nVersuch es nochmal"
                     loadingTime >= 18f -> "Fast geschafft$animatedDots"
                     loadingTime >= 9f -> "Hab noch Geduld$animatedDots"
                     else -> "Loading$animatedDots"
@@ -694,9 +694,9 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             }
 
             if(music.volume > 0.005f) {
-                music.volume -= (0.004f * masterVolume * musicVolume)
-            } else if (music.volume <= 0.005f) {
-                music.volume = 0f
+                music.volume -= (0.006f * masterVolume * musicVolume)
+            } else if (music.volume <= 0.01f) {
+                music.pause()
             }
 
             Gdx.gl.glEnable(GL20.GL_BLEND)
@@ -823,14 +823,13 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             }
 
             if (newGame) {
-                val topicId = TopicRepository().getTopicIdByName("Schule")
+                val topicId = TopicRepository().getTopicIdByName("Kleidung")
                 currentTopic = TopicRepository().getTopicById(topicId)!!
             } else {
                 println("HIII")
                 val topicId = TopicRepository().getTopicIdByName(topicString)
                 currentTopic = TopicRepository().getTopicById(topicId)!!
-                topicProgress = 1.0
-                //updateUserInformation(PhraseProgressHistoryRepository().getAllEntriesForUser(userId, saveNumber), topicId!!)
+                updateUserInformation(PhraseProgressHistoryRepository().getAllEntriesForUser(userId, saveNumber), topicId!!)
             }
             println("HI")
             newGame = false

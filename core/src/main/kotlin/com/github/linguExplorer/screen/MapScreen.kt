@@ -21,15 +21,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.github.linguExplorer.*
 import com.github.linguExplorer.component.*
-import com.github.linguExplorer.currentTopic
 import com.github.linguExplorer.event.GamePause
 import com.github.linguExplorer.event.MapChangeEvent
 import com.github.linguExplorer.event.fire
 import com.github.linguExplorer.input.PlayerKeyboardInputProcessor
-import com.github.linguExplorer.linguExplorer
 import com.github.linguExplorer.system.*
-import com.github.linguExplorer.topicProgress
 import com.github.quillraven.fleks.World
 import com.github.quillraven.fleks.world
 import ktx.app.KtxScreen
@@ -342,6 +340,14 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
     }
 
     override fun render(delta: Float) {
+        if(!music.isPlaying) {
+            music.play()
+        }
+
+        if(music.volume in 0.7f..0.01f) {
+            music.volume += (0.006f * masterVolume * musicVolume)
+        }
+        uiElements.updateProgressBarTexture()
         viewport.apply()
         batch.projectionMatrix = viewport.camera.combined
         shapeRenderer.projectionMatrix = viewport.camera.combined

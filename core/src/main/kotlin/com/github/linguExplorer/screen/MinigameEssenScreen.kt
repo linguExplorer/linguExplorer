@@ -133,7 +133,7 @@ class MinigameEssenScreen(private val game: linguExplorer,
         Gdx.input.inputProcessor = null
 
         backgroundMusic.isLooping = true
-        backgroundMusic.volume = 0.7f* musicVolume * masterVolume
+        backgroundMusic.volume = 0.5f* musicVolume * masterVolume
 
         initialLoadingTime = 0f
     }
@@ -444,7 +444,7 @@ class MinigameEssenScreen(private val game: linguExplorer,
                                 if (isCorrect) {
                                     //Objekt als eingesammelt markieren
                                     obj.isCollected = true
-                                    correctSound.play(0.8f * masterVolume * soundEffectVolume)
+                                    correctSound.play(0.9f * masterVolume * soundEffectVolume)
                                     val initialXOffset = 80f //weiter rechts zeichnen
                                     // Position des Objekts im Korb berechnen
                                     // Startposition Korb + Abstand Rand + Position in Reihe % 5 * Abstand zwischen Objekten
@@ -462,7 +462,7 @@ class MinigameEssenScreen(private val game: linguExplorer,
                                         currentBasketRow++
                                 } else {
                                     // Text mit "Fehler!" anzeigen
-                                    wrongSound.play(0.7f * masterVolume * soundEffectVolume)
+                                    wrongSound.play(1.2f * masterVolume * soundEffectVolume)
 
                                     showErrorText = true
                                     errorTextTimer = 0f
