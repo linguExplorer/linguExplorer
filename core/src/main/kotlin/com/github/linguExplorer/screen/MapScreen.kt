@@ -156,7 +156,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         val upperBarTexture = Texture(Gdx.files.internal("graphics/map-objects/upperbar 2.png"))
         val boxInTexture = Texture(Gdx.files.internal("graphics/map-objects/boxIn 1.png"))
         val boxOutTexture = Texture(Gdx.files.internal("graphics/map-objects/boxOut 2.png"))
-        val settingsIconTexture = Texture(Gdx.files.internal("xx_Images/Settingsicon.png"))
+        val settingsIconTexture = Texture(Gdx.files.internal("xx_Images/SettingsIcon.png"))
         var progressBarTexture = Texture(Gdx.files.internal("graphics/map-objects/Prozentleiste/v2/Prozentleiste2-${mapValueToRange()}.png"))
 
 
@@ -399,7 +399,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         }
 
         if (menuSet) {
-            gameMenuRenderer.renderGameMenu(batch, font, glyphLayout, viewport, shapeRenderer)
+            gameMenuRenderer.renderGameMenu(batch, font, glyphLayout, viewport,shapeRenderer, false)
             Gdx.input.inputProcessor = null
             update = 0f
         } else {
