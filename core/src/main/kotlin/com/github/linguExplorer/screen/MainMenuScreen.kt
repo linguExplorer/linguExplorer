@@ -442,11 +442,11 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
 
                             if (Gdx.input.justTouched() && isBoxHovered && !isPenHovered && !showUserExistsConfirmation && !showEnterNameDialog && !showUserEditConfirmation && !clickProcessedThisFrame) {
                                 clickProcessedThisFrame = true // Set the flag
-                                if (user != null && newGamePopUp) {
+                                if (newGamePopUp) {
                                     showUserExistsConfirmation = true
                                 } else {
                                     if (!newGamePopUp) {
-                                        this.user = user!!
+                                        this.user = user
                                         currentCheckpoint = checkpoint!!
                                         topicString = topic!!
                                         loadGame = true
@@ -608,6 +608,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                                     if (slotIsActive) {
                                         userAlreadyExists = true
                                         this.user = user!!
+                                        saveNumber = user.saveNumber
                                         currentCheckpoint = checkpoint!!
                                     } else {
                                         saveNumber = currentEditSlotIndex + 1
@@ -827,12 +828,13 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                 println (executePositionX)
             }
 
-            if (newGame) {
+            if (newGame || userAlreadyExists || (topicString == "-")) {
+                println("ho")
                 val topicId = TopicRepository().getTopicIdByName("Kleidung")
                 currentTopic = TopicRepository().getTopicById(topicId)!!
                 introduction = true
             } else {
-                println("HIII")
+                println(topicString)
                 val topicId = TopicRepository().getTopicIdByName(topicString)
                 currentTopic = TopicRepository().getTopicById(topicId)!!
                 updateUserInformation(PhraseProgressHistoryRepository().getAllEntriesForUser(userId, saveNumber), topicId!!)
@@ -842,9 +844,6 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             loadGame = false
             userAlreadyExists = false
             println(saveNumber)
-            Gdx.app.postRunnable {
-                game.addScreen(MapScreen(game, executePositionX, executePositionY))
-            }
             threadExecuted = true
             println("Done")
         }

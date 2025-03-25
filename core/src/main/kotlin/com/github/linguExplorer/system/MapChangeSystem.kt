@@ -1,5 +1,9 @@
 package com.github.linguExplorer.system
 
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.scenes.scene2d.Event
@@ -46,14 +50,12 @@ class MapChangeSystem (
     override fun onTickEntity(entity: Entity) {
         val (id, toGame, topicId, triggerEntities) = mgCmps[entity]
 
-
         if (triggerEntities.isNotEmpty()) {
-            val currentTime = System.currentTimeMillis() / 1000f // Aktuelle Zeit in Sekunden
+            val currentTime = System.currentTimeMillis() / 1000f
             val lastTriggerTime = lastTriggerTimes[toGame] ?: 0f
 
-            // Prüfe ob Cooldown abgelaufen ist
             if (currentTime - lastTriggerTime >= COOLDOWN) {
-                lastTriggerTimes[toGame] = currentTime // Update Triggerzeit
+                lastTriggerTimes[toGame] = currentTime
 
                 println("Collision to $toGame and $topicId")
 
@@ -63,6 +65,7 @@ class MapChangeSystem (
                     return
                 }
 
+                // Execute screen transition after circle effect
                 when (toGame) {
                     "SM" -> {
                         game.removeScreen<MinigameEssenScreen>()
@@ -79,7 +82,6 @@ class MapChangeSystem (
                         game.addScreen(MinigameFamilieScreen(game))
                         game.setScreen<MinigameFamilieScreen>()
                     }
-
                     "SC" -> {
                         game.removeScreen<MinigameSchuleScreen>()
                         game.addScreen(MinigameSchuleScreen())
@@ -87,7 +89,6 @@ class MapChangeSystem (
                     }
                 }
                 lastTriggerTimes[toGame] = currentTime
-
             }
 
             triggerEntities.clear()

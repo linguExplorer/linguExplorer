@@ -7,6 +7,7 @@ import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.github.linguExplorer.*
@@ -19,21 +20,30 @@ class IntroductionScreen(private val game: linguExplorer) : KtxScreen {
 
     // Text and fade properties
     private val texts = listOf(
-        "Erste Nachricht",
-        "Zweite Überraschung",
-        "Letzte Botschaft"
+        "103650, Galaxis Neolingastia",
+        "Im All unterwegs passiert etwas nicht Vorhersehbares.\nDas Raumschiff eines kleinen Blobs stürzt auf die Erde",
+        "Es ist nun deine Mission ihm zu helfen"
     )
-    private var currentTextIndex = 0
+    private var currentTextIndex = -1  // Start at -1 to trigger initial wait
     private var textAlpha = 0f
-    private var fadeDirection = 1 // 1 = fade in, -1 = fade out
-    private var fadeTimer = 0f
+    private var fadeState = FadeState.WAITING
+    private var stageTimer = 0f
 
     // Timing constants
-    private val FADE_DURATION = 2f
-    private val TEXT_DISPLAY_DURATION = 3f
+    private val INITIAL_WAIT_DURATION = 1.5f
+    private val FADE_DURATION = 1.5f
+    private val TEXT_DISPLAY_DURATION = 2f
 
     // Music
     private val backgroundMusic: Music
+
+    // Enum to manage fade states more clearly
+    private enum class FadeState {
+        WAITING,
+        FADING_IN,
+        DISPLAYING,
+        FADING_OUT
+    }
 
     init {
         viewport = FitViewport(1920f, 1080f)
@@ -41,12 +51,11 @@ class IntroductionScreen(private val game: linguExplorer) : KtxScreen {
 
         // Load VCR OSD Mono font
         font = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
-        font.data.setScale(0.5f)
+        font.data.setScale(0.4f)  // Slightly reduced scale for multi-line text
 
-      
         backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Hintergrundmusik/Hintergrundmusik_Introduction.mp3"))
         backgroundMusic.isLooping = true
-        backgroundMusic.volume = 0.5f
+        backgroundMusic.volume = 0.4f
     }
 
     override fun show() {
@@ -57,8 +66,7 @@ class IntroductionScreen(private val game: linguExplorer) : KtxScreen {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
-        updateFade(delta)
-
+        updateFadeSequence(delta)
 
         batch.projectionMatrix = viewport.camera.combined
         viewport.apply()
@@ -68,30 +76,50 @@ class IntroductionScreen(private val game: linguExplorer) : KtxScreen {
         batch.end()
     }
 
-    private fun updateFade(delta: Float) {
-        fadeTimer += delta
+    private fun updateFadeSequence(delta: Float) {
+        stageTimer += delta
 
-        // Fade in/out logic
-        if (fadeDirection == 1) {
-            // Fading in
-            textAlpha = (fadeTimer / FADE_DURATION).coerceAtMost(1f)
-            if (fadeTimer >= FADE_DURATION) {
-                fadeDirection = -1
-                fadeTimer = 0f
+        when (fadeState) {
+            FadeState.WAITING -> {
+                // Initial wait or between texts
+                if (stageTimer >= INITIAL_WAIT_DURATION) {
+                    // Move to next text if possible
+                    currentTextIndex++
+                    if (currentTextIndex >= texts.size) {
+                        // End of texts, move to map screen
+                        game.addScreen(MapScreen(game, 30f, 30f))
+                        game.setScreen<MapScreen>()
+                        return
+                    }
+
+                    // Start fading in
+                    fadeState = FadeState.FADING_IN
+                    stageTimer = 0f
+                    textAlpha = 0f
+                }
             }
-        } else {
-            // Fading out
-            textAlpha = 1f - (fadeTimer / FADE_DURATION).coerceAtMost(1f)
-            if (fadeTimer >= FADE_DURATION) {
-                // Move to next text
-                currentTextIndex++
-                fadeDirection = 1
-                fadeTimer = 0f
-
-                // Reset or end
-                if (currentTextIndex >= texts.size) {
-                    game.addScreen(MapScreen(game, 30f, 30f))  // Fügt den MapScreen hinzu
-                    game.setScreen<MapScreen>()  // Setzt den MapScreen als aktuellen Screen
+            FadeState.FADING_IN -> {
+                // Fading in
+                textAlpha = (stageTimer / FADE_DURATION).coerceAtMost(1f)
+                if (stageTimer >= FADE_DURATION) {
+                    fadeState = FadeState.DISPLAYING
+                    stageTimer = 0f
+                }
+            }
+            FadeState.DISPLAYING -> {
+                // Hold text for display duration
+                if (stageTimer >= TEXT_DISPLAY_DURATION) {
+                    fadeState = FadeState.FADING_OUT
+                    stageTimer = 0f
+                }
+            }
+            FadeState.FADING_OUT -> {
+                // Fading out
+                textAlpha = 1f - (stageTimer / FADE_DURATION).coerceAtMost(1f)
+                if (stageTimer >= FADE_DURATION) {
+                    // Reset for next text
+                    fadeState = FadeState.WAITING
+                    stageTimer = 0f
                 }
             }
         }
@@ -99,15 +127,21 @@ class IntroductionScreen(private val game: linguExplorer) : KtxScreen {
 
     private fun renderFadingText() {
         // Only render if there are texts left
-        if (currentTextIndex < texts.size) {
+        if (currentTextIndex >= 0 && currentTextIndex < texts.size) {
             font.color.a = textAlpha
             val text = texts[currentTextIndex]
-            val textWidth = font.draw(batch, text, 0f, 0f).width
+
+            // Measure text to center it
+            val glyphLayout = GlyphLayout()
+            glyphLayout.setText(font, text)
+            val x = (viewport.worldWidth - glyphLayout.width) / 2
+            val y = (viewport.worldHeight + glyphLayout.height) / 2
+
             font.draw(
                 batch,
                 text,
-                (viewport.worldWidth - textWidth) / 2,
-                viewport.worldHeight / 2
+                x,
+                y
             )
         }
     }
