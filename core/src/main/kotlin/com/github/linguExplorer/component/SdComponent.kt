@@ -4,5 +4,6 @@ import com.github.quillraven.fleks.Entity
 
 class SdComponent {
     var interact: Entity? = null
+    var name: String? = null
 
 }

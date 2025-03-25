@@ -1,6 +1,7 @@
 package com.github.linguExplorer.system
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -16,7 +17,10 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.github.linguExplorer.component.ImageComponent
 import com.github.linguExplorer.event.*
+import com.github.linguExplorer.linguExplorer
 import com.github.linguExplorer.linguExplorer.Companion.UNIT_SCALE
+import com.github.linguExplorer.screen.BlobDialog
+import com.github.linguExplorer.screen.GameMenuRenderer
 import com.github.linguExplorer.screen.GameUnlockScreenRenderer
 import com.github.linguExplorer.screen.LockScreenRenderer
 import com.github.quillraven.fleks.*
@@ -29,17 +33,26 @@ import ktx.tiled.forEachLayer
 @AllOf([ImageComponent::class])
 class RenderSystem(
     private val stage: Stage,
-    private val imageCmps:ComponentMapper<ImageComponent>
+    private val imageCmps:ComponentMapper<ImageComponent>,
+    private val gameStage: Stage,
+    private val uiStage: Stage,
+    private val game: linguExplorer,
+    private var inputMultiplexer : InputMultiplexer
+
 ) : EventListener, IteratingSystem(
     comparator = compareEntity{e1,e2 -> imageCmps[e1].compareTo(imageCmps[e2])}
 ) {
 
+    private val viewport: Viewport = ExtendViewport(1920f, 1080f)
     private val bgdLayers = mutableListOf<TiledMapTileLayer>()
     private val fgdLayers = mutableListOf<TiledMapTileLayer>()
     private val mapRenderer = OrthogonalTiledMapRenderer(null, UNIT_SCALE, stage.batch)
     private val orthoCam = stage.camera as OrthographicCamera
     private val shapeRenderer = ShapeRenderer()
     private val fadingCircles = mutableListOf<FadingCircle>()
+
+//    private val BlobDialog = BlobDialog(game, viewport, inputMultiplexer)
+
     private var showLock = false
     private var showUnlocked = false
     private var lockTimer = 0f
@@ -49,7 +62,6 @@ class RenderSystem(
         val y: Float,
         var alpha: Float = 0.5f
     )
-    private val uiStage: Stage = Stage(ExtendViewport(16f, 9f)) // Eine Stage speziell für die UI
 
     private val gviewport: Viewport = ExtendViewport(1920f, 1080f)
 
@@ -99,7 +111,6 @@ class RenderSystem(
                 }
             }
 
-
             /////Funkion hier zum Lockscreen erstellen Welche Minigame es ist wird über Parameter angegeben
 
 
@@ -112,6 +123,7 @@ class RenderSystem(
 
 
             ////
+
 
             if(showLock) {
 
@@ -134,6 +146,7 @@ class RenderSystem(
             }
 
         }
+
     }
     override fun onTickEntity(entity: Entity) {
         imageCmps[entity].image.toFront()

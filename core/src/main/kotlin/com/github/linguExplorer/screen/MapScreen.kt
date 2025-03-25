@@ -11,11 +11,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.maps.tiled.TiledMap
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
-import com.badlogic.gdx.scenes.scene2d.EventListener
-import com.badlogic.gdx.scenes.scene2d.InputEvent
-import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.Touchable
+import com.badlogic.gdx.scenes.scene2d.*
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.viewport.ExtendViewport
@@ -26,6 +24,7 @@ import com.github.linguExplorer.component.*
 import com.github.linguExplorer.event.GamePause
 import com.github.linguExplorer.event.MapChangeEvent
 import com.github.linguExplorer.event.fire
+import com.github.linguExplorer.event.startDialogEvent
 import com.github.linguExplorer.input.PlayerKeyboardInputProcessor
 import com.github.linguExplorer.system.*
 import com.github.quillraven.fleks.World
@@ -35,8 +34,9 @@ import ktx.assets.disposeSafely
 import ktx.box2d.createWorld
 import ktx.log.logger
 import ktx.math.vec2
+import ktx.tiled.forEachLayer
 
-class MapScreen(private val game: linguExplorer, private val tempX: Float, private val tempY : Float) : KtxScreen {
+class MapScreen(private val game: linguExplorer, private val tempX: Float, private val tempY : Float) : KtxScreen, EventListener {
 
     private val stage :Stage = Stage(ExtendViewport(16f,9f))
     private val textureAtlas = TextureAtlas("graphics/entities.atlas")
@@ -50,10 +50,18 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
     private var shapeRenderer: ShapeRenderer = ShapeRenderer()
     private val viewport: Viewport = ExtendViewport(1920f, 1080f)
     private val glyphLayout = GlyphLayout()
+    private val uiStage: Stage = Stage(ExtendViewport(1920f, 1080f).apply {
+        setWorldSize(1920f, 1080f)
+    })
+    private var inputMultiplexer = InputMultiplexer()
+
+
     private val batch: SpriteBatch = SpriteBatch()
+
 
     private val world: World= world {
         injectables {
+            add(inputMultiplexer)
             add(stage)
             add(textureAtlas)
             add(phWorld)
@@ -85,11 +93,18 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
 
     private val pathSystem = world.system<PathSystem>()
 
+
+    private var BlobDialog = BlobDialog(game, viewport)
+
+
+
+
     //Game Menü
     private var update = 0.25f
     private var menuSet = false
     private val boxTexture: Texture = Texture(Gdx.files.internal("xx_Images/GameMenü/box.png"))
     private var font: BitmapFont = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
+
 
     // Progress font and text
     private var progressFont: BitmapFont = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
@@ -98,6 +113,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
     private var progressTextY: Float = 0f
 
     private var inputMultiplexer = InputMultiplexer()
+
 
     //UI Elemente
     private lateinit var backpackImage: Image
@@ -129,6 +145,26 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
     // Fixe Höhe für BoxIn und BoxOut
     private val fixedBoxHeight = 300f
 
+
+        PlayerKeyboardInputProcessor(world, stage, world.mapper(), world.mapper(), stage, pathSystem )
+
+
+        val playerInputProcessor = PlayerKeyboardInputProcessor(world, stage, world.mapper(), world.mapper(), stage, pathSystem)
+        // InputMultiplexer um Spielfigur + UI zu verarbeiten
+        inputMultiplexer = InputMultiplexer()
+        inputMultiplexer.addProcessor(BlobDialog.getStage())
+
+        inputMultiplexer.addProcessor(uiStage)
+        inputMultiplexer.addProcessor(stage)
+        inputMultiplexer.addProcessor(playerInputProcessor)
+
+        // Spielfigur und Welt-Stage
+        inputMultiplexer.addProcessor(uiStage) // UI-Stage*/
+
+        Gdx.input.inputProcessor = inputMultiplexer //Multiplexer als Input-Prozessor setzen
+
+        stage.addListener(this)
+        
     private var isBoxOutVisible = false
 
     // UI Stage
@@ -136,11 +172,15 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         Stage(ScreenViewport())
     }
 
+
     // Initialisierung von UI-Elemente
     private val uiElements by lazy {
         UIElements(uiStage)
     }
 
+
+    //fixe Bilder Methode
+    private fun addUIImages() {
     // Größen und Positionen
     private var upperBarHeight: Float = 0f
     private var settingsIconHeight: Float = 0f
@@ -254,6 +294,10 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
             recalculateMapAndPhrasebookPositions() // Neu berechnen!
         }
 
+
+        backpackImage.addListener(object : ClickListener() {
+            override fun clicked(event: InputEvent?, x: Float, y: Float) {
+                println("Backpack clicked")
         private fun recalculateMapAndPhrasebookPositions() {
             // Phrasenheft + Karte untereinander
             mapImage.setPosition(
@@ -267,7 +311,6 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
             )
         }
     }
-
     override fun show() {
         log.debug { "Game Screen gets shown" }
         world.systems.forEach { system ->
@@ -385,10 +428,22 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
             update = 0f
             updateProgressText()
 
+
+
+        world.update(delta.coerceAtMost(update))
+
+
+        // Hier die Positionen basierend auf der aktuellen Viewport-Größe berechnen
+        mapImage.setPosition(
+            padding,
+            uiStage.viewport.worldHeight - imageSize - padding
+        )
+
             if(isFinished) {
                 topicProgress = 0.0
                 uiElements.updateProgressBarTexture()
             }
+
 
             return
         }
@@ -413,7 +468,15 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
 
         val rangeIndex = (clampedValue * 11).toInt()
 
+
+       if (menuSet) {
+            gameMenuRenderer.renderGameMenu(batch, font, glyphLayout, viewport, shapeRenderer)
+        }
+
+        BlobDialog.render(Gdx.graphics.deltaTime)
+
         return if (clampedValue == 1.0) 11 else rangeIndex + 1
+
     }
 
     override fun dispose() {
@@ -441,7 +504,26 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         gameMenuRenderer.dispose()
     }
 
-    companion object : KtxScreen {
-        private val log = logger<MapScreen>()
+
+    override fun handle(event: Event): Boolean {
+
+        when (event) {
+            is startDialogEvent -> {
+
+                println("Dialog mit ${event.name} wird gestartet")
+                BlobDialog.show(event.entity, "npc_sarah")
+
+                return true
+
+            }
+
+        }
+        return false
+
+
+    }
+      companion object : KtxScreen {
+      private  val log = logger<MapScreen>()
+
     }
 }

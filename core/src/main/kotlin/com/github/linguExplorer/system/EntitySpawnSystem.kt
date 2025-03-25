@@ -98,7 +98,9 @@ class EntitySpawnSystem (
                 }
 
                 if(cfg.interact) {
-                    add<SdComponent>()
+                    add<SdComponent> {
+                        name = cfg.name ?: ""
+                    }
                 }
             }
         }
@@ -137,7 +139,9 @@ class EntitySpawnSystem (
                 physicOffset = vec2(0f,-6f* UNIT_SCALE),
                 bodyType = BodyDef.BodyType.StaticBody,
                 aniType = AnimationType.IDLE,
-                interact = true
+                interact = true,
+                name = "Robert"
+
 
             )
 
@@ -147,7 +151,9 @@ class EntitySpawnSystem (
                 physicOffset = vec2(0f,-6f* UNIT_SCALE),
                 bodyType = BodyDef.BodyType.StaticBody,
                 aniType = AnimationType.IDLE,
-                interact = true
+                interact = true,
+                name = "hans"
+
 
             )
 
@@ -157,7 +163,9 @@ class EntitySpawnSystem (
                 physicOffset = vec2(0f,-6f* UNIT_SCALE),
                 bodyType = BodyDef.BodyType.StaticBody,
                 aniType = AnimationType.IDLE,
-                interact = true
+                interact = true,
+                name = "Peter"
+
 
             )
 
@@ -167,7 +175,9 @@ class EntitySpawnSystem (
                 physicOffset = vec2(0f,-6f* UNIT_SCALE),
                 bodyType = BodyDef.BodyType.StaticBody,
                 aniType = AnimationType.IDLE,
-                interact = true
+                interact = true,
+                name = "Viktor"
+
 
             )
             else -> gdxError("Type $type no Spawn config")
