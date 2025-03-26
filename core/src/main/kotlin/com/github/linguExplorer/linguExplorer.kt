@@ -53,7 +53,7 @@ class linguExplorer : KtxGame<KtxScreen>() {
 var name = "Blob"
 lateinit var currentTopic: TopicEntity
 var topicProgress = 0.0
-val userId = 1 //Int = ConfigManager.readUserId()
+val userId: Int = ConfigManager.readUserId()
 var saveNumber = 0
 var masterVolume = 1f
 var soundEffectVolume = 1f

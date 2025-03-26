@@ -307,7 +307,6 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                         batch.draw(slotTexture, slotX, slotY - slotHeight, slotWidth, slotHeight)
 
                         font.color = Color.BLACK
-
                         if (!slotIsActive) {
                             font.data.setScale(0.3f, 0.3f)
                             glyphLayout.setText(font, "Leerer Spielstand")
@@ -325,7 +324,6 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                                 slotWidth,
                                 slotHeight
                             )
-
 
                             if (isBoxHovered && newGamePopUp && !showUserExistsConfirmation && !showEnterNameDialog) {
                                 Gdx.gl.glLineWidth(3f)
@@ -349,12 +347,10 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                                     slotHeight
                                 ) && !showUserExistsConfirmation && !showEnterNameDialog && !showUserEditConfirmation && !clickProcessedThisFrame
                             ) {
-                                clickProcessedThisFrame = true // Set the flag
+                                clickProcessedThisFrame = true
                                 showEnterNameDialog = true
                                 currentEditSlotIndex = index
                             }
-
-
                         } else {
                             val penX = slotX + slotWidth - 65f
                             val penY = slotY - 65f
@@ -440,15 +436,10 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                                 if (newGamePopUp) {
                                     showUserExistsConfirmation = true
                                 } else {
-                                    if (!newGamePopUp) {
-                                        this.user = user
-                                        currentCheckpoint = checkpoint!!
-                                        topicString = topic!!
-                                        loadGame = true
-                                    } else {
-                                        saveNumber = index + 1
-                                        newGame = true
-                                    }
+                                    this.user = user
+                                    currentCheckpoint = checkpoint!!
+                                    topicString = topic!!
+                                    loadGame = true
                                     isTransitioning = true
                                     loadingTime = 0f
                                 }
@@ -558,6 +549,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                                 }
                             }
                         } else if (showEnterNameDialog) {
+                            println("$index  $slotIsActive")
                             val boxWidth = 700f
                             val boxHeight = 250f
                             val boxX = viewport.worldWidth / 2 - boxWidth / 2
@@ -598,15 +590,19 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                                         buttonHeight
                                     )
                                 ) {
+                                    println("was geht")
                                     clickProcessedThisFrame = true // Set the flag
                                     name = textField.text.toString()
                                     if (slotIsActive) {
+                                        println("guck")
                                         userAlreadyExists = true
                                         this.user = user!!
                                         saveNumber = user.saveNumber
                                         currentCheckpoint = checkpoint!!
                                     } else {
                                         saveNumber = currentEditSlotIndex + 1
+                                        println("was soll das")
+                                        println(saveNumber)
                                         newGame = true
                                     }
 
@@ -677,7 +673,6 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                         isTransitioning = false
                         transitionRadius = 0f
                         loadingTime = 0f
-
                         if (introduction) {
                             game.addScreen(IntroductionScreen(game))
                             game.setScreen<IntroductionScreen>()
@@ -819,17 +814,16 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             } else {
                 CheckpointRepository().updateCheckpoint(user.id, user.saveNumber, null, null, null, Timestamp(System.currentTimeMillis()))
                 saveNumber = user.saveNumber
-                println (topicString)
                 executePositionX = currentCheckpoint.positionX
                 executePositionY = currentCheckpoint.positionY
-                println (executePositionX)
             }
 
             if (newGame || userAlreadyExists || (topicString == "-")) {
                 println("ho")
                 val topicId = TopicRepository().getTopicIdByName("Kleidung")
                 currentTopic = TopicRepository().getTopicById(topicId)!!
-                if (topicString != "-") introduction = true
+                println("hör auf")
+                introduction = true
             } else {
                 println(topicString)
                 val topicId = TopicRepository().getTopicIdByName(topicString)

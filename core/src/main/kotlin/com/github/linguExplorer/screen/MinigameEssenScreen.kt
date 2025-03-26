@@ -458,7 +458,7 @@ class MinigameEssenScreen(private val game: linguExplorer,
                                     // Position speichern
                                     collectedObjectPositions.add(Vector2(basketX, basketY))
                                     // neue Reihe? weil mehr als 5
-                                    if(collectedObjectPositions.size % 5 == 0)
+                                    if(collectedObjectPositions.size % 6 == 0)
                                         currentBasketRow++
                                 } else {
                                     // Text mit "Fehler!" anzeigen
