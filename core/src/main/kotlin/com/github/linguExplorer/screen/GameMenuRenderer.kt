@@ -18,23 +18,21 @@ import com.github.linguExplorer.musicVolume
 import com.github.linguExplorer.soundEffectVolume
 
 class GameMenuRenderer {
-    // Menu state
     private var menuSet = true
-    private var showSoundSettings = false //Flag (ob Soundeinstellungen angezeigt werden)
+    private var showSoundSettings = false
     private var fontHeadliner: BitmapFont = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
 
     private val boxTexture: Texture
     private val resumeTexture: Texture
-    private val soundSettingsTexture: Texture //Textur für den "Soundeinstellungen"-Button
+    private val soundSettingsTexture: Texture
     private val quitGameTexture: Texture
     private val wordmarkTexture: Texture
-    private val applyTexture: Texture // Textur für den "Anwenden"-Button in den Soundeinstellungen
+    private val applyTexture: Texture
     private val redXTexture: Texture
     private val barnoneTexture: Texture
     private val barfullTexture: Texture
     private val circleTexture: Texture
 
-    // UI element sizes and positions
     private val buttonSize = Vector2(300f, 90f)
     private val buttonSpacing = 40f
     private val wordmarkScale = 0.2f
@@ -45,7 +43,6 @@ class GameMenuRenderer {
     private val headingLeftPadding = 50f
     private val circleSize = Vector2(50f, 50f)
 
-    // Slider values and positions
     private var masterCircleXOffset = 0f
     private var soundeffectsCircleXOffset = 0f
     private var musicCircleXOffset = 0f
@@ -54,12 +51,10 @@ class GameMenuRenderer {
     private var soundeffectsBarnoneY = 0f
     private var musicBarnoneY = 0f
 
-    // Drag state
     private var isDraggingMaster = false
     private var isDraggingSoundeffects = false
     private var isDraggingMusic = false
 
-    // Menu position
     private var boxX = 0f
     private var boxY = 0f
 
@@ -70,7 +65,6 @@ class GameMenuRenderer {
     private var soundeffectPreSave = 0f
     private var musicPreSave = 0f
 
-    //Which Menu
     private var game: linguExplorer = linguExplorer()
     private var isMainMenu = true
 
@@ -89,18 +83,15 @@ class GameMenuRenderer {
         barfullTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/barfull.png"))
         circleTexture = Texture(Gdx.files.internal("xx_Images/GameMenü/circle.png"))
 
-        updateCirclePositionsFromVolumes() // Initialisiert die Positionen der Kreise basierend auf den aktuellen Lautstärken
+        updateCirclePositionsFromVolumes()
     }
 
     fun renderGameMenu(batch: SpriteBatch, font: BitmapFont, glyphLayout: GlyphLayout, viewport: Viewport, shapeRenderer: ShapeRenderer, mainMenu: Boolean, linguGame: linguExplorer) {
-        // Reset menuSet to true when rendering the menu
-
         if(!mainMenu) {
             isMainMenu = false
         } else {
             isMainMenu = true
             game = linguGame
-
         }
 
         font.color = Color.BLACK
@@ -114,7 +105,6 @@ class GameMenuRenderer {
         viewport.apply()
         batch.projectionMatrix = viewport.camera.combined
 
-        // Draw transparent background
         Gdx.gl.glEnable(GL20.GL_BLEND)
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
@@ -124,11 +114,8 @@ class GameMenuRenderer {
         Gdx.gl.glDisable(GL20.GL_BLEND)
 
         batch.begin()
-        println("renderung menu")
-        // Draw box background
         batch.draw(boxTexture, boxX, boxY, 600f, 650f)
 
-        // Draw wordmark
         val wordmarkWidth = wordmarkTexture.width * wordmarkScale
         val wordmarkHeight = wordmarkTexture.height * wordmarkScale
         batch.draw(
@@ -138,7 +125,6 @@ class GameMenuRenderer {
             wordmarkHeight
         )
 
-        // Draw title
         val titleText = if (showSoundSettings) "SOUND" else "OPTIONS"
         val titleLayout = GlyphLayout(fontHeadliner, titleText)
         val titleX = boxX + (600f - titleLayout.width) / 2f
@@ -148,12 +134,10 @@ class GameMenuRenderer {
         if (showSoundSettings) {
             drawSoundSettings(batch, font, glyphLayout)
 
-            // Draw apply button
             val applyButtonX = boxX + 180f
             val applyButtonY = boxY - (buttonSize.y / 2f) + 10f
             batch.draw(applyTexture, applyButtonX, applyButtonY, applyButtonWidth, buttonSize.y)
 
-            // Draw close (X) button
             val redXX = boxX + 600f - redXSize.x - 20f
             val redXY = boxY + 650f - redXSize.y - 20f
             batch.draw(redXTexture, redXX, redXY, redXSize.x, redXSize.y)
@@ -163,42 +147,38 @@ class GameMenuRenderer {
 
         batch.end()
 
-        // Handle input and update volumes
         handleInput(viewport)
 
-        // Aktualisiert die Lautstärken basierend auf den Slider-Positionen
         if (isDraggingMaster || isDraggingSoundeffects || isDraggingMusic) {
             updateVolumesFromCirclePositions()
         }
     }
 
-    /**
-     * Updates circle positions based on current volume parameters
-     */
     private fun updateCirclePositionsFromVolumes() {
-        // Berechnet die X-Position des Master-Volume-Kreises
-        masterCircleXOffset = masterVolume * (barnoneWidth - circleSize.x)
-        // Berechnet die X-Position des Soundeffekt-Volume-Kreises
-        soundeffectsCircleXOffset = soundEffectVolume * (barnoneWidth - circleSize.x)
-        // Berechnet die X-Position des Musik-Volume-Kreises
-        musicCircleXOffset = musicVolume * (barnoneWidth - circleSize.x)
+        masterCircleXOffset = MathUtils.clamp(masterVolume, 0f, 1f) * (barnoneWidth - circleSize.x)
+        soundeffectsCircleXOffset = MathUtils.clamp(soundEffectVolume, 0f, 1f) * (barnoneWidth - circleSize.x)
+        musicCircleXOffset = MathUtils.clamp(musicVolume, 0f, 1f) * (barnoneWidth - circleSize.x)
     }
 
-    /**
-     * Updates volume parameters based on current circle positions
-     */
     private fun updateVolumesFromCirclePositions() {
-        // Berechnet das Master-Volume basierend auf der Kreisposition
-        masterVolume = masterCircleXOffset / (barnoneWidth - circleSize.x)
-        // Berechnet das Soundeffekt-Volume
-        soundEffectVolume = soundeffectsCircleXOffset / (barnoneWidth - circleSize.x)
-        // Berechnet das Musik-Volume
-        musicVolume = musicCircleXOffset / (barnoneWidth - circleSize.x)
+        masterVolume = MathUtils.clamp(
+            masterCircleXOffset / (barnoneWidth - circleSize.x),
+            0f,
+            1f
+        )
+        println(masterVolume)
+        soundEffectVolume = MathUtils.clamp(
+            soundeffectsCircleXOffset / (barnoneWidth - circleSize.x),
+            0f,
+            1f
+        )
+        musicVolume = MathUtils.clamp(
+            musicCircleXOffset / (barnoneWidth - circleSize.x),
+            0f,
+            1f
+        )
     }
 
-    /**
-     * Draws the main menu buttons (Resume, Sound Settings, Quit Game)
-     */
     private fun drawMainMenuButtons(batch: SpriteBatch) {
         var currentY = boxY + 360f
 
@@ -216,63 +196,42 @@ class GameMenuRenderer {
         font.data.setScale(0.23f, 0.23f)
 
         masterBarnoneY = currentY
-        masterCircleXOffset = drawSlider(batch, font, glyphLayout, "MASTER", masterCircleXOffset, masterBarnoneY, isDraggingMaster)
+        drawSlider(batch, font, glyphLayout, "MASTER", masterCircleXOffset, masterBarnoneY, isDraggingMaster)
         currentY -= 125f
 
         soundeffectsBarnoneY = currentY
-        soundeffectsCircleXOffset = drawSlider(batch, font, glyphLayout, "SOUNDEFFECTS", soundeffectsCircleXOffset, soundeffectsBarnoneY, isDraggingSoundeffects)
+        drawSlider(batch, font, glyphLayout, "SOUNDEFFECTS", soundeffectsCircleXOffset, soundeffectsBarnoneY, isDraggingSoundeffects)
         currentY -= 125f
 
         musicBarnoneY = currentY
-        musicCircleXOffset = drawSlider(batch, font, glyphLayout, "MUSIC", musicCircleXOffset, musicBarnoneY, isDraggingMusic)
+        drawSlider(batch, font, glyphLayout, "MUSIC", musicCircleXOffset, musicBarnoneY, isDraggingMusic)
     }
 
-    /**
-     * Draws a single slider with label, bar, and draggable circle
-     */
     private fun drawSlider(batch: SpriteBatch, font: BitmapFont, glyphLayout: GlyphLayout,
-                           name: String, offsetX: Float, barY: Float, isDragging: Boolean): Float {
-        // Draw label
+                           name: String, offsetX: Float, barY: Float, isDragging: Boolean) {
         glyphLayout.setText(font, name)
         font.draw(batch, name, boxX + headingLeftPadding + 5f, barY + barnoneHeight + glyphLayout.height + 20f)
 
-        // Draw slider background
         batch.draw(barnoneTexture, boxX + headingLeftPadding, barY, barnoneWidth, barnoneHeight)
 
-        // Calculate position based on drag state
-        val newOffset = if (isDragging) {
-            val mousePos = Gdx.input.x.toFloat()
-            MathUtils.clamp(mousePos - (boxX + headingLeftPadding), 0f, barnoneWidth - circleSize.x)
-        } else offsetX
-
-        // Draw filled portion of slider
         batch.draw(
             barfullTexture,
             boxX + headingLeftPadding,
             barY,
-            newOffset + circleSize.x / 3,
+            offsetX + circleSize.x / 3,
             barnoneHeight
         )
 
-        // Draw slider handle
         batch.draw(
             circleTexture,
-            boxX + headingLeftPadding + newOffset,
+            boxX + headingLeftPadding + offsetX,
             barY + barnoneHeight / 2f - circleSize.y / 2f,
             circleSize.x,
             circleSize.y
         )
-
-        return newOffset
     }
 
-    /**
-     * Handles mouse input for menu interactions
-     */
     private fun handleInput(viewport: Viewport) {
-        // menuSet wird jetzt in renderGameMenu auf true gesetzt, daher ist diese Bedingung nicht mehr notwendig
-        // if (!menuSet) return
-
         val mousePos = viewport.unproject(Vector2(Gdx.input.x.toFloat(), Gdx.input.y.toFloat()))
         val mouseX = mousePos.x
         val mouseY = mousePos.y
@@ -288,7 +247,6 @@ class GameMenuRenderer {
         val buttonX = boxX + (buttonSize.x / 2f)
         var currentY = boxY + 360f
 
-        // Resume button
         if (isButtonTouched(mouseX, mouseY, buttonX, currentY, buttonSize.x, buttonSize.y)) {
             if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
                 onResumeClicked()
@@ -296,15 +254,12 @@ class GameMenuRenderer {
         }
         currentY -= buttonSize.y + buttonSpacing
 
-        // Sound settings button
         if (isButtonTouched(mouseX, mouseY, buttonX, currentY, buttonSize.x, buttonSize.y)) {
             if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-                // Save current values before entering sound settings
                 masterPreSave = masterVolume
                 soundeffectPreSave = soundEffectVolume
                 musicPreSave = musicVolume
 
-                // Make sure circle positions match current volumes when opening settings
                 updateCirclePositionsFromVolumes()
 
                 showSoundSettings = true
@@ -312,94 +267,87 @@ class GameMenuRenderer {
         }
         currentY -= buttonSize.y + buttonSpacing
 
-        // Quit button
         if (isButtonTouched(mouseX, mouseY, buttonX, currentY, buttonSize.x, buttonSize.y)) {
             if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-
                 if(isMainMenu) {
                     Gdx.app.exit()
                 } else {
                     game.removeScreen<MainMenuScreen>()
                     game.addScreen(MainMenuScreen(game))
                     game.setScreen<MainMenuScreen>()
-
                 }
 
                 onQuitClicked()
-
             }
         }
     }
 
-    /**
-     * Handles input for sound settings screen
-     */
     private fun handleSoundSettingsInput(mouseX: Float, mouseY: Float) {
-        val circleTouchArea = 20f
+        val circleTouchArea = 50f
+        val sliderStartX = boxX + headingLeftPadding
+        val sliderEndX = sliderStartX + barnoneWidth - circleSize.x
 
-        // Check if any slider circle is being dragged
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             isDraggingMaster = isCircleTouched(mouseX, mouseY,
-                boxX + headingLeftPadding + masterCircleXOffset,
+                sliderStartX + masterCircleXOffset,
                 masterBarnoneY + barnoneHeight / 2f - circleSize.y / 2f,
                 circleTouchArea)
 
             isDraggingSoundeffects = isCircleTouched(mouseX, mouseY,
-                boxX + headingLeftPadding + soundeffectsCircleXOffset,
+                sliderStartX + soundeffectsCircleXOffset,
                 soundeffectsBarnoneY + barnoneHeight / 2f - circleSize.y / 2f,
                 circleTouchArea)
 
             isDraggingMusic = isCircleTouched(mouseX, mouseY,
-                boxX + headingLeftPadding + musicCircleXOffset,
+                sliderStartX + musicCircleXOffset,
                 musicBarnoneY + barnoneHeight / 2f - circleSize.y / 2f,
                 circleTouchArea)
         }
 
-        // Release drag state if mouse button is no longer pressed
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            val newXOffset = MathUtils.clamp(mouseX - sliderStartX, 0f, barnoneWidth - circleSize.x)
+
+            when {
+                isDraggingMaster -> masterCircleXOffset = newXOffset
+                isDraggingSoundeffects -> soundeffectsCircleXOffset = newXOffset
+                isDraggingMusic -> musicCircleXOffset = newXOffset
+            }
+        }
+
         if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             isDraggingMaster = false
             isDraggingSoundeffects = false
             isDraggingMusic = false
         }
 
-        // Apply button
+        updateVolumesFromCirclePositions()
+
         val applyButtonX = boxX + 180f
         val applyButtonY = boxY - (buttonSize.y / 2f) + 10f
         if (isButtonTouched(mouseX, mouseY, applyButtonX, applyButtonY, applyButtonWidth, buttonSize.y)) {
             if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-                updateVolumesFromCirclePositions()
                 showSoundSettings = false
             }
         }
 
-        // Close (X) button
         val redXX = boxX + 600f - redXSize.x - 20f
         val redXY = boxY + 650f - redXSize.y - 20f
         if (isButtonTouched(mouseX, mouseY, redXX, redXY, redXSize.x, redXSize.y)) {
             if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-                // When canceling, restore previous values
                 masterVolume = masterPreSave
                 soundEffectVolume = soundeffectPreSave
                 musicVolume = musicPreSave
 
-                // Make sure circle positions match restored volumes
-                updateCirclePositionsFromVolumes() // Aktualisiert die Kreispositionen basierend auf den aktuellen Lautstärken
-
+                updateCirclePositionsFromVolumes()
                 showSoundSettings = false
             }
         }
     }
 
-    /**
-     * Helper method to check if a button is being touched
-     */
     private fun isButtonTouched(mouseX: Float, mouseY: Float, buttonX: Float, buttonY: Float, width: Float, height: Float): Boolean {
         return mouseX >= buttonX && mouseX <= buttonX + width && mouseY >= buttonY && mouseY <= buttonY + height
     }
 
-    /**
-     * Helper method to check if a slider circle is being touched
-     */
     private fun isCircleTouched(mouseX: Float, mouseY: Float, circleX: Float, circleY: Float, touchArea: Float): Boolean {
         return mouseX in (circleX - touchArea)..(circleX + circleSize.x + touchArea) &&
             mouseY in (circleY - touchArea)..(circleY + circleSize.y + touchArea)
@@ -407,7 +355,7 @@ class GameMenuRenderer {
 
     fun setOnResumeClicked(callback: () -> Unit) {
         onResumeClicked = {
-            menuSet = false  // Hier wird menuSet auf false gesetzt
+            menuSet = false
             callback()
         }
     }
@@ -416,7 +364,6 @@ class GameMenuRenderer {
         onQuitClicked = callback
     }
 
-    // Methode zum Zurücksetzen des Menüs, falls du sie separat aufrufen möchtest
     fun resetMenu() {
         menuSet = true
         showSoundSettings = false

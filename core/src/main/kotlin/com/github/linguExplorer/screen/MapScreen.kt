@@ -99,6 +99,9 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
     private var progressTextX: Float = 0f
     private var progressTextY: Float = 0f
 
+    //Musik
+    private var screenIsNew = true
+
 
     //UI Elemente
     private lateinit var backpackImage: Image
@@ -123,8 +126,6 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
     private var progressBarXOffset: Float = 5f
 
     //Texture Toggle
-    private lateinit var boxInTexture: Texture
-    private lateinit var boxOutTexture: Texture
     private var isBoxIn = true
 
     // Fixe Höhe für BoxIn und BoxOut
@@ -341,12 +342,22 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
     }
 
     override fun render(delta: Float) {
+        if (music.volume >= 0.5f * masterVolume * musicVolume) {
+            screenIsNew = false
+        }
+
+        if(!screenIsNew) {
+            music.volume = 0.5f * masterVolume * musicVolume
+        }
+
         if(!music.isPlaying) {
+            println(music.volume)
             music.play()
         }
 
-        if(music.volume in 0.7f..0.01f) {
-            music.volume += (0.006f * masterVolume * musicVolume)
+        if(music.volume in 0.001f..0.5f * masterVolume * musicVolume && screenIsNew) {
+
+            music.volume += (0.004f * masterVolume * musicVolume)
         }
         uiElements.updateProgressBarTexture()
         viewport.apply()

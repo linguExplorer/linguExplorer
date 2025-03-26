@@ -278,8 +278,8 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                     positionY = 0f,
                     positionOffsetX = 0f,
                     positionOffsetY = 0f,
-                    sizeX = bottomTargetWidth,
-                    sizeY = targetHeight
+                    sizeX = bottomTargetWidth * 1.1f,
+                    sizeY = targetHeight * 1.1f
                 )
             )
         }
@@ -344,7 +344,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
             objectsWithHanger.forEach { obj ->
                 if (index > 0 && index % 8 == 0) {
                     positionOffsetX = 0f
-                    positionOffsetY -= 150f * (viewport.worldHeight / 600f)
+                    positionOffsetY -= 80f * (viewport.worldHeight / 600f)
                 }
                 if (!obj.isCollected) {
                     obj.positionX = obj.basePositionX * (viewport.worldWidth / 800f) + positionOffsetX

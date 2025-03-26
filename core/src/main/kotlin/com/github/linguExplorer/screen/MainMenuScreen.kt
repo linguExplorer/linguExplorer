@@ -54,7 +54,6 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private var usedSlotTexture: Texture = Texture("MainMenu/greenbox.png")
     private var emptySlotTexture: Texture = Texture("MainMenu/greybox.png")
     private var penTexture: Texture = Texture("MainMenu/penGrey.png")
-    private var spielStartenButtonTexture: Texture = Texture("MainMenu/spielstandStarten.png")
     private var showUserExistsConfirmation = false
     private var showUserEditConfirmation = false
     private var userExistsBoxTexture: Texture = Texture("MainMenu/box3.png")
@@ -88,7 +87,6 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private var executePositionX = 0f
     private var executePositionY = 0f
 
-    private val popUpButtonSize = Vector2(180f, 55f)
     private val popUpSize = Vector2(1100f, 700f)
     private val exitSize = 90f
     private val editSize = 35f
@@ -107,9 +105,6 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
     private val rectangleWidth = 550f
     private  val rectangleHeight = 46f
 
-
-    private  val rectangleX = boxX + (boxWidth - rectangleWidth) / 2
-    private  val rectangleY = boxY + boxHeight - 140f
 
     private var textField = TextField("", skin).apply {
         setBounds((viewport.worldWidth / 2) - (rectangleWidth/2), viewport.worldHeight / 2 - (rectangleHeight/2), rectangleWidth, rectangleHeight)
@@ -686,12 +681,14 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                         if (introduction) {
                             game.addScreen(IntroductionScreen(game))
                             game.setScreen<IntroductionScreen>()
+                            game.removeScreen<MainMenuScreen>()
                         } else {
                             if (game.containsScreen<MapScreen>()) {
                                 game.removeScreen<MapScreen>()
                             }
                             game.addScreen(MapScreen(game, 30f, 30f))
                             game.setScreen<MapScreen>()
+                            game.removeScreen<MainMenuScreen>()
                         }
 
                     }
@@ -832,7 +829,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                 println("ho")
                 val topicId = TopicRepository().getTopicIdByName("Kleidung")
                 currentTopic = TopicRepository().getTopicById(topicId)!!
-                introduction = true
+                if (topicString != "-") introduction = true
             } else {
                 println(topicString)
                 val topicId = TopicRepository().getTopicIdByName(topicString)
