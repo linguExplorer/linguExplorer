@@ -692,7 +692,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
             }
 
             if(music.volume > 0.005f) {
-                music.volume -= (0.006f * masterVolume * musicVolume)
+                music.volume -= (0.007f * masterVolume * musicVolume)
             } else if (music.volume <= 0.01f) {
                 music.pause()
             }

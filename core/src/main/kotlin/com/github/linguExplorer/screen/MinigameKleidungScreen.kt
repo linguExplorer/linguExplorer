@@ -15,7 +15,9 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Align
-import com.github.linguExplorer.linguExplorer
+import com.github.linguExplorer.*
+import com.github.linguExplorer.event.GameEndEvent
+import com.github.linguExplorer.event.fire
 import com.github.linguExplorer.minigames.KleidungMinigame
 import com.github.linguExplorer.models.PhraseEntity
 import ktx.app.KtxScreen
@@ -30,6 +32,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
     private val viewport: Viewport = ExtendViewport(1920f, 1080f)
     private val shapeRenderer = ShapeRenderer()
     private val executor: ExecutorService = Executors.newFixedThreadPool(1)
+    private val glyphLayout = GlyphLayout()
     var textgap = 2f
 
     // Texturen
@@ -90,16 +93,23 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
     // Getter für die dynamischen Positionen
 
 
+    private var loadingScreenRenderer = LoadingScreenRenderer()
+    private var threadExecuted = false
 
-
-    private var continueButtonScale = 1f
-    private var pauseButtonScale = 1f
-    private var continueButtonTargetScale = 1f
-    private var pauseButtonTargetScale = 1f
+    private var isTransitioning = false
+    private var transitionRadius = 0f
+    private val maxRadius = Math.sqrt((1920f * 1920f + 1080f * 1080f).toDouble()).toFloat()
+    private var loadingTime = 0f
+    private var threadWorking = false
+    private var initialLoadingTime = 0f
 
     // Zeit
     private var timeLeft = 30
     private var elapsedTime = 0f
+
+    private var backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Hintergrundmusik/Hintergrundmusik_Essen.mp3"))
+    private var correctSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Soundeffekte/richtig.mp3"))
+    private var wrongSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Soundeffekte/falsch.mp3"))
 
     // Spielstatus
     private var isDragging = false
@@ -242,11 +252,75 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
 
     override fun show() {
         Gdx.input.inputProcessor = null
+        backgroundMusic.isLooping = true
+        backgroundMusic.volume = 0.5f* musicVolume * masterVolume
     }
 
     private var isPaused = false
 
     override fun render(delta: Float) {
+        font = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
+        if (isTransitioning) {
+            transitionRadius += 1000f * delta
+            if (transitionRadius >= maxRadius) {
+                loadingTime += delta
+
+                if (!threadWorking) {
+                    storePhraseDataAsync()
+                    threadWorking = true
+                }
+
+                Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
+                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+                loadingScreenRenderer.renderAnimatedText(batch, font, glyphLayout, viewport, "Loading", delta, 1f, true)
+
+                if(music.volume > 0.005f) {
+                    music.volume -= (0.007f * masterVolume * musicVolume)
+                } else if (music.volume <= 0.01f) {
+                    music.pause()
+                }
+
+                if (threadExecuted && loadingTime > 2f) {
+                    Gdx.app.postRunnable {
+                        isTransitioning = false
+                        transitionRadius = 0f
+                        loadingTime = 0f
+
+                        backgroundMusic.stop()
+                        game.addScreen(MapScreen(game, 31.104187f, 15.677063f))
+                        game.setScreen<MapScreen>()
+                    }
+                }
+                return
+            }
+
+            Gdx.gl.glClearColor(0.611f, 0.761f, 0.827f, 1f)
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+
+            viewport.apply()
+            batch.projectionMatrix = viewport.camera.combined
+            shapeRenderer.projectionMatrix = viewport.camera.combined
+
+            batch.begin()
+            batch.end()
+
+            Gdx.gl.glEnable(GL20.GL_BLEND)
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
+            shapeRenderer.color = Color(0f, 0f, 0f, 1f)
+            shapeRenderer.circle(viewport.worldWidth / 2, viewport.worldHeight / 2, transitionRadius)
+            shapeRenderer.end()
+            Gdx.gl.glDisable(GL20.GL_BLEND)
+        }
+
+        if (!threadExecuted and !isTransitioning) {
+            initialLoadingTime += delta
+            loadingScreenRenderer.renderAnimatedText(batch, font, glyphLayout, viewport, "Loading", delta, 1f, true)
+
+            if (initialLoadingTime < 2f) {
+                return
+            }
+        }
         handleInput()
         if (!isPaused && !gameEnded && gameStarted) {
             updateTime(delta)
@@ -263,7 +337,6 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
         //Hintergrundfarbe auf #e7d7c7
         Gdx.gl.glClearColor(0.905f, 0.843f, 0.780f, 1f) // RGB-Werte für #e7d7c7
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        font = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
 
         viewport.apply()
         batch.projectionMatrix = viewport.camera.combined
@@ -365,14 +438,13 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
 
         // Pause- oder Play-Button anzeigen
         val texture: Texture = if (isPaused || gameEnded) playTexture else pauseTexture
-        pauseButtonScale = if (isPaused || gameEnded) 1f else pauseButtonScale
 
         batch.draw(
             texture,
-            pausePosition.x - (pauseSize.x * (pauseButtonScale - 1f) / 2),
-            pausePosition.y - (pauseSize.y * (pauseButtonScale - 1f) / 2),
-            pauseSize.x * pauseButtonScale,
-            pauseSize.y * pauseButtonScale
+            pausePosition.x,
+            pausePosition.y,
+            pauseSize.x,
+            pauseSize.y
         )
 
         // Zeit
@@ -392,7 +464,6 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
 
             font = BitmapFont(Gdx.files.internal("fonts/pixelsplitter/pixelsplitter.fnt"))
             font.color = Color.WHITE
-            val glyphLayout = GlyphLayout()
             font.data.setScale(0.7f, 0.7f)
             glyphLayout.setText(font, "GAME PAUSED")
             val gamePausedX = (viewport.worldWidth - glyphLayout.width) / 2
@@ -402,10 +473,10 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
             // Continue-Button anzeigen
             batch.draw(
                 continueTexture,
-                continueButtonPosition.x - (buttonSize.x * (continueButtonScale - 1f) / 2),
-                continueButtonPosition.y - (buttonSize.y * (continueButtonScale - 1f) / 2),
-                buttonSize.x * continueButtonScale,
-                buttonSize.y * continueButtonScale
+                continueButtonPosition.x,
+                continueButtonPosition.y,
+                buttonSize.x,
+                buttonSize.y,
             )
         }
 
@@ -508,21 +579,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
         val mouseX = Gdx.input.x.toFloat() * viewport.worldWidth / Gdx.graphics.width
         val mouseY = (Gdx.graphics.height - Gdx.input.y.toFloat()) * viewport.worldHeight / Gdx.graphics.height
 
-        continueButtonTargetScale = if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) &&
-            mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
-            1.1f
-        } else {
-            1f
-        }
-
         if (!gameEnded && gameStarted) {
-            pauseButtonTargetScale = if (mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) &&
-                mouseY in pausePosition.y..(pausePosition.y + pauseSize.y)) {
-                1.1f
-            } else {
-                1f
-            }
-
             if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                 if (!isPaused) {
                     if (mouseX in pausePosition.x..(pausePosition.x + pauseSize.x) && mouseY in pausePosition.y..(pausePosition.y + pauseSize.y)
@@ -580,8 +637,10 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                                 if (isCorrect) {
                                     // Objekt als eingesammelt markieren und nicht mehr anzeigen
                                     obj.isCollected = true
+                                    correctSound.play(0.9f * masterVolume * soundEffectVolume)
                                 } else {
                                     // Fehlermeldung anzeigen
+                                    wrongSound.play(1.2f * masterVolume * soundEffectVolume)
                                     showErrorText = true
                                     errorTextTimer = 0f
                                     errorLine = true
@@ -607,6 +666,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
             if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                 if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) && mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
                     gameStarted = true
+                    backgroundMusic.play()
                 }
             }
         } else {
@@ -619,6 +679,9 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                     }
                     game.addScreen(MapScreen(game,  26.5f, 4.6f))
                     game.setScreen<MapScreen>()
+
+                    isTransitioning = true
+                    loadingTime = 0f
                 }
             }
         }

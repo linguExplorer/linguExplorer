@@ -14,14 +14,11 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.Align
+import com.github.linguExplorer.*
 import com.github.linguExplorer.event.GameEndEvent
 import com.github.linguExplorer.event.fire
-import com.github.linguExplorer.linguExplorer
-import com.github.linguExplorer.masterVolume
 import com.github.linguExplorer.minigames.EssenMinigame
 import com.github.linguExplorer.models.PhraseEntity
-import com.github.linguExplorer.musicVolume
-import com.github.linguExplorer.soundEffectVolume
 import ktx.app.KtxScreen
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -157,6 +154,12 @@ class MinigameEssenScreen(private val game: linguExplorer,
                 Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
                 loadingScreenRenderer.renderAnimatedText(batch, font, glyphLayout, viewport, "Loading", delta, 1f, true)
 
+                if(music.volume > 0.005f) {
+                    music.volume -= (0.007f * masterVolume * musicVolume)
+                } else if (music.volume <= 0.01f) {
+                    music.pause()
+                }
+
                 if (threadExecuted && loadingTime > 2f) {
                     Gdx.app.postRunnable {
                         isTransitioning = false
@@ -281,6 +284,7 @@ class MinigameEssenScreen(private val game: linguExplorer,
             font.draw(batch, formatTime(timeLeft), timePosition.x + 42.5f, timePosition.y + 62.5f)
 
             if (isPaused) {
+                backgroundMusic.pause()
                 batch.end()
                 Gdx.gl.glEnable(GL20.GL_BLEND)
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)

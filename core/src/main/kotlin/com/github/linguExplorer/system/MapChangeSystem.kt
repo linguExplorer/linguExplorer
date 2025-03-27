@@ -14,6 +14,7 @@ import com.github.linguExplorer.component.PhysicComponent.Companion.physicCmpFro
 import com.github.linguExplorer.database.checkIfTopicAvailable
 import com.github.linguExplorer.event.*
 import com.github.linguExplorer.linguExplorer
+import com.github.linguExplorer.music
 import com.github.linguExplorer.saveNumber
 import com.github.linguExplorer.screen.*
 import com.github.linguExplorer.userId
@@ -88,6 +89,7 @@ class MapChangeSystem (
                         game.setScreen<MinigameSchuleScreen>()
                     }
                 }
+                music.pause()
                 lastTriggerTimes[toGame] = currentTime
             }
 
