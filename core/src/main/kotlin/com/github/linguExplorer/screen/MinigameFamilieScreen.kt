@@ -364,6 +364,7 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
 
     private fun handleGameEnd(mouseX: Float, mouseY: Float) {
         if (isContinueButtonClicked(mouseX, mouseY)) {
+            backgroundMusic.pause()
             backgroundMusic.stop()
             storePhraseDataAsync()
             transitionToMapScreen()
@@ -441,6 +442,7 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
         if (game.containsScreen<MapScreen>()) {
             game.removeScreen<MapScreen>()
         }
+        game.removeScreen<MinigameFamilieScreen>()
         game.addScreen(MapScreen(game, 12.5f, 15f))
         game.setScreen<MapScreen>()
     }
