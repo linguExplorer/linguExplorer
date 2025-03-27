@@ -163,9 +163,6 @@ class MinigameEssenScreen(private val game: linguExplorer,
                         transitionRadius = 0f
                         loadingTime = 0f
 
-                        if (game.containsScreen<MapScreen>()) {
-                            game.removeScreen<MapScreen>()
-                        }
                         backgroundMusic.stop()
                         stage.fire(GameEndEvent("SM"))
                         game.addScreen(MapScreen(game, 31.104187f, 15.677063f))
@@ -598,6 +595,11 @@ class MinigameEssenScreen(private val game: linguExplorer,
                         sizeX = 90f,
                         sizeY = 90f
                     )
+                }
+
+                if (game.containsScreen<MapScreen>()) {
+                    game.removeScreen<MapScreen>()
+                    stage.clear()
                 }
             }
             threadExecuted = true

@@ -428,6 +428,14 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         return if (clampedValue == 1.0) 11 else rangeIndex + 1
     }
 
+    override fun hide() {
+        // Remove all listeners from the stage
+        stage.clear()
+        uiStage.clear()
+
+        Gdx.input.inputProcessor = null
+    }
+
     override fun dispose() {
         stage.disposeSafely()
         playerTexture.disposeSafely()
