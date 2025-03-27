@@ -459,7 +459,7 @@ class MinigameEssenScreen(private val game: linguExplorer,
                                         currentBasketRow++
                                 } else {
                                     // Text mit "Fehler!" anzeigen
-                                    wrongSound.play(1.8f * masterVolume * soundEffectVolume)
+                                    wrongSound.play(2.3f * masterVolume * soundEffectVolume)
 
                                     showErrorText = true
                                     errorTextTimer = 0f

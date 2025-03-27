@@ -365,6 +365,12 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
         var positionOffsetY = 0f
         var index = 0
 
+        if (showErrorText) {
+            font.color = Color.RED
+            font.data.setScale(0.3f, 0.3f)
+            glyphLayout.setText(font, "False!")
+        }
+
         if (gameStarted) {
             renderPhrasesOnScreen(
                 batch,
@@ -635,7 +641,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                                     correctSound.play(0.9f * masterVolume * soundEffectVolume)
                                 } else {
                                     // Fehlermeldung anzeigen
-                                    wrongSound.play(1.8f * masterVolume * soundEffectVolume)
+                                    wrongSound.play(2.3f * masterVolume * soundEffectVolume)
                                     showErrorText = true
                                     errorTextTimer = 0f
                                     errorLine = true

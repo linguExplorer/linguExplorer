@@ -14,8 +14,11 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Align
 import com.github.linguExplorer.linguExplorer
+import com.github.linguExplorer.masterVolume
 import com.github.linguExplorer.minigames.FamilieMinigame
 import com.github.linguExplorer.models.PhraseEntity
+import com.github.linguExplorer.musicVolume
+import com.github.linguExplorer.soundEffectVolume
 import ktx.app.KtxScreen
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -29,6 +32,7 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
     private val shapeRenderer = ShapeRenderer()
     private val executor: ExecutorService = Executors.newFixedThreadPool(1)
 
+    // Texturen
     private val tagTexture = Texture(Gdx.files.internal("Minigames/Kleidung/tag.png"))
     private val reversedTagTexture = Texture(Gdx.files.internal("Minigames/Kleidung/tag_reversed.png"))
     private val textFieldTexture = Texture(Gdx.files.internal("Minigames/time.png"))
@@ -37,53 +41,57 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
     private val continueTexture = Texture(Gdx.files.internal("Minigames/btn_continue.png"))
     private val quitButtonTexture = Texture(Gdx.files.internal("Minigames/btn_quitMinigame.png"))
 
-    // Skalierungsfaktor basierend auf der Höhe (1080 / 600)
-    private val scaleFactor = 1080f / 600f
+    // Audio
+    private var backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Hintergrundmusik/Hintergrundmusik_Familie.mp3"))
+    private var correctSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Soundeffekte/richtig.mp3"))
+    private var wrongSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Soundeffekte/falsch.mp3"))
 
-    // Größen und Positionen skalieren
+    // Skalierung
+    private val scaleFactor = 1080f / 600f
     private val tagSize = Vector2(200f * scaleFactor, 90f * scaleFactor)
 
+    // Positionen
     private val pausePosition: Vector2
         get() = Vector2(310f, viewport.worldHeight - 120f)
     private val pauseSize = Vector2(80f, 80f)
-
     private val continueButtonPosition: Vector2
         get() = Vector2(
             (viewport.worldWidth / 2) - (buttonSize.x / 2),
             (viewport.worldHeight - buttonSize.y) / 2 - 50f
         )
     private val buttonSize = Vector2(375f, 105f)
-
     private val timePosition: Vector2
         get() = Vector2(30f, viewport.worldHeight - 125f)
     private val timeSize = Vector2(260f, 90f)
 
-
-
-
+    // Spielzustand
     private var phraseCountMax = 0
     private var phraseCorrectCounter = 0
-
     private var timeLeft = 45
     private var elapsedTime = 0f
     private var isPaused = false
     private var gameStarted = false
     private var gameEnded = false
     private var isCompleted = false
+    private var incorrectSelectionTimer = 0f
 
+    // Minigame Logik
     private val minigame = FamilieMinigame()
     private var objects: List<Pair<TagObject, TagObject>> = listOf()
     private var shownPhrases: List<Pair<PhraseEntity, String>>? = null
     private var firstSelected: TagObject? = null
-    private var incorrectSelectionTimer = 0f
 
     override fun show() {
         Gdx.input.inputProcessor = null
         font = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
+
+        // Musik initialisieren
+        backgroundMusic.isLooping = true
+        backgroundMusic.volume = 0.5f * musicVolume * masterVolume
+
         minigame.loadMinigamePhrases()
         minigame.loadAllPhrases()
         phraseCountMax = minigame.phraseList.size
-
         setObjects()
     }
 
@@ -102,12 +110,19 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
             isOverlapping = usedPositions.any { usedObj ->
                 isOverlappingWithMargin(obj, usedObj, 30f * scaleFactor)
             }
-
         } while (isOverlapping)
     }
 
     override fun render(delta: Float) {
         handleInput()
+
+        // Musiksteuerung
+        if (isPaused) {
+            backgroundMusic.pause()
+        } else if (gameStarted && !backgroundMusic.isPlaying) {
+            backgroundMusic.play()
+        }
+
         if (!isPaused && !gameEnded && gameStarted) {
             updateTime(delta)
         }
@@ -124,9 +139,6 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
         batch.projectionMatrix = viewport.camera.combined
         font.color = Color.BLACK
 
-
-
-
         batch.begin()
 
         if (gameStarted) {
@@ -137,14 +149,7 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
         }
 
         val texture: Texture = if (isPaused || gameEnded) playTexture else pauseTexture
-
-        batch.draw(
-            texture,
-            pausePosition.x,
-            pausePosition.y,
-            pauseSize.x,
-            pauseSize.y
-        )
+        batch.draw(texture, pausePosition.x, pausePosition.y, pauseSize.x, pauseSize.y)
 
         batch.draw(textFieldTexture, timePosition.x, timePosition.y, timeSize.x, timeSize.y)
         font.data.setScale(0.3f * scaleFactor, 0.3f * scaleFactor)
@@ -154,14 +159,24 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
         font.draw(batch, "$phraseCorrectCounter/$phraseCountMax", viewport.worldWidth - timePosition.x - timeSize.x + 20f * scaleFactor, timePosition.y + timeSize.y / 1.4f)
 
         if (incorrectSelectionTimer > 0f) {
-            incorrectSelectionTimer -= Gdx.graphics.deltaTime
+            incorrectSelectionTimer -= delta
         }
 
         if (incorrectSelectionTimer <= 0f) {
-            objects.forEach { it.first.isWrong = false
-                it.second.isWrong = false }
+            objects.forEach {
+                it.first.isWrong = false
+                it.second.isWrong = false
+            }
         }
 
+        renderPauseMenu()
+        renderStartMenu()
+        renderEndMenu()
+
+        batch.end()
+    }
+
+    private fun renderPauseMenu() {
         if (isPaused) {
             batch.end()
             Gdx.gl.glEnable(GL20.GL_BLEND)
@@ -181,16 +196,11 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
             val gamePausedY = (viewport.worldHeight / 2) + glyphLayout.height + 30f
             font.draw(batch, "GAME PAUSED", gamePausedX, gamePausedY)
 
-
-            batch.draw(
-                continueTexture,
-                continueButtonPosition.x,
-                continueButtonPosition.y - (buttonSize.y / 2) + 15f,
-                buttonSize.x,
-                buttonSize.y
-            )
+            batch.draw(continueTexture, continueButtonPosition.x, continueButtonPosition.y - (buttonSize.y / 2) + 15f, buttonSize.x, buttonSize.y)
         }
+    }
 
+    private fun renderStartMenu() {
         if (!gameStarted) {
             batch.end()
             Gdx.gl.glEnable(GL20.GL_BLEND)
@@ -201,34 +211,17 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
             Gdx.gl.glDisable(GL20.GL_BLEND)
             batch.begin()
 
-            //TODO der text ist soooo knapp nicht in der mitte :((
             font.color = Color.WHITE
             val glyphLayout = GlyphLayout()
             font.data.setScale(0.45f, 0.45f)
+            val text = "Match the German words with their English translations"
+            font.draw(batch, text, 0f, viewport.worldHeight / 2 + glyphLayout.height / 2 + 80f, viewport.worldWidth, Align.center, true)
 
-            val text = "Put the items on the list in the basket"
-            font.draw(
-                batch,
-                text,
-                0f,
-                viewport.worldHeight / 2 + glyphLayout.height / 2 + 80f,
-                viewport.worldWidth,
-                Align.center,
-                true
-            )
-
-            // Continue-Button anzeigen
-            batch.draw(
-                continueTexture,
-                continueButtonPosition.x,
-                continueButtonPosition.y - (buttonSize.y / 2) + 15f,
-                buttonSize.x,
-                buttonSize.y
-            )
-
-            //batch.draw(continueTexture, continueButtonPosition.x, continueButtonPosition.y, buttonSize.x, buttonSize.y)
+            batch.draw(continueTexture, continueButtonPosition.x, continueButtonPosition.y - (buttonSize.y / 2) + 15f, buttonSize.x, buttonSize.y)
         }
+    }
 
+    private fun renderEndMenu() {
         if (gameEnded) {
             batch.end()
             Gdx.gl.glEnable(GL20.GL_BLEND)
@@ -249,63 +242,37 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
                 val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
                 val gameOverY = (viewport.worldHeight / 2) + glyphLayout.height + 30f
                 font.draw(batch, "CONGRATULATIONS", gameOverX, gameOverY)
-                batch.draw(
-                    continueTexture,
-                    continueButtonPosition.x,
-                    continueButtonPosition.y - (buttonSize.y / 2) + 15f,
-                    buttonSize.x,
-                    buttonSize.y
-                )
+                batch.draw(continueTexture, continueButtonPosition.x, continueButtonPosition.y - (buttonSize.y / 2) + 15f, buttonSize.x, buttonSize.y)
             } else {
                 glyphLayout.setText(font, "GAME OVER")
                 val gameOverX = (viewport.worldWidth - glyphLayout.width) / 2
                 val gameOverY = (viewport.worldHeight) / 2 + glyphLayout.height + 30f
                 font.draw(batch, "GAME OVER", gameOverX, gameOverY)
-                batch.draw(
-                    quitButtonTexture,
-                    continueButtonPosition.x,
-                    continueButtonPosition.y - (buttonSize.y / 2) + 15f,
-                    buttonSize.x,
-                    buttonSize.y
-                )
-
-                /*val extraSpacing = 120f // Zusätzlicher Abstand zwischen "GAME OVER" und "Try Again"
-            val buttonYSpacing = -70f // Abstand zwischen "Try Again" und "Quit"
-            val tryAgainButtonY = gameOverY - glyphLayout.height - extraSpacing
-            val quitButtonY = tryAgainButtonY - buttonSize.y - buttonYSpacing
-            val buttonX = (viewport.worldWidth - buttonSize.x) / 2
-            batch.draw(tryAgainButtonTexture, buttonX, tryAgainButtonY, buttonSize.x, buttonSize.y)
-            batch.draw(quitButtonTexture, buttonX, quitButtonY, buttonSize.x, buttonSize.y)*/
+                batch.draw(quitButtonTexture, continueButtonPosition.x, continueButtonPosition.y - (buttonSize.y / 2) + 15f, buttonSize.x, buttonSize.y)
             }
         }
-
-        batch.end()
     }
 
     private fun setObjects() {
         val tempObjects = mutableListOf<Pair<TagObject, TagObject>>()
         val usedPositions = mutableListOf<TagObject>()
 
-        if(minigame.isGameComplete()) {
+        if (minigame.isGameComplete()) {
             gameEnded = true
             isCompleted = true
+            return
         }
 
         shownPhrases = minigame.loadPhrasesWithAssets().take(4)
-        shownPhrases!!.forEach { println(minigame.phraseList.indexOf(it.first)) }
         minigame.phraseList = minigame.phraseList.drop(4)
 
-        shownPhrases!!.forEach { (phrase, assetPath) ->
-            val texture = null//Texture(Gdx.files.internal(assetPath))
-            val sizeX = 40f
-            val sizeY = 40f
-
+        shownPhrases!!.forEach { (phrase, _) ->
             val objectEnglish = TagObject(
                 phrase = phrase,
                 positionX = 0f,
                 positionY = 0f,
-                sizeX = sizeX,
-                sizeY = sizeY,
+                sizeX = 40f,
+                sizeY = 40f,
                 isEnglishPhrase = true
             )
 
@@ -313,15 +280,13 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
                 phrase = phrase,
                 positionX = 0f,
                 positionY = 0f,
-                sizeX = sizeX,
-                sizeY = sizeY
+                sizeX = 40f,
+                sizeY = 40f
             )
 
-            // Positioniere das englische Objekt
             positionObjectWithoutOverlap(objectEnglish, usedPositions)
             usedPositions.add(objectEnglish)
 
-            // Positioniere das deutsche Objekt
             positionObjectWithoutOverlap(objectGerman, usedPositions)
             usedPositions.add(objectGerman)
 
@@ -350,22 +315,22 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
 
         batch.draw(texture, obj.positionX, obj.positionY, tagSize.x, tagSize.y)
 
-
         font.data.setScale(0.24f, 0.24f)
         val glyphLayout = GlyphLayout()
-        if (!isTranslation) {
-            if (obj.phrase.phrase.length >= 8) {
-                font.data.setScale(0.21f, 0.21f)
-            }
-            glyphLayout.setText(font, obj.phrase.phrase)
-            font.draw(batch, obj.phrase.phrase, obj.positionX + 50f, obj.positionY + obj.sizeY + glyphLayout.height / 2 + 40f)
-        } else {
-            if (obj.phrase.translation.length >= 8) {
-                font.data.setScale(0.21f, 0.21f)
-            }
-            glyphLayout.setText(font, obj.phrase.translation)
-            font.draw(batch, obj.phrase.translation, obj.positionX + (tagSize.x) - glyphLayout.width - 50f, obj.positionY + obj.sizeY + glyphLayout.height / 2 + 40f)
+        val text = if (!isTranslation) obj.phrase.phrase else obj.phrase.translation
+
+        if (text.length >= 8) {
+            font.data.setScale(0.21f, 0.21f)
         }
+
+        glyphLayout.setText(font, text)
+        val xPos = if (!isTranslation) {
+            obj.positionX + 50f
+        } else {
+            obj.positionX + tagSize.x - glyphLayout.width - 50f
+        }
+
+        font.draw(batch, text, xPos, obj.positionY + obj.sizeY + glyphLayout.height / 2 + 40f)
     }
 
     private fun handleInput() {
@@ -375,32 +340,31 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
         when {
             !gameEnded && gameStarted -> handleGameInput(mouseX, mouseY)
             !gameStarted && Gdx.input.isButtonPressed(Input.Buttons.LEFT) -> handleGameStart(mouseX, mouseY)
-            Gdx.input.isButtonPressed(Input.Buttons.LEFT) -> handleGameEnd(mouseX, mouseY)
+            gameEnded && Gdx.input.isButtonPressed(Input.Buttons.LEFT) -> handleGameEnd(mouseX, mouseY)
+            Gdx.input.isKeyPressed(Input.Keys.ESCAPE) -> isPaused = true
         }
     }
-
-
 
     private fun handleGameInput(mouseX: Float, mouseY: Float) {
         if (Gdx.input.justTouched()) {
             when {
-                !isPaused && isPauseButtonClicked(mouseX, mouseY) -> togglePause()
+                isPauseButtonClicked(mouseX, mouseY) -> togglePause()
+                isContinueButtonClicked(mouseX, mouseY) && isPaused -> togglePause()
                 !isPaused -> handleObjectSelection(mouseX, mouseY)
-                isContinueButtonClicked(mouseX, mouseY) -> togglePause()
             }
-        } else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-            isPaused = true
         }
     }
 
     private fun handleGameStart(mouseX: Float, mouseY: Float) {
         if (isContinueButtonClicked(mouseX, mouseY)) {
             gameStarted = true
+            backgroundMusic.play()
         }
     }
 
     private fun handleGameEnd(mouseX: Float, mouseY: Float) {
         if (isContinueButtonClicked(mouseX, mouseY)) {
+            backgroundMusic.stop()
             storePhraseDataAsync()
             transitionToMapScreen()
         }
@@ -433,12 +397,14 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
         val englishObject = if (firstSelected!!.isEnglishPhrase) firstSelected!! else obj
         minigame.phraseCheck(englishObject.phrase, isCorrectMatch)
 
-        if (!isCorrectMatch) {
+        if (isCorrectMatch) {
+            correctSound.play(0.9f * masterVolume * soundEffectVolume)
+            phraseCorrectCounter++
+        } else {
+            wrongSound.play(2.3f * masterVolume * soundEffectVolume)
             firstSelected!!.isWrong = true
             obj.isWrong = true
             incorrectSelectionTimer = 1f
-        } else {
-            phraseCorrectCounter++
         }
 
         resetSelection()
@@ -455,7 +421,7 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
     }
 
     private fun resetSelection() {
-        firstSelected!!.isSelected = false
+        firstSelected?.isSelected = false
         firstSelected = null
     }
 
@@ -479,7 +445,6 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
         game.setScreen<MapScreen>()
     }
 
-
     private fun getPartner(obj: TagObject): TagObject? {
         return objects.firstOrNull { pair -> pair.first == obj || pair.second == obj }
             ?.let { pair -> if (pair.first == obj) pair.second else pair.first }
@@ -487,7 +452,7 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
 
     private fun isMouseOverObject(mouseX: Float, mouseY: Float, obj: TagObject): Boolean {
         return mouseX >= obj.positionX && mouseX <= obj.positionX + tagSize.x &&
-                mouseY >= obj.positionY && mouseY <= obj.positionY + tagSize.y
+            mouseY >= obj.positionY && mouseY <= obj.positionY + tagSize.y
     }
 
     private fun updateTime(delta: Float) {
@@ -497,6 +462,7 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
             elapsedTime = 0f
         } else if (timeLeft <= 0) {
             gameEnded = true
+            backgroundMusic.stop()
         }
     }
 
@@ -516,13 +482,26 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
         viewport.update(width, height, true)
     }
 
-    override fun hide() {}
+    override fun hide() {
+        backgroundMusic.stop()
+    }
+
     override fun pause() {}
     override fun resume() {}
 
     override fun dispose() {
         batch.dispose()
         font.dispose()
+        tagTexture.dispose()
+        reversedTagTexture.dispose()
+        textFieldTexture.dispose()
+        pauseTexture.dispose()
+        playTexture.dispose()
+        continueTexture.dispose()
+        quitButtonTexture.dispose()
+        backgroundMusic.dispose()
+        correctSound.dispose()
+        wrongSound.dispose()
     }
 
     private fun isOverlappingWithMargin(obj1: TagObject, obj2: TagObject, margin: Float): Boolean {
