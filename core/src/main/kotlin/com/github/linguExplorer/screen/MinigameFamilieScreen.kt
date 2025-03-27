@@ -351,20 +351,20 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
         batch.draw(texture, obj.positionX, obj.positionY, tagSize.x, tagSize.y)
 
 
-        font.data.setScale(0.28f, 0.28f)
+        font.data.setScale(0.24f, 0.24f)
         val glyphLayout = GlyphLayout()
         if (!isTranslation) {
-            if (obj.phrase.phrase.length >= 10) {
-                font.data.setScale(0.24f, 0.24f)
+            if (obj.phrase.phrase.length >= 8) {
+                font.data.setScale(0.21f, 0.21f)
             }
             glyphLayout.setText(font, obj.phrase.phrase)
-            font.draw(batch, obj.phrase.phrase, obj.positionX + (tagSize.x / 2) - (glyphLayout.width / 2), obj.positionY + obj.sizeY + glyphLayout.height / 2 + 5f)
+            font.draw(batch, obj.phrase.phrase, obj.positionX + 50f, obj.positionY + obj.sizeY + glyphLayout.height / 2 + 40f)
         } else {
-            if (obj.phrase.translation.length >= 10) {
-                font.data.setScale(0.24f, 0.24f)
+            if (obj.phrase.translation.length >= 8) {
+                font.data.setScale(0.21f, 0.21f)
             }
             glyphLayout.setText(font, obj.phrase.translation)
-            font.draw(batch, obj.phrase.translation, obj.positionX + (tagSize.x / 2) - (glyphLayout.width / 2), obj.positionY + obj.sizeY + glyphLayout.height / 2 + 5f)
+            font.draw(batch, obj.phrase.translation, obj.positionX + (tagSize.x) - glyphLayout.width - 50f, obj.positionY + obj.sizeY + glyphLayout.height / 2 + 40f)
         }
     }
 

@@ -84,7 +84,7 @@ class MapChangeSystem (
                     }
                     "SC" -> {
                         game.removeScreen<MinigameSchuleScreen>()
-                        game.addScreen(MinigameSchuleScreen())
+                        game.addScreen(MinigameSchuleScreen(game, gameStage))
                         game.setScreen<MinigameSchuleScreen>()
                     }
                 }

@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
@@ -22,7 +23,7 @@ import ktx.app.KtxScreen
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class MinigameSchuleScreen() : KtxScreen {
+class MinigameSchuleScreen(private val game: linguExplorer, private val stage: Stage) : KtxScreen {
 
     private val batch = SpriteBatch()
     private lateinit var font: BitmapFont
@@ -590,13 +591,13 @@ class MinigameSchuleScreen() : KtxScreen {
                     mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
                     storePhraseDataAsync()
 
-                    /*stage.fire(GameEndEvent("SM"))
+                    stage.fire(GameEndEvent("SM"))
 
                     if (game.containsScreen<MapScreen>()) {
                         game.removeScreen<MapScreen>()
                     }
                     game.addScreen(MapScreen(game, 31.104187f, 15.677063f))
-                    game.setScreen<MapScreen>()*/
+                    game.setScreen<MapScreen>()
                 }
             }
         }

@@ -244,6 +244,7 @@ class MinigameEssenScreen(private val game: linguExplorer,
             var index = 0
 
             if (gameStarted) {
+                renderPhrasesOnScreen(batch, font, listPosition.x + 45f, listSize.y - 70f, 30f)
                 objects.forEach { obj ->
                     if (index > 0 && index % 8 == 0) {
                         positionOffsetX = 0f
@@ -261,7 +262,6 @@ class MinigameEssenScreen(private val game: linguExplorer,
                     positionOffsetX += 140f
                 }
 
-                renderPhrasesOnScreen(batch, font, listPosition.x + 45f, listSize.y - 70f, 30f)
             }
 
             batch.draw(basketTexture, basketPosition.x, basketPosition.y, basketSize.x, basketSize.y)
@@ -442,14 +442,10 @@ class MinigameEssenScreen(private val game: linguExplorer,
                                 //ob das Objekt in der Liste
                                 val isCorrect = minigame.phraseList.any { it.id == obj.phrase.id }
                                 if (isCorrect) {
-                                    //Objekt als eingesammelt markieren
                                     obj.isCollected = true
                                     correctSound.play(0.9f * masterVolume * soundEffectVolume)
                                     val initialXOffset = 80f //weiter rechts zeichnen
-                                    // Position des Objekts im Korb berechnen
-                                    // Startposition Korb + Abstand Rand + Position in Reihe % 5 * Abstand zwischen Objekten
                                     val basketX = basketPosition.x + initialXOffset + (collectedObjectPositions.size % 5) * collectedObjectSpacing + 20f
-                                    // Startposition Korbs + Abstand + Reihennummer * Abstand zwischen Objekten
                                     val basketY = basketPosition.y + 20f + (currentBasketRow * collectedObjectSpacing)
 
                                     obj.positionX = basketX
@@ -559,7 +555,7 @@ class MinigameEssenScreen(private val game: linguExplorer,
                 }
 
                 shapeRenderer.rect(startX - 15f,
-                    (currentY - (textHeight / 2) + 2f),
+                    (currentY - (textHeight / 2) + 1f),
                     textWidth + 30f,
                     6f)
                 shapeRenderer.end()

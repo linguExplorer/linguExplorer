@@ -129,8 +129,8 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
         bottomPositions.add(Vector2(150f, 50f))  // Position 3
         bottomPositions.add(Vector2(200f, 50f))  // Position 4
         bottomPositions.add(Vector2(250f, 50f))  // Position 5
-        bottomPositions.add(Vector2(260f, 200f))   // Position 6
-        bottomPositions.add(Vector2(260f, 200f))  // Position 7
+        bottomPositions.add(Vector2(300f, 50f))   // Position 6
+        bottomPositions.add(Vector2(350f, 50f))  // Position 7
         bottomPositions.add(Vector2(260f, 200f))  // Position 8
         bottomPositions.add(Vector2(260f, 200f))  // Position 9
         bottomPositions.add(Vector2(260f, 200f))  // Position 10
@@ -171,7 +171,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
             val aspectRatio = originalHeight / originalWidth
             val targetHeight = targetWidth * aspectRatio
 
-            val resetPositionX = 50f
+            val resetPositionX = 30f
             val resetPositionY = 750f
 
             // Regalobjekte haben keine Hanger-Textur
@@ -275,14 +275,6 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
         batch.draw(shelfTexture, shelfPosition1.x, shelfPosition1.y, shelfSize.x, shelfSize.y)
         batch.draw(shelfTexture, shelfPosition2.x, shelfPosition2.y, shelfSize.x, shelfSize.y)
 
-        // Fehlertext wird hier gezeichnet
-        if (showErrorText) {
-            font.color = Color.RED
-            font.data.setScale(0.3f, 0.3f)
-            val glyphLayout = GlyphLayout()
-            glyphLayout.setText(font, "False!")
-        }
-
         batch.draw(PurpleBagTexture, purpleBagPosition.x, purpleBagPosition.y, purpleBagSize.x, purpleBagSize.y)
         batch.draw(BagBlueTexture, blueBagPosition.x, blueBagPosition.y, blueBagSize.x, blueBagSize.y)
 
@@ -290,13 +282,30 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
         var positionOffsetY = 0f
         var index = 0
 
+        if (gameStarted) {
+            renderPhrasesOnScreen(
+                batch,
+                font,
+                minigame.bag1,
+                purpleBagPosition.x + 30f,
+                purpleBagPosition.y + purpleBagSize.y - 160f,
+                30f
+            )
+            renderPhrasesOnScreen(
+                batch,
+                font,
+                minigame.bag2,
+                blueBagPosition.x + 30f,
+                blueBagPosition.y + purpleBagSize.y - 90f,
+                30f
+            )
+
         val (objectsWithoutHanger, objectsWithHanger) = objects.partition { it.hangerTexture == null }
 
-        if (gameStarted) {
             objectsWithHanger.forEach { obj ->
-                if (index > 0 && index % 8 == 0) {
+                if (index > 0 && index % 9 == 0) {
                     positionOffsetX = 0f
-                    positionOffsetY -= 250f
+                    positionOffsetY -= 100f
                 }
                 if (!obj.isCollected) {
                     obj.positionX = obj.basePositionX + positionOffsetX
@@ -307,7 +316,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                 }
 
                 index++
-                positionOffsetX += 90f
+                positionOffsetX += 200f
 
                 renderPhrasesOnScreen(
                     batch,
@@ -334,7 +343,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
             objectsWithoutHanger.forEach { obj ->
                 if (index > 0 && index % 8 == 0) {
                     positionOffsetX = 0f
-                    positionOffsetY -= 150f
+                    positionOffsetY -= 250f
                 }
                 if (!obj.isCollected) {
                     obj.positionX = obj.basePositionX + positionOffsetX
@@ -345,24 +354,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                 }
 
                 index++
-                positionOffsetX += 50f
-
-                renderPhrasesOnScreen(
-                    batch,
-                    font,
-                    minigame.bag1,
-                    purpleBagPosition.x + 30f,
-                    purpleBagPosition.y + purpleBagSize.y - 90f,
-                    30f
-                )
-                renderPhrasesOnScreen(
-                    batch,
-                    font,
-                    minigame.bag2,
-                    blueBagPosition.x + 30f,
-                    blueBagPosition.y + purpleBagSize.y - 90f,
-                    30f
-                )
+                positionOffsetX += 120f
             }
         }
 
@@ -385,8 +377,8 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
 
         // Zeit
         batch.draw(timeTexture, timePosition.x, timePosition.y, timeSize.x, timeSize.y)
-        font.data.setScale(0.3f, 0.3f)
-        font.draw(batch, formatTime(timeLeft), timePosition.x + 20f, timePosition.y + timeSize.y / 1.4f)
+        font.data.setScale(0.5f, 0.5f)
+        font.draw(batch, formatTime(timeLeft), timePosition.x + 42.5f, timePosition.y + 62.5f)
 
         if (isPaused) {
             batch.end()
@@ -431,7 +423,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
             val glyphLayout = GlyphLayout()
             font.data.setScale(0.45f, 0.45f)
 
-            val text = "Put the items on the list in the basket"
+            val text = "Put the items in the correct bag"
             font.draw(
                 batch,
                 text,
@@ -659,7 +651,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
             val textWidth = glyphLayout.width
             val textHeight = glyphLayout.height
 
-            font.data.setScale(0.2f, 0.2f)
+            font.data.setScale(0.33f, 0.33f)
             font.draw(batch, phrase.phrase, startX, currentY)
 
             val currentLineHeight = textHeight * 1.5f
