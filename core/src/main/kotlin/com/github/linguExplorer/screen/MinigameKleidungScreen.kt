@@ -98,7 +98,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
 
     private var isTransitioning = false
     private var transitionRadius = 0f
-    private val maxRadius = Math.sqrt((1920f * 1920f + 1080f * 1080f).toDouble()).toFloat()
+    private val maxRadius = 3000f
     private var loadingTime = 0f
     private var threadWorking = false
     private var initialLoadingTime = 0f
@@ -107,7 +107,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
     private var timeLeft = 30
     private var elapsedTime = 0f
 
-    private var backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Hintergrundmusik/Hintergrundmusik_Essen.mp3"))
+    private var backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Hintergrundmusik/Hintergrundmusik_Kleidung.mp3"))
     private var correctSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Soundeffekte/richtig.mp3"))
     private var wrongSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Soundeffekte/falsch.mp3"))
 
@@ -262,13 +262,19 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
         font = BitmapFont(Gdx.files.internal("fonts/vcr osd mono/vcr osd mono.fnt"))
         if (isTransitioning) {
             transitionRadius += 1000f * delta
+            println(transitionRadius)
             if (transitionRadius >= maxRadius) {
+                println("WAS LOS")
                 loadingTime += delta
 
+
                 if (!threadWorking) {
+                    println(threadExecuted)
                     storePhraseDataAsync()
                     threadWorking = true
                 }
+
+                println("hallo")
 
                 Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
                 Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
@@ -280,6 +286,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                     music.pause()
                 }
 
+                println(threadExecuted)
                 if (threadExecuted && loadingTime > 2f) {
                     Gdx.app.postRunnable {
                         isTransitioning = false
@@ -287,6 +294,9 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                         loadingTime = 0f
 
                         backgroundMusic.stop()
+                        if (game.containsScreen<MapScreen>()) {
+                            game.removeScreen<MapScreen>()
+                        }
                         game.addScreen(MapScreen(game, 31.104187f, 15.677063f))
                         game.setScreen<MapScreen>()
                     }
@@ -315,7 +325,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
 
         if (!threadExecuted and !isTransitioning) {
             initialLoadingTime += delta
-            loadingScreenRenderer.renderAnimatedText(batch, font, glyphLayout, viewport, "Loading", delta, 1f, true)
+            LoadingScreenRenderer().renderAnimatedText(batch, font, glyphLayout, viewport, "Loading", delta, 1f, true)
 
             if (initialLoadingTime < 2f) {
                 return
@@ -361,7 +371,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                 font,
                 minigame.bag1,
                 purpleBagPosition.x + 30f,
-                purpleBagPosition.y + purpleBagSize.y - 160f,
+                purpleBagPosition.y + purpleBagSize.y - 150f,
                 30f
             )
             renderPhrasesOnScreen(
@@ -369,11 +379,11 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                 font,
                 minigame.bag2,
                 blueBagPosition.x + 30f,
-                blueBagPosition.y + purpleBagSize.y - 90f,
+                blueBagPosition.y + purpleBagSize.y - 150f,
                 30f
             )
 
-        val (objectsWithoutHanger, objectsWithHanger) = objects.partition { it.hangerTexture == null }
+            val (objectsWithoutHanger, objectsWithHanger) = objects.partition { it.hangerTexture == null }
 
             objectsWithHanger.forEach { obj ->
                 if (index > 0 && index % 9 == 0) {
@@ -391,22 +401,6 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                 index++
                 positionOffsetX += 200f
 
-                renderPhrasesOnScreen(
-                    batch,
-                    font,
-                    minigame.bag1,
-                    purpleBagPosition.x + 30f,
-                    purpleBagPosition.y + purpleBagSize.y - 90f,
-                    30f
-                )
-                renderPhrasesOnScreen(
-                    batch,
-                    font,
-                    minigame.bag2,
-                    blueBagPosition.x + 30f,
-                    blueBagPosition.y + purpleBagSize.y - 90f,
-                    30f
-                )
             }
 
             index = 0
@@ -457,7 +451,7 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
             Gdx.gl.glEnable(GL20.GL_BLEND)
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
             shapeRenderer.color = Color(0f, 0f, 0f, 0.65f)
-            shapeRenderer.rect(0f, 0f, viewport.screenWidth.toFloat(), viewport.screenHeight.toFloat())
+            shapeRenderer.rect(0f, 0f, viewport.worldWidth, viewport.worldHeight)
             shapeRenderer.end()
             Gdx.gl.glDisable(GL20.GL_BLEND)
             batch.begin()
@@ -636,11 +630,12 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
 
                                 if (isCorrect) {
                                     // Objekt als eingesammelt markieren und nicht mehr anzeigen
+                                    println("ye")
                                     obj.isCollected = true
                                     correctSound.play(0.9f * masterVolume * soundEffectVolume)
                                 } else {
                                     // Fehlermeldung anzeigen
-                                    wrongSound.play(1.2f * masterVolume * soundEffectVolume)
+                                    wrongSound.play(1.8f * masterVolume * soundEffectVolume)
                                     showErrorText = true
                                     errorTextTimer = 0f
                                     errorLine = true
@@ -672,13 +667,6 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
         } else {
             if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                 if (mouseX in continueButtonPosition.x..(continueButtonPosition.x + buttonSize.x) && mouseY in continueButtonPosition.y..(continueButtonPosition.y + buttonSize.y)) {
-                    storePhraseDataAsync()
-
-                    if (game!!.containsScreen<MapScreen>()) {
-                        game.removeScreen<MapScreen>()
-                    }
-                    game.addScreen(MapScreen(game,  26.5f, 4.6f))
-                    game.setScreen<MapScreen>()
 
                     isTransitioning = true
                     loadingTime = 0f
@@ -709,15 +697,16 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
 
         list.forEach { phrase ->
             val phraseObject = objects.find { it.phrase == phrase }
-            font.data.setScale(0.2f, 0.2f)
+            //Breite des Textes der Phrase berechnen
+            font.data.setScale(0.33f, 0.33f)
             glyphLayout.setText(font, phrase.phrase)
             val textWidth = glyphLayout.width
             val textHeight = glyphLayout.height
 
-            font.data.setScale(0.33f, 0.33f)
             font.draw(batch, phrase.phrase, startX, currentY)
 
             val currentLineHeight = textHeight * 1.5f
+            //ob Object schon eingesammelt wurde
             if (phraseObject!!.isCollected) {
                 batch.end()
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
@@ -728,10 +717,10 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
                 }
 
                 shapeRenderer.rect(
-                    startX + 320f,
-                    (currentY - textHeight / 2 - 1.75f),
-                    textWidth,
-                    3.5f
+                    startX - 15f,
+                    (currentY - (textHeight / 2) + 1f),
+                    textWidth + 30f,
+                    6f
                 )
                 shapeRenderer.end()
                 batch.begin()
@@ -752,9 +741,11 @@ class MinigameKleidungScreen(private val game: linguExplorer) : KtxScreen {
     }
 
     private fun storePhraseDataAsync() {
+        threadExecuted = false
         executor.submit {
             minigame.storePhraseData()
         }
+        threadExecuted = true
     }
 
     override fun resize(width: Int, height: Int) {
