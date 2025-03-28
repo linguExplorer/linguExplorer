@@ -203,7 +203,7 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
 
                     Thread {
                         Gdx.app.postRunnable {
-                            if (!game.containsScreen<PhrasenheftScreen>()) {
+                            if (game.containsScreen<PhrasenheftScreen>()) {
                                 game.removeScreen<PhrasenheftScreen>()
                             }
                             game.addScreen(PhrasenheftScreen(game))
@@ -410,7 +410,13 @@ class MapScreen(private val game: linguExplorer, private val tempX: Float, priva
         }
 
         if (menuSet) {
-            gameMenuRenderer.renderGameMenu(batch, font, glyphLayout, viewport,shapeRenderer, false, game)
+            var checkTrue = gameMenuRenderer.renderGameMenu(batch, font, glyphLayout, viewport,shapeRenderer, false, game)
+            if(checkTrue) {
+                music.stop()
+                game.removeScreen<MapScreen>()
+                game.addScreen(MainMenuScreen(game))
+                game.setScreen<MainMenuScreen>()
+            }
             Gdx.input.inputProcessor = null
             update = 0f
         } else {

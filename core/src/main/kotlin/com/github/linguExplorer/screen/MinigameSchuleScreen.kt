@@ -397,7 +397,7 @@ class MinigameSchuleScreen(private val game: linguExplorer, private val stage: S
             val glyphLayout = GlyphLayout()
             font.data.setScale(0.45f, 0.45f)
 
-            val text = "Put the items on the list in the basket"
+            val text = "Put the items on the timetable"
             font.draw(
                 batch,
                 text,

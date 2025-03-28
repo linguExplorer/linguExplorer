@@ -311,6 +311,12 @@ class PhrasenheftScreen (
             // Close button
             if (mouseX in closePosition.x..(closePosition.x + closeSize.x) &&
                 mouseY in closePosition.y..(closePosition.y + closeSize.y)) {
+
+                if(game.containsScreen<MapScreen>()) {
+                    game.removeScreen<MapScreen>()
+
+                }
+                game.addScreen(MapScreen(game, 30f,30f))
                 game.setScreen<MapScreen>()
                 return
             }

@@ -54,6 +54,7 @@ class GameMenuRenderer {
     private var isDraggingMaster = false
     private var isDraggingSoundeffects = false
     private var isDraggingMusic = false
+    private var isQuit= false
 
     private var boxX = 0f
     private var boxY = 0f
@@ -86,12 +87,16 @@ class GameMenuRenderer {
         updateCirclePositionsFromVolumes()
     }
 
-    fun renderGameMenu(batch: SpriteBatch, font: BitmapFont, glyphLayout: GlyphLayout, viewport: Viewport, shapeRenderer: ShapeRenderer, mainMenu: Boolean, linguGame: linguExplorer) {
+    fun renderGameMenu(batch: SpriteBatch, font: BitmapFont, glyphLayout: GlyphLayout, viewport: Viewport, shapeRenderer: ShapeRenderer, mainMenu: Boolean, linguGame: linguExplorer): Boolean {
         if(!mainMenu) {
             isMainMenu = false
         } else {
             isMainMenu = true
             game = linguGame
+        }
+
+        if (isQuit) {
+            return true
         }
 
         font.color = Color.BLACK
@@ -152,6 +157,8 @@ class GameMenuRenderer {
         if (isDraggingMaster || isDraggingSoundeffects || isDraggingMusic) {
             updateVolumesFromCirclePositions()
         }
+
+        return false
     }
 
     private fun updateCirclePositionsFromVolumes() {
@@ -271,10 +278,11 @@ class GameMenuRenderer {
             if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
                 if(isMainMenu) {
                     Gdx.app.exit()
+
                 } else {
-                    game.removeScreen<MainMenuScreen>()
-                    game.addScreen(MainMenuScreen(game))
-                    game.setScreen<MainMenuScreen>()
+
+                    println("Switch to main")
+                    isQuit = true
                 }
 
                 onQuitClicked()
