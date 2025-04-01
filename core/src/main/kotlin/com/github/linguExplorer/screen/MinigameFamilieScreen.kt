@@ -325,9 +325,9 @@ class MinigameFamilieScreen(private val game: linguExplorer) : KtxScreen {
 
         glyphLayout.setText(font, text)
         val xPos = if (!isTranslation) {
-            obj.positionX + 50f
+            obj.positionX + 60f
         } else {
-            obj.positionX + tagSize.x - glyphLayout.width - 50f
+            obj.positionX + tagSize.x - glyphLayout.width - 60f
         }
 
         font.draw(batch, text, xPos, obj.positionY + obj.sizeY + glyphLayout.height / 2 + 40f)

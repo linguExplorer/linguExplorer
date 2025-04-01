@@ -435,6 +435,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                                 clickProcessedThisFrame = true // Set the flag
                                 if (newGamePopUp) {
                                     showUserExistsConfirmation = true
+                                    currentEditSlotIndex = index
                                 } else {
                                     this.user = user
                                     currentCheckpoint = checkpoint!!
@@ -596,9 +597,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                                     if (slotIsActive) {
                                         println("guck")
                                         userAlreadyExists = true
-                                        this.user = user!!
-                                        saveNumber = user.saveNumber
-                                        currentCheckpoint = checkpoint!!
+                                        saveNumber = currentEditSlotIndex + 1
                                     } else {
                                         saveNumber = currentEditSlotIndex + 1
                                         println("was soll das")
@@ -674,6 +673,9 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
                         transitionRadius = 0f
                         loadingTime = 0f
                         if (introduction) {
+                            if (game.containsScreen<IntroductionScreen>()) {
+                                game.removeScreen<IntroductionScreen>()
+                            }
                             game.addScreen(IntroductionScreen(game))
                             game.setScreen<IntroductionScreen>()
                             game.removeScreen<MainMenuScreen>()
@@ -801,7 +803,7 @@ class MainMenuScreen(private val game: linguExplorer) : KtxScreen {
         threadExecuted = false
         executor.submit {
             if(userAlreadyExists) {
-                UserRepository().deleteUserWithDependencies(user.id, user.saveNumber)
+                UserRepository().deleteUserWithDependencies(userId, saveNumber)
                 UserRepository().addUser(userId, saveNumber, name)
                 CheckpointRepository().addCheckpoint(userId, saveNumber, 0, 30f, 30f, Timestamp(System.currentTimeMillis()))
                 executePositionX = 30f
