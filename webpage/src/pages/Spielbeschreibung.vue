@@ -98,7 +98,7 @@
 
 
       <img src="@/assets/xx_Images/xx_Images/Charactee New.png" alt="Character"
-        class="lg:w-[370px] md:w-[270px] sm:w-[180px] w-[140px] absolute z-[70] sm:translate-x-[-35vw] translate-x-[-25vw] lg:translate-y-[61.5vh] md:translate-y-[45vh] sm:translate-y-[34.5vh]  translate-y-[30vh]" />
+        class="lg:w-[370px] md:w-[270px] sm:w-[180px] w-[140px] absolute z-[70] sm:translate-x-[-35vw] translate-x-[-25vw] lg:translate-y-[46vh] md:translate-y-[60vh] sm:translate-y-[34.5vh]  translate-y-[30vh]" />
 
 
       <!-- Gras Bild -->
