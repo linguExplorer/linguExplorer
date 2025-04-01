@@ -54,7 +54,7 @@
     </section>
 
     <!-- Laptop Charakter -->
-    <div class="hidden md:flex justify-center translate-x-[30vw] lg:translate-y-[-17vh] md:translate-y-[-13vh]">
+    <div class="hidden md:flex justify-center translate-x-[30vw] lg:translate-y-[-12vh] md:translate-y-[-13vh] z-[70]">
       <img
         src="@/assets/xx_Images/xx_Images/MainCharacterSideRightAnimationv2.gif"
         alt="Desktop Character Animation"

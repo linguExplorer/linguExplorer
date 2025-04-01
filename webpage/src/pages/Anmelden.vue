@@ -193,7 +193,7 @@ export default {
             emailError.value = "Passwort oder E-Mail falsch!";
           }
         } else {
-          await router.push("/Afterlogin");
+          await router.push("/download");
         }
       } catch (error) {
         console.error("Fehler beim Senden der Anfrage:", error);
