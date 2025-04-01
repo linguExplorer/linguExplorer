@@ -12,7 +12,7 @@
           <!-- Button -->
           <template v-if="isLoggedIn">
             <button class="nav-button-spielbeschreibung hover-button">
-              <router-link to="/afterlogin" class="nav-link" href="#">
+              <router-link to="/download" class="nav-link" href="#">
                 <img
                   src="@/assets/xx_Images/xx_Images/Buttons/button jzt spielen.png"
                   alt="Jetzt spielen"
@@ -75,7 +75,7 @@
       <!-- Button direkt unter dem Linguexplorer-Logo -->
       <template v-if="isLoggedIn">
         <button class="hover-button">
-          <router-link to="/afterlogin" class="nav-link" href="#">
+          <router-link to="/download" class="nav-link" href="#">
             <img
               src="@/assets/xx_Images/xx_Images/Buttons/button play now.png"
               alt="Jetzt spielen"

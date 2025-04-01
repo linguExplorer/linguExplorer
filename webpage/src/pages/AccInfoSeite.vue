@@ -8,7 +8,7 @@
     <!-- Rechts oben Button -->
     <div class="absolute top-4 right-4">
         <button class="hover-button">
-          <router-link to="/afterlogin"  href="#">
+          <router-link to="/download"  href="#">
           <img
             src="@/assets/xx_Images/xx_Images/Buttons/red_X.png"
             alt="Nach oben"

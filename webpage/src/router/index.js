@@ -90,8 +90,8 @@ const routes = [
     component: ComingSoon,
   },
   {
-    path: "/afterlogin", // Route für Afterloginpage
-    name: "afterlogin",
+    path: "/download", // Route für Afterloginpage
+    name: "download",
     component: Afterlogin,
   },
   {
